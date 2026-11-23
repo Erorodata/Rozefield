@@ -10,8 +10,8 @@ Archived 2026-11-23 (shutdown period). Source: `H:\Backup\OverField` (a copy of 
 | Engine | Unity, IL2CPP (`GameAssembly.dll` 139.7 MB + `il2cpp_data/`) |
 | Executable | `launcher.exe` (Unity player, *not* a separate launcher) |
 | Client build (`version`) | 2026-10-24-12-00-58 |
-| Newest resource manifest (YooAsset) | 2026-11-09-11-50-10 |
-| Older manifests kept | 2026-10-24-12-00-58, 2026-11-04-17-16-53 |
+| Newest resource manifest (YooAsset) | **2026-11-23-15-53-19** (patch pushed on shutdown day; replaced one 7 KB bundle `381647ed…` with `b98e8287…`; copied into the backup, old bundle and the 2026-11-09 `.version` kept) |
+| Older manifests kept | 2026-10-24-12-00-58, 2026-11-04-17-16-53, 2026-11-09-11-50-10 |
 | Asset system | YooAsset `DefaultPackage` (StreamingAssets/yoo = built-in, yoo/DefaultPackage/CacheFiles = hot-updated, 256 hash buckets 00–ff) |
 | Scripting / hotfix | xLua (`xlua.dll`) + IFix (`IFix.Core.dll`) — patches arrive via the asset bundles |
 | Main data | `launcher_Data/data.unity3d` (91.4 MB) |
@@ -85,8 +85,10 @@ Request parameters: `version=2026-10-24-12-00-58`, `version2=ef00bcd296e82ea4ebe
 | 2 | `capture_20261123_170423` | 17:09–17:56 (game started twice) | 224 MB | Weapon/armor/imprint star-up, scrapping a module, inventory, imprint collection, F1 missions + stamina refill, F2 quests (all tabs), F3 recruit (4 banners, rates, history pages 1–4), F4 fitting room (outfit change saved), F5 Laplace Tree (all tabs), events (7-day sign-in, Daily Dessert, announcements, gashapon + rates), Pass (quest + level reward claims), Life Skills (all 4), Investigate (started 1, Gap, friend list), Game Room, Perform (instrument + sheet music), team formation, camera + share, Unstuck, Pet (codex/storage/bag), decoration edit mode, Salvager list + character gear, chat tabs, group Interaction (by the player) |
 
 | 3 | `capture_20261123_180325` | 18:07–18:22 | 254 MB | Movement (WASD, jump, double jump, umbrella glide off a cliff), sticker emote, Kirakira action, **Group High Five with another player**, dice prop roll, fishing rod and **vehicle** (Spiked Pufferfish Bumper) equip/drive/unequip, Friends → player profile / **Enter Home** / **Teleport**, chair interaction (server replied "All seats taken"), channel menu → Hot Channel → back to own garden |
+| 4 | `capture_20261123_182705` | 18:33–19:13 | 149 MB | Settings (all 5 tabs incl. full key map), cooking/processing/weaving crafts, **NPC dialogues and commissions** (Evelyn, Zoe, Sherry: commission list/completed, **Oyster commission handed in** and next one accepted, Talk, Sip Coffee), **NPC shops** (Collection Shop with Feline Token, Cuisine Shop and Variety Store with gold; Daily Sidelines buy-back), main Shop (all 9 tabs), **real-money purchase attempts → server "Currently unavailable."**, Recruit Trial (Molly) combat stage cleared 9/9 incl. boss, stage exit via windmill |
+| 5 | `capture_20261123_211935` | 21:19–22:14 (same game run as session 4) | 143 MB | Played by the player: **busy public channel 62 packed with players** during the shutdown period (crowd sync, world boss "Kraken" fight with many players), **character banner pulls (gacha)**, fishing, character screen, more NPC tasks |
 
-All three sessions hit the same server chain as section 2b, and the dispatch responses were identical. Not captured: Boss Rush, actually catching a fish, detector/area devices, NPC dialogue/commission hand-in, mini-games (the mini-game list was empty), joining a co-op match, creating a new character.
+All five sessions hit the same server chain as section 2b, and the dispatch responses were identical. Not captured: Boss Rush, actually catching a fish, detector/area devices, NPC dialogue/commission hand-in, mini-games (the mini-game list was empty), joining a co-op match, creating a new character.
 
 **Channels and gardens** (as described by the player, and seen in the session):
 - The world is split into numbered **channels**, shown in the bottom bar as `Channel: <number>`.
@@ -166,7 +168,7 @@ Tokens are encoded as `@NNN@NNN@…` byte strings. A recreated server only needs
 | Server address / config switch | ✅ (`Config.txt`) |
 | Login SDK message format | ✅ (redacted log: `qgpc_log_REDACTED.txt`) |
 | Hash manifest of every file (10,773 files; the backup is identical to the Steam install) | ✅ `capture_20261123_161336/hashes*.csv` |
-| Live game-server traffic (pcap) | ✅ sessions 1–3 (3.8 GB, 224 MB, 254 MB), see section 2c |
+| Live game-server traffic (pcap) | ✅ sessions 1–5 (3.8 GB, 224 MB, 254 MB, 149 MB, 143 MB), see section 2c |
 | Gacha rules and rate tables | ✅ section 2d |
 | Server chain, ports and dispatch responses | ✅ section 2b, `game_connections.csv` |
 | Client logs, 16–23 Nov (14 sessions) + Player.log | ✅ raw in the capture folder; redacted copies in `shareable_logs/` |
