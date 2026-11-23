@@ -1,0 +1,98 @@
+23/11/2026 5:09:34 PM	ResManager init success
+23/11/2026 5:09:34 PM	OnHotFixCS load success
+23/11/2026 5:09:34 PM	baseUrl: https://sdkapi-of-global.inutan.com
+23/11/2026 5:09:34 PM	productCode: 14893566846394405145332210454456
+23/11/2026 5:09:34 PM	channelCode: default
+23/11/2026 5:09:34 PM	QuickSDK_Oversea_steam onInitSuccess SDKChannelId: 16666
+23/11/2026 5:09:34 PM	af_device_id: <UUID>
+23/11/2026 5:09:34 PM	Parsed Command Line Arguments:
+23/11/2026 5:09:34 PM	H:\SteamLibrary\steamapps\common\OverField\launcher.exe=
+23/11/2026 5:09:34 PM	commandLineArgs : 1
+23/11/2026 5:09:34 PM	commandLineArg : H:\SteamLibrary\steamapps\common\OverField\launcher.exe
+23/11/2026 5:09:34 PM	QuickSDK_Oversea_steam SDKUid : 
+23/11/2026 5:09:34 PM	FairGuardSDK Init ret: 1
+23/11/2026 5:09:34 PM	buildGUID: ef00bcd296e82ea4ebeeced2acc8d6e0 version: 1.0.9 systemLanguage: English
+23/11/2026 5:09:34 PM	GetLoginUrlList version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+23/11/2026 5:09:35 PM	GetLoginUrlList b: True str: 
+23/11/2026 5:09:35 PM	RequestFallBackLoginServer over： http://150.5.132.155:18881
+23/11/2026 5:09:38 PM	SyncGMConfig, getClientVersionAddress: http://dsp-global-of.inutan.com:18881/dispatch/client_hot_update version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+23/11/2026 5:09:39 PM	SyncGMConfig response, b: True str: {"status":true,"message":"success","hotOssUrl":"https://d2b0sg4npngm2p.cloudfront.net/Resources;http://cdn-of-global.inutan.com/Resources","currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","server":"jp_global_prod","ssAppId":"3e9b196609224f889fbc769234200511","ssServerUrl":"https://te-receiver-aws.thinkingdata.jp","open_gm":false,"open_error_log":false,"open_netConnecting_log":false,"ipAddress":"<PLAYER_IP>","payUrl":"http://150.5.131.114:19701","isTestServer":false,"error_log_level":2,"server_id":"31000","open_cs":false,"serverTime":1795424979126}
+23/11/2026 5:09:39 PM	[ThinkingData] Info: TDAnalytics SDK initialize success, AppId = 3e9b196609224f889fbc769234200511, ServerUrl = https://te-receiver-aws.thinkingdata.jp, Mode = Normal, TimeZone = Local, DeviceId = <DEVICE_ID>, Lib = Unity, LibVersion = 3.1.0.1
+23/11/2026 5:09:39 PM	[ThinkingData] Info: Enqueue data: 
+{"#type":"user_set","#time":"2026-11-23 17:09:39.232","#distinct_id":"<DISTINCT_ID>","#account_id":"<ACCOUNT_ID>","#uuid":"<UUID>","properties":{}}
+  AppId: 3e9b196609224f889fbc769234200511
+23/11/2026 5:09:39 PM	[ThinkingData] Info: Enqueue data: 
+{"#type":"track","#time":"2026-11-23 17:09:39.235","#distinct_id":"<DISTINCT_ID>","#event_name":"ta_app_start","#account_id":"<ACCOUNT_ID>","#uuid":"<UUID>","properties":{"ip":"<PLAYER_IP>","app_channel":"16666","os_name":"windows","os_ver":"Windows 11  (10.0.26340) 64bit","app_ver":"1.0.9","network":"wifi","server":"jp_global_prod","udid":"<DEVICE_ID>","device_model":"<DEVICE_MODEL>","cps_id":"","zone_offset":0,"#device_id":"<DEVICE_ID>","#os":"Windows","#os_version":"Windows 11  (10.0.26340) 64bit","#screen_height":1080,"#screen_width":1920,"#manufacturer":"NVIDIA","#device_model":"<DEVICE_MODEL>","#app_version":"1.0.9","#bundle_id":"","#lib":"Unity","#lib_version":"3.1.0.1","#system_language":"en","#network_type":"LAN","#zone_offset":8}}
+  AppId: 3e9b196609224f889fbc769234200511
+23/11/2026 5:09:39 PM	SSSDKSystem Initialized DistinctId: <DISTINCT_ID>
+23/11/2026 5:09:39 PM	The location is invalid : Assets/ResMain/Main/UI/UI_Root_Logo/UGUI/SpriteAtlas_UI_Root_Logo.spriteatlas
+23/11/2026 5:09:39 PM	SyncGMConfig, getClientVersionAddress: http://dsp-global-of.inutan.com:18881/dispatch/client_hot_update version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+23/11/2026 5:09:40 PM	SyncGMConfig response, b: True str: {"status":true,"message":"success","hotOssUrl":"https://d2b0sg4npngm2p.cloudfront.net/Resources;http://cdn-of-global.inutan.com/Resources","currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","server":"jp_global_prod","ssAppId":"3e9b196609224f889fbc769234200511","ssServerUrl":"https://te-receiver-aws.thinkingdata.jp","open_gm":false,"open_error_log":false,"open_netConnecting_log":false,"ipAddress":"<PLAYER_IP>","payUrl":"http://150.5.131.114:19701","isTestServer":false,"error_log_level":2,"server_id":"31000","open_cs":false,"serverTime":1795424980158}
+23/11/2026 5:09:40 PM	HotUpdateSystem OnCheckHotUpdateStart IsVerifyProgramVersion: True
+23/11/2026 5:09:40 PM	localProgramVersion: 2026-10-24-12-00-58 gmProgramVersion: 2026-10-24-12-00-58 gmPatchVersion: 2026-11-09-11-50-10
+23/11/2026 5:09:40 PM	_originVersion: 2026-11-09-11-50-10
+23/11/2026 5:09:40 PM	HotUpdateSystem Updated PackageManifest Succeed
+23/11/2026 5:09:40 PM	HotUpdateSystem Not found any download files !
+23/11/2026 5:09:40 PM	HotUpdateSystem OnHotUpdateEnd
+23/11/2026 5:09:40 PM	OnHotFixCS load success
+23/11/2026 5:09:41 PM	PostProcess
+23/11/2026 5:09:41 PM	ZPrePassRendererFeature
+23/11/2026 5:09:41 PM	MinimapPlanarReflection BeforeGBuffer
+23/11/2026 5:09:41 PM	CharacterMaskPassRendererFeature
+23/11/2026 5:09:41 PM	CameraProportionPassRendererFeature
+23/11/2026 5:09:41 PM	AODecals
+23/11/2026 5:09:41 PM	Toon Outline
+23/11/2026 5:09:41 PM	Outline feature enabled
+23/11/2026 5:09:41 PM	OnMaxLODLevel:0
+23/11/2026 5:09:41 PM	OnMipmapBias:0
+23/11/2026 5:09:42 PM	初始化设置 ISettingsSystem 成功
+23/11/2026 5:09:42 PM	登录界面拉取游戏公告成功
+23/11/2026 5:09:42 PM	登录界面拉取游戏公告图片成功
+23/11/2026 5:09:43 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_GameNotice/Processed/SpriteAtlas_UI_Root_GameNotice.spriteatlas
+23/11/2026 5:09:44 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_MessageBoxTop/Processed/SpriteAtlas_UI_Root_MessageBoxTop.spriteatlas
+23/11/2026 5:09:45 PM	The location is invalid : Assets/ResMain/Main/UI/UI_Root_HotUpdate/UGUI/SpriteAtlas_UI_Root_HotUpdate.spriteatlas
+23/11/2026 5:09:47 PM	currentAppChannel: Channel_Oversea_Steam
+23/11/2026 5:09:47 PM	SceneOptimizers->CameraSystem.Instance.sceneOPT:True,SystemInfo.maxTextureArraySlices:2048,SystemInfo.systemMemorySize:32690,SystemInfo.graphicsMemorySize12113
+23/11/2026 5:09:47 PM	运行时一键关闭Renderer的ReflectionProbe
+23/11/2026 5:09:47 PM	运行时一键关闭Renderer的LightProbe
+23/11/2026 5:09:47 PM	一键关闭Renderer的动态遮挡剔除
+23/11/2026 5:09:47 PM	一键设置Renderer的MotionVectors为CameraOnly
+23/11/2026 5:09:47 PM	运行时一键设置Animator剔除
+23/11/2026 5:09:47 PM	运行时一键优化DecalLight
+23/11/2026 5:09:47 PM	运行时一键优化LightPlane
+23/11/2026 5:09:47 PM	运行时Combine合并SceneItem网格
+23/11/2026 5:09:47 PM	运行时设置LODGroup尺寸
+23/11/2026 5:09:47 PM	运行时静态合批阴影
+23/11/2026 5:09:47 PM	CombineVirtualTexture->Is4GDevice:False,Is6GDevice:->False,是否开启虚拟纹理:False
+23/11/2026 5:09:47 PM	运行时合并LOD0网格
+23/11/2026 5:09:47 PM	DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+23/11/2026 5:09:47 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+23/11/2026 5:09:47 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+23/11/2026 5:09:47 PM	[Singleton] An instance of Tayx.Graphy.GraphyManager is trying to be accessed, but it wasn't initialized first. Make sure to add an instance of Tayx.Graphy.GraphyManager in the scene before  trying to access it.
+23/11/2026 5:09:47 PM	RequestRegionInfo response, b: True str: {"status":true,"message":"success","gate_tcp_ip":"150.5.131.114","gate_tcp_port":11001,"is_server_open":true,"text":"","client_log_tcp_ip":"150.5.131.114","client_log_tcp_port":21001,"currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","photo_share_cdn_url":"https://jp-global-photo-prod.inutan.com/jp_global_prod"}
+23/11/2026 5:09:47 PM	QuickSDK_Oversea_steam 调用sdk login
+23/11/2026 5:09:47 PM	Pipe server started. Waiting for connection...
+23/11/2026 5:09:47 PM	Waiting for client connection...
+23/11/2026 5:09:47 PM	url https://sdkapi-of-global.inutan.com/openapi/oauth?openId=pcsdk&successUrl=https://sdkapi-of-global.inutan.com/loginSuccess.html&cancelUrl=https://sdkapi-of-global.inutan.com/loginCancel.html&productCode=14893566846394405145332210454456&channelCode=default&stopClose=1&theme=en&lang=en&sign=
+23/11/2026 5:09:47 PM	start exe gameName||qgpc&action||callLogin&url||aHR0cHM6Ly9zZGthcGktb2YtZ2xvYmFsLmludXRhbi5jb20vb3BlbmFwaS9vYXV0aD9vcGVuSWQ9cGNzZGsmc3VjY2Vzc1VybD1odHRwczovL3Nka2FwaS1vZi1nbG9iYWwuaW51dGFuLmNvbS9sb2dpblN1Y2Nlc3MuaHRtbCZjYW5jZWxVcmw9aHR0cHM6Ly9zZGthcGktb2YtZ2xvYmFsLmludXRhbi5jb20vbG9naW5DYW5jZWwuaHRtbCZwcm9kdWN0Q29kZT0xNDg5MzU2Njg0NjM5NDQwNTE0NTMzMjIxMDQ1NDQ1NiZjaGFubmVsQ29kZT1kZWZhdWx0JnN0b3BDbG9zZT0xJnRoZW1lPWVuJmxhbmc9ZW4mc2lnbj0=&width||470&height||475&loadStyle||1&showTaskIcon||null&w_left||-1928&w_top||-8&w_height||1048&w_width||1936&lang||en&closeButton||true&topWindow||1
+23/11/2026 5:09:47 PM	Process started with PID: 23312
+23/11/2026 5:09:49 PM	OnMessageReceived: {"action":"init","params":{}}
+23/11/2026 5:09:49 PM	Waiting for client connection...
+23/11/2026 5:09:49 PM	aciton init
+23/11/2026 5:09:57 PM	OnMessageReceived: {"action":"loginSuccess","params":{"authToken":"<TOKEN>","timeleft":"-1","uid":"<ACCOUNT_ID>","userToken":"<TOKEN>","username":"<EMAIL>"}}
+23/11/2026 5:09:57 PM	Waiting for client connection...
+23/11/2026 5:09:57 PM	aciton loginSuccess
+23/11/2026 5:09:57 PM	timeLeft is less than 0.
+23/11/2026 5:09:57 PM	Cannot send LogEvent, the Appsflyer SDK is stopped
+23/11/2026 5:09:57 PM	[Heartbeat] 启动心跳协程
+23/11/2026 5:09:57 PM	QuickSDK_Oversea_steam onLoginSuccess uid: <ACCOUNT_ID> username: <EMAIL> token: <TOKEN>
+23/11/2026 5:09:57 PM	Customer User ID has been set
+23/11/2026 5:09:57 PM	{"timestamp":"1795424997590","device_os_version":"11-10.0.26340-64","device_model":"<DEVICE_MODEL>","app_version":"1.0.0","device_ids":[{"type":"custom","value":"<UUID>"}],"request_id":"<UUID>","limit_ad_tracking":false,"customer_user_id":"<ACCOUNT_ID>"}
+23/11/2026 5:09:57 PM	登录界面拉取游戏公告成功
+23/11/2026 5:09:57 PM	Request type: FIRST_OPEN_REQUEST
+23/11/2026 5:09:57 PM	Is success: ProtocolError
+23/11/2026 5:09:57 PM	Response Code: 401
+23/11/2026 5:09:57 PM	error: HTTP/1.1 401 Unauthorized
+23/11/2026 5:09:57 PM	Please try to send the request to 'sandbox-events.appsflyer.com' instead of 'events.appsflyer.com' in order to debug.
+23/11/2026 5:09:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 5:09:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_GameNotice/Processed/SpriteAtlas_UI_Root_GameNotice.spriteatlas

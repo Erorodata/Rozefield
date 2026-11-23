@@ -1,0 +1,11 @@
+{
+ "SyncGMConfig": [
+  "{\"status\":true,\"message\":\"success\",\"hotOssUrl\":\"https://d2b0sg4npngm2p.cloudfront.net/Resources;http://cdn-of-global.inutan.com/Resources\",\"currentVersion\":\"2026-10-24-12-00-58_2026-11-09-11-50-10\",\"server\":\"jp_global_prod\",\"ssAppId\":\"3e9b196609224f889fbc769234200511\",\"ssServerUrl\":\"https://te-receiver-aws.thinkingdata.jp\",\"open_gm\":false,\"open_error_log\":false,\"open_netConnecting_log\":false,\"ipAddress\":\"<PLAYER_IP>\",\"payUrl\":\"http://150.5.131.114:19701\",\"isTestServer\":false,\"error_log_level\":2,\"server_id\":\"31000\",\"open_cs\":false,\"serverTime\":0}"
+ ],
+ "RequestRegionInfo": [
+  "{\"status\":true,\"message\":\"success\",\"gate_tcp_ip\":\"150.5.131.114\",\"gate_tcp_port\":11001,\"is_server_open\":true,\"text\":\"\",\"client_log_tcp_ip\":\"150.5.131.114\",\"client_log_tcp_port\":21001,\"currentVersion\":\"2026-10-24-12-00-58_2026-11-09-11-50-10\",\"photo_share_cdn_url\":\"https://jp-global-photo-prod.inutan.com/jp_global_prod\"}"
+ ],
+ "GetLoginUrlList": [
+  ""
+ ]
+}

@@ -1,0 +1,8 @@
+[配置说明]
+Content = 注意！配置文件必须是UTF-8编码！否则读取会报错！
+
+[服务器配置]
+UseCustomConfig = FALSE
+UseLocalServer = FALSE
+LocalServerIP = 127.0.0.1
+RemoteServerIP = 139.196.33.142
