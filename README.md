@@ -87,8 +87,9 @@ Request parameters: `version=2026-10-24-12-00-58`, `version2=ef00bcd296e82ea4ebe
 | 3 | `capture_20261123_180325` | 18:07–18:22 | 254 MB | Movement (WASD, jump, double jump, umbrella glide off a cliff), sticker emote, Kirakira action, **Group High Five with another player**, dice prop roll, fishing rod and **vehicle** (Spiked Pufferfish Bumper) equip/drive/unequip, Friends → player profile / **Enter Home** / **Teleport**, chair interaction (server replied "All seats taken"), channel menu → Hot Channel → back to own garden |
 | 4 | `capture_20261123_182705` | 18:33–19:13 | 149 MB | Settings (all 5 tabs incl. full key map), cooking/processing/weaving crafts, **NPC dialogues and commissions** (Evelyn, Zoe, Sherry: commission list/completed, **Oyster commission handed in** and next one accepted, Talk, Sip Coffee), **NPC shops** (Collection Shop with Feline Token, Cuisine Shop and Variety Store with gold; Daily Sidelines buy-back), main Shop (all 9 tabs), **real-money purchase attempts → server "Currently unavailable."**, Recruit Trial (Molly) combat stage cleared 9/9 incl. boss, stage exit via windmill |
 | 5 | `capture_20261123_211935` | 21:19–22:14 (same game run as session 4) | 143 MB | Played by the player: **busy public channel 62 packed with players** during the shutdown period (crowd sync, world boss "Kraken" fight with many players), **character banner pulls (gacha)**, fishing, character screen, more NPC tasks |
+| 6 | `capture_20261123_222021` | 22:20–23:24 (same game run as 4–5) | — | Yuzuki/Thera (commission, Ornament + Decoration shop, Talk), decoration placed in own garden (placement-cap and out-of-bounds checks), Chandler/Chang Taishi (commission, Luncheonette shop, **working Daily Sidelines buy-back**, Talk), **fishing** (setup, auto-catch ×3), Richard (tailor: Change Costume → Design Fitting Room, **Garment Dyeing**, Lyrical Clothing Store), ROTA building: Fantine (receptionist, Material Shop, Special Recruitment) and Irene, CLIFFS path to the clifftop lookout, bench/swing seating with Place/Recall Character |
 
-All five sessions hit the same server chain as section 2b, and the dispatch responses were identical. Not captured: Boss Rush, actually catching a fish, detector/area devices, NPC dialogue/commission hand-in, mini-games (the mini-game list was empty), joining a co-op match, creating a new character.
+All six sessions hit the same server chain as section 2b, and the dispatch responses were identical. Not captured: Boss Rush, actually catching a fish, detector/area devices, NPC dialogue/commission hand-in, mini-games (the mini-game list was empty), joining a co-op match, creating a new character.
 
 **Channels and gardens** (as described by the player, and seen in the session):
 - The world is split into numbered **channels**, shown in the bottom bar as `Channel: <number>`.
@@ -190,3 +191,25 @@ Tokens are encoded as `@NNN@NNN@…` byte strings. A recreated server only needs
 - `capture.pcapng` holds *all* traffic from your PC during the session, not just the game. Before sharing it, slim it in Wireshark: apply the display filter `ip.addr==150.5.131.114 || ip.addr==150.5.132.155 || ip.addr==8.134.240.36`, then use File → Export Specified Packets → "All displayed". The result has only the game-server traffic, and should be a few MB instead of 3.8 GB. It still contains your session, so share it only with trusted people.
 - `capture.etl` (2.8 GB) is the raw source of the pcapng and can be deleted.
 - `Plugins/Win/PCSDK_release/cache/` (Cookies etc.) is a browser profile for the login window — exclude it from any public upload.
+
+
+## 7. Service history
+
+- Oct 2024: launched in Japan under NetEase Games. NetEase ended service on 17 Feb 2025 11:59 JST and operating rights returned to the developer.
+- 6 Nov 2025: relaunched by INUTAN / Ekoneko Studio (PC, iOS, Android), developer-operated. **This archive is of the developer-operated service** (server `jp_global_prod`, server_id 31000).
+- Nov 2026: second end-of-service notice; captures taken 2026-11-23 before shutdown (exact shutdown date not recorded here).
+
+## 8. Garden NPC directory (Rota Garden Plaza)
+
+| NPC (commission name) | Location | Options | Shop currency |
+|---|---|---|---|
+| Evelyn | Café terrace by the pumpkin | Recruit, Commission, Shop, Talk | Feline Token |
+| Zoe | Café counter | Commission, Shop, Sip Coffee, Talk | Gold |
+| Sherry | General Store, across the fountain from the café | Commission, Shop, Talk | Gold (+ Starstone items) |
+| Thera / Yuzuki | Ornament shop next to Sherry | Commission, Shop (Ornament + Decoration), Talk | Feline Token |
+| Chandler / Chang Taishi | Beach shack (jump the terrace railing) | Commission, Shop (Luncheonette), Talk | Gold |
+| Richard | Tailor shop next to the café | Change Costume, Commission, Shop (Textile/Dye/Sidelines), Talk | Gold, Feline Token |
+| Fantine | ROTA building reception, next to the tailor | Commission, Shop (Material, Special Recruitment), Talk | Gold, recruit ticket |
+| Irene | ROTA building lobby | Talk | — |
+
+Daily Sidelines buy-back only succeeds when the item price shows **blue** (player owns the item); a **red** price silently does nothing. Many NPCs have two names (shop sign vs commission panel).

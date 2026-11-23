@@ -5029,3 +5029,680 @@ UpdateManager.Update () (at <00000000000000000000000000000000>:0)
 23/11/2026 10:14:00 PM	Spell_2020501 | You're attempting to despawn a gameObject that wasn't spawned from this pool
 23/11/2026 10:14:00 PM	Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
 23/11/2026 10:14:00 PM	Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:06 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:08 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	[Heartbeat] 心跳上报：22:14:20
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:20 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:21 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:14:21 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:14:21 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:32 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:33 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:33 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:33 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:37 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:37 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:38 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:38 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:40 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:41 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:42 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:42 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:42 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:46 PM	落地水花_游泳_深 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:48 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:50 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:50 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:51 PM	落地水花_游泳_深 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:51 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:52 PM	up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:52 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:52 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:52 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector2 <DOJumpAnchorPos>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+23/11/2026 10:14:54 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:55 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:14:57 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:14:57 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:00 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:00 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:02 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:04 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:05 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:07 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:07 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:07 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:11 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:11 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:13 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:14 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:16 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:15:16 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:16 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:17 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:18 PM	up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:20 PM	[Heartbeat] 心跳上报：22:15:20
+23/11/2026 10:15:29 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:29 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:29 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:31 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020501 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:33 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:43 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:15:59 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+23/11/2026 10:16:20 PM	[Heartbeat] 心跳上报：22:16:20
+23/11/2026 10:16:31 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:16:33 PM	眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:16:43 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:16:54 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:54 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:54 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:55 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:55 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:55 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:58 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:58 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:58 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:59 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:59 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:16:59 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:17:20 PM	[Heartbeat] 心跳上报：22:17:20
+23/11/2026 10:18:11 PM	落地水花_游泳_深 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:21 PM	[Heartbeat] 心跳上报：22:18:21
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:50 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:54 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:54 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:54 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:54 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:18:58 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:18:58 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:58 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:58 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:58 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:58 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:58 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:18:58 PM	回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:19:21 PM	[Heartbeat] 心跳上报：22:19:21
+23/11/2026 10:19:44 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 10:19:58 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:19:59 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:20:00 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:20:04 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:20:04 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:20:04 PM	FgInfo bytes: null
+23/11/2026 10:20:04 PM	OnChannelJumpCallback | 切换场景频道
+23/11/2026 10:20:04 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:20:04 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:20:04 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:20:04 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:20:04 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:20:04 PM	[Character_Base@Skin]renderer有Null的项!!!
+23/11/2026 10:20:05 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+23/11/2026 10:20:05 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:20:05 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Channel/Processed/SpriteAtlas_UI_Root_Channel.spriteatlas
+23/11/2026 10:20:21 PM	[Heartbeat] 心跳上报：22:20:21
+23/11/2026 10:21:21 PM	[Heartbeat] 心跳上报：22:21:21
+23/11/2026 10:22:21 PM	[Heartbeat] 心跳上报：22:22:21
+23/11/2026 10:23:21 PM	[Heartbeat] 心跳上报：22:23:21
+23/11/2026 10:23:47 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+23/11/2026 10:24:09 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+23/11/2026 10:24:15 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+23/11/2026 10:24:21 PM	[Heartbeat] 心跳上报：22:24:21
+23/11/2026 10:25:21 PM	[Heartbeat] 心跳上报：22:25:21
+23/11/2026 10:26:21 PM	[Heartbeat] 心跳上报：22:26:21
+23/11/2026 10:27:21 PM	[Heartbeat] 心跳上报：22:27:21
+23/11/2026 10:28:21 PM	[Heartbeat] 心跳上报：22:28:21
+23/11/2026 10:28:41 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_NpcDelegateTask/Processed/SpriteAtlas_UI_Root_NpcDelegateTask.spriteatlas
+23/11/2026 10:29:01 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:29:04 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+23/11/2026 10:29:20 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:29:21 PM	[Heartbeat] 心跳上报：22:29:21
+23/11/2026 10:29:29 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+23/11/2026 10:29:30 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_NpcShop/Processed/SpriteAtlas_UI_Root_NpcShop.spriteatlas
+23/11/2026 10:29:43 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 10:29:54 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 10:30:06 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 10:30:21 PM	[Heartbeat] 心跳上报：22:30:21
+23/11/2026 10:31:20 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:31:21 PM	[Heartbeat] 心跳上报：22:31:21
+23/11/2026 10:31:31 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:31:39 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:31:46 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:32:17 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Home/Processed/SpriteAtlas_UI_Root_Home.spriteatlas
+23/11/2026 10:32:17 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:32:21 PM	[Heartbeat] 心跳上报：22:32:21
+23/11/2026 10:32:30 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:32:33 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:32:36 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:32:39 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:32:46 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:32:55 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Home/Processed/SpriteAtlas_UI_Root_Home.spriteatlas
+23/11/2026 10:33:21 PM	[Heartbeat] 心跳上报：22:33:21
+23/11/2026 10:34:21 PM	[Heartbeat] 心跳上报：22:34:21
+23/11/2026 10:35:21 PM	[Heartbeat] 心跳上报：22:35:21
+23/11/2026 10:36:21 PM	[Heartbeat] 心跳上报：22:36:21
+23/11/2026 10:37:21 PM	[Heartbeat] 心跳上报：22:37:21
+23/11/2026 10:38:21 PM	[Heartbeat] 心跳上报：22:38:21
+23/11/2026 10:39:21 PM	[Heartbeat] 心跳上报：22:39:21
+23/11/2026 10:40:21 PM	[Heartbeat] 心跳上报：22:40:21
+23/11/2026 10:41:22 PM	[Heartbeat] 心跳上报：22:41:22
+23/11/2026 10:42:22 PM	[Heartbeat] 心跳上报：22:42:22
+23/11/2026 10:43:14 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+23/11/2026 10:43:22 PM	[Heartbeat] 心跳上报：22:43:22
+23/11/2026 10:43:28 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+23/11/2026 10:43:28 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:43:51 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+23/11/2026 10:44:22 PM	[Heartbeat] 心跳上报：22:44:22
+23/11/2026 10:44:22 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+23/11/2026 10:44:22 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:44:31 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:45:22 PM	[Heartbeat] 心跳上报：22:45:22
+23/11/2026 10:46:22 PM	[Heartbeat] 心跳上报：22:46:22
+23/11/2026 10:47:22 PM	[Heartbeat] 心跳上报：22:47:22
+23/11/2026 10:47:43 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_NpcDelegateTask/Processed/SpriteAtlas_UI_Root_NpcDelegateTask.spriteatlas
+23/11/2026 10:48:02 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:48:05 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+23/11/2026 10:48:18 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:48:22 PM	[Heartbeat] 心跳上报：22:48:22
+23/11/2026 10:48:27 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+23/11/2026 10:48:29 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_NpcShop/Processed/SpriteAtlas_UI_Root_NpcShop.spriteatlas
+23/11/2026 10:48:45 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 10:49:05 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 10:49:21 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 10:49:22 PM	[Heartbeat] 心跳上报：22:49:22
+23/11/2026 10:50:21 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:50:22 PM	[Heartbeat] 心跳上报：22:50:22
+23/11/2026 10:50:27 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:50:31 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+23/11/2026 10:50:31 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:51:21 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+23/11/2026 10:51:22 PM	[Heartbeat] 心跳上报：22:51:22
+23/11/2026 10:51:35 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+23/11/2026 10:51:42 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+23/11/2026 10:52:01 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+23/11/2026 10:52:18 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+23/11/2026 10:52:22 PM	[Heartbeat] 心跳上报：22:52:22
+23/11/2026 10:52:23 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+23/11/2026 10:53:22 PM	[Heartbeat] 心跳上报：22:53:22
+23/11/2026 10:53:51 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:54:22 PM	[Heartbeat] 心跳上报：22:54:22
+23/11/2026 10:54:52 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 10:54:59 PM	落地水花_游泳_深 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 10:55:22 PM	[Heartbeat] 心跳上报：22:55:22
+23/11/2026 10:56:22 PM	[Heartbeat] 心跳上报：22:56:22
+23/11/2026 10:57:22 PM	[Heartbeat] 心跳上报：22:57:22
+23/11/2026 10:58:22 PM	[Heartbeat] 心跳上报：22:58:22
+23/11/2026 10:59:22 PM	[Heartbeat] 心跳上报：22:59:22
+23/11/2026 11:00:22 PM	[Heartbeat] 心跳上报：23:00:22
+23/11/2026 11:01:22 PM	[Heartbeat] 心跳上报：23:01:22
+23/11/2026 11:01:56 PM	PostProcess
+23/11/2026 11:01:56 PM	ZPrePassRendererFeature
+23/11/2026 11:01:56 PM	MinimapPlanarReflection BeforeGBuffer
+23/11/2026 11:01:56 PM	CharacterMaskPassRendererFeature
+23/11/2026 11:01:56 PM	CameraProportionPassRendererFeature
+23/11/2026 11:01:56 PM	AODecals
+23/11/2026 11:01:56 PM	Toon Outline
+23/11/2026 11:01:56 PM	Outline feature enabled
+23/11/2026 11:01:57 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:02:22 PM	[Heartbeat] 心跳上报：23:02:22
+23/11/2026 11:02:36 PM	_selectedFinalIndex0
+23/11/2026 11:02:36 PM	Invalid index: 0
+23/11/2026 11:02:36 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_ItemSelect/Processed/SpriteAtlas_UI_Root_ItemSelect.spriteatlas
+23/11/2026 11:02:36 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:02:59 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:03:17 PM	_selectedFinalIndex4
+23/11/2026 11:03:18 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:03:22 PM	[Heartbeat] 心跳上报：23:03:22
+23/11/2026 11:03:26 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:03:28 PM	PostProcess
+23/11/2026 11:03:28 PM	ZPrePassRendererFeature
+23/11/2026 11:03:28 PM	MinimapPlanarReflection BeforeGBuffer
+23/11/2026 11:03:28 PM	CharacterMaskPassRendererFeature
+23/11/2026 11:03:28 PM	CameraProportionPassRendererFeature
+23/11/2026 11:03:28 PM	AODecals
+23/11/2026 11:03:28 PM	Toon Outline
+23/11/2026 11:03:28 PM	Outline feature enabled
+23/11/2026 11:03:48 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_NpcDelegateTask/Processed/SpriteAtlas_UI_Root_NpcDelegateTask.spriteatlas
+23/11/2026 11:04:09 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:04:12 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+23/11/2026 11:04:22 PM	[Heartbeat] 心跳上报：23:04:22
+23/11/2026 11:04:25 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_NpcShop/Processed/SpriteAtlas_UI_Root_NpcShop.spriteatlas
+23/11/2026 11:04:44 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 11:04:52 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:04:59 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:05:22 PM	[Heartbeat] 心跳上报：23:05:22
+23/11/2026 11:06:22 PM	[Heartbeat] 心跳上报：23:06:22
+23/11/2026 11:07:22 PM	[Heartbeat] 心跳上报：23:07:22
+23/11/2026 11:08:22 PM	[Heartbeat] 心跳上报：23:08:22
+23/11/2026 11:08:47 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_NpcDelegateTask/Processed/SpriteAtlas_UI_Root_NpcDelegateTask.spriteatlas
+23/11/2026 11:09:06 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:09:09 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+23/11/2026 11:09:19 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_NpcShop/Processed/SpriteAtlas_UI_Root_NpcShop.spriteatlas
+23/11/2026 11:09:22 PM	[Heartbeat] 心跳上报：23:09:22
+23/11/2026 11:09:32 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 11:09:37 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 11:09:42 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+23/11/2026 11:09:44 PM	落地水花_游泳_深 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+23/11/2026 11:09:45 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:09:47 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:09:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Talk/Processed/SpriteAtlas_UI_Root_Talk.spriteatlas
+23/11/2026 11:10:22 PM	[Heartbeat] 心跳上报：23:10:22
+23/11/2026 11:11:22 PM	[Heartbeat] 心跳上报：23:11:22
+23/11/2026 11:11:27 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:11:35 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:12:07 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:12:22 PM	[Heartbeat] 心跳上报：23:12:22
+23/11/2026 11:13:22 PM	[Heartbeat] 心跳上报：23:13:22
+23/11/2026 11:14:22 PM	[Heartbeat] 心跳上报：23:14:22
+23/11/2026 11:15:22 PM	[Heartbeat] 心跳上报：23:15:22
+23/11/2026 11:16:22 PM	[Heartbeat] 心跳上报：23:16:22
+23/11/2026 11:17:22 PM	[Heartbeat] 心跳上报：23:17:22
+23/11/2026 11:18:22 PM	[Heartbeat] 心跳上报：23:18:22
+23/11/2026 11:18:38 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Selection/Processed/SpriteAtlas_UI_Root_Selection.spriteatlas
+23/11/2026 11:18:38 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:19:22 PM	[Heartbeat] 心跳上报：23:19:22
+23/11/2026 11:19:33 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+23/11/2026 11:20:22 PM	[Heartbeat] 心跳上报：23:20:22
+23/11/2026 11:21:22 PM	[Heartbeat] 心跳上报：23:21:22
