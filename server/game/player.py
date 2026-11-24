@@ -24,6 +24,20 @@ def _save_registry(r):
     json.dump(r, open(_REG, 'w', encoding='utf-8'), indent=1)
 
 
+FAREWELL_MAIL = {
+    'mail_state': 'MailState_UNCLAIM', 'sender': 'The OverField Team', 'content_type': 'MailContentType_TEXT',
+    'title': 'OverField Farewell Rewards',
+    'content': ("Dear Leaders,\nAs previously announced, OverField will end service on February 8, 2027, at 23:59 (UTC+8). "
+                "Until then, we'll be giving out a series of rewards.\nThank you for staying with us until the very end. These "
+                "rewards are a small token of our appreciation, and we hope they help you enjoy OverField to the fullest before we "
+                "say goodbye.\nThe OverField Team\nNovember 24, 2026\n"),
+    'overdueDay': 9999,
+    'items': [{'itemId': i, 'num': str(n)} for i, n in ((102, 100000), (125, 10000), (2020, 9999), (2050, 9999), (2051, 9999),
+                                                       (2052, 9999), (2070, 9999), (2071, 9999), (2072, 9999), (2073, 9999),
+                                                       (2074, 9999), (2080, 9999), (401, 999), (1502, 520))],
+}
+
+
 class Player:
     def __init__(self, data, state, path):
         self.d = data
@@ -36,6 +50,17 @@ class Player:
         s = self.s
         from game import life
         life.migrate(self)
+        if not s.get('farewell_mail'):   # every player gets the official Farewell Rewards letter, kept forever
+            mails = s.setdefault('mails', [])
+            have = next((m for m in mails if 'Farewell' in (m.get('title') or '')), None)
+            if not have:
+                have = dict(FAREWELL_MAIL, mail_id=max([m.get('mail_id', 0) for m in mails] + [1232]) + 1,
+                            send_time=str(int(time.time())))
+                mails.insert(0, have)
+            have['overdueDay'] = 9999
+            s['mail_keep'] = sorted(set(s.get('mail_keep', [])) | {have['mail_id']})
+            s['farewell_mail'] = True
+            self.dirty = True
         if 'chapters' not in s:  # saves made before story chapters were tracked: a story's reward is claimed once its quest is Finish
             s['chapters'] = {}
             chap = {sid: c['ID'] for c in self.d.table('story', 'StoryChapter').values() for sid in c.get('StoryList', [])}
