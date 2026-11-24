@@ -11,6 +11,11 @@ from game import quests as Q
 H = {}
 
 
+def _world_mod():
+    from game import world
+    return world
+
+
 def _life_mod():
     from game import life
     return life
@@ -170,6 +175,8 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
               'riddles', 'dungeons', 'flagIds', 'moonSpots', 'vehicleInfoList', 'campFires'):
         if tpl.get(k):
             data[k] = tpl[k]
+    if scene_id != PUBLIC_SCENE:
+        data.update(_world_mod().scene_fields(p, scene_id))
     if owner is not None:
         data['sceneGardenData'] = garden_data(ctx, owner)
         data['placedCharacters'] = [{'characterId': c} for c in owner.s.get('placed_characters', [])][:0]
@@ -1183,3 +1190,7 @@ _dungeon.register(H, pack, enter_scene, scene_player)
 # character growth, profile, presets, pets, visits, achievements
 from game import progression as _prog  # noqa: E402
 _prog.register(H, pack, enter_scene, PUBLIC_SCENE)
+
+# open world: chests, riddles, flags, challenges, encounters, areas, moons, field drops, dungeon chest
+from game import world as _world  # noqa: E402
+_world.register(H, pack, scene_player)

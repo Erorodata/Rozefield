@@ -73,7 +73,7 @@ def register(H, pack, enter_scene, scene_player):
             {k: v for k, v in p.s['team'].items() if k in ('char1', 'char2', 'char3') and v}
         if not repeat:
             ctx.__dict__['dungeon_return'] = (p.s['scene_id'], p.s.get('channel_label'), req.get('Pos'), req.get('Rot'))
-        ctx.__dict__.update(dungeon_id=did, dungeon_start=time.time(), dungeon_kills=0, dungeon_time=0)
+        ctx.__dict__.update(dungeon_id=did, dungeon_start=time.time(), dungeon_kills=0, dungeon_time=0, dungeon_box_open=False)
         team = {}
         for slot, cid in chars.items():
             sc = {'char_id': cid}
@@ -110,25 +110,15 @@ def register(H, pack, enter_scene, scene_player):
         cfg = p.d.row('dungeon', 'Dungeon', did or 0)
         if not cfg:
             return ctx.reply({'status': FAIL})
-        paid = []
-        if cfg.get('ItemID') and cfg.get('ItemNum'):
-            if cfg['ItemID'] == VITALITY:
-                vitality(p)
-            paid = p.pay([(cfg['ItemID'], cfg['ItemNum'])])
-            if paid is None:
-                return ctx.reply({'status': FAIL})
-        ds = dstate(p, did)
+        ds = dstate(p, did)          # rewards: the final chest (world.box_open, loc DUNGEON), as on the official server
         ds['finishTimes'] += 1
         ds['lastFinishTime'] = str(ctx.__dict__.get('dungeon_time', 0))
         ds['allTaskFinished'] = True
-        got, changed = p.add_items(rewards_of(p, cfg))
         ret = ctx.__dict__.get('dungeon_return') or (p.s['scene_id'], None, None, None)
         Q.event(p, Q.C['DungeonPass'], did)
         Q.reported(p, did)
         p.dirty = True
-        ctx.reply({'status': OK, 'scene_id': ret[0], 'dungeon_data': dict(ds, monsters=[0]), 'rewards': got,
-                   'updateItems': paid})
-        pack(ctx, paid + changed)
+        ctx.reply({'status': OK, 'scene_id': ret[0], 'dungeon_data': dict(ds, monsters=[0])})
     H['DungeonFinishReq'] = finish
 
     def exit_(ctx, req):
@@ -139,6 +129,7 @@ def register(H, pack, enter_scene, scene_player):
         ret = ctx.__dict__.pop('dungeon_return', None) or (p.s['scene_id'], p.s.get('channel_label'), None, None)
         if ret[2]:
             p.s['last_pos'] = ret[2]
+        ctx.__dict__['temp_storage'] = []
         ctx.reply({'status': OK, 'scene_id': ret[0]})
         r = enter_scene(ctx, ret[0], label=ret[1])
         if r:
@@ -181,7 +172,9 @@ def register(H, pack, enter_scene, scene_player):
         p = ctx.p
         mid = req.get('monsterId', 0)
         m = p.d.row('monster', 'MonsterCharacterData', mid) or {}
-        rsp = {'status': OK, 'monsterIndex': req.get('monsterIndex', 0)}
+        rsp = {'status': OK}
+        if not ctx.__dict__.get('dungeon_id'):
+            ctx.__dict__['kills_since_drop'] = ctx.__dict__.get('kills_since_drop', 0) + 1
         if m.get('RewardPoolID'):
             items = p.d.reward_items(m['RewardPoolID'], p.s['level'])
             if items:
@@ -189,6 +182,7 @@ def register(H, pack, enter_scene, scene_player):
                 idx = len(drops) + 1
                 drops[idx] = items
                 rsp['dropItem'] = {'index': idx, 'items': [{'mainItem': p.item_info(i, n)} for i, n in items]}
+                ctx.__dict__['kills_since_drop'] = 0
         ctx.reply(rsp)
         ctx.__dict__['dungeon_kills'] = ctx.__dict__.get('dungeon_kills', 0) + 1
         Q.event(p, Q.C['KillMonest'], mid)

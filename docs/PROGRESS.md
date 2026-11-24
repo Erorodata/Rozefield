@@ -1,4 +1,4 @@
-# Rozefield progress: 77.94%
+# Rozefield progress: 79.02%
 
 ![progress](progress.png)
 
@@ -15,13 +15,13 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Player backup tool RozefieldBackup.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
-## Server & connection (74.0%)
+## Server & connection (74.2%)
 
 - [x] Dispatch, HTTPDNS and region info
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
-- [~] Client requests with a server handler (46.86% 142/303)
-- [~] Requests seen in real play that are handled (96.84% 92/95)
+- [~] Client requests with a server handler (48.51% 147/303)
+- [~] Requests seen in real play that are handled (96.97% 96/99)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -31,7 +31,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (56.6%)
+## Gameplay (60.6%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
@@ -54,8 +54,8 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Scrap (disassemble)
 - [~] Life skills: cooking, sewing, making, handicraft, fishing: recipes, success chance, levels, skills, handbook rewards; needs in-game check
 - [~] Gathering tools (net, axe, hammer, gloves, bottle): gather rewards + tool progress; needs in-game check
-- [~] Dungeons (story, resource), vitality, sweep, monster drops: rewards from the game tables; needs in-game check
-- [ ] Field treasure chests (rewards are server-side, not in client data)
+- [x] Dungeons (story, resource), vitality, sweep, monster drops: official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed
+- [~] Field treasure chests, encounters, riddles, challenges, moons: 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated
 - [ ] Mini-games and co-op (game hall)
 - [~] Perform (instruments, emotes)
 

@@ -195,12 +195,13 @@
         ],
         [
           "Dungeons (story, resource), vitality, sweep, monster drops",
-          "partial",
-          "rewards from the game tables; needs in-game check"
+          "done",
+          "official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed"
         ],
         [
-          "Field treasure chests (rewards are server-side, not in client data)",
-          "open"
+          "Field treasure chests, encounters, riddles, challenges, moons",
+          "partial",
+          "1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated"
         ],
         [
           "Mini-games and co-op (game hall)",
