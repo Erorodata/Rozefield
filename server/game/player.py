@@ -34,6 +34,8 @@ class Player:
 
     def migrate(self):
         s = self.s
+        from game import life
+        life.migrate(self)
         if 'chapters' not in s:  # saves made before story chapters were tracked: a story's reward is claimed once its quest is Finish
             s['chapters'] = {}
             chap = {sid: c['ID'] for c in self.d.table('story', 'StoryChapter').values() for sid in c.get('StoryList', [])}

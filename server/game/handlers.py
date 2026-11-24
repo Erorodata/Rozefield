@@ -11,6 +11,11 @@ from game import quests as Q
 H = {}
 
 
+def _life_mod():
+    from game import life
+    return life
+
+
 def handler(name):
     def deco(f):
         H[name] = f
@@ -54,6 +59,7 @@ def login(ctx, req):
 def main_data(ctx, req):
     p = ctx.p
     Q.login(p)
+    _life_mod().daily_energy(p)
     ctx.reply(p.main_data())
     p.s['last_login'] = int(time.time())
     ctx.push('PackNotice', {'status': OK, 'items': p.pack_items()})
@@ -1164,3 +1170,8 @@ try:
     STATUS = {v.name for v in _pool.FindEnumTypeByName('pb.StatusCode').values}
 except Exception:
     pass
+
+
+# life skills (cooking, sewing, making, handicraft, fishing, gathering) override the archived-record answers
+from game import life as _life  # noqa: E402
+_life.register(H, pack)
