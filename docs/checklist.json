@@ -108,6 +108,16 @@
           "done"
         ],
         [
+          "Character level up, level break, star up, skill up",
+          "partial",
+          "costs from the game tables; needs in-game check"
+        ],
+        [
+          "Profile, outfit / gear presets, pets, visit a friend's garden",
+          "partial",
+          "needs in-game check"
+        ],
+        [
           "Shops (Rhombite shop gives the item)",
           "done"
         ],
@@ -161,7 +171,8 @@
         ],
         [
           "Achievements: earn and claim",
-          "open"
+          "partial",
+          "counted from play, claim + group rewards; needs in-game check"
         ],
         [
           "Dye",

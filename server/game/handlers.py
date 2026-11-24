@@ -1179,3 +1179,7 @@ _life.register(H, pack)
 # dungeons, vitality, monster drops
 from game import dungeon as _dungeon  # noqa: E402
 _dungeon.register(H, pack, enter_scene, scene_player)
+
+# character growth, profile, presets, pets, visits, achievements
+from game import progression as _prog  # noqa: E402
+_prog.register(H, pack, enter_scene, PUBLIC_SCENE)

@@ -1,4 +1,4 @@
-# Rozefield progress: 77.04%
+# Rozefield progress: 77.94%
 
 ![progress](progress.png)
 
@@ -15,13 +15,13 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Player backup tool RozefieldBackup.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
-## Server & connection (71.9%)
+## Server & connection (74.0%)
 
 - [x] Dispatch, HTTPDNS and region info
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
-- [~] Client requests with a server handler (35.97% 109/303)
-- [~] Requests seen in real play that are handled (95.60% 87/91)
+- [~] Client requests with a server handler (46.86% 142/303)
+- [~] Requests seen in real play that are handled (96.84% 92/95)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -31,10 +31,12 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (55.0%)
+## Gameplay (56.6%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
+- [~] Character level up, level break, star up, skill up: costs from the game tables; needs in-game check
+- [~] Profile, outfit / gear presets, pets, visit a friend's garden: needs in-game check
 - [x] Shops (Rhombite shop gives the item)
 - [x] Food buffs and item use
 - [x] Channels, scenes, fields, friends' gardens
@@ -47,7 +49,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Quest steps with an event rule (97.71% 1,236/1,265)
 - [~] Main story quests cleared by an automated new account (16.67% 108/648)
 - [~] Achievements: view archived progress
-- [ ] Achievements: earn and claim
+- [~] Achievements: earn and claim: counted from play, claim + group rewards; needs in-game check
 - [~] Dye: colorants not consumed yet
 - [~] Scrap (disassemble)
 - [~] Life skills: cooking, sewing, making, handicraft, fishing: recipes, success chance, levels, skills, handbook rewards; needs in-game check
@@ -59,4 +61,4 @@ _OverField preservation: run the game on your own server after the official one 
 
 Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.
 
-Requests seen in play that still get an empty answer: `AbyssInfoReq`, `DailyTaskExchangeReq`, `FriendHandleReq`, `MultipleActionAcceptReq`
+Requests seen in play that still get an empty answer: `AbyssInfoReq`, `DailyTaskExchangeReq`, `MultipleActionAcceptReq`

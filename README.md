@@ -1,15 +1,15 @@
-# Rozefield progress — 77.04%
+# Rozefield progress — 77.94%
 
-`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱` **77.04%**
+`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱` **77.94%**
 
 OverField preservation: run the game on your own server after the official one closes.
 
 | Area | Progress | |
 |---|---|---:|
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
-| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` | **71.9%** |
+| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` | **74.0%** |
 | Content (Global + CN) | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱` | **87.5%** |
-| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱▱` | **55.0%** |
+| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱` | **56.6%** |
 
 🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet
 
@@ -26,15 +26,15 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Player backup tool RozefieldBackup.exe | in progress — built; first live run waits for the official server to come back |
 | 🟩 | Import backup from the login window | done |
 
-## Server & connection — 71.9%
+## Server & connection — 74.0%
 
 | | Item | Status |
 |---|---|---|
 | 🟩 | Dispatch, HTTPDNS and region info | done |
 | 🟩 | Login window with account picker | done |
 | 🟩 | Patch delivery through the game's own updater | done |
-| 🟨 | Client requests with a server handler | `▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱` 35.97% 109/303 |
-| 🟨 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 95.60% 87/91 |
+| 🟨 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱` 46.86% 142/303 |
+| 🟨 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 96.84% 92/95 |
 | ⬛ | Multiplayer (other players in scenes, co-op) | not yet — phase 2 |
 
 ## Content (Global + CN) — 87.5%
@@ -46,12 +46,14 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN-only text translated to English | done |
 | 🟨 | English UI after the CN patch | in progress — fix shipped, needs an in-game check |
 
-## Gameplay — 55.0%
+## Gameplay — 56.6%
 
 | | Item | Status |
 |---|---|---|
 | 🟩 | New account start, characters, team | done |
 | 🟩 | Outfits, gear equip, weapon / armor enhance | done |
+| 🟨 | Character level up, level break, star up, skill up | in progress — costs from the game tables; needs in-game check |
+| 🟨 | Profile, outfit / gear presets, pets, visit a friend's garden | in progress — needs in-game check |
 | 🟩 | Shops (Rhombite shop gives the item) | done |
 | 🟩 | Food buffs and item use | done |
 | 🟩 | Channels, scenes, fields, friends' gardens | done |
@@ -64,7 +66,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Quest steps with an event rule | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 97.71% 1,236/1,265 |
 | 🟨 | Main story quests cleared by an automated new account | `▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱` 16.67% 108/648 |
 | 🟨 | Achievements: view archived progress | in progress |
-| ⬛ | Achievements: earn and claim | not yet |
+| 🟨 | Achievements: earn and claim | in progress — counted from play, claim + group rewards; needs in-game check |
 | 🟨 | Dye | in progress — colorants not consumed yet |
 | 🟨 | Scrap (disassemble) | in progress |
 | 🟨 | Life skills: cooking, sewing, making, handicraft, fishing | in progress — recipes, success chance, levels, skills, handbook rewards; needs in-game check |
