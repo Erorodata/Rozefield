@@ -245,23 +245,59 @@ class Server:
 
     # channels
     def join_channel(self, sess, scene, channel):
+        """Everyone in the same scene channel sees each other (official: ServerSceneSyncDataNotice ENTER / LEAVE)."""
         self.leave_channel(sess)
         sess.chan = (scene, channel)
+        others = [o for o in self.channels.get(sess.chan, set()) if o is not sess and o.p]
         self.channels.setdefault(sess.chan, set()).add(sess)
+        if not sess.p:
+            return
+        sp = self._scene_player(sess.p)
+        for o in others:
+            try:
+                o.push('ServerSceneSyncDataNotice', {'status': 'StatusCode_OK', 'data': [
+                    {'player_id': sess.p.s['player_id'], 'serverData': [{'action_type': 'SceneActionType_ENTER', 'player': sp}]}]})
+            except Exception:
+                pass
+        if others:
+            sess.push('ServerSceneSyncDataNotice', {'status': 'StatusCode_OK', 'data': [
+                {'player_id': o.p.s['player_id'], 'serverData': [{'action_type': 'SceneActionType_ENTER', 'player': self._scene_player(o.p)}]}
+                for o in others]})
 
     def leave_channel(self, sess):
-        if getattr(sess, 'chan', None) in self.channels:
-            self.channels[sess.chan].discard(sess)
+        chan = getattr(sess, 'chan', None)
+        if chan in self.channels:
+            self.channels[chan].discard(sess)
+            if sess.p:
+                for o in list(self.channels[chan]):
+                    try:
+                        o.push('ServerSceneSyncDataNotice', {'status': 'StatusCode_OK', 'data': [
+                            {'player_id': sess.p.s['player_id'], 'serverData': [{'action_type': 'SceneActionType_LEAVE'}]}]})
+                    except Exception:
+                        pass
         sess.chan = None
+
+    @staticmethod
+    def _scene_player(p):
+        from game.handlers import scene_player
+        return scene_player(p)
 
     def broadcast(self, sess, name, body, include_self=True):
         for o in list(self.channels.get(getattr(sess, 'chan', None), {sess})):
             if o is sess and not include_self:
                 continue
-            o.push(name, body)
+            try:
+                o.push(name, body)
+            except Exception:
+                pass
 
-    def broadcast_scene_player(self, sess):
-        pass  # multiplayer (phase 2)
+    def broadcast_scene_player(self, sess, action='SceneActionType_UPDATE_TEAM'):
+        """Outfit / gear / team changes are shown to the other players in the channel."""
+        if not getattr(sess, 'p', None):
+            return
+        sp = self._scene_player(sess.p)
+        self.broadcast(sess, 'ServerSceneSyncDataNotice', {'status': 'StatusCode_OK', 'data': [
+            {'player_id': sess.p.s['player_id'], 'serverData': [{'action_type': action, 'player': {'team': sp['team']}}]}]}, include_self=False)
 
     # ---- server console: type GM commands in the server window, e.g.  roze /all outfits
     def console(self, line):

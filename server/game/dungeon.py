@@ -119,6 +119,12 @@ def register(H, pack, enter_scene, scene_player):
         Q.reported(p, did)
         p.dirty = True
         ctx.reply({'status': OK, 'scene_id': ret[0], 'dungeon_data': dict(ds, monsters=[0])})
+        if req.get('is_success', True):
+            try:
+                from game.events import moon_reward
+                moon_reward(ctx, 1119, 5)
+            except Exception:
+                pass
     H['DungeonFinishReq'] = finish
 
     def exit_(ctx, req):

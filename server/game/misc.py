@@ -752,7 +752,7 @@ def register(H, pack):
 
     # ------------------------------------------------ mini-games (solo parts)
     def gomoku(ctx, req):
-        win = req.get('self') and _gomoku_winner(req.get('board', []), req.get('lastRow', -1), req.get('lastCol', -1)) == req.get('self')
+        win = req.get('self') and _gomoku_winner(req.get('board', []), req.get('lastRow', 0), req.get('lastCol', 0)) == req.get('self')
         got, changed = give(ctx, [(GOLD, 300)] if win else [(GOLD, 50)])   # estimate
         ctx.reply({'status': OK, 'items': got, 'extraRewards': [], 'isSelfWin': bool(win)})
         pack(ctx, changed)

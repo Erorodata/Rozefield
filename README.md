@@ -1,6 +1,6 @@
-# Rozefield progress — 81.52%
+# Rozefield progress — 81.47%
 
-`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱` **81.52%**
+`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱` **81.47%**
 
 OverField preservation: run the game on your own server after the official one closes.
 
@@ -9,7 +9,7 @@ OverField preservation: run the game on your own server after the official one c
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
 | Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱` | **83.3%** |
 | Content (Global + CN) | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱` | **87.5%** |
-| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **61.5%** |
+| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **61.3%** |
 
 🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet
 
@@ -34,7 +34,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Login window with account picker | done |
 | 🟩 | Patch delivery through the game's own updater | done |
 | 🟩 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 303/303 |
-| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 133/133 |
+| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 136/136 |
 | ⬛ | Multiplayer (other players in scenes, co-op) | not yet — phase 2 |
 
 ## Content (Global + CN) — 87.5%
@@ -46,7 +46,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN-only text translated to English | done |
 | 🟨 | English UI after the CN patch | in progress — fix shipped, needs an in-game check |
 
-## Gameplay — 61.5%
+## Gameplay — 61.3%
 
 | | Item | Status |
 |---|---|---|
@@ -64,7 +64,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Recruit result screen (animation, can't leave) | in progress — results now carry the official bonus items + quality; needs in-game check |
 | 🟨 | Quest engine: main story, story rewards, daily, delegate | in progress |
 | 🟨 | Quest steps with an event rule | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 97.71% 1,236/1,265 |
-| 🟨 | Main story quests cleared by an automated new account | `▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱` 16.67% 108/648 |
+| 🟩 | Main story quests cleared by an automated new account | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 648/648 |
 | 🟨 | Achievements: view archived progress | in progress |
 | 🟨 | Achievements: earn and claim | in progress — counted from play, claim + group rewards; needs in-game check |
 | 🟨 | Dye | in progress — colorants not consumed yet |
@@ -86,6 +86,14 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Redemption codes (server owner sets them in save/codes.json) | done |
 | 🟨 | Boss Rush (solo), Abyss quest rewards | in progress — needs in-game check |
 | 🟨 | Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear | in progress — needs in-game check |
+| 🟨 | Multiplayer: other players in the same scene, movement, emotes, group emotes, chat (nearby, world, private), sitting | in progress — tested with 2 local clients; needs in-game check |
+| 🟨 | Part-time tasks, Moon Points to Wish Stones (official step prices), co-op ticket refill (6 a day) | in progress — Moon Points per activity: 5 / 25 as seen |
+| 🟨 | Online Gomoku (2 players) | in progress — reward amounts estimated |
+| 🟨 | Photo wall (upload, browse, like, favourite, delete) | in progress — pictures are stored; whether the client can download them back is untested |
+| 🟨 | Rankings: Abyss, Boss Rush (everyone on this server) | in progress |
+| 🟨 | Restaurant mini-game (buy, merge, sell, serve, quests) | in progress — built from the game tables; no official capture |
+| 🟨 | Field gear drops follow world level, 3% rare top quality | in progress — estimate |
+| 🟨 | RozefieldBackup: background start, follows a Steam restart, log file | in progress — needs a live run |
 
 **Quest steps with a rule:** 1,236 / 1,265 (`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 97.7%)
 

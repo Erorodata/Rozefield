@@ -280,9 +280,7 @@ def register(H, pack, scene_player):
         n = dt['exchange_times_left']
         if n <= 0:
             return ctx.reply({'status': FAIL})
-        st = _ev(p)['daily_task']
-        st['paid_done'] = st.get('paid_done', 0) + (n - st['left']) // 2
-        st['left'] = 0
+        _ev(p)['daily_task']['left'] = 0
         got, changed = p.add_items([(WISH_STONE, n)])
         p.dirty = True
         ctx.reply({'status': OK, 'rewards': got, 'today_converted': dt['today_converted']})
@@ -384,8 +382,9 @@ def register(H, pack, scene_player):
     # ---------------- social
     def multi_accept(ctx, req):
         ctx.reply({'status': OK})
-        ctx.push('SendMultipleActionCompleteNotice', {'status': OK, 'actionId': req.get('actionId'), 'fromPlayerId': req.get('fromPlayerId'),
-                                                      'actionPlayerIds': [req.get('fromPlayerId'), ctx.p.s['player_id']]})
+        note = {'status': OK, 'actionId': req.get('actionId'), 'fromPlayerId': req.get('fromPlayerId'),
+                'actionPlayerIds': [req.get('fromPlayerId'), ctx.p.s['player_id']]}
+        ctx.server.broadcast(ctx, 'SendMultipleActionCompleteNotice', note)   # both players (and onlookers) play it
     H['MultipleActionAcceptReq'] = multi_accept
 
     def dice(ctx, req):
@@ -521,12 +520,72 @@ def _sign_info(d, p, act):
     return e
 
 
+MOON_POINT = 124
+PARTTIME_SLOTS = (521, 522, 523, None)    # official: one task from each of these groups + one more
+TICKET, TICKET_DAILY = 117, 6             # co-op game tickets, official list showed 6/6
+
+
 def _daily_task(p):
-    """Wish Stones earned from the day's part-time tasks, collected with DailyTaskExchangeReq. Rozefield credits
-    them from finished daily quests (2 each) plus a daily base of 10."""
-    st = _ev(p).setdefault('daily_task', {'day': '', 'left': 0, 'converted': 0})
+    """Official system: Moon Points (item 124) from part-time tasks and activities are converted into Wish Stones in
+    steps (dailytask.json DailyTaskReward: 60, 60, 60, 60, 80 ... 5000 points per step, 21 steps a day); the
+    converted stones wait until they are collected with DailyTaskExchangeReq."""
+    st = _ev(p).setdefault('daily_task', {'day': '', 'left': 0, 'converted': 0, 'tasks': {}})
+    st.setdefault('tasks', {})
     if st['day'] != _day():
-        st.update(day=_day(), left=10, converted=0, paid_done=0)
+        st.update(day=_day(), converted=0, tasks={})
+        st.pop('paid_done', None)
+        _new_parttime(p, st)
+        if p.count(TICKET) < TICKET_DAILY:
+            p.add_items([(TICKET, TICKET_DAILY - p.count(TICKET))])
         p.dirty = True
-    done = sum(1 for q in p.s.get('quests', {}).values() if isinstance(q, dict) and q.get('daily') and q.get('status') == 'QuestStatus_Finish')
-    return {'today_converted': st['converted'] + done, 'exchange_times_left': st['left'] + 2 * max(0, done - st.get('paid_done', 0))}
+    _convert(p, st)
+    return {'tasks': {k: v for k, v in st['tasks'].items()}, 'today_converted': st['converted'], 'exchange_times_left': st['left']}
+
+
+def _new_parttime(p, st):
+    from game import quests as Q2
+    pool = {}
+    for q in p.d.table('quest', 'Quest').values():
+        if q.get('NewType') == 7 and 520000 <= q['ID'] < 530000:
+            pool.setdefault(q['ID'] // 1000, []).append(q['ID'])
+    for qid in list(p.s.get('quests', {})):   # yesterday's part-time tasks go away
+        if qid.isdigit() and 520000 <= int(qid) < 530000:
+            del p.s['quests'][qid]
+    used = set()
+    for slot, grp in enumerate(PARTTIME_SLOTS, 1):
+        cand = [q for q in (pool.get(grp) if grp else [x for v in pool.values() for x in v]) if q not in used]
+        if not cand:
+            continue
+        qid = random.choice(cand)
+        used.add(qid)
+        st['tasks'][str(slot)] = qid
+        Q2.accept(p, qid)
+
+
+def _convert(p, st):
+    steps = sorted(p.d.table('dailytask', 'DailyTaskReward').values(), key=lambda r: r['ID'])
+    while st['converted'] < len(steps):
+        row = steps[st['converted']]
+        if p.count(row.get('CostItemID', MOON_POINT)) < row.get('CostItemNum', 60):
+            break
+        if p.pay([(row.get('CostItemID', MOON_POINT), row.get('CostItemNum', 60))]) is None:
+            break
+        st['converted'] += 1
+        st['left'] += 1
+        p.dirty = True
+
+
+def moon_reward(ctx, gameplay_id, n):
+    """Moon Points for playing (official MoonQuestGamePlayRewardNotice, seen: 5 and 25 points)."""
+    p = ctx.p
+    got, changed = p.add_items([(MOON_POINT, n)])
+    p.dirty = True
+    try:
+        ctx.push('MoonQuestGamePlayRewardNotice', {'status': OK, 'id': gameplay_id, 'rewards': got})
+        ctx.push('PackNotice', {'status': OK, 'items': changed})
+        before = _ev(p).get('daily_task', {}).get('left', 0)
+        dt = _daily_task(p)
+        if dt['exchange_times_left'] != before:
+            ctx.push('DailyTaskUpdateNotice', dict(status=OK, **dt))
+    except Exception:
+        pass

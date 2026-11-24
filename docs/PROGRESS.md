@@ -1,4 +1,4 @@
-# Rozefield progress: 81.52%
+# Rozefield progress: 81.47%
 
 ![progress](progress.png)
 
@@ -21,7 +21,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
 - [x] Client requests with a server handler (100.00% 303/303)
-- [x] Requests seen in real play that are handled (100.00% 133/133)
+- [x] Requests seen in real play that are handled (100.00% 136/136)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -31,7 +31,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (61.5%)
+## Gameplay (61.3%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
@@ -47,7 +47,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Recruit result screen (animation, can't leave): results now carry the official bonus items + quality; needs in-game check
 - [~] Quest engine: main story, story rewards, daily, delegate
 - [~] Quest steps with an event rule (97.71% 1,236/1,265)
-- [~] Main story quests cleared by an automated new account (16.67% 108/648)
+- [x] Main story quests cleared by an automated new account (100.00% 648/648)
 - [~] Achievements: view archived progress
 - [~] Achievements: earn and claim: counted from play, claim + group rewards; needs in-game check
 - [~] Dye: colorants not consumed yet
@@ -69,5 +69,13 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] Redemption codes (server owner sets them in save/codes.json)
 - [~] Boss Rush (solo), Abyss quest rewards: needs in-game check
 - [~] Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear: needs in-game check
+- [~] Multiplayer: other players in the same scene, movement, emotes, group emotes, chat (nearby, world, private), sitting: tested with 2 local clients; needs in-game check
+- [~] Part-time tasks, Moon Points to Wish Stones (official step prices), co-op ticket refill (6 a day): Moon Points per activity: 5 / 25 as seen
+- [~] Online Gomoku (2 players): reward amounts estimated
+- [~] Photo wall (upload, browse, like, favourite, delete): pictures are stored; whether the client can download them back is untested
+- [~] Rankings: Abyss, Boss Rush (everyone on this server)
+- [~] Restaurant mini-game (buy, merge, sell, serve, quests): built from the game tables; no official capture
+- [~] Field gear drops follow world level, 3% rare top quality: estimate
+- [~] RozefieldBackup: background start, follows a Steam restart, log file: needs a live run
 
 Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.
