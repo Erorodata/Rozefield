@@ -232,12 +232,50 @@ def gm_command(ctx, text):
         if cmd == '/level':
             p.s['level'] = max(1, min(50, int(a[1]))); p.save()
             return f'level set to {p.s["level"]} (relog to apply)'
+        if cmd == '/all':
+            cat = a[1].lower() if len(a) > 1 else 'help'
+            n = int(a[2]) if len(a) > 2 else 99
+            tags = set()
+            for c in (ALL_GROUPS if cat == 'everything' else [cat]):
+                tags |= ALL_GROUPS.get(c, set())
+            if not tags:
+                return 'usage: /all <' + '|'.join(list(ALL_GROUPS) + ['everything']) + '> [count]'
+            changed, k = [], 0
+            for iid, row in ctx.d.table('item', 'Item').items():
+                tag = ctx.d.item_tag(iid)
+                if tag not in tags:
+                    continue
+                want = 1 if tag in ONE_ONLY else n
+                if p.count(iid) >= want:
+                    continue
+                changed += p.add_item(iid, want - p.count(iid))[1]; k += 1
+            p.save()
+            ctx.push('PackNotice', {'status': OK, 'items': changed})
+            return f'added {k} item types ({cat})'
         if cmd == '/char':
             got, changed = p.add_item(int(a[1]), 1); pack(ctx, changed); p.save()
             return 'character added (relog to see it)'
     except Exception as e:
         return f'error: {e}'
-    return 'commands: /give <itemId> [n], /currency [n], /level <n>, /char <characterId>'
+    return 'commands: /give <itemId> [n], /all <materials|outfits|consumables|furniture|everything> [n], /currency [n], /level <n>, /char <characterId>'
+
+
+ALL_GROUPS = {
+    'materials': {'EBagItemTag_Material', 'EBagItemTag_StrengthStone', 'EBagItemTag_ExpBook', 'EBagItemTag_Fragment',
+                  'EBagItemTag_DyeStuff', 'EBagItemTag_Agentia', 'EBagItemTag_Catcher', 'EBagItemTag_Baitbox',
+                  'EBagItemTag_MoonStone', 'EBagItemTag_PetMmaterials', 'EBagItemTag_Fish', 'EBagItemTag_Inscription',
+                  'EBagItemTag_AbilityItem', 'EBagItemTag_Collection'},
+    'outfits': {'EBagItemTag_Fashion', 'EBagItemTag_Pendant', 'EBagItemTag_Head', 'EBagItemTag_AvatarFrame',
+                'EBagItemTag_PhoneCase', 'EBagItemTag_Umbrella', 'EBagItemTag_Badge', 'EBagItemTag_CharacterBadge',
+                'EBagItemTag_Expression', 'EBagItemTag_WallPaper', 'EBagItemTag_Vehicle'},
+    'consumables': {'EBagItemTag_Food', 'EBagItemTag_Item', 'EBagItemTag_Gift', 'EBagItemTag_Energy', 'EBagItemTag_Vitality',
+                    'EBagItemTag_IntimacyGift', 'EBagItemTag_TeleportKey', 'EBagItemTag_MusicNote', 'EBagItemTag_Recipe',
+                    'EBagItemTag_SeasonalMiniGamesItem'},
+    'furniture': {'EBagItemTag_Furniture'},
+}
+ONE_ONLY = {'EBagItemTag_Fashion', 'EBagItemTag_Pendant', 'EBagItemTag_Head', 'EBagItemTag_AvatarFrame', 'EBagItemTag_PhoneCase',
+            'EBagItemTag_Umbrella', 'EBagItemTag_Badge', 'EBagItemTag_CharacterBadge', 'EBagItemTag_Expression',
+            'EBagItemTag_WallPaper', 'EBagItemTag_Vehicle', 'EBagItemTag_Recipe', 'EBagItemTag_Collection'}
 
 
 # ============================================================ characters, outfits, equipment
