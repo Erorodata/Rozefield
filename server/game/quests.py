@@ -35,12 +35,15 @@ EVENT_TYPES = {C[k] for k in ('KillMonest', 'GetItem', 'OpenBox', 'FinishMission
                               'EatFood', 'DailyQuestNum', 'KillMonsterNum', 'SideQuest12', 'OpenBox0', 'Decompose0',
                               'WearingFashing0', 'PlacingFurniture0', 'PlayerLv')}
 # types that need a system not built yet (life skills, gathering, dungeons, currencies, social): no rule
-UNBUILT_TYPES = {C[k] for k in ('DungeonPass', 'CookingNum01', 'CookingSuccessNum0', 'FishingSuccess1', 'FishingSpecialTimesNum12',
-                                'HandicraftSuccess1', 'MakeSuccess1', 'SpinSuccess1', 'HandicraftProcess1', 'MakeProcess1',
-                                'SpinProcess1', 'SpinNum01', 'CollectionGloves', 'LoggingAxe', 'MiningHammer', 'InsectNet',
-                                'WaterBottle', 'Pick', 'CollectionGlovesGains', 'InsectNetGains', 'PickGains', 'CatchTheSea',
-                                'UseEnergy', 'UseVitality', 'UseGoldNum', 'SceneExplore', 'UseInteractiveItemNum', 'CookingNum',
-                                'GardenLike', 'AddFriend')}
+UNBUILT_TYPES = {C[k] for k in ('DungeonPass', 'UseEnergy', 'UseVitality', 'UseGoldNum', 'SceneExplore',
+                                'UseInteractiveItemNum', 'GardenLike', 'AddFriend')}
+# life-skill types are tracked by game/life.py
+EVENT_TYPES_LIFE = {C[k] for k in ('CookingNum01', 'CookingSuccessNum0', 'FishingSuccess1', 'FishingSpecialTimesNum12',
+                                   'HandicraftSuccess1', 'MakeSuccess1', 'SpinSuccess1', 'HandicraftProcess1', 'MakeProcess1',
+                                   'SpinProcess1', 'SpinNum01', 'CollectionGloves', 'LoggingAxe', 'MiningHammer', 'InsectNet',
+                                   'WaterBottle', 'Pick', 'CollectionGlovesGains', 'InsectNetGains', 'PickGains', 'CatchTheSea',
+                                   'CookingNum')}
+EVENT_TYPES |= EVENT_TYPES_LIFE
 IN_PROGRESS, COMPLETED, FINISH, LOCKED = 'QuestStatus_InProgress', 'QuestStatus_Completed', 'QuestStatus_Finish', 'QuestStatus_Locked'
 MAIN, DAILY = 1, 4
 _IDX = {}
@@ -251,7 +254,7 @@ def refresh_daily(p):
 def event(p, ctype, key=None, n=1, absolute=None):
     """The player did <ctype> (EAchieveCondition) on <key> (npc/monster/item/... id), n times."""
     for q in list(p.s['quests'].values()):
-        if q.get('status') != IN_PROGRESS:
+        if q.get('status') != IN_PROGRESS or not q.get('questId'):   # id-less entries belong to activity systems
             continue
         hit = False
         for c in q.get('conditions', []):
@@ -275,7 +278,7 @@ def reported(p, key):
     """The game reports finishing a scripted step (quest talk, story mechanism, mission...) for id <key>:
     complete every active step that lists that id."""
     for q in list(p.s['quests'].values()):
-        if q.get('status') != IN_PROGRESS:
+        if q.get('status') != IN_PROGRESS or not q.get('questId'):   # id-less entries belong to activity systems
             continue
         hit = False
         for c in q.get('conditions', []):
@@ -308,7 +311,7 @@ def login(p):
     refresh_daily(p)
     advance_main(p)
     for q in list(p.s['quests'].values()):
-        if q.get('status') == IN_PROGRESS:
+        if q.get('status') == IN_PROGRESS and q.get('questId'):
             _check_state_conditions(p, q)
     p.__dict__.pop('_qchanged', None)   # main data carries everything at login
 

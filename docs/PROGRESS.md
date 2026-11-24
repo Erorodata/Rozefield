@@ -1,4 +1,4 @@
-# Rozefield progress: 75.03%
+# Rozefield progress: 76.80%
 
 ![progress](progress.png)
 
@@ -15,13 +15,13 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Player backup tool RozefieldBackup.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
-## Server & connection (69.8%)
+## Server & connection (70.7%)
 
 - [x] Dispatch, HTTPDNS and region info
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
-- [~] Client requests with a server handler (29.70% 90/303)
-- [~] Requests seen in real play that are handled (88.89% 80/90)
+- [~] Client requests with a server handler (33.33% 101/303)
+- [~] Requests seen in real play that are handled (91.11% 82/90)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -31,7 +31,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (49.1%)
+## Gameplay (55.2%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
@@ -44,18 +44,18 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] Recruit banners and pulls
 - [!] Recruit result screen (animation, can't leave): needs the game's Player.log
 - [~] Quest engine: main story, story rewards, daily, delegate
-- [~] Quest steps with an event rule (74.39% 941/1,265)
-- [~] Main story quests cleared by an automated new account (6.33% 41/648)
+- [~] Quest steps with an event rule (97.71% 1,236/1,265)
+- [~] Main story quests cleared by an automated new account (16.67% 108/648)
 - [~] Achievements: view archived progress
 - [ ] Achievements: earn and claim
 - [~] Dye: colorants not consumed yet
 - [~] Scrap (disassemble)
-- [ ] Life skills: cooking, fishing, sewing, crafting, making
-- [ ] Gathering tools (net, axe, hammer, gloves, bottle)
+- [~] Life skills: cooking, sewing, making, handicraft, fishing: recipes, success chance, levels, skills, handbook rewards; needs in-game check
+- [~] Gathering tools (net, axe, hammer, gloves, bottle): gather rewards + tool progress; needs in-game check
 - [ ] Dungeons and field monster drops
 - [ ] Mini-games and co-op (game hall)
 - [~] Perform (instruments, emotes)
 
 Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.
 
-Requests seen in play that still get an empty answer: `AbyssInfoReq`, `CookingFoodReq`, `DailyTaskExchangeReq`, `DungeonEnterReq`, `DungeonExitReq`, `DungeonFinishReq`, `DungeonOperateReq`, `FriendHandleReq`, `MultipleActionAcceptReq`, `SewingReq`
+Requests seen in play that still get an empty answer: `AbyssInfoReq`, `DailyTaskExchangeReq`, `DungeonEnterReq`, `DungeonExitReq`, `DungeonFinishReq`, `DungeonOperateReq`, `FriendHandleReq`, `MultipleActionAcceptReq`
