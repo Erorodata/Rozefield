@@ -230,6 +230,40 @@
           "Group emotes, dice, friend gifts (friendship points)",
           "partial",
           "from the capture"
+        ],
+        [
+          "Energy / vitality purchases (official prices)",
+          "partial",
+          "needs in-game check"
+        ],
+        [
+          "Exploration (send a team out), team exploration",
+          "partial",
+          "reward amounts estimated"
+        ],
+        [
+          "Handbook, imprint, treasure, badge, character achievement rewards",
+          "partial",
+          "table rewards where the game has them, else estimated"
+        ],
+        [
+          "Field extras: coins, digging, supply box, campfire, sitting, clap, music notes",
+          "partial",
+          "needs in-game check"
+        ],
+        [
+          "Redemption codes (server owner sets them in save/codes.json)",
+          "done"
+        ],
+        [
+          "Boss Rush (solo), Abyss quest rewards",
+          "partial",
+          "needs in-game check"
+        ],
+        [
+          "Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear",
+          "partial",
+          "needs in-game check"
         ]
       ]
     }

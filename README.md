@@ -1,15 +1,15 @@
-# Rozefield progress — 79.39%
+# Rozefield progress — 81.18%
 
-`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` **79.39%**
+`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` **81.18%**
 
 OverField preservation: run the game on your own server after the official one closes.
 
 | Area | Progress | |
 |---|---|---:|
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
-| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱` | **75.5%** |
+| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱` | **83.3%** |
 | Content (Global + CN) | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱` | **87.5%** |
-| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **60.8%** |
+| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **60.1%** |
 
 🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet
 
@@ -26,15 +26,15 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Player backup tool RozefieldBackup.exe | in progress — built; first live run waits for the official server to come back |
 | 🟩 | Import backup from the login window | done |
 
-## Server & connection — 75.5%
+## Server & connection — 83.3%
 
 | | Item | Status |
 |---|---|---|
 | 🟩 | Dispatch, HTTPDNS and region info | done |
 | 🟩 | Login window with account picker | done |
 | 🟩 | Patch delivery through the game's own updater | done |
-| 🟨 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱` 52.81% 160/303 |
-| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 108/108 |
+| 🟩 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 303/303 |
+| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 127/127 |
 | ⬛ | Multiplayer (other players in scenes, co-op) | not yet — phase 2 |
 
 ## Content (Global + CN) — 87.5%
@@ -46,7 +46,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN-only text translated to English | done |
 | 🟨 | English UI after the CN patch | in progress — fix shipped, needs an in-game check |
 
-## Gameplay — 60.8%
+## Gameplay — 60.1%
 
 | | Item | Status |
 |---|---|---|
@@ -79,6 +79,13 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Wishing tree and Wish Stone exchange | in progress — from the capture; Wish Stone income is estimated |
 | 🟨 | Abyss: info, teams, team switch, best time | in progress — from the capture |
 | 🟨 | Group emotes, dice, friend gifts (friendship points) | in progress — from the capture |
+| 🟨 | Energy / vitality purchases (official prices) | in progress — needs in-game check |
+| 🟨 | Exploration (send a team out), team exploration | in progress — reward amounts estimated |
+| 🟨 | Handbook, imprint, treasure, badge, character achievement rewards | in progress — table rewards where the game has them, else estimated |
+| 🟨 | Field extras: coins, digging, supply box, campfire, sitting, clap, music notes | in progress — needs in-game check |
+| 🟩 | Redemption codes (server owner sets them in save/codes.json) | done |
+| 🟨 | Boss Rush (solo), Abyss quest rewards | in progress — needs in-game check |
+| 🟨 | Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear | in progress — needs in-game check |
 
 **Quest steps with a rule:** 1,236 / 1,265 (`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 97.7%)
 

@@ -1195,6 +1195,10 @@ _prog.register(H, pack, enter_scene, PUBLIC_SCENE)
 from game import world as _world  # noqa: E402
 _world.register(H, pack, scene_player)
 
+# everything else: purchases, temp pack, exploration, collection rewards, codes, Boss Rush, mini-games, acks
+from game import misc as _misc  # noqa: E402
+_misc.register(H, pack)
+
 # events (pass, gashapon, wishing tree, sign-in), abyss, group emotes, dice, friend gifts, recruit extras
 from game import events as _events  # noqa: E402
 _events.register(H, pack, scene_player)

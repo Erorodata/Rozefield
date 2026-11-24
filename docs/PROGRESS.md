@@ -1,4 +1,4 @@
-# Rozefield progress: 79.39%
+# Rozefield progress: 81.18%
 
 ![progress](progress.png)
 
@@ -15,13 +15,13 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Player backup tool RozefieldBackup.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
-## Server & connection (75.5%)
+## Server & connection (83.3%)
 
 - [x] Dispatch, HTTPDNS and region info
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
-- [~] Client requests with a server handler (52.81% 160/303)
-- [x] Requests seen in real play that are handled (100.00% 108/108)
+- [x] Client requests with a server handler (100.00% 303/303)
+- [x] Requests seen in real play that are handled (100.00% 127/127)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -31,7 +31,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (60.8%)
+## Gameplay (60.1%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
@@ -62,5 +62,12 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Wishing tree and Wish Stone exchange: from the capture; Wish Stone income is estimated
 - [~] Abyss: info, teams, team switch, best time: from the capture
 - [~] Group emotes, dice, friend gifts (friendship points): from the capture
+- [~] Energy / vitality purchases (official prices): needs in-game check
+- [~] Exploration (send a team out), team exploration: reward amounts estimated
+- [~] Handbook, imprint, treasure, badge, character achievement rewards: table rewards where the game has them, else estimated
+- [~] Field extras: coins, digging, supply box, campfire, sitting, clap, music notes: needs in-game check
+- [x] Redemption codes (server owner sets them in save/codes.json)
+- [~] Boss Rush (solo), Abyss quest rewards: needs in-game check
+- [~] Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear: needs in-game check
 
 Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.
