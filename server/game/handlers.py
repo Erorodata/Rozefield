@@ -1004,6 +1004,8 @@ def _record_default(ctx, name, req):
         r['characterId'] = req.get('characterId', 0)
     elif name in ('GenericSceneBReq', 'GenericGameBReq'):
         r['generic_msg_id'] = req.get('generic_msg_id', 0)
+        if name == 'GenericGameBReq' and req.get('generic_msg_id') == 6:   # official answer before a co-op game
+            r['params'] = [{'int_value': '1'}]
     return r
 
 
@@ -1194,6 +1196,14 @@ _prog.register(H, pack, enter_scene, PUBLIC_SCENE)
 # open world: chests, riddles, flags, challenges, encounters, areas, moons, field drops, dungeon chest
 from game import world as _world  # noqa: E402
 _world.register(H, pack, scene_player)
+
+# everything else: purchases, temp pack, exploration, collection rewards, codes, Boss Rush, mini-games, acks
+from game import misc as _misc  # noqa: E402
+_misc.register(H, pack)
+
+# Game Hall co-op games (balloons, floating platforms), playable solo or with others on this server
+from game import coop as _coop  # noqa: E402
+_coop.register(H, pack, scene_player)
 
 # events (pass, gashapon, wishing tree, sign-in), abyss, group emotes, dice, friend gifts, recruit extras
 from game import events as _events  # noqa: E402

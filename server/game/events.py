@@ -233,6 +233,8 @@ def register(H, pack, scene_player):
             st['drawn'][str(pick['Index'])] = st['drawn'].get(str(pick['Index']), 0) + 1
             st['draws'] += 1
             idx.append(pick['Index'])
+            st.setdefault('records', []).append({'index': pick['Index'], 'itemId': pick['ItemID'], 'itemNum': pick.get('ItemNum', 1),
+                                                 'drawTime': str(int(time.time()))})
             rewards.append((pick['ItemID'], pick.get('ItemNum', 1)))
         got, changed = p.add_items(rewards) if rewards else ([], [])
         p.dirty = True
@@ -258,6 +260,19 @@ def register(H, pack, scene_player):
         ctx.reply({'status': OK, 'defId': tree, 'treeId': box, 'rewards': got})
         pack(ctx, paid + changed)
     H['BlessTreeUnlockReq'] = bless_unlock
+
+    def bless_info(ctx, req):
+        tree = req.get('defId')
+        ctx.reply({'status': OK, 'defId': tree, 'tress': {'treeIds': _ev(ctx.p).get('bless', {}).get(str(tree), [])}})
+    H['BlessTreeReq'] = bless_info
+
+    def tt_record(ctx, req):
+        recs = _tt(ctx.p, req.get('activity_id'))
+        recs = recs.get('records', [])[::-1]
+        page, per = max(1, req.get('page', 1)), 10
+        ctx.reply({'status': OK, 'activity_id': req.get('activity_id'), 'page': page,
+                   'totalPage': max(1, (len(recs) + per - 1) // per), 'records': recs[(page - 1) * per: page * per]})
+    H['ActivityTurntableRecordReq'] = tt_record
 
     def daily_exchange(ctx, req):
         p = ctx.p

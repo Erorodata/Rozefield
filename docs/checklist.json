@@ -204,8 +204,9 @@
           "1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated"
         ],
         [
-          "Mini-games and co-op (game hall)",
-          "open"
+          "Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server)",
+          "partial",
+          "from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check"
         ],
         [
           "Perform (instruments, emotes)",
@@ -230,6 +231,40 @@
           "Group emotes, dice, friend gifts (friendship points)",
           "partial",
           "from the capture"
+        ],
+        [
+          "Energy / vitality purchases (official prices)",
+          "partial",
+          "needs in-game check"
+        ],
+        [
+          "Exploration (send a team out), team exploration",
+          "partial",
+          "reward amounts estimated"
+        ],
+        [
+          "Handbook, imprint, treasure, badge, character achievement rewards",
+          "partial",
+          "table rewards where the game has them, else estimated"
+        ],
+        [
+          "Field extras: coins, digging, supply box, campfire, sitting, clap, music notes",
+          "partial",
+          "needs in-game check"
+        ],
+        [
+          "Redemption codes (server owner sets them in save/codes.json)",
+          "done"
+        ],
+        [
+          "Boss Rush (solo), Abyss quest rewards",
+          "partial",
+          "needs in-game check"
+        ],
+        [
+          "Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear",
+          "partial",
+          "needs in-game check"
         ]
       ]
     }
