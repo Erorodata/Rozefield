@@ -150,8 +150,8 @@
         ],
         [
           "Recruit result screen (animation, can't leave)",
-          "blocked",
-          "needs the game's Player.log"
+          "partial",
+          "results now carry the official bonus items + quality; needs in-game check"
         ],
         [
           "Quest engine: main story, story rewards, daily, delegate",
@@ -210,6 +210,26 @@
         [
           "Perform (instruments, emotes)",
           "partial"
+        ],
+        [
+          "Events: Pass, Gashapon, 7-day sign-in (official flow)",
+          "partial",
+          "from the 2026-11-24 capture; needs in-game check"
+        ],
+        [
+          "Wishing tree and Wish Stone exchange",
+          "partial",
+          "from the capture; Wish Stone income is estimated"
+        ],
+        [
+          "Abyss: info, teams, team switch, best time",
+          "partial",
+          "from the capture"
+        ],
+        [
+          "Group emotes, dice, friend gifts (friendship points)",
+          "partial",
+          "from the capture"
         ]
       ]
     }

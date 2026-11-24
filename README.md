@@ -1,15 +1,15 @@
-# Rozefield progress — 79.02%
+# Rozefield progress — 79.39%
 
-`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` **79.02%**
+`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` **79.39%**
 
 OverField preservation: run the game on your own server after the official one closes.
 
 | Area | Progress | |
 |---|---|---:|
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
-| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` | **74.2%** |
+| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱` | **75.5%** |
 | Content (Global + CN) | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱` | **87.5%** |
-| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **60.6%** |
+| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **60.8%** |
 
 🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet
 
@@ -26,15 +26,15 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Player backup tool RozefieldBackup.exe | in progress — built; first live run waits for the official server to come back |
 | 🟩 | Import backup from the login window | done |
 
-## Server & connection — 74.2%
+## Server & connection — 75.5%
 
 | | Item | Status |
 |---|---|---|
 | 🟩 | Dispatch, HTTPDNS and region info | done |
 | 🟩 | Login window with account picker | done |
 | 🟩 | Patch delivery through the game's own updater | done |
-| 🟨 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱` 48.51% 147/303 |
-| 🟨 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 96.97% 96/99 |
+| 🟨 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱` 52.81% 160/303 |
+| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 108/108 |
 | ⬛ | Multiplayer (other players in scenes, co-op) | not yet — phase 2 |
 
 ## Content (Global + CN) — 87.5%
@@ -46,7 +46,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN-only text translated to English | done |
 | 🟨 | English UI after the CN patch | in progress — fix shipped, needs an in-game check |
 
-## Gameplay — 60.6%
+## Gameplay — 60.8%
 
 | | Item | Status |
 |---|---|---|
@@ -61,7 +61,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Umbrella / badge / tool appearance | in progress — needs in-game check |
 | 🟨 | Garden plaza: lift, presets, 500,000 limit | in progress — needs in-game check |
 | 🟩 | Recruit banners and pulls | done |
-| 🟥 | Recruit result screen (animation, can't leave) | blocked — needs the game's Player.log |
+| 🟨 | Recruit result screen (animation, can't leave) | in progress — results now carry the official bonus items + quality; needs in-game check |
 | 🟨 | Quest engine: main story, story rewards, daily, delegate | in progress |
 | 🟨 | Quest steps with an event rule | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 97.71% 1,236/1,265 |
 | 🟨 | Main story quests cleared by an automated new account | `▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱▱` 16.67% 108/648 |
@@ -75,12 +75,16 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Field treasure chests, encounters, riddles, challenges, moons | in progress — 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated |
 | ⬛ | Mini-games and co-op (game hall) | not yet |
 | 🟨 | Perform (instruments, emotes) | in progress |
+| 🟨 | Events: Pass, Gashapon, 7-day sign-in (official flow) | in progress — from the 2026-11-24 capture; needs in-game check |
+| 🟨 | Wishing tree and Wish Stone exchange | in progress — from the capture; Wish Stone income is estimated |
+| 🟨 | Abyss: info, teams, team switch, best time | in progress — from the capture |
+| 🟨 | Group emotes, dice, friend gifts (friendship points) | in progress — from the capture |
 
 **Quest steps with a rule:** 1,236 / 1,265 (`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 97.7%)
 
 ![Rozefield progress chart](docs/progress.png)
 
-_Updated 2026-11-24 by `py server/tools/progress.py` from [docs/checklist.json](docs/checklist.json)._
+_Updated 2026-11-25 by `py server/tools/progress.py` from [docs/checklist.json](docs/checklist.json)._
 
 ## About
 

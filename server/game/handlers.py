@@ -1194,3 +1194,7 @@ _prog.register(H, pack, enter_scene, PUBLIC_SCENE)
 # open world: chests, riddles, flags, challenges, encounters, areas, moons, field drops, dungeon chest
 from game import world as _world  # noqa: E402
 _world.register(H, pack, scene_player)
+
+# events (pass, gashapon, wishing tree, sign-in), abyss, group emotes, dice, friend gifts, recruit extras
+from game import events as _events  # noqa: E402
+_events.register(H, pack, scene_player)
