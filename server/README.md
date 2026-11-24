@@ -9,7 +9,7 @@ and the server replays a full captured login (session 4) correctly in a local te
 2. Otherwise HTTPDNS `http://8.134.240.36/resolve?domain=dsp-global-of.inutan.com…` → dispatch `:18881`.
 3. Dispatch: `/dispatch/get_login_url_list`, `/dispatch/client_hot_update` (gives `hotOssUrl` CDN and resource version),
    `/dispatch/region_info` (gives gate IP/port), `/dispatch/get_notice_list`, `/dispatch/get_notice_url_list`.
-4. Login SDK: game listens on named pipe `\\.\pipe\quickpc<gameName>` (= `quickpcqgpc`) and launches `PCSDKUI.exe`; the SDK writes one JSON
+4. Login SDK: game listens on named pipe `\quickpc<game process id>` and launches `PCSDKUI.exe`; the SDK writes one JSON
    message per connection (`{"action":"init"}`, then `{"action":"loginSuccess","params":{uid,authToken,userToken,username,timeleft}}`).
    `sdk_stub/PCSDKUI.exe` replaces the web login and sends those two messages straight away.
 5. Gate TCP `:11001`: frame = `u16 big-endian header length` + `pb.PacketHead` + body.

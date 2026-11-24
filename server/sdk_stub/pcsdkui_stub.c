@@ -59,12 +59,26 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     GetPrivateProfileStringA("account", "uid", "10000001", uid, sizeof uid, path);
     GetPrivateProfileStringA("account", "username", "rozefield", user, sizeof user, path);
 
-    /* real PCSDKUI uses "\\.\pipe\quickpc" + gameName (game passes gameName||qgpc) */
-    const char *gn = strstr(cmd, "gameName||");
-    if (gn) {
-        gn += 10; size_t n = strcspn(gn, "& \"");
-        size_t L = strlen(g_pipe); if (n > sizeof g_pipe - L - 1) n = sizeof g_pipe - L - 1;
-        memcpy(g_pipe + L, gn, n); g_pipe[L + n] = 0;
+    /* The game (C#) creates the pipe as "\\quickpc" + its process id. Find it by listing all pipes. */
+    {
+        WIN32_FIND_DATAA fd; HANDLE f = FindFirstFileA("\\\\.\\pipe\\*", &fd);
+        DWORD pp = parent_pid(); char want[64]; snprintf(want, sizeof want, "quickpc%lu", pp);
+        int found = 0;
+        for (int tries = 0; tries < 50 && !found; tries++) {
+            f = FindFirstFileA("\\\\.\\pipe\\*", &fd);
+            if (f != INVALID_HANDLE_VALUE) {
+                do {
+                    if (strstr(fd.cFileName, "quickpc")) {
+                        snprintf(g_pipe, sizeof g_pipe, "\\\\.\\pipe\\%s", fd.cFileName);
+                        found = 1;
+                        if (strstr(fd.cFileName, want)) break;
+                    }
+                } while (FindNextFileA(f, &fd));
+                FindClose(f);
+            }
+            if (!found) Sleep(200);
+        }
+        logf_("pipe search done (parent %s)", want);
     }
     logf_("pipe %s", g_pipe);
     if (strstr(cmd, "action||callLogin")) {
