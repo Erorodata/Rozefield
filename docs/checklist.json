@@ -183,7 +183,12 @@
           "gather rewards + tool progress; needs in-game check"
         ],
         [
-          "Dungeons and field monster drops",
+          "Dungeons (story, resource), vitality, sweep, monster drops",
+          "partial",
+          "rewards from the game tables; needs in-game check"
+        ],
+        [
+          "Field treasure chests (rewards are server-side, not in client data)",
           "open"
         ],
         [

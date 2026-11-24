@@ -1,15 +1,15 @@
-# Rozefield progress — 76.80%
+# Rozefield progress — 77.04%
 
-`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱` **76.80%**
+`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱` **77.04%**
 
 OverField preservation: run the game on your own server after the official one closes.
 
 | Area | Progress | |
 |---|---|---:|
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
-| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱` | **70.7%** |
+| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` | **71.9%** |
 | Content (Global + CN) | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱` | **87.5%** |
-| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱` | **55.2%** |
+| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱▱` | **55.0%** |
 
 🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet
 
@@ -26,15 +26,15 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Player backup tool RozefieldBackup.exe | in progress — built; first live run waits for the official server to come back |
 | 🟩 | Import backup from the login window | done |
 
-## Server & connection — 70.7%
+## Server & connection — 71.9%
 
 | | Item | Status |
 |---|---|---|
 | 🟩 | Dispatch, HTTPDNS and region info | done |
 | 🟩 | Login window with account picker | done |
 | 🟩 | Patch delivery through the game's own updater | done |
-| 🟨 | Client requests with a server handler | `▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱` 33.33% 101/303 |
-| 🟨 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` 91.11% 82/90 |
+| 🟨 | Client requests with a server handler | `▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱▱` 35.97% 109/303 |
+| 🟨 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 95.60% 87/91 |
 | ⬛ | Multiplayer (other players in scenes, co-op) | not yet — phase 2 |
 
 ## Content (Global + CN) — 87.5%
@@ -46,7 +46,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN-only text translated to English | done |
 | 🟨 | English UI after the CN patch | in progress — fix shipped, needs an in-game check |
 
-## Gameplay — 55.2%
+## Gameplay — 55.0%
 
 | | Item | Status |
 |---|---|---|
@@ -69,7 +69,8 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Scrap (disassemble) | in progress |
 | 🟨 | Life skills: cooking, sewing, making, handicraft, fishing | in progress — recipes, success chance, levels, skills, handbook rewards; needs in-game check |
 | 🟨 | Gathering tools (net, axe, hammer, gloves, bottle) | in progress — gather rewards + tool progress; needs in-game check |
-| ⬛ | Dungeons and field monster drops | not yet |
+| 🟨 | Dungeons (story, resource), vitality, sweep, monster drops | in progress — rewards from the game tables; needs in-game check |
+| ⬛ | Field treasure chests (rewards are server-side, not in client data) | not yet |
 | ⬛ | Mini-games and co-op (game hall) | not yet |
 | 🟨 | Perform (instruments, emotes) | in progress |
 

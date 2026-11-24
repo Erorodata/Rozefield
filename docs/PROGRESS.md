@@ -1,4 +1,4 @@
-# Rozefield progress: 76.80%
+# Rozefield progress: 77.04%
 
 ![progress](progress.png)
 
@@ -15,13 +15,13 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Player backup tool RozefieldBackup.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
-## Server & connection (70.7%)
+## Server & connection (71.9%)
 
 - [x] Dispatch, HTTPDNS and region info
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
-- [~] Client requests with a server handler (33.33% 101/303)
-- [~] Requests seen in real play that are handled (91.11% 82/90)
+- [~] Client requests with a server handler (35.97% 109/303)
+- [~] Requests seen in real play that are handled (95.60% 87/91)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -31,7 +31,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (55.2%)
+## Gameplay (55.0%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
@@ -52,10 +52,11 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Scrap (disassemble)
 - [~] Life skills: cooking, sewing, making, handicraft, fishing: recipes, success chance, levels, skills, handbook rewards; needs in-game check
 - [~] Gathering tools (net, axe, hammer, gloves, bottle): gather rewards + tool progress; needs in-game check
-- [ ] Dungeons and field monster drops
+- [~] Dungeons (story, resource), vitality, sweep, monster drops: rewards from the game tables; needs in-game check
+- [ ] Field treasure chests (rewards are server-side, not in client data)
 - [ ] Mini-games and co-op (game hall)
 - [~] Perform (instruments, emotes)
 
 Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.
 
-Requests seen in play that still get an empty answer: `AbyssInfoReq`, `DailyTaskExchangeReq`, `DungeonEnterReq`, `DungeonExitReq`, `DungeonFinishReq`, `DungeonOperateReq`, `FriendHandleReq`, `MultipleActionAcceptReq`
+Requests seen in play that still get an empty answer: `AbyssInfoReq`, `DailyTaskExchangeReq`, `FriendHandleReq`, `MultipleActionAcceptReq`

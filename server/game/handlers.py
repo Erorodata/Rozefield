@@ -1175,3 +1175,7 @@ except Exception:
 # life skills (cooking, sewing, making, handicraft, fishing, gathering) override the archived-record answers
 from game import life as _life  # noqa: E402
 _life.register(H, pack)
+
+# dungeons, vitality, monster drops
+from game import dungeon as _dungeon  # noqa: E402
+_dungeon.register(H, pack, enter_scene, scene_player)
