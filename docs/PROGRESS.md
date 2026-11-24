@@ -1,6 +1,6 @@
 # Rozefield progress: 75.03%
 
-![progress](progress.svg)
+![progress](progress.png)
 
 _OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-24; regenerate with `py server/tools/progress.py`._
 
