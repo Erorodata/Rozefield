@@ -15,3 +15,10 @@ server/data-merged/
 server/data-merged.zip
 server/patch/
 server/patch_src/
+server/export_game_path.txt
+server/exports/
+server/backups/
+server/backup_tool/backups/
+server/backup_tool/recording.tmp
+server/backup_tool/RozefieldBackup.ini
+*.pdb

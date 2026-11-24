@@ -1,5 +1,9 @@
 # OverField — Preservation Archive
 
+**Rozefield progress:** see [docs/PROGRESS.md](docs/PROGRESS.md) (checklist) — regenerate with `py server/tools/progress.py`.
+
+![Rozefield progress](docs/progress.svg)
+
 Archived 2026-11-23 (shutdown period). Source: `H:\Backup\OverField` (a copy of the Steam install at `H:\SteamLibrary\steamapps\common\OverField`).
 
 ## 1. Client build
