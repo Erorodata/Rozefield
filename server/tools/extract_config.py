@@ -51,7 +51,7 @@ def main():
             continue
         t = obj.read(); raw = t.m_Script.encode('utf-8', 'surrogateescape') if isinstance(t.m_Script, str) else bytes(t.m_Script)
         base = os.path.basename(path_)[:-6]
-        name = tops.get(base.replace('_', '')) or tops.get(base.lower())
+        name = tops.get(base.replace('_', '')) or tops.get(base.lower()) or tops.get(base.split('_')[0])
         if not name:
             continue
         m = message_factory.GetMessageClass(pool.FindMessageTypeByName(name))(); m.ParseFromString(raw)
