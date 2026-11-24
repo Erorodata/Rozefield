@@ -1,8 +1,8 @@
-# Rozefield progress: 76.80%
+# Rozefield progress: 79.39%
 
 ![progress](progress.png)
 
-_OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-24; regenerate with `py server/tools/progress.py`._
+_OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-25; regenerate with `py server/tools/progress.py`._
 
 ## Preservation & archive (93.8%)
 
@@ -15,13 +15,13 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Player backup tool RozefieldBackup.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
-## Server & connection (70.7%)
+## Server & connection (75.5%)
 
 - [x] Dispatch, HTTPDNS and region info
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
-- [~] Client requests with a server handler (33.33% 101/303)
-- [~] Requests seen in real play that are handled (91.11% 82/90)
+- [~] Client requests with a server handler (52.81% 160/303)
+- [x] Requests seen in real play that are handled (100.00% 108/108)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -31,10 +31,12 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (55.2%)
+## Gameplay (60.8%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
+- [~] Character level up, level break, star up, skill up: costs from the game tables; needs in-game check
+- [~] Profile, outfit / gear presets, pets, visit a friend's garden: needs in-game check
 - [x] Shops (Rhombite shop gives the item)
 - [x] Food buffs and item use
 - [x] Channels, scenes, fields, friends' gardens
@@ -42,20 +44,23 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Umbrella / badge / tool appearance: needs in-game check
 - [~] Garden plaza: lift, presets, 500,000 limit: needs in-game check
 - [x] Recruit banners and pulls
-- [!] Recruit result screen (animation, can't leave): needs the game's Player.log
+- [~] Recruit result screen (animation, can't leave): results now carry the official bonus items + quality; needs in-game check
 - [~] Quest engine: main story, story rewards, daily, delegate
 - [~] Quest steps with an event rule (97.71% 1,236/1,265)
 - [~] Main story quests cleared by an automated new account (16.67% 108/648)
 - [~] Achievements: view archived progress
-- [ ] Achievements: earn and claim
+- [~] Achievements: earn and claim: counted from play, claim + group rewards; needs in-game check
 - [~] Dye: colorants not consumed yet
 - [~] Scrap (disassemble)
 - [~] Life skills: cooking, sewing, making, handicraft, fishing: recipes, success chance, levels, skills, handbook rewards; needs in-game check
 - [~] Gathering tools (net, axe, hammer, gloves, bottle): gather rewards + tool progress; needs in-game check
-- [ ] Dungeons and field monster drops
+- [x] Dungeons (story, resource), vitality, sweep, monster drops: official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed
+- [~] Field treasure chests, encounters, riddles, challenges, moons: 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated
 - [ ] Mini-games and co-op (game hall)
 - [~] Perform (instruments, emotes)
+- [~] Events: Pass, Gashapon, 7-day sign-in (official flow): from the 2026-11-24 capture; needs in-game check
+- [~] Wishing tree and Wish Stone exchange: from the capture; Wish Stone income is estimated
+- [~] Abyss: info, teams, team switch, best time: from the capture
+- [~] Group emotes, dice, friend gifts (friendship points): from the capture
 
 Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.
-
-Requests seen in play that still get an empty answer: `AbyssInfoReq`, `DailyTaskExchangeReq`, `DungeonEnterReq`, `DungeonExitReq`, `DungeonFinishReq`, `DungeonOperateReq`, `FriendHandleReq`, `MultipleActionAcceptReq`

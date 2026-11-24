@@ -11,6 +11,11 @@ from game import quests as Q
 H = {}
 
 
+def _world_mod():
+    from game import world
+    return world
+
+
 def _life_mod():
     from game import life
     return life
@@ -170,6 +175,8 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
               'riddles', 'dungeons', 'flagIds', 'moonSpots', 'vehicleInfoList', 'campFires'):
         if tpl.get(k):
             data[k] = tpl[k]
+    if scene_id != PUBLIC_SCENE:
+        data.update(_world_mod().scene_fields(p, scene_id))
     if owner is not None:
         data['sceneGardenData'] = garden_data(ctx, owner)
         data['placedCharacters'] = [{'characterId': c} for c in owner.s.get('placed_characters', [])][:0]
@@ -1175,3 +1182,19 @@ except Exception:
 # life skills (cooking, sewing, making, handicraft, fishing, gathering) override the archived-record answers
 from game import life as _life  # noqa: E402
 _life.register(H, pack)
+
+# dungeons, vitality, monster drops
+from game import dungeon as _dungeon  # noqa: E402
+_dungeon.register(H, pack, enter_scene, scene_player)
+
+# character growth, profile, presets, pets, visits, achievements
+from game import progression as _prog  # noqa: E402
+_prog.register(H, pack, enter_scene, PUBLIC_SCENE)
+
+# open world: chests, riddles, flags, challenges, encounters, areas, moons, field drops, dungeon chest
+from game import world as _world  # noqa: E402
+_world.register(H, pack, scene_player)
+
+# events (pass, gashapon, wishing tree, sign-in), abyss, group emotes, dice, friend gifts, recruit extras
+from game import events as _events  # noqa: E402
+_events.register(H, pack, scene_player)

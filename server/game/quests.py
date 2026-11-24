@@ -27,7 +27,7 @@ C = {  # EAchieveCondition numbers used by quests
     'Emotion': 74, 'EatFood': 75, 'CatchTheSea': 76, 'UseEnergy': 81, 'UseVitality': 80, 'DailyQuestNum': 84,
     'UseGoldNum': 85, 'KillMonsterNum': 86, 'SideQuest12': 104, 'SceneExplore': 113, 'OpenBox0': 119, 'Decompose0': 124,
     'WearingFashing0': 127, 'PlacingFurniture0': 129, 'UseInteractiveItemNum': 165, 'CookingNum': 168,
-    'GardenLike': 176, 'AddFriend': 177, 'PlayerLv': 14,
+    'GardenLike': 176, 'AddFriend': 177, 'PlayerLv': 36,
 }
 # condition types the server tracks from real actions (others complete when the game reports the step id)
 EVENT_TYPES = {C[k] for k in ('KillMonest', 'GetItem', 'OpenBox', 'FinishMission', 'FinishEncounter', 'QuestTalk', 'Gacha',
@@ -253,6 +253,8 @@ def refresh_daily(p):
 # ------------------------------------------------------------------ events
 def event(p, ctype, key=None, n=1, absolute=None):
     """The player did <ctype> (EAchieveCondition) on <key> (npc/monster/item/... id), n times."""
+    from game import progression
+    progression.on_event(p, ctype, key, n, absolute)
     for q in list(p.s['quests'].values()):
         if q.get('status') != IN_PROGRESS or not q.get('questId'):   # id-less entries belong to activity systems
             continue
@@ -308,12 +310,19 @@ def on_items(p, pairs):
 
 
 def login(p):
+    k = day_key()
+    if p.s.get('login_day') != k:
+        p.s['login_day'] = k
+        p.s['login_days'] = p.s.get('login_days', 0) + 1
+    event(p, 82, absolute=p.s['login_days'])            # EAchieveCondition_LoginDays
+    event(p, C['PlayerLv'], absolute=p.s.get('level', 1))
     refresh_daily(p)
     advance_main(p)
     for q in list(p.s['quests'].values()):
         if q.get('status') == IN_PROGRESS and q.get('questId'):
             _check_state_conditions(p, q)
     p.__dict__.pop('_qchanged', None)   # main data carries everything at login
+    p.__dict__.pop('_achanged', None)
 
 
 def flush(ctx):
@@ -328,6 +337,9 @@ def flush(ctx):
     pk = p.__dict__.pop('_qpack', None)
     if pk:
         ctx.push('PackNotice', {'status': 'StatusCode_OK', 'items': pk})
+    ach = p.__dict__.pop('_achanged', None)
+    if ach:
+        ctx.push('AchieveNotice', {'status': 'StatusCode_OK', 'achieves': ach})
     if ch:
         ctx.push('QuestNotice', {'status': 'StatusCode_OK', 'quests': list(ch.values())})
 

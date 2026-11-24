@@ -108,6 +108,16 @@
           "done"
         ],
         [
+          "Character level up, level break, star up, skill up",
+          "partial",
+          "costs from the game tables; needs in-game check"
+        ],
+        [
+          "Profile, outfit / gear presets, pets, visit a friend's garden",
+          "partial",
+          "needs in-game check"
+        ],
+        [
           "Shops (Rhombite shop gives the item)",
           "done"
         ],
@@ -140,8 +150,8 @@
         ],
         [
           "Recruit result screen (animation, can't leave)",
-          "blocked",
-          "needs the game's Player.log"
+          "partial",
+          "results now carry the official bonus items + quality; needs in-game check"
         ],
         [
           "Quest engine: main story, story rewards, daily, delegate",
@@ -161,7 +171,8 @@
         ],
         [
           "Achievements: earn and claim",
-          "open"
+          "partial",
+          "counted from play, claim + group rewards; needs in-game check"
         ],
         [
           "Dye",
@@ -183,8 +194,14 @@
           "gather rewards + tool progress; needs in-game check"
         ],
         [
-          "Dungeons and field monster drops",
-          "open"
+          "Dungeons (story, resource), vitality, sweep, monster drops",
+          "done",
+          "official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed"
+        ],
+        [
+          "Field treasure chests, encounters, riddles, challenges, moons",
+          "partial",
+          "1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated"
         ],
         [
           "Mini-games and co-op (game hall)",
@@ -193,6 +210,26 @@
         [
           "Perform (instruments, emotes)",
           "partial"
+        ],
+        [
+          "Events: Pass, Gashapon, 7-day sign-in (official flow)",
+          "partial",
+          "from the 2026-11-24 capture; needs in-game check"
+        ],
+        [
+          "Wishing tree and Wish Stone exchange",
+          "partial",
+          "from the capture; Wish Stone income is estimated"
+        ],
+        [
+          "Abyss: info, teams, team switch, best time",
+          "partial",
+          "from the capture"
+        ],
+        [
+          "Group emotes, dice, friend gifts (friendship points)",
+          "partial",
+          "from the capture"
         ]
       ]
     }

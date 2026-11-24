@@ -297,5 +297,7 @@ class Player:
                                   if v > 0 and self.d.item_tag(int(k)) == 'EBagItemTag_Furniture'],
             'birthday': s['birthday'], 'accountType': 16666, 'appearance': s.get('appearance', {}),
             'placed_characters': s['placed_characters'], 'phone_case': s['phone_case'],
+            'sex': s.get('sex') or 0, 'isHideBirthday': s.get('hide_birthday', False),
+            'pet_instance_id': s.get('pet_instance_id', 0), 'reward_levels': s.get('level_rewards', []),
             'playerDropRateInfo': {'killDropRate': 100, 'treasureDropRate': 100},
         }
