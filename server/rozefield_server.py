@@ -37,6 +37,13 @@ class Config:
 class HTTP:
     def __init__(self, cfg):
         self.cfg = cfg
+        self.patch_files, self.patch = {}, None
+        pj = os.path.join(HERE, 'patch', 'patch.json')
+        if os.path.exists(pj):
+            self.patch = json.load(open(pj))
+            self.patch_files = json.load(open(os.path.join(HERE, 'patch', 'files.json'), encoding='utf-8'))
+            cfg.res_version = self.patch['version']
+            log.info('resource patch %s active (%d files)', self.patch['version'], len(self.patch_files))
 
     def gm_config(self):
         c = self.cfg
@@ -58,11 +65,34 @@ class HTTP:
 
     def find_resource(self, path):
         name = os.path.basename(urllib.parse.unquote(path))
+        if name in self.patch_files and os.path.exists(self.patch_files[name]):
+            return self.patch_files[name]
         for d in self.cfg.res_dirs:
             for root, _, files in os.walk(d):
                 if name in files:
                     return os.path.join(root, name)
         return None
+
+    async def send_file(self, writer, path, rng=None):
+        size = os.path.getsize(path)
+        start, end = 0, size - 1
+        if rng and rng.startswith('bytes='):
+            a, _, b = rng[6:].partition('-')
+            start = int(a or 0); end = int(b) if b else size - 1
+        status = '206 Partial Content' if rng else '200 OK'
+        extra = f'Content-Range: bytes {start}-{end}/{size}\r\n' if rng else ''
+        writer.write(f'HTTP/1.1 {status}\r\nContent-Type: application/octet-stream\r\nContent-Length: {end - start + 1}\r\n'
+                     f'{extra}Accept-Ranges: bytes\r\nConnection: close\r\n\r\n'.encode())
+        log.info('  serving %s (%d bytes)', os.path.basename(path), end - start + 1)
+        with open(path, 'rb') as f:
+            f.seek(start); left = end - start + 1
+            while left > 0:
+                chunk = f.read(min(1 << 20, left))
+                if not chunk:
+                    break
+                writer.write(chunk); left -= len(chunk)
+                await writer.drain()
+        writer.close()
 
     async def handle(self, reader, writer):
         try:
@@ -96,9 +126,8 @@ class HTTP:
         elif p.startswith('/Resources/'):
             f = self.find_resource(p)
             if f:
-                out = open(f, 'rb').read(); ctype = 'application/octet-stream'
-            else:
-                code = 404; log.warning('resource not found: %s', p)
+                return await self.send_file(writer, f, hdr.get('range'))
+            code = 404; log.warning('resource not found: %s', p)
         else:
             out = json.dumps({"status": True, "message": "success", "data": None}).encode()
         reason = {200: 'OK', 404: 'Not Found'}[code]

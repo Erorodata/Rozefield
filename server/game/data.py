@@ -2,7 +2,7 @@
 import json, os
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(HERE, 'data')
+DATA_DIR = os.path.join(HERE, 'data-merged') if os.path.exists(os.path.join(HERE, 'data-merged')) or os.path.exists(os.path.join(HERE, 'data-merged.zip')) else os.path.join(HERE, 'data')
 
 
 class Data:

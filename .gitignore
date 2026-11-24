@@ -11,3 +11,7 @@ server/save/accounts/
 server/archive/
 server/data.zip
 __pycache__/
+server/data-merged/
+server/data-merged.zip
+server/patch/
+server/patch_src/
