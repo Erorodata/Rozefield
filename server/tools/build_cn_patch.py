@@ -14,6 +14,8 @@ HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 from tools import yoo  # noqa: E402
 
+import re
+KEEP_GLOBAL = re.compile(r'ui_root_|spriteatlas_|texture_background_|_ui_atlas_.*_(btn|text|title|font)')
 CONFIG_BUNDLE = 'assets_development_excel_scripts_pbstaticconfigure_resbundle_pbstaticconfigure.bundle'
 
 
@@ -73,6 +75,9 @@ def main():
             continue
         if name in gidx and not ga[name] <= ca[name]:
             skipped['shared bundle changed differently in Global'] += 1
+            continue
+        if name in gidx and KEEP_GLOBAL.search(name):
+            skipped['would replace Global UI art (English text baked in images)'] += 1
             continue
         # this bundle + every dependency the Global client does not have
         stack, need, ok = [name], {}, True

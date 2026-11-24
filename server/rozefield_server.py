@@ -221,6 +221,29 @@ class Server:
     def broadcast_scene_player(self, sess):
         pass  # multiplayer (phase 2)
 
+    # ---- server console: type GM commands in the server window, e.g.  roze /all outfits
+    def console(self, line):
+        parts = line.strip().split(None, 1)
+        if not parts:
+            return
+        if parts[0] in ('list', 'who'):
+            for pid in self.all_player_ids():
+                o = self.player_by_id(pid)
+                print(f'  {pid}  {o.s["name"]:<20} lv{o.s["level"]}  {"ONLINE" if pid in self.sessions else ""}')
+            return
+        if len(parts) < 2 or not parts[1].startswith('/'):
+            print('usage: <player name> /command ...   (e.g.  roze /all outfits)   |  list'); return
+        name, cmd = parts
+        sess = next((x for x in self.sessions.values() if x.p.s['name'].lower() == name.lower()), None)
+        if sess is None:
+            print(f'{name} is not online (log in first)'); return
+        sess.cur = None
+        print('  ' + G.gm_command(sess, cmd))
+        try:
+            sess.w.write(b'')
+        except Exception:
+            pass
+
 
 class Session:
     def __init__(self, server, reader, writer):
@@ -346,6 +369,17 @@ async def main():
             servers.append(await asyncio.start_server(http.handle, a.bind, a.dns_port))
         except OSError as e:
             log.warning('HTTPDNS port %s not available (%s) — fine if Config.txt points at this PC', a.dns_port, e)
+    loop = asyncio.get_running_loop()
+
+    def read_console():
+        while True:
+            line = sys.stdin.readline()
+            if not line:
+                return
+            loop.call_soon_threadsafe(game.console, line)
+    import threading
+    threading.Thread(target=read_console, daemon=True).start()
+    log.info('Type GM commands here, e.g.  <name> /all outfits   or  list')
     log.info('Rozefield up: dispatch http://%s:%s  gate %s:%s', a.public_ip, a.http_port, a.public_ip, a.gate_port)
     await asyncio.gather(*(s.serve_forever() for s in servers))
 
