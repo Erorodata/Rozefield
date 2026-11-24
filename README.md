@@ -1,6 +1,6 @@
-# Rozefield progress — 81.18%
+# Rozefield progress — 81.52%
 
-`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱` **81.18%**
+`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱` **81.52%**
 
 OverField preservation: run the game on your own server after the official one closes.
 
@@ -9,7 +9,7 @@ OverField preservation: run the game on your own server after the official one c
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
 | Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱` | **83.3%** |
 | Content (Global + CN) | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱` | **87.5%** |
-| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **60.1%** |
+| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **61.5%** |
 
 🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet
 
@@ -34,7 +34,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Login window with account picker | done |
 | 🟩 | Patch delivery through the game's own updater | done |
 | 🟩 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 303/303 |
-| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 127/127 |
+| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 133/133 |
 | ⬛ | Multiplayer (other players in scenes, co-op) | not yet — phase 2 |
 
 ## Content (Global + CN) — 87.5%
@@ -46,7 +46,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN-only text translated to English | done |
 | 🟨 | English UI after the CN patch | in progress — fix shipped, needs an in-game check |
 
-## Gameplay — 60.1%
+## Gameplay — 61.5%
 
 | | Item | Status |
 |---|---|---|
@@ -73,7 +73,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Gathering tools (net, axe, hammer, gloves, bottle) | in progress — gather rewards + tool progress; needs in-game check |
 | 🟩 | Dungeons (story, resource), vitality, sweep, monster drops | done — official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed |
 | 🟨 | Field treasure chests, encounters, riddles, challenges, moons | in progress — 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated |
-| ⬛ | Mini-games and co-op (game hall) | not yet |
+| 🟨 | Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server) | in progress — from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check |
 | 🟨 | Perform (instruments, emotes) | in progress |
 | 🟨 | Events: Pass, Gashapon, 7-day sign-in (official flow) | in progress — from the 2026-11-24 capture; needs in-game check |
 | 🟨 | Wishing tree and Wish Stone exchange | in progress — from the capture; Wish Stone income is estimated |

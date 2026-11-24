@@ -1,4 +1,4 @@
-# Rozefield progress: 81.18%
+# Rozefield progress: 81.52%
 
 ![progress](progress.png)
 
@@ -21,7 +21,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
 - [x] Client requests with a server handler (100.00% 303/303)
-- [x] Requests seen in real play that are handled (100.00% 127/127)
+- [x] Requests seen in real play that are handled (100.00% 133/133)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -31,7 +31,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (60.1%)
+## Gameplay (61.5%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
@@ -56,7 +56,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Gathering tools (net, axe, hammer, gloves, bottle): gather rewards + tool progress; needs in-game check
 - [x] Dungeons (story, resource), vitality, sweep, monster drops: official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed
 - [~] Field treasure chests, encounters, riddles, challenges, moons: 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated
-- [ ] Mini-games and co-op (game hall)
+- [~] Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server): from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check
 - [~] Perform (instruments, emotes)
 - [~] Events: Pass, Gashapon, 7-day sign-in (official flow): from the 2026-11-24 capture; needs in-game check
 - [~] Wishing tree and Wish Stone exchange: from the capture; Wish Stone income is estimated
