@@ -1,0 +1,43 @@
+{
+"UIStaticText": {
+"需解锁": "Locked",
+"套装种类": "Set Type",
+"主词条": "Main Stat",
+"边缘吸附": "Edge Snap",
+"家具": "Furniture",
+"器皿": "Vessels",
+"宝具铲": "Treasure Shovel",
+"藏宝图": "Treasure Map",
+"物品解锁进度": "Item Unlock Progress",
+"特典礼包": "Special Package",
+"迎春特典": "Spring Special",
+"许愿": "Make a Wish",
+"手机外壳": "Phone Case",
+"中文": "Chinese",
+"日语": "Japanese",
+"默认进入热门频道": "Join popular channel by default",
+"双指缩放": "Pinch to Zoom",
+"39488c2b": "Cannot Enhance"
+},
+"StringDialogText": {
+"Dialog200141_Chat_0": "Captain! Shiika! Fei! I've got super~ amazing news! That legendary \"Forbidden Zone\" has been unsealed!",
+"Dialog200141_Chat_1": "\"Forbidden Zone\"? Sounds so mysterious... Could it be somewhere we've been before?",
+"Dialog200141_Chat_2": "That's right! It's F07 [Behaim World]... the part above it!",
+"Dialog200141_Chat_3": "To be precise, it's designation F07x - [Behaim World Upper Layer].",
+"Dialog200141_Chat_4": "We found it a long time ago, but its danger rating was too high, so it stayed under a mandatory lockdown.",
+"Dialog200141_Chat_5": "After repeated assessments, the danger level has dropped steadily to a range where people are allowed to enter.",
+"Dialog200141_Chat_6": "So that's it! A sealed world that slept for ages and was once full of danger...",
+"Dialog200141_Chat_7": "And now it's woken up, waiting for us to lift its veil! That's so romantic!",
+"Dialog200141_Chat_8": "Shiika really focuses on different things than me... But since the danger is lower, it should... probably... be fine?",
+"Dialog200141_Chat_9": "The research department is sending people to explore too. We need to redraw the map there while keeping everyone safe.",
+"Dialog200141_Chat_10": "An upside-down mirror world, and a freshly unsealed forbidden land... Captain, my adventurous soul is on fire!",
+"Dialog200141_Chat_11": "Honestly...",
+"Dialog200141_Chat_12": "Anyway! It's a lot more stable now, but that place used to be the \"Forbidden Zone\", so don't let your guard down!",
+"Dialog200141_Chat_13": "Don't worry, Irene, I'll take good care of Shiika and the Captain!",
+"Dialog200142_Chat_0": "We're finally here. Captain, Shiika, stay close to me.",
+"Dialog200142_Chat_1": "Huh? Where did Fei go?!",
+"Dialog200142_Chat_2": "Captain~ Fei~ Come look, the upside-down world is so beautiful!",
+"Dialog200142_Chat_3": "Shiika! Wait for me!"
+},
+"Titles": {"荧荧": "Irene", "莹莹": "Irene", "诗": "Shiika", "菲": "Fei"}
+}

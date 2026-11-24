@@ -6,6 +6,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <tlhelp32.h>
+#include <commdlg.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -47,6 +48,8 @@ static char g_name[128], g_uid[160];
 static char g_list_uid[64][160], g_list_name[64][128];
 static int g_n, g_done;
 static HWND g_lb, g_edit;
+static char g_host[64] = "127.0.0.1";
+static void add_row(int i, const char *lv);
 
 static void fetch_accounts(const char *host) {
     WSADATA w; WSAStartup(MAKEWORD(2, 2), &w);
@@ -70,6 +73,61 @@ static void fetch_accounts(const char *host) {
         (void)lv;
     }
 }
+/* Upload a .rzsave backup (made with RozefieldBackup.exe on the official server) to the Rozefield server.
+ * Reply: "OK|uid|name" or "ERR|reason". */
+static int import_backup(HWND h) {
+    wchar_t fn[MAX_PATH] = L"";
+    OPENFILENAMEW of = {0}; of.lStructSize = sizeof of; of.hwndOwner = h;
+    of.lpstrFilter = L"Rozefield backup (*.rzsave)\0*.rzsave\0All files\0*.*\0"; of.lpstrFile = fn; of.nMaxFile = MAX_PATH;
+    of.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR; of.lpstrTitle = L"Choose your backup (.rzsave)";
+    if (!GetOpenFileNameW(&of)) return 0;
+    HANDLE f = CreateFileW(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    if (f == INVALID_HANDLE_VALUE) { MessageBoxW(h, L"Could not open that file.", L"Rozefield", MB_OK); return 0; }
+    DWORD size = GetFileSize(f, NULL), got = 0;
+    char *data = (char *)malloc(size ? size : 1);
+    ReadFile(f, data, size, &got, NULL); CloseHandle(f);
+    SetCursor(LoadCursor(NULL, IDC_WAIT));
+    WSADATA w; WSAStartup(MAKEWORD(2, 2), &w);
+    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in a = {0}; a.sin_family = AF_INET; a.sin_port = htons(18881); a.sin_addr.s_addr = inet_addr(g_host);
+    DWORD to = 120000; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
+    static char resp[4096]; int len = 0, r;
+    resp[0] = 0;
+    if (connect(s, (struct sockaddr *)&a, sizeof a) == 0) {
+        char hdr[256];
+        int hl = snprintf(hdr, sizeof hdr, "POST /rozefield/import HTTP/1.0\r\nHost: rozefield\r\nContent-Type: application/octet-stream\r\n"
+                                           "Content-Length: %lu\r\n\r\n", (unsigned long)got);
+        send(s, hdr, hl, 0);
+        for (DWORD off = 0; off < got;) { int n = send(s, data + off, (int)(got - off > 65536 ? 65536 : got - off), 0); if (n <= 0) break; off += n; }
+        while (len < (int)sizeof resp - 1 && (r = recv(s, resp + len, sizeof resp - 1 - len, 0)) > 0) len += r;
+        resp[len] = 0;
+    }
+    closesocket(s); free(data);
+    SetCursor(LoadCursor(NULL, IDC_ARROW));
+    char *body = strstr(resp, "\r\n\r\n"); body = body ? body + 4 : NULL;
+    wchar_t msg[600];
+    if (!body) { MessageBoxW(h, L"The Rozefield server did not answer. Is it running?", L"Rozefield", MB_OK | MB_ICONWARNING); return 0; }
+    if (strncmp(body, "OK|", 3) == 0) {
+        char *uid = body + 3, *nm = strchr(uid, '|');
+        if (nm) *nm++ = 0; else nm = uid;
+        if (g_n < 64) {
+            int i = g_n;
+            for (int k = 0; k < g_n; k++) if (strcmp(g_list_uid[k], uid) == 0) i = k;
+            snprintf(g_list_uid[i], 160, "%s", uid); snprintf(g_list_name[i], 128, "%s", nm);
+            if (i == g_n) { g_n++; add_row(i, ""); }
+            SendMessageW(g_lb, LB_SETCURSEL, i, 0);
+        }
+        wchar_t wn[128]; MultiByteToWideChar(CP_UTF8, 0, nm, -1, wn, 128);
+        swprintf(msg, 600, L"Imported \"%ls\". Select it and press Play.", wn);
+        MessageBoxW(h, msg, L"Rozefield", MB_OK | MB_ICONINFORMATION);
+        return 1;
+    }
+    wchar_t wb[512]; MultiByteToWideChar(CP_UTF8, 0, strncmp(body, "ERR|", 4) == 0 ? body + 4 : body, -1, wb, 512);
+    swprintf(msg, 600, L"Import failed: %ls", wb);
+    MessageBoxW(h, msg, L"Rozefield", MB_OK | MB_ICONWARNING);
+    return 0;
+}
+
 static void add_row(int i, const char *lv) {
     wchar_t wn[128], row[200]; MultiByteToWideChar(CP_UTF8, 0, g_list_name[i], -1, wn, 128);
     swprintf(row, 200, L"%ls", wn);
@@ -87,6 +145,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
             if (i >= 0) finish(h, i);
             return 0;
         }
+        if (id == 3) { import_backup(h); return 0; }                    /* Import backup */
         if (id == 2) {                                                   /* Create new */
             wchar_t wn[64]; GetWindowTextW(g_edit, wn, 64);
             if (!wn[0]) { MessageBoxW(h, L"Type a name for the new account.", L"Rozefield", MB_OK); return 0; }
@@ -104,11 +163,12 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     return DefWindowProcW(h, m, w, l);
 }
 static int pick_account(const char *host, const char *last) {
+    snprintf(g_host, sizeof g_host, "%s", host);
     fetch_accounts(host);
     WNDCLASSW wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = GetModuleHandleW(NULL);
     wc.lpszClassName = L"RozefieldLogin"; wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     RegisterClassW(&wc);
-    int W = 380, Hh = 400, x = (GetSystemMetrics(SM_CXSCREEN) - W) / 2, y = (GetSystemMetrics(SM_CYSCREEN) - Hh) / 2;
+    int W = 380, Hh = 440, x = (GetSystemMetrics(SM_CXSCREEN) - W) / 2, y = (GetSystemMetrics(SM_CYSCREEN) - Hh) / 2;
     HWND h = CreateWindowExW(WS_EX_TOPMOST, L"RozefieldLogin", L"Rozefield - choose your account", WS_CAPTION | WS_SYSMENU | WS_VISIBLE,
                              x, y, W, Hh, NULL, NULL, wc.hInstance, NULL);
     HFONT f = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
@@ -118,8 +178,9 @@ static int pick_account(const char *host, const char *last) {
     HWND t2 = CreateWindowW(L"STATIC", L"New account name:", WS_CHILD | WS_VISIBLE, 16, 270, 340, 18, h, NULL, NULL, NULL);
     g_edit = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 16, 292, 240, 26, h, NULL, NULL, NULL);
     HWND b2 = CreateWindowW(L"BUTTON", L"Create", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 266, 290, 90, 30, h, (HMENU)2, NULL, NULL);
-    HWND ctl[] = {t1, g_lb, b1, t2, g_edit, b2};
-    for (int i = 0; i < 6; i++) SendMessageW(ctl[i], WM_SETFONT, (WPARAM)f, TRUE);
+    HWND b3 = CreateWindowW(L"BUTTON", L"Import backup (.rzsave) from the official server...", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 16, 336, 340, 30, h, (HMENU)3, NULL, NULL);
+    HWND ctl[] = {t1, g_lb, b1, t2, g_edit, b2, b3};
+    for (int i = 0; i < 7; i++) SendMessageW(ctl[i], WM_SETFONT, (WPARAM)f, TRUE);
     SendMessageW(g_edit, EM_LIMITTEXT, 20, 0);
     int sel = 0;
     for (int i = 0; i < g_n; i++) { add_row(i, ""); if (last && strcmp(g_list_uid[i], last) == 0) sel = i; }

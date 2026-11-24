@@ -38,6 +38,7 @@ class HTTP:
     def __init__(self, cfg):
         self.cfg = cfg
         self.patch_files, self.patch = {}, None
+        self.game = None
         pj = os.path.join(HERE, 'patch', 'patch.json')
         if os.path.exists(pj):
             self.patch = json.load(open(pj))
@@ -62,6 +63,30 @@ class HTTP:
                 "is_server_open": True, "text": "", "client_log_tcp_ip": c.host_ip, "client_log_tcp_port": 21001,
                 "currentVersion": f"{c.client_version}_{c.res_version}",
                 "photo_share_cdn_url": f"http://{c.host_ip}:{c.http_port}/photo"}
+
+    def import_backup(self, data):
+        from tools.import_player import import_bytes, ImportFailed
+        os.makedirs(os.path.join(HERE, 'save', 'imports'), exist_ok=True)
+        open(os.path.join(HERE, 'save', 'imports', time.strftime('%Y%m%d_%H%M%S') + '.rzsave'), 'wb').write(data)
+        try:
+            from tools.import_player import read_rzsave_bytes
+            try:
+                meta, msgs = read_rzsave_bytes(data)
+            except Exception:
+                return 'ERR|this is not a Rozefield backup file (.rzsave)'
+            md = next((m['body'] for m in msgs if m['name'] == 'PlayerMainDataRsp'), {}) or {}
+            uid = 'rz_' + (md.get('player_name') or meta.get('player_name') or '').lower()
+            if self.game and any(s.p and s.p.s.get('uid') == uid for s in self.game.sessions.values()):
+                return 'ERR|that account is online right now - log out first'
+            path, uid, name = import_bytes(data)
+        except ImportFailed as e:
+            log.warning('import failed: %s', e)
+            return f'ERR|{e}'
+        except Exception as e:
+            log.exception('import error')
+            return f'ERR|server error: {e}'
+        log.info('imported backup "%s" as %s', name, uid)
+        return f'OK|{uid}|{name}'
 
     def find_resource(self, path):
         name = os.path.basename(urllib.parse.unquote(path))
@@ -136,6 +161,9 @@ class HTTP:
                 log.warning('account list: %s', e)
             lines.sort(key=lambda x: -int(x.rsplit('|', 1)[1]))
             out = '\n'.join(l.rsplit('|', 1)[0] for l in lines).encode('utf-8'); ctype = 'text/plain; charset=utf-8'
+        elif p == '/rozefield/import' and method == 'POST':  # login window "Import backup": body = .rzsave
+            out = (await asyncio.get_running_loop().run_in_executor(None, self.import_backup, body)).encode('utf-8')
+            ctype = 'text/plain; charset=utf-8'
         elif p.startswith('/Resources/'):
             f = self.find_resource(p)
             if f:
@@ -156,6 +184,7 @@ class HTTP:
 from game.data import Data
 from game.player import Player
 from game import handlers as G
+from game import quests as Q
 
 
 def decode_token(tok):
@@ -353,6 +382,11 @@ class Session:
                     log.info('  (not implemented: %s -> empty OK)', name)
                 self.reply({'status': 'StatusCode_OK'} if 'status' in msg_class(rsp).DESCRIPTOR.fields_by_name else {})
         self.cur = None
+        if self.p is not None:
+            try:
+                Q.flush(self)
+            except Exception:
+                log.exception('quest update failed')
 
 
 async def main():
@@ -375,6 +409,7 @@ async def main():
     cfg = Config(a)
     http = HTTP(cfg)
     game = Server(cfg, a)
+    http.game = game
     servers = [await asyncio.start_server(http.handle, a.bind, a.http_port),
                await asyncio.start_server(lambda r, w: Session(game, r, w).run(), a.bind, a.gate_port)]
     if a.dns_port:

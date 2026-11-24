@@ -13,11 +13,41 @@ HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 
 SKIP_FILES = {'exploration'}
+CONFIG_OVERRIDES = {k: '500000' for k in ('HomeItemPointMax', 'PublicHomeItemPointMax', 'PrivateHomeItemPointMax',
+                                               'SpecialPublicHomeItemPointMax')}
 LANG_FALLBACK = {'english': 'en', 'japanese': 'en', 'korea': 'en', 'traditional': 'tc', 'simplified': 'sc'}
 
 
 def rkey(r):
     return r.get('ID', json.dumps(r, sort_keys=True, ensure_ascii=False))
+
+
+UI_TR = {}
+_uitr = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cn_ui_translations_en.json')
+if os.path.exists(_uitr):
+    UI_TR = json.load(open(_uitr, encoding='utf-8'))
+LANG_COLS = ('English', 'Japanese', 'Korea')
+
+
+def _placeholder(t):
+    return not t or t.startswith('_') or any(t.endswith('_' + c) for c in LANG_COLS + ('Traditional',))
+
+
+def fix_ui_text(r, cc):
+    """CN-only UI label: fill the English/Japanese/Korean columns (CN builds leave '<zh>_English' placeholders)."""
+    zh = r.get('Chinese_Simplified', '')
+    en = UI_TR.get('UIStaticText', {}).get(r.get('Key')) or UI_TR.get('UIStaticText', {}).get(zh)
+    for col in LANG_COLS:
+        if _placeholder(r.get(col, '')):
+            r[col] = en or zh
+    if _placeholder(r.get('Chinese_Traditional', '')):
+        r['Chinese_Traditional'] = cc.convert(zh) if cc and zh else zh
+
+
+def fix_dialog(r, lang):
+    if lang in ('english', 'japanese', 'korea'):
+        r['Content'] = UI_TR.get('StringDialogText', {}).get(r.get('Key'), r.get('Content', ''))
+        r['Title'] = UI_TR.get('Titles', {}).get(r.get('Title'), r.get('Title', ''))
 
 
 def merge_sheets(g, c, string_lang=None, tr=None, cc=None):
@@ -27,10 +57,19 @@ def merge_sheets(g, c, string_lang=None, tr=None, cc=None):
             continue
         gv = g.setdefault(sh, {'datas': []})
         have = {rkey(r) for r in gv.get('datas', [])}
+        keys = {r['Key'] for r in gv.get('datas', []) if isinstance(r.get('Key'), str) and r.get('Key')}
         for r in v['datas']:
-            if rkey(r) in have:
+            # CN renumbered many rows: same Key under a new ID would shadow the Global (English) row
+            if not r or rkey(r) in have or (isinstance(r.get('Key'), str) and r.get('Key') in keys):
                 continue
             r = json.loads(json.dumps(r))
+            have.add(rkey(r))
+            if isinstance(r.get('Key'), str):
+                keys.add(r['Key'])
+            if sh == 'UIStaticText':
+                fix_ui_text(r, cc)
+            if string_lang and 'Content' in r:
+                fix_dialog(r, string_lang)
             if string_lang and 'Text' in r:
                 mode = LANG_FALLBACK.get(string_lang, 'en')
                 if mode == 'en' and tr and f'{sh}:{r.get("ID", 0)}' in tr:
@@ -43,7 +82,8 @@ def merge_sheets(g, c, string_lang=None, tr=None, cc=None):
 
 
 def main():
-    bundle, gdir, cdir, trf, out = sys.argv[1:6]
+    rewrite_all = '--rewrite-all' in sys.argv  # base bundle already merged once: re-serialize every table
+    bundle, gdir, cdir, trf, out = [a for a in sys.argv[1:] if not a.startswith('--')][:5]
     import UnityPy
     from google.protobuf import descriptor_pb2, message_factory, json_format
     from ofproto import pool
@@ -77,8 +117,13 @@ def main():
             n = merge_sheets(g, json.load(open(os.path.join(cdir, base + '.json'), encoding='utf-8')))
         else:
             n = 0
+        if base == 'globalconfig':  # Rozefield: raise the plaza ornament point caps
+            for r in g.get('Config', {}).get('datas', []):
+                if r.get('Key') in CONFIG_OVERRIDES:
+                    r['Values'] = [CONFIG_OVERRIDES[r['Key']]]
+                    n += 1
         json.dump(g, open(os.path.join(mdir, base + '.json'), 'w', encoding='utf-8'), ensure_ascii=False)
-        if not n:
+        if not n and not (rewrite_all and os.path.exists(os.path.join(cdir, base + '.json'))):
             continue
         m = message_factory.GetMessageClass(pool.FindMessageTypeByName(name))()
         json_format.ParseDict(g, m, ignore_unknown_fields=True)

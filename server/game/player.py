@@ -30,6 +30,18 @@ class Player:
         self.s = state
         self.path = path
         self.dirty = False
+        self.migrate()
+
+    def migrate(self):
+        s = self.s
+        if 'chapters' not in s:  # saves made before story chapters were tracked: a story's reward is claimed once its quest is Finish
+            s['chapters'] = {}
+            chap = {sid: c['ID'] for c in self.d.table('story', 'StoryChapter').values() for sid in c.get('StoryList', [])}
+            for st in self.d.table('story', 'Story').values():
+                q = s.get('quests', {}).get(str(st.get('QuestID')))
+                if q and q.get('status') == 'QuestStatus_Finish' and st['ID'] in chap:
+                    s['chapters'].setdefault(str(chap[st['ID']]), []).append(st['ID'])
+            self.dirty = True
 
     # ------------------------------------------------------------ load/create
     @classmethod
@@ -61,7 +73,7 @@ class Player:
             'weapons': {}, 'armors': {}, 'posters': {}, 'pets': {}, 'outfits': {}, 'inscriptions': {},
             'next_instance': 1,
             'scene_id': d.config_int('Player_Initial_Scenario_ID', 100), 'channel_id': 0,
-            'quests': {}, 'tutorials': [],
+            'quests': {}, 'chapters': {}, 'tutorials': [],
             'garden': {'furniture': {}, 'likes': 0, 'access': 0, 'open': True, 'next_furniture_id': 1},
             'placed_characters': [], 'buffs': {}, 'gacha': {}, 'shop': {}, 'appearance': {},
             'gm': True,
@@ -78,9 +90,10 @@ class Player:
         umb = d.config_int('Player_Default_Umbrella_ItemID', 0)
         if umb:
             self.add_item(umb, 1)
+        from game import quests
         q = d.config_int('InitialQuest', 0)
         if q:
-            self.s['quests'][str(q)] = {'questId': q, 'status': 'QuestStatus_InProgress', 'bonusTimes': 1}
+            quests.accept(self, q)
 
     def save(self):
         self.s['saved_at'] = int(time.time())
@@ -109,6 +122,13 @@ class Player:
         for iid, n in pairs:
             g, c = self.add_item(iid, n)
             got += g; changed += c
+        if pairs and not self.__dict__.get('_in_quest_items'):
+            from game import quests
+            self._in_quest_items = True
+            try:
+                quests.on_items(self, pairs)
+            finally:
+                self._in_quest_items = False
         return got, changed
 
     def add_item(self, item_id, n=1):
@@ -243,6 +263,7 @@ class Player:
             if not row or self.s['exp'] < row.get('NeedExp', 10 ** 9) or not self.d.row('level', 'PlayerLevel', self.s['level'] + 1):
                 break
             self.s['exp'] -= row['NeedExp']; self.s['level'] += 1
+            self.__dict__['_leveled'] = True
 
     # ------------------------------------------------------------ views
     def pack_items(self):
@@ -258,6 +279,7 @@ class Player:
         return out
 
     def main_data(self):
+        from game import quests
         s = self.s
         return {
             'status': 'StatusCode_OK', 'player_id': s['player_id'], 'player_name': s['name'],
@@ -266,7 +288,7 @@ class Player:
             'sign': s['sign'], 'phone_background': s['phone_background'], 'world_level': s['world_level'],
             'create_time': s['create_time'], 'characters': list(s['characters'].values()), 'team': s['team'],
             'scene_id': s['scene_id'], 'channel_id': s['channel_id'] or s['player_id'],
-            'quest_detail': {'quests': list(s['quests'].values())},
+            'quest_detail': quests.quest_detail(self),
             'player_label': s['player_label'], 'channel_label': s['player_label'],
             'gardenLikesNum': s['garden']['likes'],
             'furnitureItemInfo': [{'itemId': int(k), 'num': str(v)} for k, v in s['items'].items()

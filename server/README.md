@@ -46,3 +46,25 @@ and the server replays a full captured login (session 4) correctly in a local te
 * Co-op/other players: single player only.
 
 Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsystem,windows -s -o PCSDKUI.exe pcsdkui_stub.c`
+
+## Saving player accounts before the official shutdown (backup / import)
+
+**Easiest:** give players `backup_tool\RozefieldBackup.exe` (single file, nothing to install). They press
+**1. Open OverField (Official)**, log in as usual, open the menus in the checklist, and close the game: the backup
+(`backups\<name>_<date>.rzsave`) is saved automatically (or press **2. Save backup**). Later, in the Rozefield login
+window, **Import backup (.rzsave)...** uploads it and the account appears under their in-game name. Re-importing the
+same account replaces it (the previous save is kept as `<id>.json.before_import_<time>`); a name already used by a
+different account is refused.
+
+Script version of the same:
+
+**Players (while the official server is still online):** run `export_my_data.bat`, then start OverField normally and log
+in. The tool relays your game's connection to the official server unchanged and records what the server sends about
+your account (it sends nothing of its own and does not save your login token). Open the menus it lists (achievements,
+life skills, manual, plaza...) so those are saved too, close the game, press Ctrl+C. You get
+`exports\<name>_<date>.rzsave`. Config.txt is put back as soon as the game has connected; if the window was closed
+early, running the .bat again restores everything.
+
+**Server host:** drag `.rzsave` files onto `import_player.bat` (or `py tools\import_player.py file.rzsave [--name X]`).
+The player then types their in-game name in the Rozefield login box and continues where they left off. Any other name
+starts a fresh account.

@@ -11,9 +11,13 @@ class Data:
         self._raw = {}
         self._idx = {}
         z = path.rstrip('/\\') + '.zip'
-        if (not os.path.isdir(path) or not os.listdir(path)) and os.path.exists(z):
-            import zipfile
-            zipfile.ZipFile(z).extractall(path)
+        stamp = os.path.join(path, '.from_zip')
+        if os.path.exists(z) and (not os.path.exists(stamp) or os.path.getmtime(z) > os.path.getmtime(stamp)):
+            import zipfile  # (re)extract when the shipped zip is newer than the extracted copy
+            zf = zipfile.ZipFile(z)
+            top = os.path.basename(path.rstrip('/\\')) + '/'
+            zf.extractall(os.path.dirname(path.rstrip('/\\')) if all(n.startswith(top) for n in zf.namelist()) else path)
+            open(stamp, 'w').close()
         if not os.path.isdir(path) or not os.listdir(path):
             raise SystemExit(f'No game data in {path}. Run: py tools\\extract_config.py "<game>\\launcher_Data\\yoo"')
         from ofproto import pool
