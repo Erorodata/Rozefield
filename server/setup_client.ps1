@@ -1,10 +1,11 @@
-<#  Rozefield client switch. Run in an *Administrator* PowerShell:
+<#  Rozefield client switch. Default target is the backup copy (H:\Backup\OverField) so the Steam install stays
+    original for the official servers. Run in an *Administrator* PowerShell:
       powershell -ExecutionPolicy Bypass -File setup_client.ps1            # point the game at this PC
       powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Revert    # restore the original files
     It (1) swaps PCSDKUI.exe for the offline login stub (original kept as PCSDKUI.exe.orig),
        (2) sets UseCustomConfig/RemoteServerIP in StreamingAssets\Config.txt (original kept as Config.txt.orig),
        (3) adds hosts-file lines sending the game's dispatch domains to 127.0.0.1.            #>
-param([string]$Game = 'H:\SteamLibrary\steamapps\common\OverField', [string]$ServerIP = '127.0.0.1', [switch]$Revert)
+param([string]$Game = 'H:\Backup\OverField', [string]$ServerIP = '127.0.0.1', [switch]$Revert, [switch]$Hosts)
 $ErrorActionPreference = 'Stop'
 $here  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sdk   = Join-Path $Game 'launcher_Data\Plugins\Win\PCSDK_release'
@@ -36,7 +37,7 @@ $t = [IO.File]::ReadAllText($cfg)
 $t = $t -replace 'UseCustomConfig\s*=\s*\w+', 'UseCustomConfig = TRUE' -replace 'RemoteServerIP\s*=\s*[^\r\n]*', "RemoteServerIP = $ServerIP"
 [IO.File]::WriteAllText($cfg, $t, (New-Object Text.UTF8Encoding $false))
 $lines = @([IO.File]::ReadAllLines($hosts)) | Where-Object { $_ -notmatch [regex]::Escape($tag) }
-$lines += $domains | ForEach-Object { "$ServerIP $_ $tag" }
+if ($Hosts) { $lines += $domains | ForEach-Object { "$ServerIP $_ $tag" } }  # off by default: hosts entries would redirect every copy of the game
 $null = Write-Hosts $lines
 ipconfig /flushdns | Out-Null
-Write-Host "Game now points at $ServerIP. Start start_server.bat, then launch the game (Steam or launcher.exe)."
+Write-Host "$Game now points at $ServerIP (other game copies untouched). Start start_server.bat, then run $Game\launcher.exe"

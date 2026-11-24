@@ -2,7 +2,7 @@
 rem Builds the Rozefield resource patch that adds CN-client content to the Steam client.
 rem Run once (and again if either game updates). Then restart start_server.bat.
 cd /d "%~dp0"
-set GAME=H:\SteamLibrary\steamapps\common\OverField
+set GAME=H:\Backup\OverField
 if exist game_path.txt set /p GAME=<game_path.txt
 set CN=H:\OverField\OverField Game
 if exist cn_game_path.txt set /p CN=<cn_game_path.txt

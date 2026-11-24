@@ -1,7 +1,7 @@
 @echo off
 rem Rozefield private server launcher. Double-click to run. Close the window to stop.
 cd /d "%~dp0"
-set GAME=H:\SteamLibrary\steamapps\common\OverField
+set GAME=H:\Backup\OverField
 if exist game_path.txt set /p GAME=<game_path.txt
 where py >nul 2>nul && (set PY=py -3) || (set PY=python)
 %PY% -c "import google.protobuf, cramjam" 2>nul || %PY% -m pip install -r requirements.txt
