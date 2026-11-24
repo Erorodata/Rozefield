@@ -1,0 +1,16 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllScenicDatas {
+  protocol.ScenicDatas Scenic = 1;
+}
+message ScenicDatas {
+  repeated protocol.ScenicConfigure datas = 1;
+}
+message ScenicConfigure {
+  int32 ID = 1;
+  int32 FirstRewardID = 2;
+  int32 GuideVoice = 3;
+  string AssetFullName = 4;
+}

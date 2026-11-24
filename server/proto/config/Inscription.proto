@@ -1,0 +1,26 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllInscriptionDatas {
+  protocol.InscriptionDatas Inscription = 1;
+}
+message InscriptionDatas {
+  repeated protocol.InscriptionConfigure datas = 1;
+}
+message InscriptionConfigure {
+  int32 ID = 1;
+  int32 ItemID = 2;
+  repeated protocol.InscriptionGroupInfo InscriptionGroupInfo = 3;
+  int32 NewWeaponSystemType = 4;
+}
+message InscriptionGroupInfo {
+  int32 Level = 1;
+  int32 PassiveSpellID = 2;
+  int32 NeedGoldCount = 3;
+  repeated protocol.InscriptionNeedItems InscriptionNeedItem = 4;
+}
+message InscriptionNeedItems {
+  int32 NeedItemID = 1;
+  int32 ItemCount = 2;
+}

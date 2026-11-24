@@ -1,0 +1,124 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllWeaponDatas {
+  protocol.WeaponDatas Weapon = 1;
+  protocol.WeaponPropertyDatas WeaponProperty = 2;
+  protocol.WeaponDisassembleDatas WeaponDisassemble = 3;
+  protocol.WeaponStrengthenDatas WeaponStrengthen = 4;
+  protocol.WeaponRandomPropertyDatas WeaponRandomProperty = 5;
+  protocol.WeaponRandomValueDatas WeaponRandomValue = 6;
+  protocol.WeaponSpellDatas WeaponSpell = 7;
+}
+message WeaponDatas {
+  repeated protocol.WeaponConfigure datas = 1;
+}
+message WeaponConfigure {
+  int32 ID = 1;
+  int32 ItemID = 2;
+  int32 Durability = 3;
+  int32 WeaponPropertyID = 4;
+  int32 BaseScore = 5;
+  repeated int32 PassiveSpellIDs = 6;
+  int32 RollSpellGroupID = 7;
+  int32 NormalSpellID = 8;
+  int32 AirNormalSpellID = 9;
+  string AssetFullName = 10;
+  int32 NewAIType = 11;
+  int32 NewWeaponSystemType = 12;
+  int32 NewChoppingCorrectionType = 13;
+  int32 NewShootingCorrectionType = 14;
+  int32 NewStrikeCorrectionType = 15;
+  int32 NewMagicCorrectionType = 16;
+  int32 NewWeaponType = 17;
+}
+message WeaponPropertyDatas {
+  repeated protocol.WeaponPropertyConfigure datas = 1;
+}
+message WeaponPropertyConfigure {
+  int32 ID = 1;
+  repeated protocol.WeaponPropertyGroupInfo WeaponPropertyGroupInfo = 2;
+}
+message WeaponPropertyGroupInfo {
+  int32 MinLevel = 1;
+  int32 MaxLevel = 2;
+  int32 WeaponLevel = 3;
+  float MinAttack = 4;
+  float MaxAttack = 5;
+  float MinDamageBalance = 6;
+  float MaxDamageBalance = 7;
+  float MinCriticalRatio = 8;
+  float MaxCriticalRatio = 9;
+  repeated float WeaponParams = 10;
+  float MinFloatValue = 11;
+  float MaxFloatValue = 12;
+  int32 RandomProperty1ID = 13;
+  int32 RandomProperty2ID = 14;
+  int32 RandomProperty3ID = 15;
+  int32 RandomProperty4ID = 16;
+  int32 StrengthenID = 17;
+  int32 DisassembleID = 18;
+}
+message WeaponDisassembleDatas {
+  repeated protocol.WeaponDisassembleConfigure datas = 1;
+}
+message WeaponDisassembleConfigure {
+  int32 ID = 1;
+  repeated protocol.WeaponDisassembleItem WeaponDisassembleItem = 2;
+}
+message WeaponDisassembleItem {
+  int32 ItemID = 1;
+  int32 ItemMinCount = 2;
+  int32 ItemMaxCount = 3;
+  float ItemRate = 4;
+}
+message WeaponStrengthenDatas {
+  repeated protocol.WeaponStrengthenConfigure datas = 1;
+}
+message WeaponStrengthenConfigure {
+  int32 ID = 1;
+  repeated protocol.WeaponStrengthenGroupInfo WeaponStrengthenGroupInfo = 2;
+}
+message WeaponStrengthenGroupInfo {
+  int32 Level = 1;
+  float AddAttack = 2;
+  float AddAttackRatio = 3;
+  int32 NeedGoldCount = 4;
+  repeated protocol.WeaponStrengthNeedItems WeaponStrengthNeedItem = 5;
+}
+message WeaponStrengthNeedItems {
+  int32 NeedItemID = 1;
+  int32 NeedItemCount = 2;
+}
+message WeaponRandomPropertyDatas {
+  repeated protocol.WeaponRandomPropertyConfigure datas = 1;
+}
+message WeaponRandomPropertyConfigure {
+  int32 ID = 1;
+  repeated protocol.WeaponRandomPropertyGroupInfo WeaponRandomPropertyGroupInfo = 2;
+}
+message WeaponRandomPropertyGroupInfo {
+  int32 NewPropertyType = 1;
+  int32 RandomValueID = 2;
+}
+message WeaponRandomValueDatas {
+  repeated protocol.WeaponRandomValueConfigure datas = 1;
+}
+message WeaponRandomValueConfigure {
+  int32 ID = 1;
+  repeated protocol.WeaponRandomValueGroupInfo WeaponRandomGroupInfo = 2;
+}
+message WeaponRandomValueGroupInfo {
+  float MinLevel = 1;
+  float MaxLevel = 2;
+  float Min = 3;
+  float Max = 4;
+}
+message WeaponSpellDatas {
+  repeated protocol.WeaponSpellConfigure datas = 1;
+}
+message WeaponSpellConfigure {
+  int32 ID = 1;
+  repeated int32 RollSpellIDs = 2;
+}

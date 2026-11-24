@@ -1,0 +1,30 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllActivityDatas {
+  protocol.ActivityDatas Activity = 1;
+}
+message ActivityDatas {
+  repeated protocol.ActivityConfigure datas = 1;
+}
+message ActivityConfigure {
+  int32 ID = 1;
+  string AnnouncedTime = 2;
+  string OpeningTime = 3;
+  string ClosingTime = 4;
+  string PhotoUrl = 5;
+  string PcUrl = 6;
+  int32 TextID = 7;
+  int32 IconID = 8;
+  int32 Index = 9;
+  repeated protocol.ActivityMapMomentsItem Moments = 10;
+  int32 QuestID = 11;
+  int32 DialogID = 12;
+  int32 ActivityID = 13;
+  int32 NewActivityType = 14;
+}
+message ActivityMapMomentsItem {
+  string OpeningMoment = 1;
+  string ClosingMoment = 2;
+}

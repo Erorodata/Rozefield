@@ -3,3 +3,6 @@
 *.etl
 clientlogs_*/
 transcript.txt
+server/save/
+server/traffic.jsonl
+server/server.log

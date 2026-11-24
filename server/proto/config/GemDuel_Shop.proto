@@ -1,0 +1,109 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_ShopDatas {
+  protocol.GemDuelShopInfoDatas GemDuelShopInfo = 1;
+  protocol.GemDuelShopGridDatas GemDuelGrid = 2;
+  protocol.GemDuelShopPoolDatas GemDuelPool = 3;
+  protocol.GemDuelShopIncreasingDatas GemDuelIncreasing = 4;
+  protocol.GemDuelShopDatas Shop = 5;
+  protocol.GemDuelRecommendationDatas GemDuelRecommendation = 6;
+}
+message GemDuelShopInfoDatas {
+  repeated protocol.GemDuelShopInfoConfigure datas = 1;
+}
+message GemDuelShopInfoConfigure {
+  int32 ID = 1;
+  int32 UIIndex = 2;
+  int32 TextID = 3;
+  int32 IconID = 4;
+  string OpeningTime = 5;
+  string ClosingTime = 6;
+  int32 GridID = 7;
+  int32 RefreshItemID = 8;
+  int32 RefreshItemCost = 9;
+  int32 UnlockItemID = 10;
+  int32 RefreshLimit = 11;
+  repeated int32 ItemIDs = 12;
+  int32 NewShopType = 13;
+}
+message GemDuelShopGridDatas {
+  repeated protocol.GemDuelShopGridConfigure datas = 1;
+}
+message GemDuelShopGridConfigure {
+  int32 ID = 1;
+  repeated protocol.GemDuelShopGridConfigureItem Items = 2;
+}
+message GemDuelShopGridConfigureItem {
+  int32 GridID = 1;
+  int32 Index = 2;
+  int32 ConditionParam = 3;
+  int32 FirstBuyShopPoolID = 4;
+  int32 ShopPoolID = 5;
+  int32 IconID = 6;
+  int32 BuyMaxCount = 7;
+  int32 NewShopRefreshType = 8;
+  repeated int32 RefreshTime = 9;
+  string GoodsID = 10;
+}
+message GemDuelShopPoolDatas {
+  repeated protocol.GemDuelShopPoolConfigure datas = 1;
+}
+message GemDuelShopPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.GemDuelShopPoolConfigureItem Items = 2;
+}
+message GemDuelShopPoolConfigureItem {
+  int32 ItemID = 1;
+  bool IsRepeatedInBag = 2;
+  int32 ItemNum = 3;
+  int32 Index = 4;
+  string Name = 5;
+  int32 AddItemID = 6;
+  int32 AddItemNum = 7;
+  string OpeningTime = 8;
+  string ClosingTime = 9;
+  float Discount = 10;
+  float ShowDiscount = 11;
+  bool IsHideInBag = 12;
+  repeated protocol.GemDuelShopCurrencyItems GemDuelShopCurrencyItem = 13;
+}
+message GemDuelShopCurrencyItems {
+  int32 CurrencyID = 1;
+  int32 Price = 2;
+  int32 IncreasingID = 3;
+}
+message GemDuelShopIncreasingDatas {
+  repeated protocol.GemDuelShopIncreasingConfigure datas = 1;
+}
+message GemDuelShopIncreasingConfigure {
+  int32 ID = 1;
+  repeated protocol.GemDuelShopIncreasingConfigureItem Items = 2;
+}
+message GemDuelShopIncreasingConfigureItem {
+  int32 Price = 1;
+}
+message GemDuelShopDatas {
+  repeated protocol.GemDuelShopConfigure datas = 1;
+}
+message GemDuelShopConfigure {
+  int32 ID = 1;
+}
+message GemDuelRecommendationDatas {
+  repeated protocol.GemDuelRecommendationConfigure datas = 1;
+}
+message GemDuelRecommendationConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 IconID = 3;
+  repeated protocol.GemDuelShopRecommendationItem Items = 4;
+}
+message GemDuelShopRecommendationItem {
+  int32 PageIconID = 1;
+  int32 PageTextID = 2;
+  int32 ShopID = 3;
+  int32 ShopPoolID = 4;
+  string OpeningTime = 5;
+  string ClosingTime = 6;
+}

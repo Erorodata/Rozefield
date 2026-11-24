@@ -1,0 +1,22 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllActivitySignDatas {
+  protocol.ActivitySignDatas ActivitySign = 1;
+}
+message ActivitySignDatas {
+  repeated protocol.ActivitySignConfigure datas = 1;
+}
+message ActivitySignConfigure {
+  int32 ID = 1;
+  repeated protocol.ActivitySignItems ActivitySignItem = 2;
+}
+message ActivitySignItems {
+  int32 Days = 1;
+  repeated protocol.ActivitySignRewardItems ActivitySignRewardItem = 2;
+}
+message ActivitySignRewardItems {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}

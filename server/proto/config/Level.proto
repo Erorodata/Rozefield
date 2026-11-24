@@ -1,0 +1,204 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllLevelDatas {
+  protocol.playerLevelDatas PlayerLevel = 1;
+  protocol.WorldLevelDatas WorldLevel = 2;
+  protocol.NormalLevelDatas NormalLevel = 3;
+  protocol.GuideLevelDatas GuideLevel = 4;
+  protocol.WeaponLevelDatas WeaponLevel = 5;
+  protocol.ScenicLevelDatas ScenicLevel = 6;
+  protocol.CrystalLevelDatas CrystalLevel = 7;
+  protocol.PhotoLevelDatas PhotoLevel = 8;
+  protocol.DataLevelDatas DataLevel = 9;
+  protocol.FileLevelDatas FileLevel = 10;
+  protocol.BookLevelDatas BookLevel = 11;
+  protocol.TapeLevelDatas TapeLevel = 12;
+  protocol.CollectItemLevelDatas CollectItemLevel = 13;
+  protocol.PortalLevelDatas PortalLevel = 14;
+  protocol.PhotoItemLevelDatas PhotoItemLevel = 15;
+}
+message playerLevelDatas {
+  repeated protocol.playerLevelConfigure datas = 1;
+}
+message playerLevelConfigure {
+  int32 ID = 1;
+  int32 NeedExp = 2;
+  int32 MonsterLevel = 3;
+  int32 RewardID = 4;
+  int32 DescriptionID = 5;
+  int32 LevelUpDescriptionID = 6;
+  int32 PlayerVitality = 7;
+  int32 PlayerEnergy = 8;
+}
+message WorldLevelDatas {
+  repeated protocol.WorldLevelConfigure datas = 1;
+}
+message WorldLevelConfigure {
+  int32 ID = 1;
+  int32 Level = 2;
+  int32 TextID = 3;
+  int32 MonsterLevel = 4;
+  repeated protocol.WorldLevelInfo WorldLevelInfo = 5;
+}
+message WorldLevelInfo {
+  int32 AchieveID = 1;
+  int32 FlagID = 2;
+}
+message NormalLevelDatas {
+  repeated protocol.NormalLevelConfigure datas = 1;
+}
+message NormalLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.NormalLevelInfo NormalLevelInfo = 2;
+}
+message NormalLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message GuideLevelDatas {
+  repeated protocol.GuideLevelConfigure datas = 1;
+}
+message GuideLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.GuideLevelInfo GuideLevelInfo = 2;
+}
+message GuideLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message WeaponLevelDatas {
+  repeated protocol.WeaponLevelConfigure datas = 1;
+}
+message WeaponLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.WeaponLevelInfo WeaponLevelInfo = 2;
+}
+message WeaponLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message ScenicLevelDatas {
+  repeated protocol.ScenicLevelConfigure datas = 1;
+}
+message ScenicLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.ScenicLevelInfo ScenicLevelInfo = 2;
+}
+message ScenicLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message CrystalLevelDatas {
+  repeated protocol.CrystalLevelConfigure datas = 1;
+}
+message CrystalLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.CrystalLevelInfo CrystalLevelInfo = 2;
+}
+message CrystalLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message PhotoLevelDatas {
+  repeated protocol.PhotoLevelConfigure datas = 1;
+}
+message PhotoLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.PhotoLevelInfo PhotoLevelInfo = 2;
+}
+message PhotoLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message DataLevelDatas {
+  repeated protocol.DataLevelConfigure datas = 1;
+}
+message DataLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.DataLevelInfo DataLevelInfo = 2;
+}
+message DataLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message FileLevelDatas {
+  repeated protocol.FileLevelConfigure datas = 1;
+}
+message FileLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.FileLevelInfo FileLevelInfo = 2;
+}
+message FileLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message BookLevelDatas {
+  repeated protocol.BookLevelConfigure datas = 1;
+}
+message BookLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.BookLevelInfo BookLevelInfo = 2;
+}
+message BookLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message TapeLevelDatas {
+  repeated protocol.TapeLevelConfigure datas = 1;
+}
+message TapeLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.TapeLevelInfo TapeLevelInfo = 2;
+}
+message TapeLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message CollectItemLevelDatas {
+  repeated protocol.CollectItemLevelConfigure datas = 1;
+}
+message CollectItemLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.CollectItemLevelInfo CollectItemLevelInfo = 2;
+}
+message CollectItemLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message PortalLevelDatas {
+  repeated protocol.PortalLevelConfigure datas = 1;
+}
+message PortalLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.PortalLevelInfo PortalLevelInfo = 2;
+}
+message PortalLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}
+message PhotoItemLevelDatas {
+  repeated protocol.PhotoItemLevelConfigure datas = 1;
+}
+message PhotoItemLevelConfigure {
+  int32 ID = 1;
+  repeated protocol.PhotoItemLevelInfo PhotoItemLevelInfo = 2;
+}
+message PhotoItemLevelInfo {
+  int32 Level = 1;
+  int32 NeedExp = 2;
+  int32 GuideVoice = 3;
+}

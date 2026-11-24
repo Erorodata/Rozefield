@@ -1,0 +1,126 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllShopDatas {
+  protocol.ShopInfoDatas Info = 1;
+  protocol.ShopGridDatas Grid = 2;
+  protocol.ShopPoolDatas Pool = 3;
+  protocol.ShopIncreasingDatas Increasing = 4;
+  protocol.ShopDatas Shop = 5;
+  protocol.RecommendationDatas Recommendation = 6;
+  protocol.ShopExChangeDatas ShopExChange = 7;
+}
+message ShopInfoDatas {
+  repeated protocol.ShopInfoConfigure datas = 1;
+}
+message ShopInfoConfigure {
+  int32 ID = 1;
+  int32 UIIndex = 2;
+  int32 TextID = 3;
+  int32 IconID = 4;
+  string OpeningTime = 5;
+  string ClosingTime = 6;
+  int32 GridID = 7;
+  int32 RefreshItemID = 8;
+  int32 RefreshItemCost = 9;
+  int32 UnlockItemID = 10;
+  repeated int32 ItemIDs = 11;
+  int32 NewShopType = 12;
+}
+message ShopGridDatas {
+  repeated protocol.ShopGridConfigure datas = 1;
+}
+message ShopGridConfigure {
+  int32 ID = 1;
+  repeated protocol.ShopGridConfigureItem Items = 2;
+}
+message ShopGridConfigureItem {
+  int32 GridID = 1;
+  int32 Index = 2;
+  int32 NewGridConditionType = 3;
+  string ConditionParam = 4;
+  int32 FirstBuyShopPoolID = 5;
+  int32 ShopPoolID = 6;
+  int32 IconID = 7;
+  int32 BuyMaxCount = 8;
+  int32 NewShopRefreshType = 9;
+  repeated int32 RefreshTime = 10;
+  string GoodsID = 11;
+  bool IsGift = 12;
+}
+message ShopPoolDatas {
+  repeated protocol.ShopPoolConfigure datas = 1;
+}
+message ShopPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.ShopPoolConfigureItem Items = 2;
+}
+message ShopPoolConfigureItem {
+  int32 ItemID = 1;
+  bool IsRepeatedInBag = 2;
+  int32 ItemNum = 3;
+  int32 Index = 4;
+  string Name = 5;
+  int32 AddItemID = 6;
+  int32 AddItemNum = 7;
+  int32 MinLevel = 8;
+  int32 MaxLevel = 9;
+  string OpeningTime = 10;
+  string ClosingTime = 11;
+  float Discount = 12;
+  float ShowDiscount = 13;
+  bool IsHideInBag = 14;
+  repeated protocol.ShopCurrencyItems ShopCurrencyItem = 15;
+}
+message ShopCurrencyItems {
+  int32 CurrencyID = 1;
+  int32 Price = 2;
+  int32 WishlistPrice = 3;
+  float WishlistDiscount = 4;
+  int32 IncreasingID = 5;
+}
+message ShopIncreasingDatas {
+  repeated protocol.ShopIncreasingConfigure datas = 1;
+}
+message ShopIncreasingConfigure {
+  int32 ID = 1;
+  repeated protocol.ShopIncreasingConfigureItem Items = 2;
+}
+message ShopIncreasingConfigureItem {
+  int32 Price = 1;
+}
+message ShopDatas {
+  repeated protocol.ShopConfigure datas = 1;
+}
+message ShopConfigure {
+  int32 ID = 1;
+}
+message RecommendationDatas {
+  repeated protocol.RecommendationConfigure datas = 1;
+}
+message RecommendationConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 IconID = 3;
+  repeated protocol.ShopRecommendationItem Items = 4;
+}
+message ShopRecommendationItem {
+  int32 PageIconID = 1;
+  int32 PageTextID = 2;
+  int32 ShopID = 3;
+  int32 ShopPoolID = 4;
+  string OpeningTime = 5;
+  string ClosingTime = 6;
+}
+message ShopExChangeDatas {
+  repeated protocol.ShopExChangeConfigure datas = 1;
+}
+message ShopExChangeConfigure {
+  int32 ID = 1;
+  float Price1 = 2;
+  float Price2 = 3;
+  float Price3 = 4;
+  float Price4 = 5;
+  float Price5 = 6;
+}

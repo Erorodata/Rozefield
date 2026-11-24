@@ -1,0 +1,57 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_GachaDatas {
+  protocol.GemDuelGachaInfoDatas GemDuelGachaInfo = 1;
+  protocol.GemDuelGachaPoolDatas GemDuelGachaPool = 2;
+  protocol.GemDuelGachaRewardPoolDatas GemDuelRewardPool = 3;
+}
+message GemDuelGachaInfoDatas {
+  repeated protocol.GemDuelGachaInfoConfigure datas = 1;
+}
+message GemDuelGachaInfoConfigure {
+  int32 ID = 1;
+  int32 Index = 2;
+  string OpeningTime = 3;
+  string ClosingTime = 4;
+  int32 TextID = 5;
+  int32 IconID = 6;
+  bool IsFree = 7;
+  int32 ConsumeItem1ID = 8;
+  int32 Method1Count = 9;
+  int32 ConsumeItem1Num = 10;
+  int32 ConsumeItem2ID = 11;
+  int32 Method2Count = 12;
+  int32 ConsumeItem2Num = 13;
+  int32 MaxTimes = 14;
+  int32 OptionalNum = 15;
+  int32 OptionalPoolID = 16;
+  int32 BigGuaranteeNum = 17;
+  int32 BigGuaranteePoolID = 18;
+  int32 NewGemDuelShowType = 19;
+  int32 NewGemDuelUIGachaType = 20;
+}
+message GemDuelGachaPoolDatas {
+  repeated protocol.GemDuelGachaPoolConfigure datas = 1;
+}
+message GemDuelGachaPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.GemDuelGachaPoolItem Items = 2;
+}
+message GemDuelGachaPoolItem {
+  int32 FreeGachaPoolID = 1;
+}
+message GemDuelGachaRewardPoolDatas {
+  repeated protocol.GemDuelGachaRewardPoolConfigure datas = 1;
+}
+message GemDuelGachaRewardPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.GemDuelGachaRewardPoolItem Items = 2;
+}
+message GemDuelGachaRewardPoolItem {
+  int32 ItemID = 1;
+  int32 ItemMinCount = 2;
+  int32 ItemMaxCount = 3;
+  int32 Weight = 4;
+}

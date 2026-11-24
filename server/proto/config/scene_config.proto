@@ -1,0 +1,82 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package config;
+
+message SceneConfig {
+  repeated config.SceneInfo Scenes = 1;
+  repeated config.SceneInfo Dungeons = 2;
+  int64 SceneConfigVersion = 3;
+  repeated config.MiniGameInfo MiniGameInfos = 4;
+}
+message MiniGameInfo {
+  uint32 ID = 1;
+  int32 Duration = 2;
+  repeated int32 RewardParams = 3;
+  int32 EntityCount = 4;
+  int32 ReadyAnimationDuration = 5;
+  map<uint32, uint32> WeaponParams = 6;
+}
+message SceneInfo {
+  int32 ID = 1;
+  repeated config.BornInfo Born = 2;
+  repeated config.GatherPointSetInfo GatherPointSetInfo = 3;
+  repeated config.CollectionTreasureInfo CollectionTreasureInfos = 4;
+  repeated config.DungeonCoinInfo CoinInfos = 5;
+  repeated config.DungeonInfo DungeonInfos = 6;
+  repeated config.DungeonMonsterInfo MonsterInfos = 7;
+}
+message BornInfo {
+  config.Vector3 Position = 1;
+  config.Vector4 Rotation = 2;
+}
+message Vector3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+message Vector4 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+  float w = 4;
+}
+message VectorInt3 {
+  int32 x = 1;
+  int32 y = 2;
+  int32 z = 3;
+}
+message GatherPointSetInfo {
+  config.Vector3 MinStartPoint = 1;
+  float CellSize = 2;
+  int32 RandomCount = 3;
+  repeated config.GatherSet GatherPointSets = 4;
+  int32 Index = 5;
+}
+message GatherSet {
+  int32 Index = 1;
+  config.Vector3 SetIndex = 2;
+  repeated config.GatherPointInfo LifeGatherPointers = 3;
+  repeated int32 Neighbor = 4;
+}
+message GatherPointInfo {
+  int32 Index = 1;
+  int32 GatherID = 2;
+}
+message CollectionTreasureInfo {
+  int32 Index = 1;
+  int32 ID = 2;
+}
+message RiddleInfo {
+  int32 ID = 1;
+}
+message DungeonCoinInfo {
+  int32 Index = 1;
+  int32 ID = 2;
+}
+message DungeonInfo {
+  int32 ID = 1;
+}
+message DungeonMonsterInfo {
+  int32 Index = 1;
+  int32 UnitID = 2;
+}

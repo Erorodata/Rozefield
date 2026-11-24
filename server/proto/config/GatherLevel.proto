@@ -1,0 +1,84 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGatherLevelDatas {
+  protocol.CollectionGlovesDatas CollectionGloves = 1;
+  protocol.LoggingAxeDatas LoggingAxe = 2;
+  protocol.MiningHammerDatas MiningHammer = 3;
+  protocol.InsectNetDatas InsectNet = 4;
+  protocol.WaterBottleDatas WaterBottle = 5;
+  protocol.PickDatas Pick = 6;
+}
+message CollectionGlovesDatas {
+  repeated protocol.CollectionGlovesConfigure datas = 1;
+}
+message CollectionGlovesConfigure {
+  int32 ID = 1;
+  repeated protocol.CollectionGlovesLevelItem CollectionGlovesLevelItem = 2;
+}
+message CollectionGlovesLevelItem {
+  int32 Level = 1;
+  int32 NeedCount = 2;
+  int32 GuideVoice = 3;
+}
+message LoggingAxeDatas {
+  repeated protocol.LoggingAxeConfigure datas = 1;
+}
+message LoggingAxeConfigure {
+  int32 ID = 1;
+  repeated protocol.CollectionLoggingAxeLevelItem CollectionLoggingAxeLevelItem = 2;
+}
+message CollectionLoggingAxeLevelItem {
+  int32 Level = 1;
+  int32 NeedCount = 2;
+  int32 GuideVoice = 3;
+}
+message MiningHammerDatas {
+  repeated protocol.MiningHammerConfigure datas = 1;
+}
+message MiningHammerConfigure {
+  int32 ID = 1;
+  repeated protocol.CollectionMiningHammerLevelItem CollectionMiningHammerLevelItem = 2;
+}
+message CollectionMiningHammerLevelItem {
+  int32 Level = 1;
+  int32 NeedCount = 2;
+  int32 GuideVoice = 3;
+}
+message InsectNetDatas {
+  repeated protocol.InsectNetConfigure datas = 1;
+}
+message InsectNetConfigure {
+  int32 ID = 1;
+  repeated protocol.CollectionInsectNetLevelItem CollectionInsectNetLevelItem = 2;
+}
+message CollectionInsectNetLevelItem {
+  int32 Level = 1;
+  int32 NeedCount = 2;
+  int32 GuideVoice = 3;
+}
+message WaterBottleDatas {
+  repeated protocol.WaterBottleConfigure datas = 1;
+}
+message WaterBottleConfigure {
+  int32 ID = 1;
+  repeated protocol.CollectionWaterBottleLevelItem CollectionWaterBottleLevelItem = 2;
+}
+message CollectionWaterBottleLevelItem {
+  int32 Level = 1;
+  int32 NeedCount = 2;
+  int32 GuideVoice = 3;
+}
+message PickDatas {
+  repeated protocol.PickConfigure datas = 1;
+}
+message PickConfigure {
+  int32 ID = 1;
+  repeated protocol.CollectionPickLevelItem CollectionPickLevelItem = 2;
+}
+message CollectionPickLevelItem {
+  int32 Level = 1;
+  int32 NeedCount = 2;
+  int32 GuideVoice = 3;
+}

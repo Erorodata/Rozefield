@@ -1,0 +1,40 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_PlayerLevelDatas {
+  protocol.GemDuelPlayerLevelDatas GemDuelPlayerLevel = 1;
+  protocol.GemDuelGrowthFundDatas GemDuelGrowthFund = 2;
+}
+message GemDuelPlayerLevelDatas {
+  repeated protocol.GemDuelPlayerLevelConfigure datas = 1;
+}
+message GemDuelPlayerLevelConfigure {
+  int32 ID = 1;
+  int32 NeedExp = 2;
+}
+message GemDuelGrowthFundDatas {
+  repeated protocol.GemDuelGrowthFundConfigure datas = 1;
+}
+message GemDuelGrowthFundConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 IconID = 3;
+  repeated protocol.GemDuelGrowthFundItem GemDuelGrowthFundItem = 4;
+}
+message GemDuelGrowthFundItem {
+  int32 GrowthFundLevel = 1;
+  int32 PlayerLevel = 2;
+  bool IsExpensive = 3;
+  int32 UnlockText = 4;
+  repeated protocol.GemDuelGrowthFundFreeItem GemDuelGrowthFundFreeItem = 5;
+  repeated protocol.GemDuelGrowthFundNoFreeItem GemDuelGrowthFundNoFreeItem = 6;
+}
+message GemDuelGrowthFundFreeItem {
+  int32 FreeItemID = 1;
+  int32 FreeItemNum = 2;
+}
+message GemDuelGrowthFundNoFreeItem {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}

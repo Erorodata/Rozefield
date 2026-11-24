@@ -1,0 +1,91 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_SkillDatas {
+  protocol.GemDuelSkillDatas GemDuelSkill = 1;
+  protocol.GemDuelSkillTargetSelectionDatas GemDuelSkillTargetSelection = 2;
+  protocol.GemDuelSkillTriggerEffectDatas GemDuelSkillTriggerEffect = 3;
+  protocol.GemDuelSkillConditionalComparisonDatas GemDuelSkillConditionalComparison = 4;
+  protocol.GemDuelSkillSummonDatas GemDuelSkillSummon = 5;
+  protocol.GemDuelSkillSceneEventEffcetDatas GemDuelSkillSceneEventEffcet = 6;
+}
+message GemDuelSkillDatas {
+  repeated protocol.GemDuelSkillConfigure datas = 1;
+}
+message GemDuelSkillConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 IconID = 3;
+  string Performance = 4;
+  string SkillTag = 5;
+  int32 CastType = 6;
+  repeated int32 TargetSelection = 7;
+}
+message GemDuelSkillTargetSelectionDatas {
+  repeated protocol.GemDuelSkillTargetSelectionConfigure datas = 1;
+}
+message GemDuelSkillTargetSelectionConfigure {
+  int32 ID = 1;
+  int32 TargetCategory = 2;
+  int32 Sorting = 3;
+  int32 MinCount = 4;
+  int32 MaxCount = 5;
+  int32 BonusPercentage = 6;
+  repeated int32 RiggerEffect = 7;
+  int32 NewSelectScope = 8;
+  int32 NewDefaultTarget = 9;
+  int32 NewAttribute = 10;
+}
+message GemDuelSkillTriggerEffectDatas {
+  repeated protocol.GemDuelSkillTriggerEffectConfigure datas = 1;
+}
+message GemDuelSkillTriggerEffectConfigure {
+  int32 ID = 1;
+  int32 EffectType = 2;
+  int32 EffectSubType = 3;
+  int32 EffectFeedback = 4;
+  repeated int32 ScriptParams = 5;
+  int32 Duration = 6;
+  int32 TriggerTiming = 7;
+  int32 TriggerProbability = 8;
+  int32 Overwrite = 9;
+  int32 NewDefineType = 10;
+}
+message GemDuelSkillConditionalComparisonDatas {
+  repeated protocol.GemDuelSkillConditionalComparisonConfigure datas = 1;
+}
+message GemDuelSkillConditionalComparisonConfigure {
+  int32 ID = 1;
+  int32 Value = 2;
+  int32 IsCombine = 3;
+  repeated int32 WorkConditions = 4;
+  repeated int32 LoseConditions = 5;
+  int32 NewConditionType1 = 6;
+  int32 NewConditionExpr1 = 7;
+  int32 NewOperation = 8;
+  int32 Newcompare = 9;
+  int32 NewConditionType2 = 10;
+  int32 NewConditionExpr2 = 11;
+}
+message GemDuelSkillSummonDatas {
+  repeated protocol.GemDuelSkillSummonConfigure datas = 1;
+}
+message GemDuelSkillSummonConfigure {
+  int32 ID = 1;
+  int32 Level1 = 2;
+  int32 Star1 = 3;
+  repeated int32 EnemySkillUnlock1 = 4;
+}
+message GemDuelSkillSceneEventEffcetDatas {
+  repeated protocol.GemDuelSkillSceneEventEffcetConfigure datas = 1;
+}
+message GemDuelSkillSceneEventEffcetConfigure {
+  int32 ID = 1;
+  int32 Duration = 2;
+  repeated int32 ScriptParams = 3;
+  repeated int32 RiggerEffect = 4;
+  repeated int32 CasterRiggerEffect = 5;
+  int32 MaxValue = 6;
+  int32 NewEventType = 7;
+}

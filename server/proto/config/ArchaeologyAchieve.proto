@@ -1,0 +1,19 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllArchaeologyAchieveDatas {
+  protocol.ArchaeologyAchieveDatas ArchaeologyAchieve = 1;
+}
+message ArchaeologyAchieveDatas {
+  repeated protocol.ArchaeologyAchieveConfigure datas = 1;
+}
+message ArchaeologyAchieveConfigure {
+  int32 ID = 1;
+  int32 NewArchaeologyType = 2;
+  repeated protocol.ArchaeologyAchieveItem Items = 3;
+}
+message ArchaeologyAchieveItem {
+  int32 AchieveID = 1;
+  int32 RewardID = 2;
+}

@@ -1,0 +1,17 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllMusicNoteDatas {
+  protocol.MusicNoteDatas MusicNote = 1;
+}
+message MusicNoteDatas {
+  repeated protocol.MusicNoteConfigure datas = 1;
+}
+message MusicNoteConfigure {
+  int32 ID = 1;
+  string Path = 2;
+  int32 NewMusicCategory = 3;
+  int32 GroupID = 4;
+  string GameplayPath = 5;
+}

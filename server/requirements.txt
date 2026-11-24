@@ -1,0 +1,3 @@
+protobuf>=4.25
+cramjam>=2.8
+dpkt>=1.9

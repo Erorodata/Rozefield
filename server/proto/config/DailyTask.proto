@@ -1,0 +1,16 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllDailyTaskDatas {
+  protocol.DailyTaskRewardDatas DailyTaskReward = 1;
+}
+message DailyTaskRewardDatas {
+  repeated protocol.DailyTaskRewardConfigure datas = 1;
+}
+message DailyTaskRewardConfigure {
+  int32 ID = 1;
+  int32 Step = 2;
+  int32 CostItemID = 3;
+  int32 CostItemNum = 4;
+}

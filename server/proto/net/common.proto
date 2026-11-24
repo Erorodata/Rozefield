@@ -1,0 +1,2407 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package pb;
+import "google/protobuf/descriptor.proto";
+import "enum.proto";
+
+enum MsgType {
+  MsgType_NONE = 0;
+  MsgType_KEY_A = 1;
+  MsgType_KEY_B = 2;
+  MsgType_PROTO_CONTROL = 3;
+  MsgType_SYNC = 4;
+}
+enum FriendHandleType {
+  FriendHandleType_NONE = 0;
+  FriendHandleType_ADD = 1;
+  FriendHandleType_APPLY = 2;
+  FriendHandleType_DEL = 3;
+}
+enum FriendListType {
+  FriendListType_NONE = 0;
+  FriendListType_APPLY = 1;
+  FriendListType_FRIEND = 2;
+  FriendListType_BLACK = 3;
+}
+enum FriendStatus {
+  FriendStatus_NONE = 0;
+  FriendStatus_APPLY = 1;
+  FriendStatus_FRIEND = 2;
+  FriendStatus_BLACK = 3;
+}
+enum ChatChannelType {
+  ChatChannel_Default = 0;
+  ChatChannel_ChatRoom = 1;
+  ChatChannel_Private = 2;
+  ChatChannel_System = 3;
+  ChatChannel_Notice = 4;
+  ChatChannel_Team = 5;
+  ChatChannel_Guild = 6;
+  ChatChannel_Horn = 7;
+}
+enum MsgRoute {
+  MsgRoute_GAME = 0;
+  MsgRoute_SCENE = 1;
+  MsgRoute_MP = 2;
+}
+enum StatusCode {
+  StatusCode_NONE = 0;
+  StatusCode_OK = 1;
+  StatusCode_FAIL = 2;
+  StatusCode_BAD_REQ = 3;
+  StatusCode_SYS_ERR = 4;
+  StatusCode_ACCOUNT_UNAUTH = 5;
+  StatusCode_ILLEGAL_LEN = 6;
+  StatusCode_ILLEGAL_CHAR = 7;
+  StatusCode_BAD_WORD = 8;
+  StatusCode_DUPLICATED_NAME = 9;
+  StatusCode_SERVER_IS_FULL = 10;
+  StatusCode_PLAYER_NOT_FOUND = 11;
+  StatusCode_CFG_NOT_FOUND = 12;
+  StatusCode_ITEM_NOT_ENOUGH = 13;
+  StatusCode_ACCOUNT_BANNED = 14;
+  StatusCode_REGISTER_LIMIT = 15;
+  StatusCode_PLAYER_NOT_IN_CHANNEL_WAIT = 16;
+  StatusCode_PLAYER_NOT_IN_CHANNEL = 17;
+  StatusCode_QUICK_CHECK_FAIL = 20;
+  StatusCode_INVALID_TOKEN = 21;
+  StatusCode_ACCOUNT_NAME_NOT_BIND = 22;
+  StatusCode_ACCOUNT_NAME_REPEAT_BIND = 23;
+  StatusCode_ACCOUNT_NAME_BIND_FAIL = 24;
+  StatusCode_IGNORE = 25;
+  StatusCode_MODULE_CLOSE = 30;
+  StatusCode_CLIENT_VERSION_ERR = 31;
+  StatusCode_SERVERUNDERMAINTENANCE = 205;
+  StatusCode_REPEAT_GET_REWARD = 207;
+  StatusCode_MUTED_PLAYER_CHAT_FAIL = 210;
+  StatusCode_FRIEND_SEARCH_FAIL = 211;
+  StatusCode_FRIEND_ADD_FAIL = 212;
+  StatusCode_PLAYER_LEVEL_LIMIT = 220;
+  StatusCode_SCENE_CHANNEL_IS_FULL = 226;
+  StatusCode_SCENE_CHANNEL_NEED_PASSWORD = 227;
+  StatusCode_SCENE_CHANNEL_WRONG_PASSWORD = 228;
+  StatusCode_CANT_JOIN_PLAYER_CURRENT_SCENE_CHANNEL = 229;
+  StatusCode_SCENE_NOT_UNLOCK = 234;
+  StatusCode_SCENE_CHANNEL_PRIVATE = 235;
+  StatusCode_SCENE_CHANNEL_NOT_EXIST = 236;
+  StatusCode_SCENE_PUBLIC_CHANNEL_NOT_UNLOCK = 237;
+  StatusCode_CHAT_CHANNEL_NOT_EXIST = 238;
+  StatusCode_REQUESTS_TOO_FREQUENT = 240;
+  StatusCode_PlayerLifeSkillNotExist = 250;
+  StatusCode_LifeLvNotEnough = 251;
+  StatusCode_AreaUnlock = 282;
+  StatusCode_DungeonUnlock = 302;
+  StatusCode_PlayerNotInDungeon = 305;
+  StatusCode_DungeonTeamFull = 303;
+  StatusCode_DungeonTeamError = 304;
+  StatusCode_DungeonCantReward = 308;
+  StatusCode_DungeonCheat = 309;
+  StatusCode_Activity_Close = 310;
+  StatusCode_Interval_Reward_Is_Get = 311;
+  StatusCode_POSTER_MAX_STAR = 380;
+  StatusCode_POSTER_ILLUSTRATION_NOT_ACTIVE = 381;
+  StatusCode_POSTER_ILLUSTRATION_REWARDED = 382;
+  StatusCode_MAIL_NO_REWARD = 421;
+  StatusCode_MAIL_NOT_EXIST = 422;
+  StatusCode_MAIL_COLLECT_NUM_LIMIT = 423;
+  StatusCode_CharNotExist = 430;
+  StatusCode_ChallengeNotEnd = 470;
+  StatusCode_ChallengeNotStart = 471;
+  StatusCode_SHOP_ITEM_ALREADY_IN_BAG = 491;
+  StatusCode_SHOP_SINGLE_BUY_NUM_LIMIT = 493;
+  StatusCode_SHOP_GRID_BUY_NUM_LIMIT = 494;
+  StatusCode_GamePlayRewardLimit = 510;
+  StatusCode_RiddleNotEnd = 515;
+  StatusCode_RiddleNotStart = 516;
+  StatusCode_HasUnlocked = 570;
+  StatusCode_ChairSeatTaken = 581;
+  StatusCode_PlayerSitOtherChair = 582;
+  StatusCode_PlayerChairRemoved = 583;
+  StatusCode_WORLD_LEVEL_NOW_IN = 641;
+  StatusCode_WORLD_LEVEL_LOCKED = 642;
+  StatusCode_WORLD_SWITCH_FAIL = 643;
+  StatusCode_WORLD_LEVEL_ALREADY_UNLOCK = 644;
+  StatusCode_WORLD_LEVEL_ACHIEVE_NOT_FINISH = 645;
+  StatusCode_WORLD_LEVEL_UNLOCK_FAIL = 646;
+  StatusCode_NotFinishAllTask = 660;
+  StatusCode_AlreadyGotReward = 661;
+  StatusCode_EXPLORE_IN_PROGRESS = 693;
+  StatusCode_EXPLORE_NUM_LIMIT = 692;
+  StatusCode_EXPLORE_NOT_EXISTS = 695;
+  StatusCode_EXPLORE_MAX_TIMES = 697;
+  StatusCode_EXPLORE_NOT_FINISH = 698;
+  StatusCode_EXPLORE_COLLECT_NOT_FINISH = 699;
+  StatusCode_INTERVAL_OVERDUE = 711;
+  StatusCode_INTERVAL_NOT_EXISTS = 717;
+  StatusCode_INTERVAL_FINISH = 718;
+  StatusCode_INTERVAL_NOT_FINISH = 719;
+  StatusCode_REPORT_TIME_LIMIT = 752;
+  StatusCode_FRIEND_NOT_EXIST = 780;
+  StatusCode_FRIEND_EXIST = 782;
+  StatusCode_FRIEND_LIMIT = 783;
+  StatusCode_FRIEND_APPLY_LIMIT = 784;
+  StatusCode_FRIEND_OTHER_LIMIT = 786;
+  StatusCode_FRIEND_NOT_APPLY = 789;
+  StatusCode_FRIEND_BLACK = 790;
+  StatusCode_FRIEND_APPLY_EXIST = 791;
+  StatusCode_EnergyNotEnough = 827;
+  StatusCode_IS_FISHING = 828;
+  StatusCode_TREASURE_BOX_NOT_EXIST = 841;
+  StatusCode_CharacterSkillLvIsMax = 853;
+  StatusCode_EnergyBuyTimesLimit = 865;
+  StatusCode_REDEMPTION_CODE_NOT_EXIST = 890;
+  StatusCode_REDEMPTION_CODE_USED = 891;
+  StatusCode_REDEMPTION_CODE_NUM_IS_MAX = 892;
+  StatusCode_REDEMPTION_CODE_FAIL = 893;
+  StatusCode_FurnitureNumLimit = 902;
+  StatusCode_TIPS_LIKES_NUM_LIMIT = 903;
+  StatusCode_COLLECT_MOON_NOT_MATCH = 904;
+  StatusCode_FunctionUnlock = 1310;
+  StatusCode_GACHA_CARD_POOL_FAIL = 1318;
+  StatusCode_GACHA_CARD_REWARD_FAIL = 1319;
+  StatusCode_GACHA_ERR = 1320;
+  StatusCode_GACHA_UNLOCK = 1321;
+  StatusCode_GACHA_FREE_TIME_NOT_READY = 1322;
+  StatusCode_GACHA_TYPE_NOT_EXIST = 1323;
+  StatusCode_GACHA_NOT_FREE = 1324;
+  StatusCode_GACHA_NUM_MAX = 1325;
+  StatusCode_GACHA_ALREADY_FULL_PICK = 1326;
+  StatusCode_GACHA_FULL_PICK_NOT_EXIST = 1327;
+  StatusCode_GACHA_ITEM_NOT_EXIST = 1329;
+  StatusCode_HEAD_NOT_UNLOCK = 1330;
+  StatusCode_ACTION_NOT_UNLOCK = 1331;
+  StatusCode_PHONE_BACKGROUND_NOT_UNLOCK = 1332;
+  StatusCode_GACHA_OPTIONAL = 1333;
+  StatusCode_ACTION_STUDY_TIME_OUT = 1334;
+  StatusCode_ABILITY_NOT_UNLOCK = 1340;
+  StatusCode_ABILITY_LEVEL_LIMIT = 1341;
+  StatusCode_Item_Get_Fail = 1350;
+  StatusCode_VITALITY_FULL = 1360;
+  StatusCode_VITALITY_BUY_NUM_LIMIT = 1361;
+  StatusCode_IsLearning = 1373;
+  StatusCode_CantLearningTwoSkill = 1374;
+  StatusCode_SkillAlreadyStudy = 1375;
+  StatusCode_ProficiencyNotEnough = 1376;
+  StatusCode_LifeSkillMaxLv = 1377;
+  StatusCode_LifeMaxLv = 1378;
+  StatusCode_ABILITY_BADGE_NOT_UNLOCK = 1390;
+  StatusCode_ABILITY_BADGE_BOX_ALREADY_ACTIVE = 1391;
+  StatusCode_ABILITY_BADGE_ACTIVE_PRE_CONDITION_NOT_FINISH = 1392;
+  StatusCode_ABILITY_BADGE_PAGE_REWARDED = 1393;
+  StatusCode_ABILITY_BADGE_PAGE_BOX_ACTIVE_LIMIT = 1394;
+  StatusCode_ABILITY_BADGE_ACHIEVE_NOT_COMPLETE = 1395;
+  StatusCode_ABILITY_BADGE_ACHIEVE_REWARDED = 1396;
+  StatusCode_RANDOM_DYE_STUFF_NOT_RANDOM_COLOR = 1400;
+  StatusCode_OUTFIT_SCHEME_INDEX_NOT_UNLOCK = 1401;
+  StatusCode_OUTFIT_TYPE_DIFFER = 1402;
+  StatusCode_OUTFIT_SEX_TYPE_DIFFER = 1403;
+  StatusCode_NOT_DYE = 1404;
+  StatusCode_OUTFIT_SCHEME_INDEX_HAS_UNLOCKED = 1405;
+  StatusCode_Temp_Pack_Is_Full = 1410;
+  StatusCode_AREA_NOT_UNLOCK = 1420;
+  StatusCode_AREA_ALREADY_UNLOCK = 1421;
+  StatusCode_AREA_LEVEL_LIMIT = 1422;
+  StatusCode_AREA_LEVEL_QUEST_NOT_FINISH = 1423;
+  StatusCode_REGION_VOICE_COLLECTED = 1424;
+  StatusCode_Map_Completeness_Not_Enough = 1430;
+  StatusCode_PreChapter_Not_Finish = 1431;
+  StatusCode_PreStory_Not_Finish = 1432;
+  StatusCode_Lv_Not_Enough = 1433;
+  StatusCode_NOT_COLLECTED = 1440;
+  StatusCode_ALREADY_COLLECTED = 1441;
+  StatusCode_COLLECTION_ALREADY_REWARDED = 1442;
+  StatusCode_GATHER_WEAPON_NOT_WEAR = 1443;
+  StatusCode_GATHER_WEAPON_TYPE_DIFFER = 1444;
+  StatusCode_GATHER_LIMIT = 1445;
+  StatusCode_Quest_Not_Finish = 1450;
+  StatusCode_Not_Payment = 1451;
+  StatusCode_Already_Accept_Quest = 1452;
+  StatusCode_MANUAL_NOT_UNLOCK = 1460;
+  StatusCode_MANUAL_ALREADY_UNLOCK = 1461;
+  StatusCode_MANUAL_REWARDED = 1462;
+  StatusCode_CAMP_FIRE_TOO_CLOSE = 1470;
+  StatusCode_PARTIAL_EQUIP_DISASSEMBLE_FAILED = 1471;
+  StatusCode_WEAPON_MAX_STRENGTH_LEVEL = 1480;
+  StatusCode_ARMOR_MAX_STRENGTH_LEVEL = 1481;
+  StatusCode_CREATE_ORDER_SPEED_ERROR = 1490;
+  StatusCode_BattlePass_Not_Buy = 1500;
+  StatusCode_BattlePass_QuestRewarded = 1501;
+  StatusCode_BattlePass_MaxLevel = 1502;
+  StatusCode_BattlePass_LevelLimit = 1503;
+  StatusCode_BattlePass_LvRewarded = 1504;
+  StatusCode_BattlePass_HasBuy = 1505;
+  StatusCode_ActivityGift_Rewarded = 1506;
+  StatusCode_ActivityGift_HasBuy = 1507;
+  StatusCode_ACTIVITY_INVITE_NOT_OPEN = 1510;
+  StatusCode_INVITE_CODE_ALREADY_FILLED = 1511;
+  StatusCode_INVITE_CODE_NOT_EXIST = 1512;
+  StatusCode_ACTIVITY_INVITE_TASK_CLAIMED = 1513;
+  StatusCode_ACTIVITY_INVITE_TASK_NOT_COMPLETED = 1514;
+  StatusCode_INVITE_CODE_IS_SELF = 1515;
+  StatusCode_CANT_REPEATED_PLACED_IN_OTHER_CHANNEL = 1520;
+  StatusCode_CANT_HANDING_MORE = 1521;
+  StatusCode_GAME_CARD_CANT_GACHA = 1601;
+  StatusCode_MP_TEAM_NAME_EMPTY = 1602;
+  StatusCode_MP_TEAM_NAME_TOO_LONG = 1603;
+  StatusCode_MP_TEAM_NAME_PURE_DIGIT = 1604;
+  StatusCode_MP_TEAM_NAME_INVALID = 1605;
+  StatusCode_TEAM_RAID_CARD_INVALID = 1606;
+  StatusCode_MP_CHARACTER_INVALID = 1607;
+  StatusCode_MP_NOT_IN_TEAM = 1608;
+  StatusCode_MP_TEAM_NOT_LEADER = 1609;
+  StatusCode_MP_TEAM_FULL = 1610;
+  StatusCode_MP_INVALID_TEAM_TYPE = 1611;
+  StatusCode_MP_PLAY_INFO_UNCHANGED = 1612;
+  StatusCode_MP_ALREADY_IN_TEAM = 1613;
+  StatusCode_MP_TEAM_NAME_UNCHANGED = 1614;
+  StatusCode_MP_TEAM_NOT_EXIST = 1615;
+  StatusCode_MP_IN_TEAM_KICK_CD = 1616;
+  StatusCode_MP_CHARACTER_UNCHANGED = 1617;
+  StatusCode_MP_INVITER_NOT_IN_TEAM = 1618;
+  StatusCode_MP_INVITEE_IN_TEAM = 1619;
+  StatusCode_MP_INVITEE_NOT_SAME_CHANNEL = 1620;
+  StatusCode_MP_TEAM_UNCHANGED = 1621;
+  StatusCode_MP_PLAYER_ALREADY_IN_TEAM = 1622;
+  StatusCode_MP_BEACON_NOT_PLACED = 1623;
+  StatusCode_MP_BEACON_DUPLICATED = 1624;
+  StatusCode_MP_MEMBERS_NOT_AROUND = 1625;
+  StatusCode_MP_MEMBERS_NOT_ENOUGH = 1626;
+  StatusCode_MP_NOT_STARTING = 1627;
+  StatusCode_PLAYER_NOT_IN_MP_ROOM = 1628;
+  StatusCode_PLAYER_NOT_IN_MP_TEAM = 1629;
+  StatusCode_GAME_CARD_NOT_EXISTS = 1630;
+  StatusCode_MP_LEADER_CANNOT_QUIT = 1631;
+  StatusCode_NOT_IN_MAIN_CITY = 1632;
+  StatusCode_MP_IN_CD = 1633;
+  StatusCode_MP_ROOM_ID_DUPLICATED = 1634;
+  StatusCode_MP_TEAM_ID_DUPLICATED = 1635;
+  StatusCode_MP_ALREADY_IN_ROOM = 1636;
+  StatusCode_MP_TEAM_CANNOT_JOIN = 1637;
+  StatusCode_MP_BEACON_CANNOT_MOVE = 1638;
+  StatusCode_MP_BEACON_NOT_EXIST = 1639;
+  StatusCode_MP_BEACON_CANNOT_PLACE = 1640;
+  StatusCode_MP_BEACON_CANNOT_RETRIEVE = 1641;
+  StatusCode_MP_BEACON_CANNOT_CALL_IN = 1642;
+  StatusCode_MP_BEACON_CANNOT_START = 1643;
+  StatusCode_MP_TEAM_MEMBER_NOT_ENOUGH = 1644;
+  StatusCode_MP_TEAM_NOT_READY = 1645;
+  StatusCode_MP_CANNOT_CHANGE_MODE = 1646;
+  StatusCode_MP_TEAM_GAME_STARTED = 1647;
+  StatusCode_MP_MODE_LOCKED = 1648;
+  StatusCode_MP_LEADER_BLOCKED = 1649;
+  StatusCode_MP_PLAYER_NOT_IN_ROOM = 1650;
+  StatusCode_PLAYER_OPERATION_LOCKED = 1660;
+  StatusCode_PLAYER_WRONG_GARDEN_PASSWORD = 1661;
+  StatusCode_PLAYER_PASSWORD_LOCKED = 1662;
+  StatusCode_FRIEND_INTIMACY_LIMIT = 1665;
+  StatusCode_FRIEND_INTIMACY_DAY_GIFT_LIMIT = 1666;
+  StatusCode_PS_MOVE_NORMAL_ERR = 1669;
+  StatusCode_PS_UPLOAD_LIMIT = 1670;
+  StatusCode_PS_NOT_EXIST = 1671;
+  StatusCode_PS_LIKE_FAIL = 1672;
+  StatusCode_PS_FAVORITE_LIMIT = 1673;
+  StatusCode_PS_SEARCH_FAIL = 1674;
+  StatusCode_PS_SEARCH_SPEED_ERROR = 1675;
+  StatusCode_PS_TODAY_UPLOAD_LIMIT = 1676;
+  StatusCode_PS_ACTIVITY_NOT_OPEN = 1677;
+  StatusCode_PS_ACTIVITY_UPLOAD_END = 1678;
+  StatusCode_PS_ACTIVITY_UPLOAD_LIMIT = 1679;
+  StatusCode_PLAYER_BLESS_TREE_EXIST = 1680;
+  StatusCode_PLAYER_BLESS_NEED_NODE = 1681;
+  StatusCode_SHOP_EXPRESS_NOT_START = 1691;
+  StatusCode_SHOP_EXPRESS_REPEAT_UPLOAD = 1692;
+  StatusCode_SHOP_EXPRESS_PHONE_ILLEGAL = 1693;
+  StatusCode_SHOP_EXPRESS_ITEM_NOT_ENOUGH = 1694;
+  StatusCode_DAILY_WISH_TIMES_NOT_ENOUGH = 1701;
+  StatusCode_TURNTABLE_NO_REWARD_REMAIN = 1702;
+  StatusCode_GARDEN_PLACE_CHARACTER_CONDITION_NOT_MET = 1703;
+  StatusCode_CHARACTER_IN_TEAM = 1704;
+  StatusCode_GARDEN_PLACE_CHARACTER_ALREADY = 1705;
+  StatusCode_FURNITURE_NOT_EXIST = 1706;
+  StatusCode_CHARACTER_PLACED = 1707;
+  StatusCode_MULTIPLE_ACTION_INVALID = 1708;
+  StatusCode_FURNITURE_OCCUPY = 1709;
+  StatusCode_SEASON_NOT_EXISTS = 1710;
+  StatusCode_OTHER_CHALLENGE_STARTED = 1711;
+  StatusCode_PRE_STAGE_NOT_PASS = 1712;
+  StatusCode_STAGE_NOT_OPEN = 1713;
+  StatusCode_WISH_LIST_SHOP_ERR = 1720;
+  StatusCode_WISH_LIST_EXIST = 1721;
+  StatusCode_WISH_LIST_LIMIT = 1722;
+  StatusCode_WISH_LIST_NOT_EXIST = 1723;
+  StatusCode_FRIEND_INTIMACY_NOT_ENOUGH = 1724;
+  StatusCode_FRIEND_DAYS_NOT_ENOUGH = 1725;
+  StatusCode_CHAIR_LOOP = 1726;
+  StatusCode_CHARACTER_ENTER_BOSS_RUSH = 1727;
+  StatusCode_MINIGAME_RESTAURANT_GRID_FULL = 1740;
+  StatusCode_MINIGAME_RESTAURANT_GRID_NOT_EXIST = 1741;
+  StatusCode_MINIGAME_RESTAURANT_MIX_ERR = 1742;
+  StatusCode_MINIGAME_RESTAURANT_FOOD_MAX_LEVEL = 1743;
+  StatusCode_MINIGAME_RESTAURANT_GRID_EMPTY = 1744;
+  StatusCode_MINIGAME_RESTAURANT_CUSTOMER_FINISH = 1745;
+  StatusCode_MINIGAME_RESTAURANT_FOOD_ERR = 1746;
+  StatusCode_WISH_LIST_SEND_LIMIT = 1751;
+  StatusCode_MOON_CARD_DAYS_LIMIT = 1760;
+  StatusCode_GEM_DUEL_STAMINA_FULL = 1780;
+  StatusCode_GEM_DUEL_SKILL_ALREADY_UNLOCKED = 1781;
+  StatusCode_GEM_DUEL_BUY_STAMINA_LIMIT = 1782;
+  StatusCode_GEM_DUEL_TEAM_NOT_UNLOCK = 1783;
+  StatusCode_GEM_DUEL_SHOP_REFRESH_LIMIT = 1784;
+  StatusCode_GrowthFund_HasBuy = 1785;
+  StatusCode_GrowthFund_Not_Buy = 1786;
+  StatusCode_GrowthFund_LevelLimit = 1787;
+  StatusCode_SHOP_GRID_UNLOCKED = 1801;
+  StatusCode_PET_NOT_FOUND = 1811;
+  StatusCode_PET_GRID_FULL = 1812;
+  StatusCode_INHERITCODE_FAIL_COUNT_LIMIT = 3001;
+  StatusCode_INHERITCODE_REPEAT_BIND = 3002;
+  StatusCode_INHERITCODE_All_FINISH = 3003;
+  StatusCode_INHERITCODE_FAIL = 3004;
+  StatusCode_INHERITCODE_NOT_EXIST = 3005;
+}
+enum AccountType {
+  AccountType_NONE = 0;
+  AccountType_TOURIST = 1;
+  AccountType_GAVA = 3;
+  AccountType_XIAOMI = 19;
+  AccountType_VIVO = 65;
+  AccountType_OPPO = 139;
+  AccountType_HUAWEI = 39;
+  AccountType_MUMU = 311;
+  AccountType_LEIDIAN = 309;
+  AccountType_9GAME = 207;
+  AccountType_HONOR = 315;
+  AccountType_4399 = 45;
+  AccountType_LENOVO = 29;
+  AccountType_YYB = 95;
+  AccountType_223 = 321;
+  AccountType_BLIBLI = 114;
+  AccountType_Mac = 7777;
+  AccountType_IOS = 8888;
+  AccountType_Windows = 9999;
+  AccountType_Android = 28814;
+  AccountType_WeGame = 30000;
+  AccountType_BliBliPC = 30114;
+  AccountType_GLOBAL_IOS = 18888;
+  AccountType_GLOBAL_Windows = 19999;
+  AccountType_GLOBAL_Google = 17777;
+  AccountType_GLOBAL_Samsung = 17778;
+  AccountType_GLOBAL_Steam = 16666;
+}
+enum AccountOSType {
+  Windows = 0;
+  Android = 1;
+  IOS = 2;
+  Mac = 3;
+  Gava = 4;
+  BliBliPC = 5;
+  WeGame = 6;
+}
+enum PlayerOfflineReason {
+  PlayerOfflineReason_NONE = 0;
+  PlayerOfflineReason_DISCONNECT = 1;
+  PlayerOfflineReason_SERVER_SHUTDOWN = 2;
+  PlayerOfflineReason_KICK = 3;
+  PlayerOfflineReason_ANOTHER_LOGIN = 4;
+  PlayerOfflineReason_ANTI_ADDICTION = 5;
+  PlayerOfflineReason_LOGOUT = 6;
+  PlayerOfflineReason_ACCOUNT_CANCEL_BIND = 7;
+}
+enum OperateCmdType {
+  OperateCmdType_NONE = 0;
+  OperateCmdType_GM_CODE = 1;
+  OperateCmdType_QUESTIONNAIRE_SUBMIT = 2;
+  OperateCmdType_TASK_UPDATE_BATCH = 3;
+  OperateCmdType_MPPlayRoomSettlement = 4;
+}
+enum MailState {
+  MailState_UNREAD = 0;
+  MailState_READED = 1;
+  MailState_UNCLAIM = 2;
+  MailState_CLAIMED = 3;
+}
+enum MailType {
+  MailType_NONE = 0;
+  MailType_GLOBAL = 1;
+  MailType_PLAYER = 2;
+}
+enum MailContentType {
+  MailContentType_NONE = 0;
+  MailContentType_TEXT = 1;
+  MailContentType_TEXT_ID = 2;
+}
+enum LifeType {
+  LIFE_TYPE_NONE = 0;
+  LIFE_TYPE_Cooking = 1;
+  LIFE_TYPE_Fishing = 2;
+  LIFE_TYPE_Making = 3;
+  LIFE_TYPE_Handicraft = 4;
+  LIFE_TYPE_Sewing = 5;
+  LIFE_TYPE_Gathering = 6;
+}
+enum OperateTargetType {
+  OperateTargetType_NONE = 0;
+  OperateTargetType_GLOBAL = 1;
+  OperateTargetType_PLAYER = 2;
+  OperateTargetType_SYSTEM = 3;
+  OperateTargetType_SCENE = 4;
+}
+enum SceneActionType {
+  SceneActionType_NONE = 0;
+  SceneActionType_ENTER = 1;
+  SceneActionType_LEAVE = 2;
+  SceneActionType_UPDATE_EQUIP = 3;
+  SceneActionType_UPDATE_FASHION = 4;
+  SceneActionType_UPDATE_TEAM = 5;
+  SceneActionType_UPDATE_APPEARANCE = 6;
+  SceneActionType_UPDATE_NICKNAME = 7;
+  SceneActionType_UPDATE_CHARACTER_DEAD = 8;
+  SceneActionType_UPDATE_CHARACTER_LV = 9;
+  SceneActionType_UPDATE_CHARACTER_STAR = 10;
+  SceneActionType_UPDATE_WEAPON_STAR = 11;
+  SceneActionType_UPDATE_ARMOR = 12;
+  SceneActionType_UPDATE_INSCRIPTION = 13;
+  SceneActionType_ADD_FOOD_BUFF = 14;
+  SceneActionType_REMOVE_FOOD_BUFF = 15;
+  SceneActionType_UPDATE_POSTER = 16;
+  SceneActionType_UPDATE_CHARACTER_BREAK_LV = 17;
+  SceneActionType_ADD_GOLBAL_BUFF = 18;
+  SceneActionType_REMOVE_GOLBAL_BUFF = 19;
+  SceneActionType_TOD_UPDATE = 20;
+  SceneActionType_Birthday_Update = 21;
+  SceneActionType_PLACED_CHARACTER_OUTFIT_UPDATE = 22;
+  SceneActionType_UPDATE_MUSICAL_ITEM = 23;
+  SceneActionType_UPDATE_ABYSS_RANK = 24;
+  SceneActionType_UPDATE_PHONE_CASE = 25;
+  SceneActionType_UPDATA_PET = 26;
+}
+enum QuestStatus {
+  QuestStatus_Locked = 0;
+  QuestStatus_InProgress = 1;
+  QuestStatus_Completed = 2;
+  QuestStatus_Finish = 3;
+}
+enum CommonParamType {
+  COMMON_PARAM_TYPE_NONE = 0;
+  COMMON_PARAM_TYPE_INT = 1;
+  COMMON_PARAM_TYPE_FLOAT = 2;
+  COMMON_PARAM_TYPE_DOUBLE = 3;
+  COMMON_PARAM_TYPE_BOOL = 4;
+  COMMON_PARAM_TYPE_STRING = 5;
+}
+enum BattleState {
+  Start = 0;
+  Finish = 1;
+  Reset = 2;
+  Fail = 3;
+  Close = 4;
+}
+enum TreasureBoxState {
+  TreasureBoxState_Close = 0;
+  TreasureBoxState_Open = 1;
+}
+enum RewardStatus {
+  NotReward = 0;
+  Reward = 1;
+}
+enum TreasureBoxLocType {
+  TreasureBoxLocType_SCENE = 0;
+  TreasureBoxLocType_DUNGEON = 1;
+}
+enum JumpType {
+  None = 0;
+  HttpJump = 1;
+  GameJump = 2;
+}
+enum WeatherType {
+  WeatherType_SUNNY = 0;
+  WeatherType_RAINY = 1;
+}
+enum ForbiddenType {
+  ForbiddenType_Muted = 0;
+  ForbiddenType_SearchFriend = 1;
+  ForbiddenType_AddFriend = 2;
+  ForbiddenType_Silence = 3;
+  ForbiddenType_AbyssRank = 4;
+  ForbiddenType_BossRushRank = 5;
+}
+enum RedemptionCodeType {
+  RedemptionCodeType_Text = 0;
+  RedemptionCodeType_Random = 1;
+}
+enum ReportStatus {
+  NickNameViolation = 0;
+  ChatViolation = 1;
+  Advertisement = 2;
+  Fraud = 3;
+  ExternalPlugin = 4;
+  Sign = 5;
+  Other = 6;
+  Furniture = 7;
+  PhotoShare = 8;
+}
+enum MPBeaconStatus {
+  MPBeaconStatus_UNPLACED = 0;
+  MPBeaconStatus_PLACED = 1;
+  MPBeaconStatus_MOVING = 2;
+  MPBeaconStatus_CALLING_IN = 3;
+  MPBeaconStatus_STARTED = 4;
+}
+enum MPBeaconAction {
+  MPBeaconAction_NONE = 0;
+  MPBeaconAction_PLACE = 1;
+  MPBeaconAction_MOVE = 2;
+  MPBeaconAction_RETRIVE = 3;
+  MPBeaconAction_CALL_IN = 4;
+}
+enum ModuleCode {
+  ModuleCode_NONE = 0;
+  ModuleCode_Gacha = 1;
+  ModuleCode_Activity = 2;
+  ModuleCode_MP = 3;
+  ModuleCode_Furniture = 4;
+  ModuleCode_PhotoShare = 5;
+  ModuleCode_Chat = 6;
+  ModuleCode_NickName = 7;
+  ModuleCode_Sign = 8;
+  ModuleCode_MPTeamName = 9;
+}
+enum PhotoSearchType {
+  PhotoSearchType_NONE = 0;
+  PhotoSearchType_TODAY = 1;
+  PhotoSearchType_TOTAL = 2;
+  PhotoSearchType_NEW = 3;
+  PhotoSearchType_SEARCH = 4;
+  PhotoSearchType_SEARCH_PAGE = 5;
+  PhotoSearchType_MY_FAVORITE = 6;
+  PhotoSearchType_MY_SHARE = 7;
+  PhotoSearchType_Activity = 8;
+  PhotoSearchType_Activity_Rank = 9;
+}
+enum PhotoSearchTextType {
+  PhotoSearchTextType_NONE = 0;
+  PhotoSearchTextType_TEXT = 1;
+  PhotoSearchTextType_CODE = 2;
+  PhotoSearchTextType_UID = 3;
+}
+enum PhotoOperateType {
+  PhotoOperateType_NONE = 0;
+  PhotoOperateType_LIKE = 1;
+  PhotoOperateType_LIKE_CANCEL = 2;
+  PhotoOperateType_FAVORITE = 3;
+  PhotoOperateType_FAVORITE_CANCEL = 4;
+  PhotoOperateType_DEL = 5;
+  PhotoOperateType_MOVE = 6;
+}
+enum AuditStatus {
+  AuditStatus_NONE = 0;
+  AuditStatus_SUCCESS = 1;
+  AuditStatus_ERROR = 2;
+}
+enum AbyssRankType {
+  BONUS_100 = 0;
+  BONUS_50 = 1;
+  BONUS_0 = 2;
+  CHALLENGE = 3;
+}
+enum MusicalItemSource {
+  MusicalItemSource_Self = 0;
+  MusicalItemSource_Furniture = 1;
+}
+enum WishListOperateType {
+  WishListOperateType_None = 0;
+  WishListOperateType_Add = 1;
+  WishListOperateType_Del = 2;
+}
+enum WishListSourceType {
+  WishListSourceType_None = 0;
+  WishListSourceType_WishList = 1;
+  WishListSourceType_MoonCard = 2;
+  WishListSourceType_BattlePass = 3;
+}
+enum SPOperateType {
+  SPOperateType_None = 0;
+  SPOperateType_Open = 1;
+  SPOperateType_Change = 2;
+  SPOperateType_Check = 3;
+  SPOperateType_Close = 4;
+}
+enum RestaurantGameOperateType {
+  RestaurantGameOperateType_None = 0;
+  RestaurantGameOperateType_Buy = 1;
+  RestaurantGameOperateType_Mix = 2;
+  RestaurantGameOperateType_Recycle = 3;
+}
+enum LanguageType {
+  LanguageType_None = 0;
+  LanguageType_EN = 1;
+  LanguageType_TC = 2;
+  LanguageType_JPN = 3;
+  LanguageType_KO = 4;
+  LanguageType_CN = 5;
+}
+enum RollNoticeType {
+  RollNoticeType_None = 0;
+  RollNoticeType_Fireworks = 1;
+}
+enum GemDuelQuestStatus {
+  GemDuelQuestStatus_Locked = 0;
+  GemDuelQuestStatus_InProgress = 1;
+  GemDuelQuestStatus_Completed = 2;
+  GemDuelQuestStatus_Finish = 3;
+}
+enum PetAttribute {
+  PetAttribute_HP = 0;
+  PetAttribute_Pow = 1;
+  PetAttribute_Str = 2;
+  PetAttribute_Int = 3;
+  PetAttribute_Dex = 4;
+  PetAttribute_Luc = 5;
+}
+message PacketHead {
+  uint32 packet_id = 1;
+  uint32 msg_id = 2;
+  uint32 flag = 3;
+  uint32 body_len = 4;
+  uint32 total_pack_count = 5;
+  uint32 seq_id = 6;
+}
+message GenericParam {
+  repeated int32 int32s = 1;
+  repeated uint32 uint32s = 2;
+  repeated int64 int64s = 3;
+  repeated uint64 uint64s = 4;
+  repeated string strings = 5;
+  repeated float floats = 6;
+  repeated double doubles = 7;
+}
+message Vector3 {
+  int32 x = 1;
+  int32 y = 2;
+  int32 z = 3;
+  uint32 decimalPlaces = 4;
+}
+message Vector4 {
+  int32 x = 1;
+  int32 y = 2;
+  int32 z = 3;
+  int32 w = 4;
+  uint32 decimalPlaces = 5;
+}
+message ClientInfo {
+  string lang = 1;
+  string client_version = 2;
+  string resource_version = 3;
+  string device_uuid = 4;
+  string device_model = 5;
+  string analysis_distinct_id = 6;
+  string network = 7;
+  string ip = 8;
+  string ipv6 = 9;
+  string os_name = 10;
+  string os_ver = 11;
+  pb.LanguageType language = 12;
+}
+message OperateCmdData {
+  string trace_id = 1;
+  pb.OperateCmdType cmd_type = 2;
+  string gm_code = 3;
+  pb.QuestionnaireCmdData questionnaire = 4;
+  repeated pb.TaskCmdData task_update_batch = 5;
+  bytes data = 6;
+}
+message MailAttachment {
+  repeated pb.ItemDetail itemDetail = 1;
+  repeated pb.BaseItem items = 2;
+}
+message MailData {
+  uint32 mail_id = 1;
+  pb.MailState state = 2;
+  pb.MailType mail_type = 3;
+  string sender = 4;
+  pb.MailContentType content_type = 5;
+  uint32 model_id = 6;
+  string title = 7;
+  string content = 8;
+  repeated string content_params = 9;
+  pb.MailAttachment attachment = 10;
+  int64 send_time = 11;
+  int64 expire_time = 12;
+  uint32 keep_days = 13;
+  int64 start_time = 14;
+  int64 end_time = 15;
+  uint32 condition_create_time = 16;
+  repeated uint32 condition_channel = 17;
+  repeated uint32 target_ids = 18;
+  bool is_questionnaire = 19;
+  bool collect_status = 20;
+}
+message RandomProperty {
+  pb.EPropertyType propertyType = 1;
+  uint32 value = 2;
+}
+message ItemDetail {
+  enum PackType {
+    PackType_Inventory = 0;
+    PackType_TempPack = 1;
+    PackType_TempStorageArea = 2;
+    PackType_None = 3;
+  }
+  pb.ItemInfo mainItem = 1;
+  repeated pb.ItemInfo transformedItem = 2;
+  repeated pb.ItemInfo extras = 3;
+  pb.ItemDetail.PackType packType = 4;
+  uint32 extraQuality = 5;
+}
+message ItemInfo {
+  uint32 itemId = 1;
+  pb.EBagItemTag itemTag = 2;
+  bool isNew = 3;
+  uint32 tempPackIndex = 4;
+  oneof item {
+    pb.BaseItem baseItem = 5;
+    pb.WeaponInstance weapon = 6;
+    pb.ArmorInstance armor = 7;
+    pb.PosterInstance poster = 8;
+    pb.Character character = 9;
+    pb.Outfit outfit = 10;
+    pb.Inscription inscription = 11;
+    pb.TreasureInstance treasure = 13;
+    pb.PetInstance pet = 14;
+  }
+}
+message TreasureInstance {
+  uint32 itemId = 1;
+  uint32 instanceId = 2;
+  uint32 sceneId = 3;
+  uint32 gatherPointIndex = 4;
+  uint32 lifeGatherPointIndex = 5;
+}
+message BaseItem {
+  uint32 itemId = 1;
+  int64 num = 2;
+}
+message WeaponInstance {
+  uint32 weaponId = 1;
+  uint32 instanceId = 2;
+  uint32 attack = 3;
+  uint32 damageBalance = 4;
+  uint32 criticalRatio = 5;
+  repeated pb.RandomProperty randomProperty = 6;
+  uint32 wearerId = 7;
+  uint32 level = 8;
+  uint32 strengthLevel = 9;
+  uint32 strengthExp = 10;
+  uint32 star = 11;
+  uint32 inscription1 = 12;
+  uint32 durability = 13;
+  uint32 propertyIndex = 14;
+  bool isLock = 15;
+}
+message ArmorInstance {
+  uint32 armorId = 1;
+  uint32 instanceId = 2;
+  pb.EPropertyType mainPropertyType = 3;
+  uint32 mainPropertyVal = 4;
+  repeated pb.RandomProperty randomProperty = 5;
+  uint32 wearerId = 6;
+  uint32 level = 7;
+  uint32 strengthLevel = 8;
+  uint32 strengthExp = 9;
+  uint32 propertyIndex = 10;
+  bool isLock = 15;
+}
+message PosterInstance {
+  uint32 posterId = 1;
+  uint32 instanceId = 2;
+  uint32 wearerId = 3;
+  uint32 star = 4;
+}
+message PosterIllustration {
+  uint32 posterIllustrationId = 1;
+  pb.RewardStatus status = 2;
+}
+message TempPack {
+  uint32 maxSize = 1;
+  repeated pb.ItemInfo itemInfos = 2;
+}
+message LifeCommonResult {
+  repeated pb.ItemDetail resultItems = 1;
+  bool isSuccess = 2;
+  pb.LifeType lifeType = 3;
+  repeated pb.BaseItem skillReturnItems = 6;
+  bool isLuckyReturn = 7;
+}
+message LifeBaseInfo {
+  pb.LifeType lifeType = 1;
+  uint32 proficiencyValue = 2;
+  uint32 level = 3;
+}
+message LifeAchieve {
+  pb.LifeType lifeType = 1;
+  repeated pb.Achieve lifeAchieve = 2;
+  repeated uint32 rewardedLifeAchieveIdLst = 3;
+}
+message LifeProficiency {
+  pb.LifeType lifeType = 1;
+  uint32 proficiencyValue = 2;
+}
+message LifeAchieveCount {
+  uint32 id = 1;
+  uint64 count = 2;
+}
+message LifeSkill {
+  pb.LifeType lifeType = 1;
+  repeated pb.SingleLifeSkillInfo lifeSkillInfo = 2;
+}
+message SingleLifeSkillInfo {
+  uint32 skillId = 1;
+  uint32 lv = 2;
+  int64 startStudyTime = 3;
+}
+message PlayerAbility {
+  uint32 abilityId = 1;
+  uint32 level = 2;
+}
+message CharacterLevelInfo {
+  uint32 characterId = 1;
+  uint32 level = 2;
+  uint32 exp = 3;
+}
+message OutfitHideInfo {
+  bool hideOrn = 1;
+  bool hideBraid = 2;
+}
+message Character {
+  uint32 characterId = 1;
+  uint32 level = 2;
+  uint32 maxLevel = 3;
+  uint32 exp = 4;
+  uint32 star = 5;
+  repeated pb.EquipmentPreset equipmentPresets = 6;
+  uint32 inUseEquipmentPresetIndex = 7;
+  repeated pb.OutfitPreset outfitPresets = 8;
+  uint32 inUseOutfitPresetIndex = 9;
+  uint32 gatherWeapon = 10;
+  pb.CharacterAppearance characterAppearance = 11;
+  repeated pb.CharacterSkill characterSkillList = 12;
+  repeated uint32 rewardedAchievementIdLst = 13;
+  bool isUnlockPayment = 14;
+  repeated uint32 rewardIndexLst = 15;
+  uint32 m_p_game_weapon = 16;
+}
+message CharacterSkill {
+  uint32 skillId = 1;
+  uint32 skillLevel = 2;
+}
+message CharacterAchievement {
+  enum AchievementStatus {
+    Doing = 0;
+    CanReward = 1;
+    Rewarded = 2;
+  }
+  uint32 achievementId = 1;
+  uint32 process = 2;
+  pb.CharacterAchievement.AchievementStatus status = 3;
+}
+message EquipmentPreset {
+  uint32 presetIndex = 1;
+  uint32 weapon = 2;
+  repeated pb.ArmorInfo armors = 3;
+  repeated pb.PosterInfo posters = 4;
+}
+message ArmorInfo {
+  pb.EEquipType equipType = 1;
+  uint32 armorId = 2;
+}
+message PosterInfo {
+  enum PosterIndex {
+    PosterIndex_First = 0;
+    PosterIndex_Second = 1;
+    PosterIndex_Third = 2;
+  }
+  pb.PosterInfo.PosterIndex posterIndex = 1;
+  uint32 posterId = 2;
+}
+message OutfitPreset {
+  uint32 presetIndex = 1;
+  uint32 hat = 2;
+  uint32 hair = 3;
+  uint32 clothes = 4;
+  uint32 ornament = 5;
+  uint32 hatDyeSchemeIndex = 6;
+  uint32 hairDyeSchemeIndex = 7;
+  uint32 clothesDyeSchemeIndex = 8;
+  uint32 ornamentDyeSchemeIndex = 9;
+  pb.OutfitHideInfo outfitHideInfo = 10;
+  uint32 pendTop = 11;
+  uint32 pendChest = 12;
+  uint32 pendPelvis = 13;
+  uint32 pendUpFace = 14;
+  uint32 pendDownFace = 15;
+  uint32 pendLeftHand = 16;
+  uint32 pendRightHand = 17;
+  uint32 pendLeftFoot = 18;
+  uint32 pendRightFoot = 19;
+  uint32 pendTopDyeSchemeIndex = 20;
+  uint32 pendChestDyeSchemeIndex = 21;
+  uint32 pendPelvisDyeSchemeIndex = 22;
+  uint32 pendUpFaceDyeSchemeIndex = 23;
+  uint32 pendDownFaceDyeSchemeIndex = 24;
+  uint32 pendLeftHandDyeSchemeIndex = 25;
+  uint32 pendRightHandDyeSchemeIndex = 26;
+  uint32 pendLeftFootDyeSchemeIndex = 27;
+  uint32 pendRightFootDyeSchemeIndex = 28;
+}
+message GachaInfo {
+  uint32 gachaId = 1;
+  uint32 gachaTimes = 2;
+  bool hasFullPick = 3;
+  bool isFree = 4;
+  uint32 optionalUpItem = 5;
+  uint32 optionalValue = 6;
+  uint32 guarantee = 7;
+  uint32 choose_pool_id = 8;
+}
+message AbilityBadgePageInfo {
+  uint32 page = 1;
+  bool isReward = 2;
+  repeated uint32 activeBoxIds = 3;
+}
+message Outfit {
+  uint32 outfitId = 1;
+  repeated pb.OutfitDyeScheme dyeSchemes = 2;
+}
+message UnSaveOutfitDyeScheme {
+  uint32 outfitId = 1;
+  pb.PosColor color = 2;
+  uint32 schemeIndex = 3;
+  uint32 pos = 4;
+  uint32 dyeItemId = 5;
+}
+message OutfitDyeScheme {
+  uint32 schemeIndex = 1;
+  repeated pb.PosColor colors = 2;
+  bool isUnLock = 3;
+}
+message PosColor {
+  uint32 pos = 1;
+  uint32 red = 2;
+  uint32 green = 3;
+  uint32 blue = 4;
+}
+message OutfitDyeParam {
+  uint32 pictureId = 1;
+  repeated double params = 2;
+  float uvy = 3;
+  bool isDye = 4;
+}
+message Team {
+  uint32 char1 = 1;
+  uint32 char2 = 2;
+  uint32 char3 = 3;
+}
+message TeamRedis {
+  int64 saveTime = 1;
+  pb.Vector3 char1Pos = 2;
+  pb.Vector3 char1Rot = 3;
+  pb.Vector3 char2Pos = 4;
+  pb.Vector3 char2Rot = 5;
+  pb.Vector3 char3Pos = 6;
+  pb.Vector3 char3Rot = 7;
+}
+message FishingEventResult {
+  uint32 costEndurance = 1;
+  repeated pb.FishingEventMsg fishingEventList = 2;
+  uint32 costTime = 3;
+  repeated pb.FishData fishInfos = 4;
+}
+message FishingEventMsg {
+  uint32 ID = 1;
+  uint32 index = 2;
+}
+message FishData {
+  uint32 ID = 1;
+  float length = 2;
+}
+message CharacterAppearance {
+  uint32 badge = 1;
+  uint32 umbrellaId = 2;
+  uint32 insectNetInstanceId = 3;
+  uint32 loggingAxeInstanceId = 4;
+  uint32 waterBottleInstanceId = 5;
+  uint32 miningHammerInstanceId = 6;
+  uint32 collectionGlovesInstanceId = 7;
+  uint32 fishingRodInstanceId = 8;
+  uint32 vehicleInstanceId = 9;
+  uint32 shovelInstanceId = 10;
+}
+message PlayerAppearance {
+  uint32 avatar_frame = 1;
+  uint32 pendant = 2;
+}
+message SceneServerData {
+  pb.SceneActionType action_type = 1;
+  pb.ScenePlayer player = 2;
+  uint32 tod_time = 3;
+  pb.ScenePlacedCharacter character = 4;
+}
+message Chapter {
+  uint32 chapterId = 1;
+  repeated uint32 rewardedStoryIds = 2;
+}
+message DailyQuestBonus {
+  uint32 bonus1Left = 1;
+  uint32 bonus2Left = 2;
+  uint32 bonus3Left = 3;
+}
+message RandomQuestBonus {
+  uint32 bonusLeft = 1;
+}
+message Quest {
+  uint32 questId = 1;
+  repeated pb.Condition conditions = 2;
+  pb.QuestStatus status = 3;
+  uint32 completeCount = 4;
+  uint32 bonusTimes = 5;
+  uint32 activityId = 6;
+}
+message Condition {
+  uint32 conditionId = 1;
+  uint32 progress = 2;
+  pb.QuestStatus status = 3;
+}
+message Statistics {
+  pb.EAchieveCondition conditionType = 1;
+  uint32 param1 = 2;
+  uint32 param2 = 3;
+  uint64 count = 4;
+}
+message Achieve {
+  uint32 achieveId = 1;
+  uint64 count = 2;
+}
+message ShopGrid {
+  uint32 id = 1;
+  uint32 gridId = 2;
+  uint32 poolId = 3;
+  uint32 poolIndex = 4;
+  uint32 buyTimes = 5;
+  int64 updateTime = 6;
+}
+message Inscription {
+  uint32 inscriptionId = 1;
+  uint32 level = 2;
+  uint32 weaponInstanceId = 3;
+}
+message CommonParam {
+  pb.CommonParamType param_type = 1;
+  int64 int_value = 2;
+  float float_value = 3;
+  double double_value = 4;
+  bool bool_value = 5;
+  string string_value = 6;
+}
+message NetworkEventData {
+  int64 object_id = 1;
+  uint32 event_id = 2;
+  repeated pb.CommonParam param = 3;
+}
+message SceneData {
+  uint32 sceneId = 1;
+  repeated pb.GatherLimit gatherLimits = 3;
+  repeated pb.DropItem dropItems = 4;
+  repeated pb.AreaData areas = 5;
+  repeated pb.CollectionData collections = 6;
+  repeated pb.ChallengeData challenges = 7;
+  repeated pb.TreasureBoxData treasureBoxes = 8;
+  repeated pb.RiddleData riddles = 9;
+  repeated pb.MonsterData monsters = 10;
+  repeated pb.BattleEncounterData encounterData = 11;
+  repeated pb.FlagBattleData flags = 12;
+  repeated uint32 regionVoices = 13;
+  repeated pb.Bonfire bonFires = 14;
+  pb.SoccerPosition soccerPosition = 15;
+  repeated pb.ChairInfo chairInfoList = 16;
+  repeated pb.DungeonData dungeons = 17;
+  repeated uint32 flagIds = 18;
+  pb.SceneGardenData sceneGardenData = 19;
+  uint32 currentGatherGroupId = 21;
+  repeated pb.ScenePlayer players = 22;
+  uint32 channelId = 23;
+  uint32 tod_time = 24;
+  repeated pb.CampFire campFires = 25;
+  pb.WeatherType weatherType = 26;
+  uint32 channel_label = 27;
+  pb.FireworksInfo fireworksInfo = 28;
+  repeated pb.MPBeacon m_p_beacons = 29;
+  repeated pb.NetworkEventData networkEvent = 30;
+  repeated pb.ScenePlacedCharacter placedCharacters = 31;
+  repeated pb.MoonSpotData moonSpots = 32;
+  repeated pb.RoomDecorData roomDecorList = 33;
+  repeated pb.VehicleInfo vehicleInfoList = 34;
+}
+message ChatChannelData {
+  uint32 channelId = 1;
+  uint32 playerSize = 2;
+}
+message ChatData {
+  uint32 channelId = 1;
+  repeated uint32 playerId = 2;
+}
+message SceneGardenData {
+  map<int64, pb.FurnitureDetailsInfo> gardenFurnitureInfoMap = 1;
+  int64 likesNum = 2;
+  int64 accessPlayerNum = 3;
+  uint32 leftLikeNum = 4;
+  string gardenName = 5;
+  map<int64, uint32> furniturePlayerMap = 6;
+  map<int64, pb.sceneGardenOtherPlayerData> otherPlayerFurnitureInfoMap = 7;
+  uint32 furnitureCurrentPointNum = 8;
+  map<int64, pb.sceneGardenOtherPlayerData> playerHandingFurnitureInfoMap = 9;
+}
+message SceneFurnitureScheme {
+  map<int64, pb.FurnitureDetailsInfo> gardenFurnitureInfoMap = 2;
+  string name = 3;
+  map<uint32, int64> furnitureCount = 4;
+}
+message sceneGardenOtherPlayerData {
+  uint32 playerId = 1;
+  pb.FurnitureDetailsInfo furnitureInfo = 2;
+}
+message SceneGardenPlayerData {
+  repeated pb.FurnitureDetailsInfo gardenFurnitureInfoList = 1;
+}
+message FurnitureDetailsInfo {
+  int64 furnitureId = 1;
+  uint32 furnitureItemId = 2;
+  pb.Vector3 pos = 3;
+  pb.Vector3 rotation = 4;
+  uint32 layerNum = 5;
+}
+message GardenBaseInfo {
+  int64 likesNum = 1;
+  int64 accessNum = 2;
+  uint32 furnitureNum = 3;
+  uint32 furnitureLimitNum = 4;
+  bool isOpen = 5;
+  string password = 6;
+  int64 password_expire_time = 7;
+}
+message GatherLimit {
+  uint32 gatherType = 1;
+  uint32 gatherNum = 2;
+  uint32 gatherLimitNum = 3;
+  uint32 luckyGatherLimitNum = 4;
+}
+message AreaData {
+  enum AreaState {
+    Close = 0;
+    Unlock = 1;
+  }
+  uint32 areaId = 1;
+  pb.AreaData.AreaState areaState = 2;
+  uint32 level = 3;
+  repeated pb.BaseItem items = 4;
+}
+message CollectionData {
+  uint32 type = 1;
+  map<uint32, pb.PBCollectionRewardData> itemMap = 2;
+  uint32 level = 3;
+  uint32 exp = 4;
+}
+message PBCollectionRewardData {
+  uint32 itemId = 1;
+  pb.RewardStatus status = 2;
+}
+message ChallengeData {
+  uint32 challengeId = 1;
+  uint32 useTime = 2;
+  pb.BattleState state = 3;
+  uint32 star = 4;
+}
+message TreasureBoxData {
+  uint32 index = 1;
+  uint32 boxId = 2;
+  pb.ETreasureBoxType type = 3;
+  pb.TreasureBoxState state = 4;
+  int64 nextRefreshTime = 5;
+  repeated pb.ItemDetail rewards = 6;
+}
+message DynamicTreasureBoxData {
+  uint32 index = 1;
+  uint32 boxId = 2;
+  pb.ETreasureBoxType type = 3;
+  repeated pb.ItemDetail rewards = 4;
+  uint32 maxQuality = 5;
+  pb.TreasureBoxState state = 6;
+  int64 openTime = 7;
+}
+message DynamicTreasureBoxBaseData {
+  uint32 boxId = 1;
+  uint32 index = 2;
+  uint32 maxQuality = 3;
+}
+message RiddleData {
+  uint32 riddleId = 1;
+  bool isWin = 2;
+  pb.BattleState state = 3;
+}
+message MonsterData {
+  uint32 monsterId = 1;
+  uint32 monsterIndex = 2;
+}
+message BattleEncounterData {
+  uint32 battleId = 1;
+  pb.BattleState state = 2;
+  uint32 boxId = 3;
+}
+message FlagBattleData {
+  uint32 battleId = 1;
+  pb.BattleState state = 2;
+  pb.EMissionType type = 3;
+  uint32 finishTimes = 4;
+  uint32 voiceId = 5;
+}
+message FlagData {
+  repeated pb.FlagBattleData flagBattleDataLst = 1;
+}
+message Bonfire {
+  int32 id = 1;
+  pb.Vector3 position = 2;
+  pb.Vector3 rotation = 3;
+  int64 playerId = 4;
+}
+message SyncSoccerData {
+  pb.Vector3 position = 1;
+  pb.Vector3 velocity = 2;
+  pb.Vector3 eulerAngles = 3;
+  pb.Vector3 angularVelocity = 4;
+}
+message SoccerPosition {
+  pb.Vector3 position = 1;
+}
+message ChairInfo {
+  int64 chairId = 1;
+  int32 seatId = 2;
+  uint32 playerId = 3;
+}
+message VehicleInfo {
+  uint32 chairId = 1;
+  map<int32, uint32> seatInfo = 2;
+}
+message DungeonData {
+  uint32 dungeonId = 1;
+  bool allTaskFinished = 2;
+  uint32 enterTimes = 3;
+  uint32 exitTimes = 4;
+  uint32 finishTimes = 5;
+  repeated uint32 coins = 6;
+  int64 lastFinishTime = 7;
+  pb.RewardStatus taskFinishReward = 8;
+  pb.RewardStatus starReward = 9;
+  repeated uint32 monsters = 10;
+  uint32 char1 = 11;
+  uint32 char2 = 12;
+  uint32 char3 = 13;
+  int64 lastEnterTime = 14;
+  pb.Vector3 pos = 15;
+  pb.Vector3 rot = 16;
+  bool isOpenSecretBox = 17;
+}
+message TaskData {
+  int32 index = 1;
+  int32 process = 2;
+}
+message ScenePlayer {
+  uint32 player_id = 1;
+  string player_name = 2;
+  pb.SceneTeam team = 3;
+  pb.ScenePlayerActionStatus status = 4;
+  repeated uint32 foodBuffIds = 5;
+  repeated uint32 globalBuffIds = 6;
+  bool isBirthday = 7;
+  uint32 avatar_frame = 8;
+  uint32 musical_item_id = 9;
+  pb.MusicalItemSource musical_item_source = 10;
+  int64 musical_item_instance_id = 11;
+  uint32 abyss_rank = 12;
+  pb.PlayingMusicNote playing_music_note = 13;
+  uint32 phone_case = 14;
+  uint32 vehicle_item_id = 15;
+  uint32 pet_item_id = 16;
+  string pet_name = 17;
+}
+message PlayingMusicNote {
+  uint32 music_note_id = 1;
+  int64 start_time = 2;
+}
+message ScenePlayerActionStatus {
+  uint32 id = 1;
+  int64 value1 = 2;
+  int64 value2 = 3;
+  int64 value3 = 4;
+  int64 value4 = 5;
+  int64 value5 = 6;
+  int64 value6 = 7;
+  int64 value7 = 8;
+  int64 value8 = 9;
+}
+message SceneTeam {
+  pb.SceneCharacter char1 = 1;
+  pb.SceneCharacter char2 = 2;
+  pb.SceneCharacter char3 = 3;
+}
+message SceneCharacter {
+  uint32 char_id = 1;
+  pb.SceneCharacterOutfitPreset outfitPreset = 2;
+  uint32 gatherWeapon = 3;
+  pb.CharacterAppearance characterAppearance = 4;
+  pb.Vector3 Pos = 5;
+  pb.Vector3 Rot = 6;
+  uint32 weaponId = 7;
+  uint32 weaponStar = 8;
+  uint32 charLv = 9;
+  uint32 charStar = 10;
+  bool isDead = 11;
+  uint32 charBreakLv = 12;
+  repeated pb.BaseArmor armors = 13;
+  uint32 inscriptionId = 14;
+  uint32 inscriptionLv = 15;
+  repeated pb.BasePoster posters = 16;
+  uint32 m_p_game_weapon = 17;
+}
+message ScenePlacedCharacter {
+  uint32 character_id = 1;
+  pb.SceneCharacterOutfitPreset outfitPreset = 2;
+  int64 furniture_id = 3;
+  int32 seat_id = 4;
+}
+message BaseArmor {
+  uint32 armorId = 1;
+  uint32 armorStar = 2;
+}
+message BasePoster {
+  uint32 posterId = 1;
+  uint32 posterStar = 2;
+}
+message SceneCharacterOutfitPreset {
+  uint32 hat = 1;
+  uint32 hair = 2;
+  uint32 clothes = 3;
+  uint32 ornament = 4;
+  pb.OutfitDyeScheme hatDyeScheme = 5;
+  pb.OutfitDyeScheme hairDyeScheme = 6;
+  pb.OutfitDyeScheme clothDyeScheme = 7;
+  pb.OutfitDyeScheme ornDyeScheme = 8;
+  pb.OutfitHideInfo hideInfo = 9;
+  uint32 pendTop = 11;
+  uint32 pendChest = 12;
+  uint32 pendPelvis = 13;
+  uint32 pendUpFace = 14;
+  uint32 pendDownFace = 15;
+  uint32 pendLeftHand = 16;
+  uint32 pendRightHand = 17;
+  uint32 pendLeftFoot = 18;
+  uint32 pendRightFoot = 19;
+  pb.OutfitDyeScheme pendTopDyeScheme = 20;
+  pb.OutfitDyeScheme pendChestDyeScheme = 21;
+  pb.OutfitDyeScheme pendPelvisDyeScheme = 22;
+  pb.OutfitDyeScheme pendUpFaceDyeScheme = 23;
+  pb.OutfitDyeScheme pendDownFaceDyeScheme = 24;
+  pb.OutfitDyeScheme pendLeftHandDyeScheme = 25;
+  pb.OutfitDyeScheme pendRightHandDyeScheme = 26;
+  pb.OutfitDyeScheme pendLeftFootDyeScheme = 27;
+  pb.OutfitDyeScheme pendRightFootDyeScheme = 28;
+}
+message PlayerFlagData {
+  uint32 battleId = 1;
+  pb.BattleState state = 2;
+  uint32 treasureBoxId = 3;
+  uint32 treasureBoxIndex = 4;
+  pb.EMissionType battleType = 5;
+  uint32 openTimes = 6;
+  uint32 finishTimes = 7;
+}
+message PlayerFlagBattleData {
+  uint32 battleId = 1;
+  pb.BattleState state = 2;
+  uint32 treasureBoxId = 3;
+  uint32 treasureBoxIndex = 4;
+  pb.EMissionType battleType = 5;
+  uint32 openTimes = 6;
+  uint32 finishTimes = 7;
+  uint32 voiceId = 8;
+}
+message RollNotice {
+  uint32 notice_id = 1;
+  string context = 2;
+  uint32 roll_interval = 3;
+  int64 start_time = 4;
+  int64 end_time = 5;
+  int64 next_time = 6;
+  pb.LanguageContext global_context = 7;
+}
+message PlayerShopInfo {
+  uint32 shopId = 1;
+  repeated pb.ShopGrid grids = 2;
+}
+message PlayerBriefInfo {
+  uint32 playerId = 1;
+  string nickName = 2;
+  uint32 level = 3;
+  uint32 head = 4;
+  int64 lastLoginTime = 5;
+  uint32 teamLeaderBadge = 6;
+  pb.ESexType sex = 7;
+  uint32 phoneBackground = 8;
+  bool isOnline = 9;
+  string sign = 10;
+  string guildName = 11;
+  uint32 characterId = 12;
+  uint32 createTime = 13;
+  uint32 playerLabel = 14;
+  int64 gardenLikeNum = 15;
+  int32 account_type = 16;
+  string birthday = 17;
+  uint32 hide_value = 18;
+  uint32 avatar_frame = 19;
+  uint32 phone_case = 20;
+}
+message PlayerExploreInfo {
+  uint32 exploreId = 1;
+  uint32 times = 2;
+  int64 startTime = 3;
+  bool isQuickFinish = 4;
+  repeated uint32 collectItemId = 6;
+  bool collectReward = 7;
+}
+message DropItem {
+  uint32 index = 1;
+  repeated pb.ItemDetail items = 2;
+}
+message OneGroupAchieveInfo {
+  uint32 groupId = 1;
+  repeated uint32 rewardedAchieveIdLst = 2;
+  repeated pb.Achieve achieveLst = 3;
+  repeated pb.FinishAchieveInfo finishAchieveLst = 4;
+}
+message FinishAchieveInfo {
+  uint32 achieveId = 1;
+  int64 finishTime = 2;
+}
+message ManualFlag {
+  uint32 flagId = 1;
+  pb.RewardStatus status = 2;
+  optional uint32 dungeonTaskFinishNum = 3;
+}
+message NoticeData {
+  enum NoticeType {
+    System = 0;
+    Activity = 1;
+    Image = 2;
+    Carousel = 3;
+  }
+  int32 noticeId = 1;
+  pb.NoticeData.NoticeType type = 2;
+  bool isMaintenance = 3;
+  string title = 4;
+  repeated pb.NoticeContent content = 5;
+  int64 startTime = 6;
+  int64 endTime = 7;
+  string imageUrl = 8;
+  bool isPopup = 9;
+  int64 lastUpdTime = 10;
+  int32 orderId = 11;
+  bool priority = 12;
+  string channel = 13;
+  bool beforeLoginPopup = 14;
+  bool afterLoginPopup = 15;
+  pb.JumpType jumpType = 16;
+  string jumpValue = 17;
+  int32 oriNoticeId = 18;
+  repeated pb.NoticeCondition condition = 19;
+  int32 imageHeight = 20;
+  bool refreshRedPoint = 21;
+  bool todayOnceNotice = 22;
+  uint32 language = 23;
+}
+message NoticeContent {
+  int32 orderId = 1;
+  string text = 2;
+  string imageUrl = 3;
+  string title = 4;
+  string subtitle = 5;
+  int32 imageHeight = 6;
+  pb.JumpType jumpType = 7;
+  string jumpValue = 8;
+}
+message NoticeCondition {
+  int32 type = 1;
+  int32 param1 = 2;
+  int32 param2 = 3;
+}
+message SceneProcess {
+  uint32 sceneId = 1;
+  uint32 process = 2;
+}
+message PlayerBuff {
+  enum BuffSystemType {
+    None = 0;
+    BuffSystemType_GLOBAL = 1;
+    BuffSystemType_LIFE = 2;
+  }
+  pb.PlayerBuff.BuffSystemType systemType = 1;
+  repeated pb.Buff buffLst = 2;
+}
+message Buff {
+  uint32 buffId = 1;
+  int64 endTime = 2;
+}
+message CampFire {
+  pb.Vector3 pos = 1;
+  pb.Vector3 rot = 2;
+  uint32 id = 3;
+  uint32 playerId = 4;
+  int64 placeTime = 5;
+  uint32 actionId = 6;
+}
+message ChatMsgData {
+  uint32 playerId = 1;
+  uint32 head = 2;
+  uint32 badge = 3;
+  string name = 4;
+  string text = 5;
+  uint32 expression = 6;
+  int64 sendTime = 7;
+  uint32 avatarFrame = 8;
+}
+message IntervalInfo {
+  uint32 intervalId = 1;
+  int64 finishTime = 2;
+  uint32 playerId = 3;
+  int64 createTime = 4;
+  repeated pb.FriendIntervalInfo member = 6;
+}
+message FriendIntervalInfo {
+  uint32 playerId = 1;
+  string nickName = 2;
+  uint32 head = 3;
+  int64 joinTime = 4;
+  bool isReward = 5;
+}
+message PlayerActivitySignIn {
+  uint32 activityId = 1;
+  int64 openTime = 2;
+  int64 closeTime = 3;
+  uint32 loginDay = 4;
+  uint32 rewardId = 5;
+  int64 initTime = 6;
+}
+message PlayerActivityQuest {
+  uint32 activityId = 1;
+  int64 openTime = 2;
+  int64 closeTime = 3;
+  uint32 progressReward = 4;
+  repeated uint32 rewardAchieve = 5;
+  uint32 openDay = 6;
+}
+message PlayerGachaRecord {
+  uint32 gachaId = 1;
+  uint32 itemId = 2;
+  int64 gachaTime = 3;
+}
+message PlayerActivityRegular {
+  uint32 activityId = 1;
+  int64 openTime = 2;
+  int64 closeTime = 3;
+  repeated pb.ActivityRegularAchieve dailyAchieve = 4;
+  repeated pb.ActivityRegularAchieve poolAchieve = 5;
+  repeated pb.ActivityRegularAchieve dailyRefreshAchieve = 6;
+  bool param1 = 7;
+}
+message ActivityRegularAchieve {
+  uint32 achieveId = 1;
+  bool isReward = 2;
+}
+message PlayerClapData {
+  uint32 playerId = 1;
+  pb.Vector3 pos = 2;
+  pb.Vector3 forward = 3;
+}
+message ThrowDiceResult {
+  enum DiceWonResult {
+    Loss = 0;
+    Win = 1;
+    Draw = 2;
+  }
+  uint32 diceId = 1;
+  uint32 pips = 2;
+  string playerName = 3;
+  pb.ThrowDiceResult.DiceWonResult wonResult = 4;
+  uint32 playerId = 5;
+}
+message ThrowDiceResultListByZone {
+  repeated pb.ThrowDiceResult resultLst = 1;
+}
+message PrivateChatOffline {
+  uint32 playerId = 1;
+  string name = 2;
+  uint32 head = 3;
+  bool isNewMsg = 4;
+  uint32 avatarFrame = 5;
+}
+message ForbiddenInfo {
+  pb.ForbiddenType forbiddenType = 1;
+  int64 endTime = 2;
+  string reason = 3;
+}
+message SystemNoticeData {
+  uint32 noticeId = 1;
+  repeated string param = 2;
+  uint32 sceneId = 3;
+  uint32 channelId = 4;
+}
+message PlayerDropRateInfo {
+  uint32 killDropRate = 1;
+  uint32 treasureDropRate = 2;
+}
+message SavePrivateRecordData {
+  string private_key = 1;
+  uint32 makePlayerId = 2;
+  bytes records = 3;
+}
+message SavePrivateStatusData {
+  string key = 1;
+  uint32 makePlayerId = 2;
+  bytes records = 3;
+}
+message PrivateStatusList {
+  repeated pb.PrivateStatusData data = 1;
+}
+message PrivateStatusData {
+  uint32 playerId = 1;
+  bool isNew = 2;
+}
+message PrivateMsgChange {
+  string private_chat_key = 1;
+  string private_status_key = 2;
+  uint32 markPlayerId = 3;
+  uint32 targetPlayerId = 4;
+}
+message AbyssInfo {
+  map<uint32, pb.AbyssSeasonInfo> seasonInfo = 1;
+  uint32 playerId = 2;
+}
+message AbyssSeasonInfo {
+  uint32 seasonId = 1;
+  map<uint32, pb.AbyssDungeonInfo> dungeonInfo = 2;
+  map<uint32, pb.AbyssDungeonInfo> dungeonInfo_50 = 3;
+  map<uint32, pb.AbyssDungeonInfo> dungeonInfo_0 = 4;
+}
+message AbyssDungeonInfo {
+  uint32 dungeonId = 1;
+  repeated pb.Team abyssTeams = 2;
+  uint32 finishTime = 3;
+  bool isChallenge = 4;
+}
+message PayDeliverData {
+  uint32 seq = 1;
+  string orderId = 2;
+  string sourceOrderId = 3;
+  uint32 amount = 4;
+  string goods_id = 5;
+  string pay_time = 6;
+  uint32 source = 7;
+  uint32 create_time = 8;
+  string pay_type = 9;
+  string currency_type = 10;
+  string currency_amount = 11;
+}
+message FireworksInfo {
+  uint32 fireworksId = 1;
+  uint32 fireworksDurationTime = 2;
+  int64 fireworksStartTime = 3;
+}
+message QuestionnaireGMData {
+  uint32 gm_id = 1;
+  string questionnaire_id = 2;
+  string questionnaire_name = 3;
+  string questionnaire_url = 4;
+  int64 start_time = 5;
+  int64 end_time = 6;
+  pb.MailData result_mail = 7;
+  pb.MailData enter_mail = 8;
+  pb.QuestionnaireTrigger triggers = 9;
+  repeated uint32 target_ids = 10;
+  repeated uint32 available_channels = 11;
+  map<uint32, string> global_name = 20;
+  map<uint32, pb.QuestionnaireGlobalContentData> notice_mail_content = 21;
+  map<uint32, pb.QuestionnaireGlobalContentData> reward_mail_content = 22;
+}
+message QuestionnaireTrigger {
+  uint32 player_lv = 1;
+  uint32 register_day = 2;
+  uint32 quest_id = 3;
+}
+message QuestionnaireBrief {
+  uint32 id = 1;
+  string name = 2;
+  string url = 3;
+  int64 start_time = 4;
+  int64 end_time = 5;
+}
+message QuestionnaireCmdData {
+  uint32 id = 1;
+  bool is_valid = 2;
+}
+message QuestionnaireGlobalContentData {
+  string title = 1;
+  string content = 2;
+  string sender = 3;
+}
+message PlayerQuestionnaireInfo {
+  repeated pb.QuestionnaireBrief to_fill = 1;
+}
+message PlayerDailyTask {
+  map<uint32, uint32> tasks = 1;
+  uint32 today_converted = 2;
+  uint32 exchange_times_left = 3;
+}
+message QuestionnaireMeta {
+  uint32 gm_id = 1;
+  uint32 player_id = 2;
+}
+message IntervalMember {
+  uint32 player_id = 1;
+  int64 join_time = 2;
+  bool is_reward = 3;
+}
+message IntervalCacheInfo {
+  uint32 player_id = 1;
+  uint32 interval_id = 2;
+  int64 finish_time = 3;
+  int64 interval_expire_time = 4;
+  int64 create_time = 5;
+  bool is_finish = 6;
+  map<uint32, pb.IntervalMember> members = 7;
+}
+message RedemptionCodeData {
+  string code = 1;
+  pb.RedemptionCodeType type = 2;
+  uint32 use_frequency = 3;
+  int64 start_time = 4;
+  int64 end_time = 5;
+  repeated uint32 channels = 6;
+  repeated pb.BaseItem items = 7;
+}
+message PlayerActivityBattlePass {
+  uint32 activityId = 1;
+  int64 openTime = 2;
+  int64 closeTime = 3;
+  repeated uint32 dailyAchieveRewardLst = 4;
+  repeated uint32 weeklyAchieveRewardLst = 5;
+  repeated uint32 seasonAchieveRewardLst = 6;
+  uint32 level = 7;
+  uint32 totalExp = 8;
+  uint32 weekExp = 9;
+  bool hasBuy = 10;
+  repeated uint32 freeLvRewardLst = 11;
+  repeated uint32 paymentLvRewardLst = 12;
+  uint32 currentExp = 13;
+}
+message PlayerActivityGift {
+  uint32 activityId = 1;
+  int64 openTime = 2;
+  int64 closeTime = 3;
+  repeated uint32 rewardedIdLst = 4;
+  bool hasBuy = 5;
+}
+message PlayerGardenLikeRecord {
+  uint32 playerId = 1;
+  int64 time = 3;
+}
+message ReportData {
+  pb.ReportStatus report_status = 1;
+  pb.ChatChannelType chat_channel = 2;
+  uint32 reported_player_id = 3;
+  string reported_role_name = 4;
+  int32 reported_role_level = 5;
+  string reason = 6;
+  string chat_content = 7;
+  uint32 player_id = 8;
+  string player_name = 9;
+  uint32 player_level = 10;
+  int64 create_time = 11;
+  int64 code = 12;
+}
+message PlayerActivityBase {
+  uint32 activity_id = 1;
+  int64 open_time = 2;
+  int64 close_time = 3;
+  pb.EActivityType activity_type = 4;
+}
+message PlayerActivityInviteData {
+  pb.PlayerActivityBase base = 1;
+  uint32 invited = 2;
+  repeated uint32 rewarded_tasks = 3;
+  uint32 invited_total = 4;
+  string invite_code = 5;
+  bool been_invited = 6;
+}
+message TaskCmdData {
+  pb.EAchieveCondition condition_type = 1;
+  repeated uint32 params = 2;
+  uint64 delta = 3;
+}
+message PayRebateData {
+  uint32 point = 1;
+  uint32 moonCard = 2;
+  uint32 battlePass = 3;
+  string characterBp = 4;
+  string specialGoodsId = 5;
+  string specialItems = 6;
+  string cbtGiftItems = 7;
+  string CbtGiftWeapon = 8;
+}
+message GameCardBuff {
+  uint32 group_id = 1;
+  repeated pb.GameCardBuffItem items = 2;
+}
+message GameCardBuffItem {
+  uint32 id = 1;
+  pb.ECampType target = 2;
+  pb.EEmergeWhen emerge_when = 3;
+}
+message GameCardRoundInfo {
+  uint32 group_id = 1;
+  uint32 final_round = 2;
+  repeated uint32 branch_rounds = 3;
+  uint32 buff_group = 4;
+  repeated uint32 elite_rounds = 5;
+  uint32 enemy_group = 6;
+  uint32 elite_group = 7;
+  uint32 boss_group = 8;
+  repeated uint32 terrains = 9;
+}
+message GameCardQualityInfo {
+  pb.EQuality quality = 1;
+  uint32 score_bonus_rate = 2;
+  uint32 reward_bonus_rate = 3;
+  uint32 card_bonus_rate = 4;
+  uint32 reward_id = 5;
+}
+message GameCardInfo {
+  uint32 id = 1;
+  uint32 group_id = 2;
+  uint32 level = 3;
+  uint32 score_min = 4;
+  uint32 score_max = 5;
+  uint32 rate_of_reward_min = 6;
+  uint32 rate_of_reward_max = 7;
+  uint32 rate_of_card_reward = 8;
+  pb.GameCardBuff buff_info = 9;
+  pb.GameCardRoundInfo round_info = 10;
+  int64 time_limit_sec = 11;
+  pb.GameCardQualityInfo quality_info = 12;
+  int64 obtain_at = 13;
+  uint32 owner_id = 14;
+}
+message MPBeacon {
+  uint32 owner_id = 1;
+  string name = 2;
+  pb.MPBeaconStatus status = 3;
+  pb.Vector3 position = 4;
+  pb.Vector3 rotation = 5;
+  uint32 channel_label = 6;
+  uint32 scene_id = 7;
+  pb.MPGameModeInfo mode_info = 8;
+  map<uint32, bool> members = 9;
+  bool can_start = 10;
+}
+message MPTeamBase {
+  pb.MPGameModeInfo mode_info = 1;
+  uint32 team_id = 2;
+  string team_name = 3;
+  uint32 current_members = 4;
+  uint32 max_members = 5;
+}
+message MPTeamMembers {
+  uint32 leader = 1;
+  map<uint32, pb.MPPlayer> members = 2;
+}
+message MPTeamDetail {
+  pb.MPTeamBase base = 1;
+  pb.MPTeamMembers members = 2;
+}
+message MPPlayerInfo {
+  pb.Character character = 1;
+}
+message InternalMPPlayer {
+  uint32 player_id = 1;
+  uint32 game_server_id = 2;
+  uint32 gate_server_id = 3;
+  pb.MPPlayerInfo player_info = 4;
+  pb.PlayerBriefInfo player_brief = 5;
+}
+message MPPlayer {
+  uint32 player_id = 1;
+  pb.MPPlayerInfo player_info = 2;
+  pb.PlayerBriefInfo player_brief = 3;
+}
+message MPTeamCreateParams {
+  string team_name = 1;
+  pb.MPGameModeInfo game_mode_info = 2;
+}
+message MPGameModeInfo {
+  uint32 mode_id = 1;
+  uint32 sub_mode_id = 2;
+  pb.EMultiplayerPlayMode game_mode = 3;
+  uint32 gameplay_id = 4;
+}
+message CloseModuleData {
+  uint32 module_id = 1;
+  repeated uint32 event_id = 2;
+}
+message WeatherForecastInfo {
+  uint32 tod_hour = 1;
+  int32 weather_type = 2;
+}
+message PhotoDetailInfo {
+  int64 code = 1;
+  uint32 player_label = 2;
+  uint32 player_id = 4;
+  string player_name = 5;
+  uint32 head = 6;
+  int64 upload_time = 7;
+  uint32 weaponId = 8;
+  repeated pb.PhotoShareOutfit outfits = 9;
+  uint32 badge = 10;
+  string title = 11;
+  string tag1 = 12;
+  string tag2 = 13;
+  uint32 likes_total = 14;
+  uint32 favorite_total = 15;
+  uint32 dye_download_total = 16;
+  bool likes_status = 17;
+  bool favorite_status = 18;
+  pb.CameraParameters camera_param = 19;
+  uint32 character_id = 20;
+  repeated uint32 outfit_ids = 21;
+  string tag3 = 22;
+  uint32 activity_id = 23;
+  pb.AuditStatus status = 30;
+}
+message PhotoPreviewInfo {
+  int64 code = 1;
+  uint32 player_label = 2;
+  uint32 player_id = 3;
+  string player_name = 4;
+  uint32 head = 5;
+  string title = 6;
+  uint32 likes_total = 7;
+  bool likes_status = 8;
+  uint32 activity_id = 9;
+  pb.AuditStatus status = 30;
+}
+message PhotoShareOutfit {
+  uint32 outfitId = 1;
+  pb.OutfitDyeScheme dyeSchemes = 2;
+}
+message CameraParameters {
+  pb.CameraColor Color = 1;
+  pb.CameraWhiteBalance WhiteBalance = 2;
+  pb.CameraDepthOfField DepthOfField = 3;
+  pb.CameraFlood Flood = 4;
+  pb.CameraChromaticAberration ChromaticAberration = 5;
+  pb.CameraVignetting Vignetting = 6;
+  pb.CameraFilmGrain FilmGrain = 7;
+  pb.CameraPerspectiveDistortion PerspectiveDistortion = 8;
+  pb.CameraProjectingCamera ProjectingCamera = 9;
+  pb.CameraCommon Lift = 10;
+  pb.CameraCommon Gamma = 11;
+  pb.CameraCommon ShaderColor = 12;
+  pb.CameraCommon ShaderMiddleColor = 13;
+  pb.CameraCommon ShaderHighLight = 14;
+  uint32 CameraVersion = 15;
+}
+message CameraColor {
+  bool IsOpen = 1;
+  float Exposure = 2;
+  float Contrast = 3;
+  float ColourToneShifting = 4;
+  float Saturation = 5;
+}
+message CameraWhiteBalance {
+  bool IsOpen = 1;
+  float Temperature = 2;
+  float Tone = 3;
+}
+message CameraDepthOfField {
+  bool IsOpen = 1;
+  float Distance = 2;
+  float FocalLength = 3;
+  float Aperture = 4;
+  float NumberOfBlades = 5;
+  float BladeCurvature = 6;
+  float RotatingBladeShutter = 7;
+}
+message CameraFlood {
+  bool IsOpen = 1;
+  float Value = 2;
+  float Streng = 3;
+  float R = 4;
+  float G = 5;
+  float B = 6;
+}
+message CameraChromaticAberration {
+  bool IsOpen = 1;
+  float Streng = 2;
+}
+message CameraVignetting {
+  bool IsOpen = 1;
+  float Streng = 2;
+  float Smoothness = 3;
+}
+message CameraFilmGrain {
+  bool IsOpen = 1;
+  float Streng = 2;
+  float Flicker = 3;
+}
+message CameraPerspectiveDistortion {
+  bool IsOpen = 1;
+  float Streng = 2;
+  float X = 3;
+  float Y = 4;
+  float Scale = 5;
+}
+message CameraProjectingCamera {
+  bool IsOpen = 1;
+  float Distance = 2;
+  float Fitter = 3;
+}
+message CameraCommon {
+  bool IsOpen = 1;
+  float G = 2;
+  float R = 3;
+  float B = 4;
+}
+message PhotoDetailESInfo {
+  int64 code = 1;
+  uint32 player_label = 2;
+  uint32 player_id = 4;
+  string player_name = 5;
+  uint32 head = 6;
+  int64 upload_time = 7;
+  uint32 weaponId = 8;
+  repeated pb.PhotoShareOutfit outfits = 9;
+  uint32 badge = 10;
+  string title = 11;
+  string tag1 = 12;
+  string tag2 = 13;
+  uint32 likes_total = 14;
+  string camera_param = 19;
+  uint32 character_id = 20;
+  uint32 score = 21;
+  string tag3 = 22;
+  uint32 activity_id = 24;
+}
+message PlayerBlessTreeInfo {
+  repeated uint32 treeIds = 1;
+}
+message GMRecommendChannel {
+  uint32 index = 1;
+  uint32 channel_id = 2;
+  string image_url = 3;
+  string image_id = 4;
+  string title = 5;
+}
+message TurntableItem {
+  uint32 index = 1;
+  uint32 itemId = 2;
+  uint32 itemNum = 3;
+  int32 remainCount = 4;
+  bool isSpecial = 5;
+}
+message PlayerActivityTurntable {
+  uint32 activityId = 1;
+  int64 openTime = 2;
+  int64 closeTime = 3;
+  map<uint32, pb.TurntableItem> items = 4;
+  bool singleDiscount = 5;
+}
+message TurntableDrawRecord {
+  uint32 index = 1;
+  uint32 itemId = 2;
+  uint32 itemNum = 3;
+  int64 drawTime = 4;
+}
+message AbyssAllRankRecord {
+  uint32 SeasonId = 1;
+  repeated pb.AbyssAllRankInfo ranks = 2;
+  pb.AbyssRankType bonus_type = 3;
+}
+message AbyssAllRankInfo {
+  uint32 player_id = 1;
+  uint32 totalTime = 2;
+  pb.AbyssRankType bonus_type = 4;
+}
+message ScenePlacedCharacterInfo {
+  uint32 character_id = 1;
+  int64 furniture_id = 2;
+  int32 seat_id = 3;
+}
+message WishListInfo {
+  uint32 shopId = 1;
+  uint32 gridId = 2;
+  uint32 poolId = 3;
+  int64 createTime = 4;
+}
+message BossRushInfo {
+  uint32 season_id = 1;
+  uint64 best_total_score = 2;
+  uint32 total_rank_ratio = 3;
+  int32 current_stage_index = 4;
+  repeated pb.BossRushStageInfo stage_infos = 5;
+  int64 start_time = 6;
+  int64 end_time = 7;
+  int64 show_rank_time = 8;
+  int64 challenge_end_time = 9;
+  repeated uint32 used_characters = 10;
+}
+message MonsterInfo {
+  uint32 monster_id = 1;
+  uint32 remain_hp = 2;
+}
+message BossRushStageInfo {
+  int32 stage_index = 1;
+  uint64 best_score = 2;
+  bool is_passed = 3;
+  uint64 total_score = 4;
+  uint64 total_damage_hp = 5;
+  int64 total_consume_time = 6;
+  repeated pb.BossRushSeasonDetailStageTeam teams = 7;
+}
+message BossRushStageBattleInfo {
+  int32 stage_index = 1;
+  uint32 trigger_id = 2;
+  repeated pb.MonsterInfo monsters = 3;
+}
+message PlayerChallengeCache {
+  uint32 player_id = 1;
+  repeated pb.PlayerChallengeInfo challenge_infos = 2;
+}
+message PlayerChallengeInfo {
+  uint32 challenge_id = 1;
+  uint32 use_time = 2;
+}
+message BossRushSeasonDetailStageTeam {
+  repeated uint32 characters = 1;
+  uint64 total_damage_hp = 2;
+  int64 total_consume_time = 3;
+}
+message BossRushRankInfo {
+  uint32 player_id = 1;
+  uint64 score = 2;
+  uint32 rank_ratio = 3;
+}
+message AbyssRankPlayerIds {
+  repeated uint32 player_ids = 1;
+}
+message RestaurantGameGridInfo {
+  uint32 index = 1;
+  uint32 food = 2;
+  bool isUnLock = 3;
+}
+message RestaurantGameDungeonInfo {
+  uint32 dungeon_id = 1;
+  repeated pb.RestaurantGameCustomerInfo customer_list = 2;
+  repeated pb.RestaurantGameQuestInfo question_info = 3;
+}
+message RestaurantGameCustomerInfo {
+  uint32 customer_index = 1;
+  uint32 food = 2;
+  bool status = 3;
+}
+message RestaurantGameQuestInfo {
+  uint32 quest_id = 1;
+  pb.QuestStatus status = 2;
+}
+message MoonQuestData {
+  uint32 id = 1;
+  uint32 acquireIndex = 2;
+  uint32 acquireTime = 3;
+}
+message MoonSpotData {
+  uint32 id = 1;
+  uint32 instance_id = 2;
+  pb.Vector3 pos = 3;
+  pb.Vector3 rot = 4;
+  int64 create_time = 5;
+}
+message SceneQuestData {
+  pb.EAchieveCondition condition_type = 1;
+  uint32 condition_id = 2;
+  uint32 progress = 3;
+}
+message RoomDecorData {
+  uint32 decor_id = 1;
+  uint32 pos_id = 2;
+  uint32 item_id = 3;
+}
+message GemDuelCharacterData {
+  uint32 id = 1;
+  uint32 level = 2;
+  uint32 star = 3;
+  repeated uint32 unlock_passive_skill_index = 4;
+  bool is_favorite = 5;
+}
+message LanguageContext {
+  map<uint32, string> context = 1;
+  pb.RollNoticeType text_type = 2;
+}
+message GemDuelItem {
+  uint32 item_id = 1;
+  int64 num = 2;
+}
+message GemDuelTeamData {
+  uint32 team_id = 1;
+  string team_name = 2;
+  repeated uint32 characters = 3;
+  repeated uint32 ai_priority_index = 4;
+  bool priority_skill = 5;
+}
+message GemDuelArenaData {
+  uint32 day_challenge_num = 1;
+  uint32 day_refresh_num = 2;
+  repeated pb.GemDuelArenaRivalData rivals = 3;
+  uint32 total_point = 4;
+  uint32 max_fighting_power = 5;
+  uint32 total_game = 6;
+  uint32 win_game = 7;
+}
+message GemDuelArenaPlayerData {
+  uint32 player_id = 1;
+  string name = 2;
+  repeated pb.GemDuelCharacterData characters = 3;
+  uint32 fighting_power = 4;
+  uint32 win_score = 5;
+  uint32 badge_id = 6;
+}
+message GemDuelArenaRivalData {
+  uint32 stage = 1;
+  pb.GemDuelArenaPlayerData player = 2;
+  pb.GemDuelItem reward = 3;
+}
+message GemDuelArenaRankItem {
+  pb.GemDuelArenaRankPlayerInfo info = 1;
+  int64 record_time = 2;
+}
+message GemDuelArenaRankPlayerInfo {
+  uint32 player_id = 1;
+  string name = 2;
+  uint32 fighting_power = 3;
+  uint32 head_id = 4;
+  uint32 badge_id = 5;
+  uint32 total_game = 6;
+  uint32 win_game = 7;
+  uint32 total_point = 8;
+}
+message GemDuelPlayerGachaRecord {
+  uint32 gachaId = 1;
+  uint32 itemId = 2;
+  int64 gachaTime = 3;
+}
+message GemDuelQuest {
+  uint32 questId = 1;
+  repeated pb.GemDuelCondition conditions = 2;
+  pb.GemDuelQuestStatus status = 3;
+  uint32 activityId = 4;
+  uint32 completeCount = 5;
+}
+message GemDuelCondition {
+  uint32 conditionId = 1;
+  uint32 progress = 2;
+  pb.GemDuelQuestStatus status = 3;
+}
+message GemDuelStatistics {
+  pb.EGemDuelAchieveCondition conditionType = 1;
+  uint32 param1 = 2;
+  uint32 param2 = 3;
+  uint32 param3 = 4;
+  uint64 count = 5;
+}
+message GemDuelDailyQuestBonus {
+  uint32 liveness = 1;
+  repeated uint32 rewardLiveness = 2;
+  int64 updateTime = 3;
+}
+message GemDuelGrowthFund {
+  uint32 growth_fund_id = 1;
+  repeated uint32 free_lv_reward_lst = 2;
+  repeated uint32 pay_lv_reward_lst = 3;
+  bool has_buy = 4;
+}
+message GemDuelBattlePass {
+  uint32 battle_pass_id = 1;
+  int64 open_time = 2;
+  int64 close_time = 3;
+  uint32 level = 4;
+  uint32 total_exp = 5;
+  bool has_buy = 6;
+  repeated uint32 free_lv_reward_lst = 7;
+  repeated uint32 pay_lv_reward_lst = 8;
+}
+message PlayerActivitySandbag {
+  uint32 activity_id = 1;
+  repeated pb.PlayerActivityDailyBox box_list = 2;
+  repeated uint32 server_reward = 3;
+  int64 server_progress = 4;
+}
+message PlayerActivityDailyBox {
+  uint32 seq = 1;
+  uint32 item_id = 2;
+  int64 num = 3;
+  bool use_status = 4;
+  int64 create_time = 5;
+  uint32 pool_id = 6;
+}
+message PlayerActivityRecallData {
+  pb.PlayerActivityBase base = 1;
+  repeated uint32 rewarded_tasks = 3;
+  string invite_code = 5;
+  bool been_invited = 6;
+}
+message PlayerActivityKoiData {
+  pb.PlayerActivityBase base = 1;
+  repeated string codes = 2;
+  uint32 totalPaymentNum = 3;
+  uint32 nextRewardPaymentNum = 4;
+}
+message TreasureAchieve {
+  pb.EArchaeologyType achieve_type = 1;
+  repeated pb.Achieve treasure_achieve = 2;
+  repeated uint32 rewarded_treasure_achieve_id_lst = 3;
+}
+message PetInstance {
+  uint32 itemId = 1;
+  uint32 instance_id = 2;
+  string name = 3;
+  uint32 level = 4;
+  uint32 natureId = 5;
+  bool special_color = 6;
+  uint32 integrity_id = 7;
+  repeated pb.PetIntegrityData integrity = 8;
+  uint32 star = 10;
+  uint32 catch_scene_id = 11;
+  uint32 catch_area_id = 12;
+  int64 catch_time = 13;
+  uint32 size = 14;
+  uint32 weight = 15;
+  uint32 badge_id = 16;
+  repeated uint32 badge_ids = 17;
+}
+message PetIntegrityData {
+  pb.PetAttribute attr = 1;
+  uint32 value = 2;
+}

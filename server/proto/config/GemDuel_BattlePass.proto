@@ -1,0 +1,36 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_BattlePassDatas {
+  protocol.GemDuelBattlePassDatas GemDuelBattlePass = 1;
+}
+message GemDuelBattlePassDatas {
+  repeated protocol.GemDuelBattlePassConfigure datas = 1;
+}
+message GemDuelBattlePassConfigure {
+  int32 ID = 1;
+  string OpeningTime = 2;
+  string ClosingTime = 3;
+  int32 ShopID = 4;
+  int32 BuyExp = 5;
+  int32 ExpCostItem = 6;
+  int32 ExpCostNumber = 7;
+  int32 GetExp = 8;
+  repeated protocol.GemDuelBattlePassItem GemDuelBattlePassItem = 9;
+}
+message GemDuelBattlePassItem {
+  int32 Level = 1;
+  int32 Exp = 2;
+  bool IsExpensive = 3;
+  repeated protocol.GemDuelBattlePassFreeItem GemDuelBattlePassFreeItem = 4;
+  repeated protocol.GemDuelBattlePassNoFreeItem GemDuelBattlePassNoFreeItem = 5;
+}
+message GemDuelBattlePassFreeItem {
+  int32 FreeItemID = 1;
+  int32 FreeItemNum = 2;
+}
+message GemDuelBattlePassNoFreeItem {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}

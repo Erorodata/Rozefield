@@ -173,7 +173,7 @@ Tokens are encoded as `@NNN@NNN@…` byte strings. A recreated server only needs
 | Gacha rules and rate tables | ✅ section 2d |
 | Server chain, ports and dispatch responses | ✅ section 2b, `game_connections.csv` |
 | Client logs, 16–23 Nov (14 sessions) + Player.log | ✅ raw in the capture folder; redacted copies in `shareable_logs/` |
-| Gateway protocol (port 11001) decoded | ❌ needs reverse engineering of `GameAssembly.dll` |
+| Gateway protocol (port 11001) decoded | ✅ plaintext protobuf, 733 ids, full schemas — see `server/` |
 | Server-side logic (gacha rates, battle validation, DB) | ❌ never on the client; must be reconstructed from traffic + client data tables |
 
 ## 5. Capture tips (while servers are still up)

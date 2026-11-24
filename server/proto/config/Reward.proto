@@ -1,0 +1,47 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllRewardDatas {
+  protocol.RewardPoolDatas RewardPool = 1;
+  protocol.RewardItemPoolDatas RewardItemPool = 2;
+  protocol.WorldLevelPoolDatas WorldLevelPool = 3;
+}
+message RewardPoolDatas {
+  repeated protocol.RewardPoolConfigure datas = 1;
+}
+message RewardPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.RewardPoolGroupInfo RewardPoolGroup = 2;
+}
+message RewardPoolGroupInfo {
+  int32 RewardPoolGroupID = 1;
+}
+message RewardItemPoolDatas {
+  repeated protocol.RewardItemPoolConfigure datas = 1;
+}
+message RewardItemPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.RewardItemPoolGroupInfo RewardItemPoolGroup = 2;
+}
+message RewardItemPoolGroupInfo {
+  int32 ItemID = 1;
+  repeated int32 NeedItems = 2;
+  int32 ShowItemID = 3;
+  bool ShowNum = 4;
+  int32 ItemMinCount = 5;
+  int32 ItemMaxCount = 6;
+  int32 MinLevelLimit = 7;
+  int32 MaxLevelLimit = 8;
+}
+message WorldLevelPoolDatas {
+  repeated protocol.WorldLevelPoolConfigure datas = 1;
+}
+message WorldLevelPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.WorldLevelPoolGroupInfo WorldLevelPoolGroup = 2;
+}
+message WorldLevelPoolGroupInfo {
+  int32 WorldLevel = 1;
+  int32 PoolID = 2;
+}

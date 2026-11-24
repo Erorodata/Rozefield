@@ -1,0 +1,19 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_QuestDatas {
+  protocol.GemDuelQuestDatas GemDuelQuest = 1;
+}
+message GemDuelQuestDatas {
+  repeated protocol.GemDuelQuestConfigure datas = 1;
+}
+message GemDuelQuestConfigure {
+  int32 ID = 1;
+  int32 Name = 2;
+  repeated int32 AchieveConditionID = 3;
+  int32 Reward = 4;
+  int32 FirstReward = 5;
+  bool IsImmedReward = 6;
+  int32 NewType = 7;
+}

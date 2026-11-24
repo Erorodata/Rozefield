@@ -1,0 +1,51 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_ArenaDatas {
+  protocol.GemDuelArenaDatas GemDuelArena = 1;
+  protocol.GemDuelBotTeamDatas GemDuelBotTeam = 2;
+  protocol.GemDuelBotNameDatas GemDuelBotName = 3;
+}
+message GemDuelArenaDatas {
+  repeated protocol.GemDuelArenaConfigure datas = 1;
+}
+message GemDuelArenaConfigure {
+  int32 ID = 1;
+  float FightingLimit = 2;
+  float FightingMax = 3;
+  int32 ScorecardRewardItem = 4;
+  int32 ScorecardRewardNumber = 5;
+}
+message GemDuelBotTeamDatas {
+  repeated protocol.GemDuelBotTeamConfigure datas = 1;
+}
+message GemDuelBotTeamConfigure {
+  int32 ID = 1;
+  int32 BotFighting = 2;
+  int32 BotNumber = 3;
+  int32 Enemy1 = 4;
+  int32 Level1 = 5;
+  int32 Star1 = 6;
+  repeated int32 EnemySkillUnlock1 = 7;
+  int32 Enemy2 = 8;
+  int32 Level2 = 9;
+  int32 Star2 = 10;
+  repeated int32 EnemySkillUnlock2 = 11;
+  int32 Enemy3 = 12;
+  int32 Level3 = 13;
+  int32 Star3 = 14;
+  repeated int32 EnemySkillUnlock3 = 15;
+  int32 Enemy4 = 16;
+  int32 Level4 = 17;
+  int32 Star4 = 18;
+  repeated int32 EnemySkillUnlock4 = 19;
+}
+message GemDuelBotNameDatas {
+  repeated protocol.GemDuelBotNameConfigure datas = 1;
+}
+message GemDuelBotNameConfigure {
+  int32 ID = 1;
+  string Name = 2;
+  int32 NewGemDuelBotNameType = 3;
+}

@@ -1,0 +1,95 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllCollectionItemDatas {
+  protocol.CollectionItemDatas CollectionItem = 1;
+  protocol.CollectionPhotoDataDatas CollectionPhotoData = 2;
+  protocol.CollectionItemDataDatas CollectionItemData = 3;
+  protocol.CollectionItemFileDatas CollectionItemFile = 4;
+  protocol.CollectionItemBookDatas CollectionItemBook = 5;
+  protocol.CollectionItemTapeDatas CollectionItemTape = 6;
+  protocol.CollectionItemItemDatas CollectionItemItem = 7;
+  protocol.CollectionItemPortalDatas CollectionItemPortal = 8;
+  protocol.CollectItemPhotoItemDatas CollectItemPhotoItem = 9;
+}
+message CollectionItemDatas {
+  repeated protocol.CollectionItemConfigure datas = 1;
+}
+message CollectionItemConfigure {
+  int32 ID = 1;
+  int32 RelateID = 2;
+  int32 ItemID = 3;
+  int32 NewCollectionType = 4;
+}
+message CollectionPhotoDataDatas {
+  repeated protocol.CollectionPhotoDataConfigure datas = 1;
+}
+message CollectionPhotoDataConfigure {
+  int32 ID = 1;
+  int32 PhotoIconID = 2;
+  int32 CollectItem = 3;
+}
+message CollectionItemDataDatas {
+  repeated protocol.CollectionItemDataConfigure datas = 1;
+}
+message CollectionItemDataConfigure {
+  int32 ID = 1;
+  int32 DataIconID = 2;
+  int32 GuideVoice = 3;
+  int32 RewardID = 4;
+  int32 TextID = 5;
+}
+message CollectionItemFileDatas {
+  repeated protocol.CollectionItemFileConfigure datas = 1;
+}
+message CollectionItemFileConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 GuideVoice = 3;
+  int32 RewardID = 4;
+}
+message CollectionItemBookDatas {
+  repeated protocol.CollectionItemBookConfigure datas = 1;
+}
+message CollectionItemBookConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 GuideVoice = 3;
+  int32 RewardID = 4;
+}
+message CollectionItemTapeDatas {
+  repeated protocol.CollectionItemTapeConfigure datas = 1;
+}
+message CollectionItemTapeConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 Sound = 3;
+  bool IsBgmLower = 4;
+}
+message CollectionItemItemDatas {
+  repeated protocol.CollectionItemItemConfigure datas = 1;
+}
+message CollectionItemItemConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 GuideVoice = 3;
+  int32 RewardID = 4;
+}
+message CollectionItemPortalDatas {
+  repeated protocol.CollectionItemPortalConfigure datas = 1;
+}
+message CollectionItemPortalConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 GuideVoice = 3;
+}
+message CollectItemPhotoItemDatas {
+  repeated protocol.CollectItemPhotoItemConfigure datas = 1;
+}
+message CollectItemPhotoItemConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 GuideVoice = 3;
+  int32 RewardID = 4;
+}

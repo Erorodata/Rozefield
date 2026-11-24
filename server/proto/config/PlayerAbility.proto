@@ -1,0 +1,16 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllPlayerAbilityDatas {
+  protocol.PlayerAbilityDatas PlayerAbility = 1;
+}
+message PlayerAbilityDatas {
+  repeated protocol.PlayerAbilityConfigure datas = 1;
+}
+message PlayerAbilityConfigure {
+  int32 ID = 1;
+  float Para = 2;
+  repeated int32 SceneIDs = 3;
+  int32 NewUnlockAbilityType = 4;
+}

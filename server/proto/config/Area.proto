@@ -1,0 +1,105 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllAreaDatas {
+  protocol.AreaDataDatas AreaData = 1;
+  protocol.AreaVoiceDatas AreaVoice = 2;
+  protocol.AreaLevelDataDatas AreaLevelData = 3;
+  protocol.AreaMissionDataDatas AreaMissionData = 4;
+  protocol.AreaUnlockDataDatas AreaUnlockData = 5;
+  protocol.AreaRelationDataDatas AreaRelationData = 6;
+}
+message AreaDataDatas {
+  repeated protocol.AreaDataConfigure datas = 1;
+}
+message AreaDataConfigure {
+  int32 ID = 1;
+  repeated protocol.AreaData AreaDataGroup = 2;
+}
+message AreaData {
+  int32 AreaID = 1;
+  int32 UnlockPoolID = 2;
+  int32 RelevancePoolID = 3;
+  int32 TextID = 4;
+  int32 AreaLevelID = 5;
+}
+message AreaVoiceDatas {
+  repeated protocol.AreaVoiceConfigure datas = 1;
+}
+message AreaVoiceConfigure {
+  int32 ID = 1;
+  repeated protocol.AreaVoice AreaVoiceGroup = 2;
+}
+message AreaVoice {
+  int32 Index = 1;
+  int32 NearVoice = 2;
+  int32 ActivationVoice = 3;
+}
+message AreaLevelDataDatas {
+  repeated protocol.AreaLevelDataConfigure datas = 1;
+}
+message AreaLevelDataConfigure {
+  int32 ID = 1;
+  repeated protocol.AreaLevelData AreaLevelDataGroup = 2;
+}
+message AreaLevelData {
+  int32 Level = 1;
+  int32 PassiveID = 2;
+  int32 MissionPoolID = 3;
+}
+message AreaMissionDataDatas {
+  repeated protocol.AreaMissionDataConfigure datas = 1;
+}
+message AreaMissionDataConfigure {
+  int32 ID = 1;
+  repeated protocol.AreaMissionData AreaMissionDataGroup = 2;
+}
+message AreaMissionData {
+  int32 AchieveConditionID = 1;
+}
+message AreaUnlockDataDatas {
+  repeated protocol.AreaUnlockDataConfigure datas = 1;
+}
+message AreaUnlockDataConfigure {
+  int32 ID = 1;
+  int32 Unlock = 2;
+  repeated protocol.AreaUnlockData AreaUnlockDataGroup = 3;
+}
+message AreaUnlockData {
+  int32 Index = 1;
+  int32 FlagID = 2;
+  int32 BattleEncounterID = 3;
+  int32 CollectFileID = 4;
+  int32 CollectItemID = 5;
+  int32 CollectBookID = 6;
+  int32 CollectTapeID = 7;
+  int32 CollectPortalID = 8;
+  int32 CollectDataID = 9;
+  int32 ChallengeID = 10;
+  int32 RiddleID = 11;
+}
+message AreaRelationDataDatas {
+  repeated protocol.AreaRelationDataConfigure datas = 1;
+}
+message AreaRelationDataConfigure {
+  int32 ID = 1;
+  int32 Unlock = 2;
+  repeated protocol.AreaRelationData AreaRelationDataGroup = 3;
+}
+message AreaRelationData {
+  int32 Index = 1;
+  int32 ScenicID = 2;
+  int32 BattleNormalID = 3;
+  int32 BattleGuideID = 4;
+  int32 BattleWeaponID = 5;
+  int32 BattleGatherID = 6;
+  int32 CollectFileID = 7;
+  int32 CollectItemID = 8;
+  int32 CollectBookID = 9;
+  int32 CollectTapeID = 10;
+  int32 CollectPortalID = 11;
+  int32 CollectDataID = 12;
+  int32 ChallengeID = 13;
+  int32 RiddleID = 14;
+}

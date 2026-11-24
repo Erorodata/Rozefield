@@ -1,0 +1,19 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllTextDatas {
+  protocol.UITextDatas UIText = 1;
+}
+message UITextDatas {
+  repeated protocol.UITextConfigure datas = 1;
+}
+message UITextConfigure {
+  int32 ID = 1;
+  string Key = 2;
+  string Chinese_Simplified = 3;
+  string Chinese_Traditional = 4;
+  string English = 5;
+  string Japanese = 6;
+  string Korea = 7;
+}

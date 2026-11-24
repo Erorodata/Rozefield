@@ -1,0 +1,36 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_ItemDatas {
+  protocol.GemDuelItemDatas GemDuelItem = 1;
+  protocol.GemDuelBagDatas GemDuelBag = 2;
+}
+message GemDuelItemDatas {
+  repeated protocol.GemDuelItemConfigure datas = 1;
+}
+message GemDuelItemConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 IconID = 3;
+  int32 Quality = 4;
+  int32 StackCount = 5;
+  bool IsShowNum = 6;
+  int32 SourceID = 7;
+  int32 GmCount = 8;
+  int32 BgID = 9;
+  int32 ScriptParams = 10;
+  int32 NewItemType = 11;
+  int32 NewItemTag = 12;
+  int32 NewItemUseType = 13;
+}
+message GemDuelBagDatas {
+  repeated protocol.GemDuelBagConfigure datas = 1;
+}
+message GemDuelBagConfigure {
+  int32 ID = 1;
+  repeated protocol.GemDuelBagItem GemDuelBagItem = 2;
+}
+message GemDuelBagItem {
+  int32 NewItemTag = 1;
+}
