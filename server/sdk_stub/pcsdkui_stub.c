@@ -2,7 +2,7 @@
  * The game starts PCSDKUI.exe with "gameName||qgpc&action||callLogin&url||..." and listens on
  * \\.\pipe\quickpc<gameName>. The real SDK opens a web login and then writes one JSON message per pipe
  * connection. This stub skips the web page and immediately reports a successful login with the
- * uid/username from rozefield_sdk.ini (next to the exe). The token is ignored by the Rozefield server. */
+ * name the player types in a small window; the name travels in the token, uid = "rz_<lower-case name>". */
 #include <windows.h>
 #include <tlhelp32.h>
 #include <stdio.h>
@@ -37,6 +37,41 @@ static int send_msg(const char *json) {
     }
     logf_("could not open pipe for %s", json);
     return 0;
+}
+
+
+/* ---- tiny "enter your name" window (no resource file needed) ---- */
+static char g_name[64];
+static HWND g_edit;
+static int g_done;
+static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
+    if (m == WM_COMMAND && (LOWORD(w) == 1 || LOWORD(w) == IDOK)) {
+        GetWindowTextA(g_edit, g_name, sizeof g_name);
+        if (g_name[0]) { g_done = 1; DestroyWindow(h); }
+        return 0;
+    }
+    if (m == WM_CLOSE) { g_done = -1; DestroyWindow(h); return 0; }
+    if (m == WM_DESTROY) { PostQuitMessage(0); return 0; }
+    return DefWindowProcA(h, m, w, l);
+}
+static int ask_name(const char *def) {
+    WNDCLASSA wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = GetModuleHandleA(NULL);
+    wc.lpszClassName = "RozefieldLogin"; wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    RegisterClassA(&wc);
+    int W = 360, Hh = 170, x = (GetSystemMetrics(SM_CXSCREEN) - W) / 2, y = (GetSystemMetrics(SM_CYSCREEN) - Hh) / 2;
+    HWND h = CreateWindowExA(WS_EX_TOPMOST, "RozefieldLogin", "Rozefield - OverField login", WS_CAPTION | WS_SYSMENU | WS_VISIBLE,
+                             x, y, W, Hh, NULL, NULL, wc.hInstance, NULL);
+    CreateWindowA("STATIC", "Player name (a new name creates a new account):", WS_CHILD | WS_VISIBLE, 16, 14, 320, 20, h, NULL, NULL, NULL);
+    g_edit = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", def, WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 16, 40, 312, 26, h, NULL, NULL, NULL);
+    SendMessageA(g_edit, EM_LIMITTEXT, 20, 0);
+    CreateWindowA("BUTTON", "Log in", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 228, 80, 100, 30, h, (HMENU)1, NULL, NULL);
+    SetForegroundWindow(h); SetFocus(g_edit); SendMessageA(g_edit, EM_SETSEL, 0, -1);
+    MSG msg;
+    while (GetMessageA(&msg, NULL, 0, 0) > 0) {
+        if (msg.message == WM_KEYDOWN && msg.wParam == VK_RETURN) { SendMessageA(h, WM_COMMAND, 1, 0); continue; }
+        TranslateMessage(&msg); DispatchMessageA(&msg);
+    }
+    return g_done == 1;
 }
 
 static DWORD parent_pid(void) {
@@ -82,12 +117,25 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     }
     logf_("pipe %s", g_pipe);
     if (strstr(cmd, "action||callLogin")) {
-        char msg[1024];
+        char msg[1024], tok[512] = "@", uidbuf[96];
+        GetPrivateProfileStringA("account", "last_name", user, g_name, sizeof g_name, path);
+        if (!ask_name(g_name)) {
+            send_msg("{\"action\":\"init\",\"params\":{}}");
+            send_msg("{\"action\":\"loginCancel\",\"params\":{}}");
+            return 0;
+        }
+        WritePrivateProfileStringA("account", "last_name", g_name, path);
+        /* the account key is the lower-cased name; the name itself travels in the token */
+        snprintf(uidbuf, sizeof uidbuf, "rz_%s", g_name);
+        for (char *c = uidbuf; *c; c++) { if (*c >= 'A' && *c <= 'Z') *c += 32; if (*c == '"' || *c == '\\') *c = '_'; }
+        for (unsigned char *c = (unsigned char *)g_name; *c && strlen(tok) < sizeof tok - 6; c++) {
+            char b[8]; snprintf(b, sizeof b, "%u@", *c); strcat(tok, b);
+        }
         send_msg("{\"action\":\"init\",\"params\":{}}");
-        Sleep(500);
+        Sleep(300);
         snprintf(msg, sizeof msg,
-                 "{\"action\":\"loginSuccess\",\"params\":{\"authToken\":\"@114@111@122@101@\",\"timeleft\":\"-1\","
-                 "\"uid\":\"%s\",\"userToken\":\"@114@111@122@101@\",\"username\":\"%s\"}}", uid, user);
+                 "{\"action\":\"loginSuccess\",\"params\":{\"authToken\":\"%s\",\"timeleft\":\"-1\","
+                 "\"uid\":\"%s\",\"userToken\":\"%s\",\"username\":\"%s\"}}", tok, uidbuf, tok, uidbuf);
         send_msg(msg);
     } else if (strstr(cmd, "action||callPay")) {
         send_msg("{\"action\":\"payCancel\",\"params\":{}}");

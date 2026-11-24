@@ -5,11 +5,11 @@ Runs three services on this PC:
   * HTTPDNS         :80     (optional, same handler — answers /resolve?domain=...)
   * game gate TCP   :11001  (protobuf protocol recovered from the client)
 
-The gate answers login with your saved account (tools/make_save.py), replays a
-captured response for every request it has seen before, and for anything new
-returns an empty "StatusCode_OK" response of the right type so the client keeps going.
+Every login name gets its own account (save/accounts/<player id>.json). New accounts start as a
+fresh player built from the game's own data tables (data/, extracted from the client).
+Game rules live in game/handlers.py; requests with no handler get an empty StatusCode_OK reply.
 
-    python rozefield_server.py --save save/save.json
+    python rozefield_server.py
 """
 import argparse, asyncio, copy, gzip, json, logging, os, sys, time, urllib.parse
 from ofproto import ID2NAME, NAME2ID, decode, frame, from_dict, new, to_dict, unframe, msg_class
@@ -30,7 +30,6 @@ class Config:
         self.client_version = a.client_version
         self.res_version = a.res_version
         self.res_dirs = a.res_dir or []
-        self.save = json.load(open(a.save, encoding='utf-8')) if a.save and os.path.exists(a.save) else None
         self.traffic = open(a.traffic_log, 'a', encoding='utf-8') if a.traffic_log else None
 
 
@@ -112,49 +111,124 @@ class HTTP:
 
 
 # ---------------------------------------------------------------- gate side
+from game.data import Data
+from game.player import Player
+from game import handlers as G
+
+
+def decode_token(tok):
+    """The Rozefield SDK stub puts the typed username in the token as @NNN@NNN@ bytes."""
+    try:
+        return bytes(int(x) for x in tok.strip('@').split('@') if x).decode('utf-8')
+    except Exception:
+        return None
+
+
+class Server:
+    def __init__(self, cfg, args):
+        self.cfg, self.args = cfg, args
+        self.d = Data()
+        self.sessions = {}            # player_id -> Session
+        self.channels = {}            # (scene, channel) -> set(Session)
+        self.pending_names = {}
+        self.templates = {}
+        tp = os.path.join(HERE, 'data', 'scene_templates.json')
+        if os.path.exists(tp):
+            self.templates = json.load(open(tp, encoding='utf-8'))
+
+    def scene_template(self, scene_id):
+        return self.templates.get(str(scene_id), {})
+
+    # accounts
+    def player_by_id(self, pid):
+        if pid in self.sessions:
+            return self.sessions[pid].p
+        path = os.path.join(HERE, 'save', 'accounts', f'{pid}.json')
+        if os.path.exists(path):
+            return Player(self.d, json.load(open(path, encoding='utf-8')), path)
+        return None
+
+    def player_by_label(self, label):
+        return self.player_by_id(label)  # labels are player ids on Rozefield
+
+    def all_player_ids(self):
+        d = os.path.join(HERE, 'save', 'accounts')
+        return [int(f[:-5]) for f in os.listdir(d) if f[:-5].isdigit()] if os.path.isdir(d) else []
+
+    def is_online(self, pid):
+        return pid in self.sessions
+
+    def friend_list(self, ctx):
+        out = []
+        for pid in self.all_player_ids():
+            if pid == ctx.p.s['player_id']:
+                continue
+            o = self.player_by_id(pid)
+            if o:
+                s = o.s
+                out.append({'info': {'playerId': pid, 'nickName': s['name'], 'level': s['level'], 'head': s['head'],
+                                     'sign': s['sign'], 'createTime': s['create_time'], 'playerLabel': s['player_label'],
+                                     'isOnline': self.is_online(pid), 'account_type': 16666,
+                                     'lastLoginTime': str(s.get('last_login', 0) * 1000)}})
+        return out
+
+    # channels
+    def join_channel(self, sess, scene, channel):
+        self.leave_channel(sess)
+        sess.chan = (scene, channel)
+        self.channels.setdefault(sess.chan, set()).add(sess)
+
+    def leave_channel(self, sess):
+        if getattr(sess, 'chan', None) in self.channels:
+            self.channels[sess.chan].discard(sess)
+        sess.chan = None
+
+    def broadcast(self, sess, name, body, include_self=True):
+        for o in list(self.channels.get(getattr(sess, 'chan', None), {sess})):
+            if o is sess and not include_self:
+                continue
+            o.push(name, body)
+
+    def broadcast_scene_player(self, sess):
+        pass  # multiplayer (phase 2)
+
+
 class Session:
-    def __init__(self, cfg, reader, writer):
-        self.cfg, self.r, self.w = cfg, reader, writer
+    def __init__(self, server, reader, writer):
+        self.server, self.cfg, self.r, self.w = server, server.cfg, reader, writer
+        self.d = server.d
         self.seq = 0
-        self.save = cfg.save or {}
+        self.p = None
+        self.chan = None
+        self.cur = None
         self.peer = writer.get_extra_info('peername')
 
-    def send(self, name, msg, packet_id=None, push=False):
+    def login(self, uid, name):
+        self.p = Player.load_or_create(self.d, uid, name)
+        old = self.server.sessions.get(self.p.s['player_id'])
+        if old and old is not self:
+            self.p = old.p
+            old.w.close()
+        self.server.sessions[self.p.s['player_id']] = self
+        log.info('login uid=%s -> player %s "%s"', uid, self.p.s['player_id'], self.p.s['name'])
+
+    def _send(self, name, d, packet_id=None, push=False):
+        m = from_dict(name, d)
         if push:
             self.seq += 1
-        body = msg.SerializeToString()
-        self.w.write(frame(NAME2ID[name], body, packet_id=packet_id, seq_id=self.seq if push else None))
-        if name not in ('PlayerPingRsp',):
-            log.info('  -> %s (%d bytes)%s', name, len(body), ' push' if push else '')
-        self.trace('S2C', name, msg)
-
-    def trace(self, d, name, msg):
+        self.w.write(frame(NAME2ID[name], m.SerializeToString(), packet_id=packet_id, seq_id=self.seq if push else None))
+        if name != 'PlayerPingRsp':
+            log.info('  -> %s%s', name, ' push' if push else '')
         if self.cfg.traffic:
-            self.cfg.traffic.write(json.dumps({'t': time.time(), 'dir': d, 'name': name, 'body': to_dict(msg)},
-                                              ensure_ascii=False) + '\n')
+            self.cfg.traffic.write(json.dumps({'t': time.time(), 'dir': 'S2C', 'name': name, 'body': d}, ensure_ascii=False) + '\n')
 
-    def empty_rsp(self, req_name):
-        rsp = req_name[:-3] + 'Rsp'
-        if rsp not in NAME2ID:
-            return None, None
-        m = new(rsp)
-        if 'status' in m.DESCRIPTOR.fields_by_name:
-            m.status = 1 if m.DESCRIPTOR.fields_by_name['status'].enum_type else 0
-            try:
-                m.status = m.DESCRIPTOR.fields_by_name['status'].enum_type.values_by_name['StatusCode_OK'].number
-            except Exception:
-                pass
-        return rsp, m
+    def reply(self, d):
+        name, pid = self.cur
+        self._send(name[:-3] + 'Rsp', d, packet_id=pid)
+        self.cur = None
 
-    def replay(self, req_name, req):
-        lst = self.save.get('responses', {}).get(req_name)
-        if not lst:
-            return None
-        rd = to_dict(req)
-        for e in reversed(lst):
-            if e['req'] == rd:
-                return e
-        return lst[-1]
+    def push(self, name, d):
+        self._send(name, d, push=True)
 
     async def run(self):
         log.info('gate connection from %s', self.peer)
@@ -168,8 +242,16 @@ class Session:
                 for h, body in unframe(buf):
                     self.handle(h, body)
                 await self.w.drain()
-        except (ConnectionResetError, asyncio.IncompleteReadError):
+                if self.p and self.p.dirty:
+                    self.p.save()
+        except (ConnectionResetError, asyncio.IncompleteReadError, OSError):
             pass
+        finally:
+            self.server.leave_channel(self)
+            if self.p:
+                self.p.save()
+                if self.server.sessions.get(self.p.s['player_id']) is self:
+                    del self.server.sessions[self.p.s['player_id']]
         log.info('gate connection closed %s', self.peer)
 
     def handle(self, h, body):
@@ -179,58 +261,38 @@ class Session:
             log.warning('bad body for msg %s: %s', h.msg_id, e); return
         if not name:
             log.warning('unknown msg id %s (%d bytes)', h.msg_id, len(body)); return
-        self.trace('C2S', name, req)
-        pid = h.packet_id or None
-        if name == 'PlayerSceneRecordReq':
-            return  # position upload, server never answers
-        if name not in ('PlayerPingReq',):
-            log.info('<- %s %s', name, json.dumps(to_dict(req), ensure_ascii=False)[:160])
-        fn = getattr(self, 'on_' + name, None)
-        if fn:
-            return fn(req, pid)
-        e = self.replay(name, req)
-        if e:
-            self.send(e['rsp_name'], from_dict(e['rsp_name'], e['rsp']), pid)
-            for n, b in e.get('followups', []):
-                self.send(n, from_dict(n, b), push=True)
-            return
-        rsp, m = self.empty_rsp(name)
-        if rsp:
-            log.info('  (no saved answer for %s, sending empty OK)', name)
-            self.send(rsp, m, pid)
-
-    # --- login flow
-    def on_VerifyLoginTokenReq(self, req, pid):
-        acc = self.save.get('account', {})
-        self.send('VerifyLoginTokenRsp', new('VerifyLoginTokenRsp', status='StatusCode_OK',
-                  user_id=acc.get('user_id', 1), account_type=req.account_type, sdkUid=req.sdkUid,
-                  is_server_open=True, time_left=4294967295, device_uuid=req.device_uuid), pid)
-
-    def on_PlayerLoginReq(self, req, pid):
-        d = copy.deepcopy(self.save.get('login_rsp') or {'status': 'StatusCode_OK', 'player_name': 'Rozefield',
-                                                          'scene_id': 9999, 'channel_id': 1})
-        d['server_time_ms'] = str(now_ms())
-        d['region_name'] = 'rozefield_local'
-        self.send('PlayerLoginRsp', from_dict('PlayerLoginRsp', d), pid)
-
-    def on_PlayerMainDataReq(self, req, pid):
-        md = self.save.get('main_data')
-        if md is None:
-            _, m = self.empty_rsp('PlayerMainDataReq')
-        else:
-            m = from_dict('PlayerMainDataRsp', md)
-        self.send('PlayerMainDataRsp', m, pid)
-        for n, b in self.save.get('login_notices', []):
-            self.send(n, from_dict(n, b), push=True)
-
-    def on_PlayerPingReq(self, req, pid):
-        self.send('PlayerPingRsp', new('PlayerPingRsp', status='StatusCode_OK',
-                  client_time_ms=str(req.client_time_ms), server_time_ms=str(now_ms())), pid)
+        rd = to_dict(req)
+        if self.cfg.traffic:
+            self.cfg.traffic.write(json.dumps({'t': time.time(), 'dir': 'C2S', 'name': name, 'body': rd}, ensure_ascii=False) + '\n')
+        if name not in ('PlayerPingReq', 'PlayerSceneRecordReq'):
+            log.info('<- %s %s', name, json.dumps(rd, ensure_ascii=False)[:160])
+        if name == 'VerifyLoginTokenReq':
+            nm = decode_token(rd.get('login_token', ''))
+            if nm:
+                self.server.pending_names[rd.get('sdkUid', '')] = nm
+        elif self.p is None:
+            log.warning('request before login: %s', name); return
+        self.cur = (name, h.packet_id or None)
+        fn = G.H.get(name)
+        try:
+            if fn:
+                fn(self, rd)
+        except Exception:
+            log.exception('handler %s failed', name)
+            if self.cur:
+                self.reply({'status': 'StatusCode_FAIL'})
+        if self.cur and name.endswith('Req'):
+            rsp = name[:-3] + 'Rsp'
+            if rsp in NAME2ID and name != 'PlayerSceneRecordReq':
+                if not fn:
+                    log.info('  (not implemented: %s -> empty OK)', name)
+                self.reply({'status': 'StatusCode_OK'} if 'status' in msg_class(rsp).DESCRIPTOR.fields_by_name else {})
+        self.cur = None
 
 
 async def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--save', default=os.path.join(HERE, 'save', 'save.json'))
+    ap.add_argument('--save', default=None, help='(unused, accounts live in save/accounts)')
     ap.add_argument('--public-ip', default='127.0.0.1', help='IP the client should connect to')
     ap.add_argument('--bind', default='0.0.0.0')
     ap.add_argument('--http-port', type=int, default=18881)
@@ -239,17 +301,17 @@ async def main():
     ap.add_argument('--client-version', default='2026-10-24-12-00-58')
     ap.add_argument('--res-version', default='2026-11-23-15-53-19')
     ap.add_argument('--res-dir', action='append', help='folder(s) holding PackageManifest_* files to serve')
+    ap.add_argument('--all-banners', action='store_true', help='show recruit banners whose dates have passed')
     ap.add_argument('--traffic-log', default=os.path.join(HERE, 'traffic.jsonl'))
     a = ap.parse_args()
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S',
                         handlers=[logging.StreamHandler(sys.stdout),
                                   logging.FileHandler(os.path.join(HERE, 'server.log'), encoding='utf-8')])
     cfg = Config(a)
-    if not cfg.save:
-        log.warning('no save file at %s — logging in with an empty account', a.save)
     http = HTTP(cfg)
+    game = Server(cfg, a)
     servers = [await asyncio.start_server(http.handle, a.bind, a.http_port),
-               await asyncio.start_server(lambda r, w: Session(cfg, r, w).run(), a.bind, a.gate_port)]
+               await asyncio.start_server(lambda r, w: Session(game, r, w).run(), a.bind, a.gate_port)]
     if a.dns_port:
         try:
             servers.append(await asyncio.start_server(http.handle, a.bind, a.dns_port))

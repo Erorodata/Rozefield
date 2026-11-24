@@ -9,5 +9,5 @@ if errorlevel 1 (
   echo Python 3 is needed: install it from python.org ^(tick "Add python to PATH"^), then run this again.
   pause & exit /b 1
 )
-%PY% rozefield_server.py --save save\save.json --res-dir "%GAME%\launcher_Data\yoo" %*
+%PY% rozefield_server.py --res-dir "%GAME%\launcher_Data\yoo" %*
 pause

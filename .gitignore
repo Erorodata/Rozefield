@@ -6,3 +6,8 @@ transcript.txt
 server/save/
 server/traffic.jsonl
 server/server.log
+server/data/
+server/save/accounts/
+server/archive/
+server/data.zip
+__pycache__/
