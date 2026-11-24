@@ -814,6 +814,55 @@ def register(H, pack):
               'RestaurantGameInfoReq', 'RestaurantGameOperateReq', 'RestaurantGameEatReq', 'RestaurantGameQuestRewardReq'):
         H.setdefault(n, lambda ctx, req: ctx.reply({'status': FAIL}))
 
+    # ------------------------------------------------ mailbox (official flow: read -> claim -> delete read)
+    KEEP = 'mail_keep'   # mail ids that are never deleted or expired (mementos, e.g. the Farewell Rewards letter)
+
+    def mails(p):
+        return p.s.setdefault('mails', [])
+
+    def mail_items(ctx, m):
+        if m.get('reward'):
+            return [(r['mainItem']['itemId'], int((r['mainItem'].get('baseItem') or {}).get('num', 1) or 1)) for r in m['reward']]
+        return [(x['itemId'], int(x.get('num', 1) or 1)) for x in m.get('items', [])]
+
+    def get_mails(ctx, req):
+        ctx.reply({'status': OK, 'mails': mails(ctx.p)})
+    H['GetMailsReq'] = get_mails
+
+    def operate(ctx, req):
+        p = ctx.p
+        op, mid = req.get('operate_type', 'MailOperateType_NONE'), req.get('mail_id')
+        keep = set(p.s.get(KEEP, []))
+        changed_mails, got_all, changed_items, deleted = [], [], [], []
+        has_items = lambda m: bool(m.get('items') or m.get('reward'))
+        for m in list(mails(p)):
+            st = m.get('mail_state', 'MailState_UNREAD')
+            if op == 'MailOperateType_READ' and m['mail_id'] == mid:
+                if st == 'MailState_UNREAD':
+                    m['mail_state'] = 'MailState_UNCLAIM' if has_items(m) else 'MailState_READED'
+                changed_mails.append(m)
+            elif op in ('MailOperateType_CLAIM', 'MailOperateType_CLAIM_ALL') and (op == 'MailOperateType_CLAIM_ALL' or m['mail_id'] == mid):
+                if has_items(m) and st != 'MailState_CLAIMED':
+                    got, ch = give(ctx, mail_items(ctx, m))
+                    got_all += got
+                    changed_items += ch
+                    m['mail_state'] = 'MailState_CLAIMED'
+                    changed_mails.append(m)
+            elif op == 'MailOperateType_DELETE_ALL_READED':
+                if m['mail_id'] not in keep and (st == 'MailState_CLAIMED' or (st == 'MailState_READED' and not has_items(m))):
+                    mails(p).remove(m)
+                    deleted.append(m['mail_id'])
+        p.dirty = True
+        r = {'status': OK, 'operate_type': op, 'mails': changed_mails}
+        if got_all:
+            r['claim_result'] = got_all
+        if deleted:
+            r['deleted_mail_ids'] = deleted
+        ctx.reply(r)
+        if changed_items:
+            pack(ctx, changed_items)
+    H['OperateMailsReq'] = operate
+
     def wish_list(ctx, req):
         st = _st(ctx.p, 'wish_list', [])
         key = [req.get('shopId'), req.get('gridId')]
