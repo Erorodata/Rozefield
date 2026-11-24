@@ -1,0 +1,74 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllInteractionActivityDatas {
+  protocol.ActivityInteractionDatas ActivityInteraction = 1;
+  protocol.FullServerActivityDatas FullServerActivity = 2;
+  protocol.RecallActivityDatas RecallActivity = 3;
+  protocol.HomecomingRewardDatas HomecomingReward = 4;
+}
+message ActivityInteractionDatas {
+  repeated protocol.ActivityInteractionConfigure datas = 1;
+}
+message ActivityInteractionConfigure {
+  int32 ID = 1;
+  int32 ObjectID = 2;
+  int32 NewGardenActivities = 3;
+  repeated protocol.ActivityInteractionItems ActivityInteractionItem = 4;
+}
+message ActivityInteractionItems {
+  int32 Index = 1;
+  int32 SpecialType = 2;
+  int32 RewardPoolGroupID = 3;
+  int32 OutputCeiling = 4;
+  int32 ResetType = 5;
+  int32 Daily = 6;
+  int32 Weekly = 7;
+  int32 Monthly = 8;
+}
+message FullServerActivityDatas {
+  repeated protocol.FullServerActivityConfigure datas = 1;
+}
+message FullServerActivityConfigure {
+  int32 ID = 1;
+  repeated protocol.FullServerActivityItems FullServerActivityItem = 2;
+}
+message FullServerActivityItems {
+  int32 Index = 1;
+  int32 CompletionCount = 2;
+  repeated protocol.FullServerActivityRewardItems FullServerActivityRewardItem = 3;
+}
+message FullServerActivityRewardItems {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}
+message RecallActivityDatas {
+  repeated protocol.RecallActivityConfigure datas = 1;
+}
+message RecallActivityConfigure {
+  int32 ID = 1;
+  int32 RelationID = 2;
+  repeated protocol.RecallActivityItems RecallActivityItem = 3;
+}
+message RecallActivityItems {
+  int32 Index = 1;
+  int32 AchieveConditionID = 2;
+  bool HiddenState = 3;
+  repeated protocol.RecallActivityRewardItems RecallActivityRewardItem = 4;
+}
+message RecallActivityRewardItems {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}
+message HomecomingRewardDatas {
+  repeated protocol.HomecomingRewardConfigure datas = 1;
+}
+message HomecomingRewardConfigure {
+  int32 ID = 1;
+  repeated protocol.HomecomingRewardItems HomecomingRewardItem = 2;
+}
+message HomecomingRewardItems {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}

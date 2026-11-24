@@ -1,0 +1,55 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllActivityTurntableDatas {
+  protocol.ActivityTurntableDatas ActivityTurntable = 1;
+  protocol.TurntablePoolDatas TurntablePool = 2;
+  protocol.TurntableRewardDatas TurntableReward = 3;
+}
+message ActivityTurntableDatas {
+  repeated protocol.ActivityTurntableConfigure datas = 1;
+}
+message ActivityTurntableConfigure {
+  int32 ID = 1;
+  int32 TurntablePoolID = 2;
+  int32 TextID = 3;
+  int32 CostItemID = 4;
+  int32 ShowCharacter = 5;
+  int32 FirstOneNeedItemNum = 6;
+  int32 OneNeedItemNum = 7;
+  int32 ShowBgIndex = 8;
+  int32 Reward5 = 9;
+  repeated int32 ShowFashions = 10;
+  int32 NewTurntableType = 11;
+}
+message TurntablePoolDatas {
+  repeated protocol.TurntablePoolConfigure datas = 1;
+}
+message TurntablePoolConfigure {
+  int32 ID = 1;
+  repeated protocol.TurntablePoolItems TurntablePoolItem = 2;
+}
+message TurntablePoolItems {
+  int32 Index = 1;
+  int32 ItemID = 2;
+  int32 ItemNum = 3;
+  int32 LimitNum = 4;
+  int32 Weight = 5;
+  bool IsSpecial = 6;
+}
+message TurntableRewardDatas {
+  repeated protocol.TurntableRewardConfigure datas = 1;
+}
+message TurntableRewardConfigure {
+  int32 ID = 1;
+  int32 FinishItemID = 2;
+  int32 FinishItemNum = 3;
+  repeated protocol.TurntableRewardPoolItems TurntableRewardPoolItem = 4;
+}
+message TurntableRewardPoolItems {
+  int32 Index = 1;
+  int32 Num = 2;
+  int32 RewardItemID = 3;
+  int32 RewardItemNum = 4;
+}

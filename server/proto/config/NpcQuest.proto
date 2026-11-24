@@ -1,0 +1,42 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllNpcQuestDatas {
+  protocol.NpcQuestInfoDatas NpcQuestInfo = 1;
+  protocol.NpcQuestPoolDatas NpcQuestPool = 2;
+}
+message NpcQuestInfoDatas {
+  repeated protocol.NpcQuestInfoConfigure datas = 1;
+}
+message NpcQuestInfoConfigure {
+  int32 ID = 1;
+  int32 RefreshTime = 2;
+  int32 RefreshCurrency = 3;
+  int32 RefreshCost = 4;
+  int32 QuestPoolID = 5;
+  int32 OpenedDialog = 6;
+  int32 NormalDonateDialog = 7;
+}
+message NpcQuestPoolDatas {
+  repeated protocol.NpcQuestPoolConfigure datas = 1;
+}
+message NpcQuestPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.NpcQuestPoolItem NpcQuestPools = 2;
+}
+message NpcQuestPoolItem {
+  int32 QuestID = 1;
+  int32 NeedItemID = 2;
+  int32 NeedItemMinCount = 3;
+  int32 NeedItemMaxCount = 4;
+  int32 AmityAdd = 5;
+  int32 Weight = 6;
+  int32 NeedMinLevel = 7;
+  int32 NeedMaxLevel = 8;
+  repeated protocol.NpcQuestPoolRewardItem NpcQuestPoolRewardItem = 9;
+}
+message NpcQuestPoolRewardItem {
+  int32 RewardItemID = 1;
+  int32 RewardItemCount = 2;
+}

@@ -1,0 +1,55 @@
+{
+  "title": "Rozefield progress",
+  "subtitle": "OverField preservation: run the game on your own server after the official one closes.",
+  "story_autorun": {"reached": 41, "note": "new account, automated run; stops at the first cooking quest (life skills not built yet)"},
+  "areas": [
+    {"name": "Preservation & archive", "rows": [
+      ["Global client backup (playable copy)", "done"],
+      ["CN 1.1.12 client copy (source of CN content)", "done"],
+      ["Protocol recovered: 154 proto files, 2,308 messages, 733 message ids", "done"],
+      ["Official traffic captures (redacted copies in repo)", "done"],
+      ["Archived account (Player) imported and playable", "done"],
+      ["Public snapshot of 490 other players", "done"],
+      ["Player backup tool RozefieldBackup.exe", "partial", "built; first live run waits for the official server to come back"],
+      ["Import backup from the login window", "done"]
+    ]},
+    {"name": "Server & connection", "rows": [
+      ["Dispatch, HTTPDNS and region info", "done"],
+      ["Login window with account picker", "done"],
+      ["Patch delivery through the game's own updater", "done"],
+      ["@requests_handled", "bar"],
+      ["@requests_seen", "bar"],
+      ["Multiplayer (other players in scenes, co-op)", "open", "phase 2"]
+    ]},
+    {"name": "Content (Global + CN)", "rows": [
+      ["CN-only table rows merged into Global data", "done"],
+      ["CN-only assets ported through the updater (1,120)", "done"],
+      ["CN-only text translated to English", "done"],
+      ["English UI after the CN patch", "partial", "fix shipped, needs an in-game check"]
+    ]},
+    {"name": "Gameplay", "rows": [
+      ["New account start, characters, team", "done"],
+      ["Outfits, gear equip, weapon / armor enhance", "done"],
+      ["Shops (Rhombite shop gives the item)", "done"],
+      ["Food buffs and item use", "done"],
+      ["Channels, scenes, fields, friends' gardens", "done"],
+      ["Chat and GM console (no double text)", "partial", "needs in-game check"],
+      ["Umbrella / badge / tool appearance", "partial", "needs in-game check"],
+      ["Garden plaza: lift, presets, 500,000 limit", "partial", "needs in-game check"],
+      ["Recruit banners and pulls", "done"],
+      ["Recruit result screen (animation, can't leave)", "blocked", "needs the game's Player.log"],
+      ["Quest engine: main story, story rewards, daily, delegate", "partial"],
+      ["@quest_steps", "bar"],
+      ["@story_autorun", "bar"],
+      ["Achievements: view archived progress", "partial"],
+      ["Achievements: earn and claim", "open"],
+      ["Dye", "partial", "colorants not consumed yet"],
+      ["Scrap (disassemble)", "partial"],
+      ["Life skills: cooking, fishing, sewing, crafting, making", "open"],
+      ["Gathering tools (net, axe, hammer, gloves, bottle)", "open"],
+      ["Dungeons and field monster drops", "open"],
+      ["Mini-games and co-op (game hall)", "open"],
+      ["Perform (instruments, emotes)", "partial"]
+    ]}
+  ]
+}

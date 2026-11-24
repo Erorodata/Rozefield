@@ -1,0 +1,4944 @@
+{
+"StringItemText:134": [
+"Anniversary Coin",
+"Exchange for items in the Anniversary Coin Shop",
+"Earned from Anniversary events",
+""
+],
+"StringItemText:673": [
+"Gold Scorpio Trophy Base",
+"Required to craft [Zodiac Gold Cup - Scorpio]",
+"",
+""
+],
+"StringItemText:674": [
+"Silver Scorpio Trophy Base",
+"Required to craft [Zodiac Silver Cup - Scorpio]",
+"",
+""
+],
+"StringItemText:675": [
+"Bronze Scorpio Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Scorpio]",
+"",
+""
+],
+"StringItemText:676": [
+"Iron Scorpio Trophy Base",
+"Required to craft [Zodiac Iron Cup - Scorpio]",
+"",
+""
+],
+"StringItemText:677": [
+"Gold Sagittarius Trophy Base",
+"Required to craft [Zodiac Gold Cup - Sagittarius]",
+"",
+""
+],
+"StringItemText:678": [
+"Silver Sagittarius Trophy Base",
+"Required to craft [Zodiac Silver Cup - Sagittarius]",
+"",
+""
+],
+"StringItemText:679": [
+"Bronze Sagittarius Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Sagittarius]",
+"",
+""
+],
+"StringItemText:680": [
+"Iron Sagittarius Trophy Base",
+"Required to craft [Zodiac Iron Cup - Sagittarius]",
+"",
+""
+],
+"StringItemText:681": [
+"Gold Capricorn Trophy Base",
+"Required to craft [Zodiac Gold Cup - Capricorn]",
+"",
+""
+],
+"StringItemText:682": [
+"Silver Capricorn Trophy Base",
+"Required to craft [Zodiac Silver Cup - Capricorn]",
+"",
+""
+],
+"StringItemText:683": [
+"Bronze Capricorn Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Capricorn]",
+"",
+""
+],
+"StringItemText:684": [
+"Iron Capricorn Trophy Base",
+"Required to craft [Zodiac Iron Cup - Capricorn]",
+"",
+""
+],
+"StringItemText:685": [
+"Gold Aquarius Trophy Base",
+"Required to craft [Zodiac Gold Cup - Aquarius]",
+"",
+""
+],
+"StringItemText:686": [
+"Silver Aquarius Trophy Base",
+"Required to craft [Zodiac Silver Cup - Aquarius]",
+"",
+""
+],
+"StringItemText:687": [
+"Bronze Aquarius Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Aquarius]",
+"",
+""
+],
+"StringItemText:688": [
+"Iron Aquarius Trophy Base",
+"Required to craft [Zodiac Iron Cup - Aquarius]",
+"",
+""
+],
+"StringItemText:689": [
+"Gold Pisces Trophy Base",
+"Required to craft [Zodiac Gold Cup - Pisces]",
+"",
+""
+],
+"StringItemText:690": [
+"Silver Pisces Trophy Base",
+"Required to craft [Zodiac Silver Cup - Pisces]",
+"",
+""
+],
+"StringItemText:691": [
+"Bronze Pisces Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Pisces]",
+"",
+""
+],
+"StringItemText:692": [
+"Iron Pisces Trophy Base",
+"Required to craft [Zodiac Iron Cup - Pisces]",
+"",
+""
+],
+"StringItemText:693": [
+"Gold Aries Trophy Base",
+"Required to craft [Zodiac Gold Cup - Aries]",
+"",
+""
+],
+"StringItemText:694": [
+"Silver Aries Trophy Base",
+"Required to craft [Zodiac Silver Cup - Aries]",
+"",
+""
+],
+"StringItemText:695": [
+"Bronze Aries Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Aries]",
+"",
+""
+],
+"StringItemText:696": [
+"Iron Aries Trophy Base",
+"Required to craft [Zodiac Iron Cup - Aries]",
+"",
+""
+],
+"StringItemText:697": [
+"Gold Taurus Trophy Base",
+"Required to craft [Zodiac Gold Cup - Taurus]",
+"",
+""
+],
+"StringItemText:698": [
+"Silver Taurus Trophy Base",
+"Required to craft [Zodiac Silver Cup - Taurus]",
+"",
+""
+],
+"StringItemText:699": [
+"Bronze Taurus Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Taurus]",
+"",
+""
+],
+"StringItemText:791": [
+"Iron Taurus Trophy Base",
+"Required to craft [Zodiac Iron Cup - Taurus]",
+"",
+""
+],
+"StringItemText:792": [
+"Gold Gemini Trophy Base",
+"Required to craft [Zodiac Gold Cup - Gemini]",
+"",
+""
+],
+"StringItemText:793": [
+"Silver Gemini Trophy Base",
+"Required to craft [Zodiac Silver Cup - Gemini]",
+"",
+""
+],
+"StringItemText:794": [
+"Bronze Gemini Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Gemini]",
+"",
+""
+],
+"StringItemText:795": [
+"Iron Gemini Trophy Base",
+"Required to craft [Zodiac Iron Cup - Gemini]",
+"",
+""
+],
+"StringItemText:796": [
+"Gold Cancer Trophy Base",
+"Required to craft [Zodiac Gold Cup - Cancer]",
+"",
+""
+],
+"StringItemText:797": [
+"Silver Cancer Trophy Base",
+"Required to craft [Zodiac Silver Cup - Cancer]",
+"",
+""
+],
+"StringItemText:798": [
+"Bronze Cancer Trophy Base",
+"Required to craft [Zodiac Bronze Cup - Cancer]",
+"",
+""
+],
+"StringItemText:799": [
+"Iron Cancer Trophy Base",
+"Required to craft [Zodiac Iron Cup - Cancer]",
+"",
+""
+],
+"StringItemText:3007": [
+"Wind Crystal",
+"A special crystal holding the power of wind. Material for crafting some gameplay furniture.",
+"Exchanged with game points at the vending machine's arcade shop",
+""
+],
+"StringItemText:5429": [
+"Mischief Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5430": [
+"Mischief Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5431": [
+"Content Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5432": [
+"Content Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5433": [
+"Pitiful Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5434": [
+"Pitiful Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5435": [
+"Too Cool Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5436": [
+"Too Cool Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5437": [
+"Giggle Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5438": [
+"Giggle Challenge Badge (Test)",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5439": [
+"Abyss S33 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5440": [
+"Abyss S33 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5441": [
+"Abyss S34 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5442": [
+"Abyss S34 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5443": [
+"Abyss S35 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5444": [
+"Abyss S35 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5445": [
+"Abyss S36 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5446": [
+"Abyss S36 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5447": [
+"Abyss S37 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5448": [
+"Abyss S37 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5449": [
+"Abyss S38 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5450": [
+"Abyss S38 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5451": [
+"Abyss S39 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5452": [
+"Abyss S39 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5453": [
+"Abyss S40 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5454": [
+"Abyss S40 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5455": [
+"Abyss S41 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5456": [
+"Abyss S41 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5457": [
+"Abyss S42 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5458": [
+"Abyss S42 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5459": [
+"Abyss S43 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5460": [
+"Abyss S43 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5461": [
+"Abyss S44 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5462": [
+"Abyss S44 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5463": [
+"Abyss S45 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5464": [
+"Abyss S45 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5465": [
+"Abyss S46 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5466": [
+"Abyss S46 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5467": [
+"Abyss S47 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5468": [
+"Abyss S47 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5469": [
+"Abyss S48 Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:5470": [
+"Abyss S48 Challenge Badge",
+"A cute little badge that can be worn next to your name.",
+"Once obtained, wear it from the Fashion screen.",
+""
+],
+"StringItemText:6044": [
+"Lottery Ticket",
+"Used in the Rota Koi event to get prize codes, or exchanged for the Koi Badge and Koi Avatar Frame in the Anniversary Shop. After the event, each unused ticket turns into 10 Starstones.",
+"",
+""
+],
+"StringItemText:7261": [
+"",
+"An avatar frame for the captain's profile picture. Change it from the appearance screen.",
+"",
+""
+],
+"StringItemText:8320": [
+"Anniversary",
+"Changes the wallpaper at the top of the phone",
+"",
+""
+],
+"StringItemText:9399": [
+"Aurele - Clear Whisper",
+"Unlocks the \"Aurele - Clear Whisper\" profile picture",
+"",
+""
+],
+"StringItemText:9400": [
+"Tutu - Bedtime Story",
+"Unlocks the \"Tutu - Bedtime Story\" profile picture",
+"",
+""
+],
+"StringItemText:9401": [
+"Moon - Snug Slumber",
+"Unlocks the \"Moon - Snug Slumber\" profile picture",
+"",
+""
+],
+"StringItemText:9402": [
+"Anime Lead L",
+"Unlocks the \"Anime Lead L\" profile picture",
+"",
+""
+],
+"StringItemText:9403": [
+"Anime Lead M",
+"Unlocks the \"Anime Lead M\" profile picture",
+"",
+""
+],
+"StringItemText:9404": [
+"Anime Lead R",
+"Unlocks the \"Anime Lead R\" profile picture",
+"",
+""
+],
+"StringItemText:43204": [
+"Connie",
+"Item needed to unlock this Salvager's profile picture",
+"",
+""
+],
+"StringItemText:63204": [
+"Connie's Tin Badge",
+"Owners could later claim a physical pin badge from the official page",
+"",
+""
+],
+"StringItemText:700057": [
+"[Special | Fei Chopping Veggies]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700058": [
+"[Special | Fei Squishing Cheeks]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700059": [
+"[Special | Lolomay: Nice!]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700060": [
+"[Special | Dove Fish]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700061": [
+"[Special | Lolomay on the Phone]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700062": [
+"[Special | Kobushi lol]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700063": [
+"[Special | Molly Says Hi]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700064": [
+"[Special | Fei Holding a Mushroom]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700065": [
+"[Special | Gazetter: As Expected of Me]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700066": [
+"[Special | Lacy Speechless]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700067": [
+"[Special | Fei Surprised]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700068": [
+"[Special | Fei Babbling]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700069": [
+"[Special | Kobushi: Leave It to Me]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700070": [
+"[Sunshine Doll | Rain]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700071": [
+"[Special | Molly Feeling Guilty]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700072": [
+"[Pompompurin | Melting in the Heat]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700073": [
+"[Special | Lolomay: Onegai]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700074": [
+"[Special | Fei Feast]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:700075": [
+"[Special | Lexy: Ehehe]",
+"Unlocks a special chat sticker",
+"",
+""
+],
+"StringItemText:713320": [
+"Connie's Dance",
+"Unlocks the \"Connie's Dance\" interaction emote",
+"Note: only players who obtained this emote directly can teach it; an emote learned from someone else cannot be taught.",
+""
+],
+"StringItemText:720000": [
+"Suplex",
+"Unlocks the \"Suplex\" interaction emote",
+"",
+""
+],
+"StringItemText:4201051": [
+"Primrose Bloom Headpiece",
+"Little antlers, little ears and petal hair clips: a free fawn in the sunshine.",
+"",
+""
+],
+"StringItemText:4201052": [
+"Primrose Bloom Braids",
+"Pink twin braids brimming with spring blossoms.",
+"",
+""
+],
+"StringItemText:4201053": [
+"Primrose Bloom Dress",
+"A dress scattered with pink petals, with sheer skirt and sleeves, fresh as a meadow.",
+"",
+""
+],
+"StringItemText:4201062": [
+"Night Gothic Twintails",
+"Big gradient spiral twintails; calm and aloof, yet a little playful.",
+"",
+""
+],
+"StringItemText:4201063": [
+"Night Gothic Dress",
+"A black-and-white gothic dress. Understated elegance.",
+"",
+""
+],
+"StringItemText:4201064": [
+"Night Gothic Wings",
+"Little black wings glittering with starlight. Top-tier texture.",
+"",
+""
+],
+"StringItemText:4201065": [
+"Night Gothic Parasol",
+"A simple parasol to match the dress: basic colors, gorgeous style.",
+"",
+""
+],
+"StringItemText:4201081": [
+"Midsummer Beach Sun Hat",
+"A pink sun hat with a bow. A summer essential.",
+"",
+""
+],
+"StringItemText:4201082": [
+"Midsummer Beach Long Hair",
+"Lively shoulder-length hair. Certified girlish.",
+"",
+""
+],
+"StringItemText:4201083": [
+"Midsummer Beach Off-Shoulder Set",
+"An off-shoulder top and hot pants full of summer. Remember your sunscreen!",
+"",
+""
+],
+"StringItemText:4201084": [
+"Midsummer Beach Sunglasses [1]",
+"Beach-day sunglasses decorated with flowers.",
+"",
+""
+],
+"StringItemText:4201085": [
+"Midsummer Beach Sunglasses [2]",
+"Beach-day sunglasses decorated with flowers.",
+"",
+""
+],
+"StringItemText:4201072": [
+"Cute Star Hairstyle",
+"Cute straight short hair. Certified girlish.",
+"",
+""
+],
+"StringItemText:4201073": [
+"Cute Star Dress",
+"A pullover dress with star patterns. Lively and youthful.",
+"",
+""
+],
+"StringItemText:5041110": [
+"Flower Shop Shelf",
+"A fine piece of furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5041609": [
+"Seaside Fishing Gear",
+"A fine piece of furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5042009": [
+"Zen Temple Guqin",
+"A fine piece of furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5043914": [
+"Starry Dream Waltz",
+"A dreamy carousel of roses and starlight, said to hold a never-ending fairy tale.\nA special magic circuit is carved into its core: the harder it is pushed, the faster it spins.\n— Careful not to make your sweet dreams dizzy.",
+"",
+""
+],
+"StringItemText:5043916": [
+"Storm Chair",
+"An ordinary white plastic chair, yet sit on it and you can faintly hear a storm.",
+"",
+""
+],
+"StringItemText:5044010": [
+"Jade Go Board",
+"A fine piece of furniture for decorating the Garden Plaza. Interact with it to play Gomoku.",
+"",
+""
+],
+"StringItemText:5044011": [
+"Updraft [1]",
+"A fine piece of furniture for decorating the Garden Plaza. Stand close and you might fly higher?",
+"",
+""
+],
+"StringItemText:5044012": [
+"Updraft [2]",
+"A fine piece of furniture for decorating the Garden Plaza. Stand close and you might take off?",
+"",
+""
+],
+"StringItemText:5046031": [
+"Zodiac Gold Cup - Scorpio",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046032": [
+"Zodiac Silver Cup - Scorpio",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046033": [
+"Zodiac Bronze Cup - Scorpio",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046034": [
+"Zodiac Iron Cup - Scorpio",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046041": [
+"Zodiac Gold Cup - Sagittarius",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046042": [
+"Zodiac Silver Cup - Sagittarius",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046043": [
+"Zodiac Bronze Cup - Sagittarius",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046044": [
+"Zodiac Iron Cup - Sagittarius",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046051": [
+"Zodiac Gold Cup - Capricorn",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046052": [
+"Zodiac Silver Cup - Capricorn",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046053": [
+"Zodiac Bronze Cup - Capricorn",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046054": [
+"Zodiac Iron Cup - Capricorn",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046061": [
+"Zodiac Gold Cup - Aquarius",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046062": [
+"Zodiac Silver Cup - Aquarius",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046063": [
+"Zodiac Bronze Cup - Aquarius",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046064": [
+"Zodiac Iron Cup - Aquarius",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046071": [
+"Zodiac Gold Cup - Pisces",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046072": [
+"Zodiac Silver Cup - Pisces",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046073": [
+"Zodiac Bronze Cup - Pisces",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046074": [
+"Zodiac Iron Cup - Pisces",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046081": [
+"Zodiac Gold Cup - Aries",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046082": [
+"Zodiac Silver Cup - Aries",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046083": [
+"Zodiac Bronze Cup - Aries",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046084": [
+"Zodiac Iron Cup - Aries",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046091": [
+"Zodiac Gold Cup - Taurus",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046092": [
+"Zodiac Silver Cup - Taurus",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046093": [
+"Zodiac Bronze Cup - Taurus",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046094": [
+"Zodiac Iron Cup - Taurus",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046101": [
+"Zodiac Gold Cup - Gemini",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046102": [
+"Zodiac Silver Cup - Gemini",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046103": [
+"Zodiac Bronze Cup - Gemini",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046104": [
+"Zodiac Iron Cup - Gemini",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046111": [
+"Zodiac Gold Cup - Cancer",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046112": [
+"Zodiac Silver Cup - Cancer",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046113": [
+"Zodiac Bronze Cup - Cancer",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5046114": [
+"Zodiac Iron Cup - Cancer",
+"United Calculation memorial furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:5047001": [
+"Guqin",
+"A fine piece of furniture for decorating the Garden Plaza.",
+"",
+""
+],
+"StringItemText:6023160": [
+"Halloween Special Offer Package I",
+"Halloween Special Offer Package I",
+"",
+""
+],
+"StringItemText:6023170": [
+"Halloween Special Offer Package II",
+"Halloween Special Offer Package II",
+"",
+""
+],
+"StringItemText:6023180": [
+"Halloween Candy Package",
+"Halloween Candy Package",
+"",
+""
+],
+"StringItemText:6023190": [
+"Halloween Selection Package",
+"Halloween Selection Package",
+"",
+""
+],
+"StringItemText:6023200": [
+"Halloween Night Patrol Package",
+"Halloween Night Patrol Package",
+"",
+""
+],
+"StringItemText:6023210": [
+"Halloween Thanks Package I",
+"Halloween Thanks Package I",
+"",
+""
+],
+"StringItemText:6023220": [
+"Halloween Thanks Package II",
+"Halloween Thanks Package II",
+"",
+""
+],
+"StringItemText:6023230": [
+"Early Winter Special Offer Package I",
+"Early Winter Special Offer Package I",
+"",
+""
+],
+"StringItemText:6023240": [
+"Early Winter Special Offer Package II",
+"Early Winter Special Offer Package II",
+"",
+""
+],
+"StringItemText:6023250": [
+"Early Winter Whisper Package I",
+"Early Winter Whisper Package I",
+"",
+""
+],
+"StringItemText:6023260": [
+"Early Winter Whisper Package II",
+"Early Winter Whisper Package II",
+"",
+""
+],
+"StringItemText:6023270": [
+"Early Winter Selection Package",
+"Early Winter Selection Package",
+"",
+""
+],
+"StringItemText:6023280": [
+"Early Winter Warmth Package I",
+"Early Winter Warmth Package I",
+"",
+""
+],
+"StringItemText:6023290": [
+"Early Winter Warmth Package II",
+"Early Winter Warmth Package II",
+"",
+""
+],
+"StringItemText:6023300": [
+"Early Winter Energy Package I",
+"Early Winter Energy Package I",
+"",
+""
+],
+"StringItemText:6023310": [
+"Early Winter Energy Package II",
+"Early Winter Energy Package II",
+"",
+""
+],
+"StringItemText:6023320": [
+"Early Winter Growth Package",
+"Early Winter Growth Package",
+"",
+""
+],
+"StringItemText:6023330": [
+"Early Winter Sunshine Supply",
+"Early Winter Sunshine Supply",
+"",
+""
+],
+"StringItemText:6025120": [
+"Snowland Special Offer Package I",
+"Snowland Special Offer Package I",
+"",
+""
+],
+"StringItemText:6025130": [
+"Snowland Special Offer Package II",
+"Snowland Special Offer Package II",
+"",
+""
+],
+"StringItemText:6025140": [
+"Snowland Special Offer Package III",
+"Snowland Special Offer Package III",
+"",
+""
+],
+"StringItemText:6025150": [
+"Snowland Radiance Package I",
+"Snowland Radiance Package I",
+"",
+""
+],
+"StringItemText:6025160": [
+"Snowland Radiance Package II",
+"Snowland Radiance Package II",
+"",
+""
+],
+"StringItemText:6025170": [
+"Snowland Radiance Package III",
+"Snowland Radiance Package III",
+"",
+""
+],
+"StringItemText:6025180": [
+"Snowland Carol Package I",
+"Snowland Carol Package I",
+"",
+""
+],
+"StringItemText:6025190": [
+"Snowland Carol Package II",
+"Snowland Carol Package II",
+"",
+""
+],
+"StringItemText:6025200": [
+"Snowland Glow Package I",
+"Snowland Glow Package I",
+"",
+""
+],
+"StringItemText:6025210": [
+"Snowland Glow Package II",
+"Snowland Glow Package II",
+"",
+""
+],
+"StringItemText:6025220": [
+"Snowland Glow Package III",
+"Snowland Glow Package III",
+"",
+""
+],
+"StringItemText:6025230": [
+"Snowland Trail Supply",
+"Snowland Trail Supply",
+"",
+""
+],
+"StringItemText:6025240": [
+"New Moon Special Offer Package I",
+"New Moon Special Offer Package I",
+"",
+""
+],
+"StringItemText:6025250": [
+"New Moon Special Offer Package II",
+"New Moon Special Offer Package II",
+"",
+""
+],
+"StringItemText:6025260": [
+"New Moon Friendship Package",
+"New Moon Friendship Package",
+"",
+""
+],
+"StringItemText:6025270": [
+"New Moon Selection Package",
+"New Moon Selection Package",
+"",
+""
+],
+"StringItemText:6025280": [
+"New Moon Value Package",
+"New Moon Value Package",
+"",
+""
+],
+"StringItemText:6025290": [
+"New Moon Thanks Package I",
+"New Moon Thanks Package I",
+"",
+""
+],
+"StringItemText:6025300": [
+"New Moon Thanks Package II",
+"New Moon Thanks Package II",
+"",
+""
+],
+"StringItemText:6025310": [
+"Warm Winter Special Offer Package I",
+"Warm Winter Special Offer Package I",
+"",
+""
+],
+"StringItemText:6025320": [
+"Warm Winter Special Offer Package II",
+"Warm Winter Special Offer Package II",
+"",
+""
+],
+"StringItemText:6025330": [
+"Warm Winter Supply Package",
+"Warm Winter Supply Package",
+"",
+""
+],
+"StringItemText:6025340": [
+"Warm Winter Selection Package",
+"Warm Winter Selection Package",
+"",
+""
+],
+"StringItemText:6025350": [
+"Warm Winter Value Package",
+"Warm Winter Value Package",
+"",
+""
+],
+"StringItemText:6025360": [
+"Warm Winter Thanks Package I",
+"Warm Winter Thanks Package I",
+"",
+""
+],
+"StringItemText:6025370": [
+"Warm Winter Thanks Package II",
+"Warm Winter Thanks Package II",
+"",
+""
+],
+"StringItemText:6025380": [
+"Spring Welcome Special Package I",
+"Spring Welcome Special Package I",
+"",
+""
+],
+"StringItemText:6025390": [
+"Spring Special Offer Package II",
+"Spring Special Offer Package II",
+"",
+""
+],
+"StringItemText:6025400": [
+"Spring Welcome Good Fortune Package I",
+"Spring Welcome Good Fortune Package I",
+"",
+""
+],
+"StringItemText:6025410": [
+"Spring Festival Welcome Package I",
+"Spring Festival Welcome Package I",
+"",
+""
+],
+"StringItemText:6025420": [
+"Spring Welcome Good Fortune Package II",
+"Spring Welcome Good Fortune Package II",
+"",
+""
+],
+"StringItemText:6025430": [
+"Spring Festival Greeting Package II",
+"Spring Festival Greeting Package II",
+"",
+""
+],
+"StringItemText:6025440": [
+"Spring Welcome Wish Package I",
+"Spring Welcome Wish Package I",
+"",
+""
+],
+"StringItemText:6025450": [
+"Spring Welcome Wish Package II",
+"Spring Welcome Wish Package II",
+"",
+""
+],
+"StringItemText:6025460": [
+"Spring Welcome Wish Package III",
+"Spring Welcome Wish Package III",
+"",
+""
+],
+"StringItemText:6025470": [
+"Welcome Spring and Fortune Package I",
+"Welcome Spring and Fortune Package I",
+"",
+""
+],
+"StringItemText:6025480": [
+"Welcome Spring and Prosperity Package II",
+"Welcome Spring and Prosperity Package II",
+"",
+""
+],
+"StringItemText:6025490": [
+"Spring Fortune Package",
+"Spring Fortune Package",
+"",
+""
+],
+"StringItemText:6025500": [
+"Spring Renewal Package",
+"Spring Renewal Package",
+"",
+""
+],
+"StringItemText:6025510": [
+"Spring Welcome Harvest Package",
+"Spring Welcome Harvest Package",
+"",
+""
+],
+"StringItemText:6025520": [
+"Golden Horse New Year",
+"Golden Horse New Year",
+"",
+""
+],
+"StringItemText:6025530": [
+"Pure White Heartfelt Package I",
+"Pure White Heartfelt Package I",
+"",
+""
+],
+"StringItemText:6025540": [
+"Pure White Heartfelt Package II",
+"Pure White Heartfelt Package II",
+"",
+""
+],
+"StringItemText:6025550": [
+"Pure White Heartbeat Package",
+"Pure White Heartbeat Package",
+"",
+""
+],
+"StringItemText:6025560": [
+"Pure White Encounter Package",
+"Pure White Encounter Package",
+"",
+""
+],
+"StringItemText:6025570": [
+"Pure White Meeting Package",
+"Pure White Meeting Package",
+"",
+""
+],
+"StringItemText:6025580": [
+"Pure White Love Song Package I",
+"Pure White Love Song Package I",
+"",
+""
+],
+"StringItemText:6025590": [
+"Pure White Love Song Package II",
+"Pure White Love Song Package II",
+"",
+""
+],
+"StringItemText:6026060": [
+"Teddy Bear Costume",
+"Contains the Teddy Bear Costume set",
+"",
+""
+],
+"StringItemText:6027040": [
+"Night Violet Set",
+"Contains the Night Violet set",
+"",
+""
+],
+"StringItemText:6027050": [
+"Magic Set",
+"Contains the Dazzling Magic set",
+"",
+""
+],
+"StringItemText:6027060": [
+"Morning Mist Student Set",
+"Contains the Morning Mist Student set",
+"",
+""
+],
+"StringItemText:6027070": [
+"Blazing Gold Magic Set",
+"Contains the Blazing Gold Magic set",
+"",
+""
+],
+"StringItemText:6027080": [
+"Zen Temple Furniture Set",
+"Contains the Zen Temple furniture set",
+"",
+""
+],
+"StringItemText:6027090": [
+"Anniversary Mystery Package",
+"Anniversary Mystery Package",
+"",
+""
+],
+"StringItemText:6027100": [
+"Anniversary Special Offer Package I",
+"Anniversary Special Offer Package I",
+"",
+""
+],
+"StringItemText:6027110": [
+"Anniversary Guqin Grand Package",
+"Anniversary Guqin Grand Package",
+"",
+""
+],
+"StringItemText:6027120": [
+"Anniversary Demon's Wings Package",
+"Anniversary Demon's Wings Package",
+"",
+""
+],
+"StringItemText:6027130": [
+"Anniversary Starry Dream Waltz Package",
+"Anniversary Starry Dream Waltz Package",
+"",
+""
+],
+"StringItemText:6027140": [
+"Pink Sweet-Cool Set",
+"Contains the Pink Sweet-Cool set",
+"",
+""
+],
+"StringItemText:6027150": [
+"Chinese Festival Set",
+"Contains the Chinese Festival set",
+"",
+""
+],
+"StringItemText:6027160": [
+"Little Angel Set",
+"Contains the Little Angel set",
+"",
+""
+],
+"StringItemText:6027170": [
+"Anniversary Grand Package",
+"Anniversary Grand Package",
+"",
+""
+],
+"StringItemText:6027180": [
+"Anniversary Emote Grand Package",
+"Anniversary Emote Grand Package",
+"",
+""
+],
+"StringItemText:6027190": [
+"Anniversary Special Offer Package II",
+"Anniversary Special Offer Package II",
+"",
+""
+],
+"StringItemText:6027210": [
+"Secret to Leveling Up",
+"Secret to Leveling Up",
+"",
+""
+],
+"StringItemText:6027220": [
+"Secret to Leveling Up Fast",
+"Secret to Leveling Up Fast",
+"",
+""
+],
+"StringItemText:6027230": [
+"\"A Clear Confession\"",
+"\"Blue is me today, pink is me in my dreams. Which confession did you receive?\"",
+"",
+""
+],
+"StringItemText:6027240": [
+"Tutu's Moonlight Collection",
+"\"Tutu keeps her treasured stories and tenderness here, waiting to open them with you.\"",
+"",
+""
+],
+"StringItemText:6027250": [
+"Game Coin Supply Package",
+"Contains Game Coins for playing arcade minigames.",
+"",
+""
+],
+"StringItemText:6027260": [
+"The Moon Hidden in a Pillow",
+"\"They say every pillow hides a tiny moon, found only in sweet dreams.\"",
+"",
+""
+],
+"StringItemText:6100000": [
+"SR Footage Selector Package I",
+"Open to choose one of: [Little Shiika]x1, [Little Cacao]x1, [Little Tutu]x1, [Little Fei]x1, [Little Kobushi]x1, [Starstones]x50",
+"",
+""
+],
+"StringItemText:6100010": [
+"SR Footage Selector Package II",
+"Open to choose one of: [Little Momo]x1, [Little Lynn]x1, [Little Miao]x1, [Little Cho]x1, [Starstones]x50",
+"",
+""
+],
+"StringItemText:6100020": [
+"SR Footage Selector Package III",
+"Open to choose one of: [Little Hikari]x1, [Little Witch]x1, [Little Moon]x1, [Little CC]x1, [Starstones]x50",
+"",
+""
+],
+"StringItemText:6100030": [
+"SSR Footage Selector Package I",
+"Open to choose one of: [Good Morning]x1, [The Morning of Departure]x1, [Her Ruins]x1, [Joyland]x1, [Starstones]x100",
+"",
+""
+],
+"StringItemText:6100040": [
+"SSR Footage Selector Package II",
+"Open to choose one of: [The Card-Drawing Ritual]x1, [Showtime]x1, [Schedule]x1, [Picking Oranges]x1, [Starstones]x150",
+"",
+""
+],
+"StringItemText:6100050": [
+"SSR Footage Selector Package III",
+"Open to choose one of: [The Library Girl]x1, [Chasing Butterflies]x1, [Caged Dream]x1, [Hellfire Spicy Combo]x1, [Behaim's World]x1, [Starstones]x200",
+"",
+""
+],
+"StringItemText:10299011": [
+"Mr. Li's Tape: Fishing",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299012": [
+"Mr. Li's Tape: Beachcombing",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299013": [
+"Mr. Li's Tape: Mr. Li's Monologue",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299014": [
+"Mr. Li's Tape: Seafood Soup",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299015": [
+"Mr. Li's Tape: Trash in the Sea",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299016": [
+"Mr. Li's Tape: More Yarn Balls",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299017": [
+"Mr. Li's Tape: Weapon Balance",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299018": [
+"Mr. Li's Tape: Lemon Floor Lamp",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299019": [
+"Mr. Li's Tape: Cabinet Door Blocks WiFi",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299020": [
+"Mr. Li's Tape: Hair Dye",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299021": [
+"Mr. Li's Tape: Ammo and Stamina",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299022": [
+"Mr. Li's Tape: Crossdressing",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299023": [
+"Mr. Li's Tape: Four Bottles of Salt, Three of Oil",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299024": [
+"Mr. Li's Tape: Crafting",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299025": [
+"Mr. Li's Tape: Never Learned B",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299026": [
+"Mr. Li's Tape: Five-Salt Fried Rice",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299027": [
+"Mr. Li's Tape: Double Jump",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299028": [
+"Mr. Li's Tape: Nine Lemons, Twelve Carrots",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299029": [
+"Mr. Li's Tape: Trash by the Piece",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:10299030": [
+"Mr. Li's Tape: One Vest",
+"A collectible scattered around the city",
+"",
+""
+],
+"StringItemText:110040101": [
+"[Behaim] Bug-catching luck chance:",
+"[Behaim] Bug-catching luck chance: 3/15%",
+"",
+""
+],
+"StringItemText:110040102": [
+"[Behaim] Bug-catching luck chance:",
+"[Behaim] Bug-catching luck chance: 6/15%",
+"",
+""
+],
+"StringItemText:110040103": [
+"[Behaim] Bug-catching luck chance:",
+"[Behaim] Bug-catching luck chance: 9/15%",
+"",
+""
+],
+"StringItemText:110040104": [
+"[Behaim] Bug-catching luck chance:",
+"[Behaim] Bug-catching luck chance: 12/15%",
+"",
+""
+],
+"StringItemText:110040105": [
+"[Behaim] Bug-catching luck chance:",
+"[Behaim] Bug-catching luck chance: 15/15%",
+"",
+""
+],
+"StringItemText:110040201": [
+"Bug-catching luck chance:",
+"Bug-catching luck chance: 1/5%",
+"",
+""
+],
+"StringItemText:110040202": [
+"Bug-catching luck chance:",
+"Bug-catching luck chance: 2/5%",
+"",
+""
+],
+"StringItemText:110040203": [
+"Bug-catching luck chance:",
+"Bug-catching luck chance: 3/5%",
+"",
+""
+],
+"StringItemText:110040204": [
+"Bug-catching luck chance:",
+"Bug-catching luck chance: 4/5%",
+"",
+""
+],
+"StringItemText:110040205": [
+"Bug-catching luck chance:",
+"Bug-catching luck chance: 5/5%",
+"",
+""
+],
+"StringItemText:110040301": [
+"[Behaim] Gathering luck chance:",
+"[Behaim] Gathering luck chance: 3/15%",
+"",
+""
+],
+"StringItemText:110040302": [
+"[Behaim] Gathering luck chance:",
+"[Behaim] Gathering luck chance: 6/15%",
+"",
+""
+],
+"StringItemText:110040303": [
+"[Behaim] Gathering luck chance:",
+"[Behaim] Gathering luck chance: 9/15%",
+"",
+""
+],
+"StringItemText:110040304": [
+"[Behaim] Gathering luck chance:",
+"[Behaim] Gathering luck chance: 12/15%",
+"",
+""
+],
+"StringItemText:110040305": [
+"[Behaim] Gathering luck chance:",
+"[Behaim] Gathering luck chance: 15/15%",
+"",
+""
+],
+"StringItemText:110040401": [
+"Gathering luck chance:",
+"Gathering luck chance: 1/5%",
+"",
+""
+],
+"StringItemText:110040402": [
+"Gathering luck chance:",
+"Gathering luck chance: 2/5%",
+"",
+""
+],
+"StringItemText:110040403": [
+"Gathering luck chance:",
+"Gathering luck chance: 3/5%",
+"",
+""
+],
+"StringItemText:110040404": [
+"Gathering luck chance:",
+"Gathering luck chance: 4/5%",
+"",
+""
+],
+"StringItemText:110040405": [
+"Gathering luck chance:",
+"Gathering luck chance: 5/5%",
+"",
+""
+],
+"StringItemText:110040501": [
+"[Behaim]Ambush Break:",
+"[Behaim] Increases Break If Attack First: 4/20%",
+"",
+""
+],
+"StringItemText:110040502": [
+"[Behaim]Ambush Break:",
+"[Behaim] Increases Break If Attack First: 8/20%",
+"",
+""
+],
+"StringItemText:110040503": [
+"[Behaim]Ambush Break:",
+"[Behaim] Increases Break If Attack First: 12/20%",
+"",
+""
+],
+"StringItemText:110040504": [
+"[Behaim]Ambush Break:",
+"[Behaim] Increases Break If Attack First: 16/20%",
+"",
+""
+],
+"StringItemText:110040505": [
+"[Behaim]Ambush Break:",
+"[Behaim] Increases Break If Attack First: 20/20%",
+"",
+""
+],
+"StringItemText:110040601": [
+"Current Health Percentage：",
+"Current Health Percentage： 0.4/2%",
+"",
+""
+],
+"StringItemText:110040602": [
+"Current Health Percentage：",
+"Current Health Percentage： 0.8/2%",
+"",
+""
+],
+"StringItemText:110040603": [
+"Current Health Percentage：",
+"Current Health Percentage： 1.2/2%",
+"",
+""
+],
+"StringItemText:110040604": [
+"Current Health Percentage：",
+"Current Health Percentage： 1.6/2%",
+"",
+""
+],
+"StringItemText:110040605": [
+"Current Health Percentage：",
+"Current Health Percentage： 2/2%",
+"",
+""
+],
+"StringItemText:110040701": [
+"Move speed:",
+"Move speed: 0.05/0.25",
+"",
+""
+],
+"StringItemText:110040702": [
+"Move speed:",
+"Move speed: 0.1/0.25",
+"",
+""
+],
+"StringItemText:110040703": [
+"Move speed:",
+"Move speed: 0.15/0.25",
+"",
+""
+],
+"StringItemText:110040704": [
+"Move speed:",
+"Move speed: 0.2/0.25",
+"",
+""
+],
+"StringItemText:110040705": [
+"Move speed:",
+"Move speed: 0.25/0.25",
+"",
+""
+],
+"StringItemText:110040801": [
+"CRIT DMG：",
+"CRIT DMG: 0.6/3%",
+"",
+""
+],
+"StringItemText:110040802": [
+"CRIT DMG：",
+"CRIT DMG: 1.2/3%",
+"",
+""
+],
+"StringItemText:110040803": [
+"CRIT DMG：",
+"CRIT DMG: 1.8/3%",
+"",
+""
+],
+"StringItemText:110040804": [
+"CRIT DMG：",
+"CRIT DMG: 2.4/3%",
+"",
+""
+],
+"StringItemText:110040805": [
+"CRIT DMG：",
+"CRIT DMG: 3/3%",
+"",
+""
+],
+"StringItemText:110040901": [
+"[Behaim]Ambush Ultimate:",
+"[Behaim] Increases Ultimate If Attack First: 12/60",
+"",
+""
+],
+"StringItemText:110040902": [
+"[Behaim]Ambush Ultimate:",
+"[Behaim] Increases Ultimate If Attack First: 24/60",
+"",
+""
+],
+"StringItemText:110040903": [
+"[Behaim]Ambush Ultimate:",
+"[Behaim] Increases Ultimate If Attack First: 36/60",
+"",
+""
+],
+"StringItemText:110040904": [
+"[Behaim]Ambush Ultimate:",
+"[Behaim] Increases Ultimate If Attack First: 48/60",
+"",
+""
+],
+"StringItemText:110040905": [
+"[Behaim]Ambush Ultimate:",
+"[Behaim] Increases Ultimate If Attack First: 60/60",
+"",
+""
+],
+"StringItemText:110041001": [
+"CRIT Rate：",
+"CRIT Rate： 0.2/1%",
+"",
+""
+],
+"StringItemText:110041002": [
+"CRIT Rate：",
+"CRIT Rate： 0.4/1%",
+"",
+""
+],
+"StringItemText:110041003": [
+"CRIT Rate：",
+"CRIT Rate： 0.6/1%",
+"",
+""
+],
+"StringItemText:110041004": [
+"CRIT Rate：",
+"CRIT Rate： 0.8/1%",
+"",
+""
+],
+"StringItemText:110041005": [
+"CRIT Rate：",
+"CRIT Rate： 1/1%",
+"",
+""
+],
+"StringItemText:110041101": [
+"[Behaim] Sprint cost reduction:",
+"[Behaim] Sprint cost reduction: 2.5/12.5%",
+"",
+""
+],
+"StringItemText:110041102": [
+"[Behaim] Sprint cost reduction:",
+"[Behaim] Sprint cost reduction: 5/12.5%",
+"",
+""
+],
+"StringItemText:110041103": [
+"[Behaim] Sprint cost reduction:",
+"[Behaim] Sprint cost reduction: 7.5/12.5%",
+"",
+""
+],
+"StringItemText:110041104": [
+"[Behaim] Sprint cost reduction:",
+"[Behaim] Sprint cost reduction: 10/12.5%",
+"",
+""
+],
+"StringItemText:110041105": [
+"[Behaim] Sprint cost reduction:",
+"[Behaim] Sprint cost reduction: 12.5/12.5%",
+"",
+""
+],
+"StringItemText:110041201": [
+"Reduced Sprinting Cost：",
+"Reduced Sprinting Cost： 1/5%",
+"",
+""
+],
+"StringItemText:110041202": [
+"Reduced Sprinting Cost：",
+"Reduced Sprinting Cost： 2/5%",
+"",
+""
+],
+"StringItemText:110041203": [
+"Reduced Sprinting Cost：",
+"Reduced Sprinting Cost： 3/5%",
+"",
+""
+],
+"StringItemText:110041204": [
+"Reduced Sprinting Cost：",
+"Reduced Sprinting Cost： 4/5%",
+"",
+""
+],
+"StringItemText:110041205": [
+"Reduced Sprinting Cost：",
+"Reduced Sprinting Cost： 5/5%",
+"",
+""
+],
+"StringItemText:110041301": [
+"Temporary bag slots +1",
+"Temporary bag slots +1",
+"",
+""
+],
+"StringItemText:110041302": [
+"Temporary bag slots +2",
+"Temporary bag slots +2",
+"",
+""
+],
+"StringItemText:110041303": [
+"Temporary bag slots +2",
+"Temporary bag slots +2",
+"",
+""
+],
+"StringDungeon:120701": [
+"Ashen Creature Food Storehouse [I]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120702": [
+"Ashen Creature Food Storehouse [II]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120703": [
+"Ashen Creature Food Storehouse [III]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120704": [
+"Ashen Creature Food Storehouse [IV]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120705": [
+"Ashen Creature Food Storehouse [V]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120706": [
+"Ashen Creature Food Storehouse [VI]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120707": [
+"Ashen Creature Food Storehouse [VII]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120708": [
+"Ashen Creature Food Storehouse [VIII]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120709": [
+"Ashen Creature Food Storehouse [IX]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringDungeon:120710": [
+"Ashen Creature Food Storehouse [X]",
+"Simulated Field",
+"A simulated field built by the Research Department. Field energy builds up food the Ashen Creatures love... which also attracts them.\n<color=#EB005D>(Open daily)</color>",
+"Ashen Creature growth materials",
+"◆ Resistant to Slashes\n◆ Resistant to Melee Strikes",
+""
+],
+"StringFlag:15107": [
+"Pet Food Storehouse",
+"Sequence Field",
+"Defeat all monsters"
+],
+"StringFlag:9600110": [
+"Lights of Ten Thousand Homes",
+"Event Stage",
+"Defeat the Bronze Cauldron"
+],
+"StringQuestText:200141": [
+"The Upside-Down World",
+"Irene says she has big news for us"
+],
+"StringQuestText:304011": [
+"Source Suppression [01]",
+"The detector picked up heavy Ashen Creature activity deep in the ruins ahead.\nIf we don't deal with it now, they'll grow into a horde.\nTake out the spawn point before they gather!"
+],
+"StringQuestText:304012": [
+"Source Suppression [02]",
+"Bad news: the \"Source\" in that area is more active than expected.\nA wave of mutated Ashen Creatures is already spreading outward.\nClear out the core area before they break through the line."
+],
+"StringQuestText:304013": [
+"Source Suppression [03]",
+"This target is tricky: a cluster that has already mutated.\nIt's surrounded by Ashen Creatures; normal firepower can barely get close.\nIt'll be a tough fight, but you should be fine."
+],
+"StringQuestText:304014": [
+"Source Suppression [04]",
+"Alert! Extremely unstable energy detected. The Source is about to erupt!\nCut their link to the Grey Zone right now.\nMove fast and end the fight before the energy goes out of control!"
+],
+"StringQuestText:304021": [
+"Base Station Maintenance [01]",
+"The signal relay here keeps getting interference and its efficiency has dropped a lot.\nThe technicians say Ashen Creatures nearby are chewing the cables.\nPlease clear the area so the base station can work normally again."
+],
+"StringQuestText:304022": [
+"Base Station Maintenance [02]",
+"Observation Tower 3's power core is rebooting and its shield will be down meanwhile.\nAshen Creatures are sensitive to energy surges; they'll swarm in for sure.\nFor these few minutes until the reboot finishes, the tower's safety is in your hands."
+],
+"StringQuestText:304023": [
+"Base Station Maintenance [03]",
+"We need to set up a temporary beacon on this high ground to extend our view.\nSetting it up takes a while and may be a bit noisy.\nHold the position and keep everything away from the equipment!"
+],
+"StringQuestText:304024": [
+"Base Station Maintenance [04]",
+"Damn, the purifier's filter is clogged and stability is dropping fast!\nIf it isn't fixed now, the whole area will be contaminated.\nCover the repair team and destroy every Ashen Creature that comes close!"
+],
+"StringQuestText:304031": [
+"Emergency Rescue [01]",
+"We got a distress call: a rookie exploration team got lost on the way back.\nThey're low on oxygen and supplies. It doesn't look good.\nYou're closest. Can you go bring them back?"
+],
+"StringQuestText:304032": [
+"Emergency Rescue [02]",
+"A transport vehicle broke down and is stuck at the edge of the grey fog.\nHighly aggressive mutants were spotted there and they won't hold out long. It's urgent: go support them now and keep them alive!"
+],
+"StringQuestText:304033": [
+"Emergency Rescue [03]",
+"An important researcher got separated from their escort while collecting samples.\nHe is carrying a critical data drive. Nothing can go wrong.\nFind him and escort him safely to the extraction point."
+],
+"StringQuestText:304034": [
+"Emergency Rescue [04]",
+"Our outpost was ambushed and communications just went dark.\nIt's our last foothold in the area. We can't lose it.\nGet the people inside out, whatever it takes!"
+],
+"StringQuestText:304041": [
+"Deep Recovery [01]",
+"Records show some undamaged memory chips were left in this old district.\nThere are lots of Ashen Creatures there, but the Research Department really needs that data.\nCould you sneak in and quietly bring them out?"
+],
+"StringQuestText:304042": [
+"Deep Recovery [02]",
+"We need a special crystal to upgrade the Skycart's engine.\nIt only grows deep in the most contaminated tunnels.\nCollecting it may draw out something big. Be careful."
+],
+"StringQuestText:304043": [
+"Deep Recovery [03]",
+"A lost airdrop supply crate landed at the edge of the rift.\nThe terrain is treacherous and flying Ashen Creatures circle the area.\nA job for someone agile: you. Please."
+],
+"StringQuestText:304044": [
+"Deep Recovery [04]",
+"A special request: we need to recover an \"Old Core\" that is still running.\nIts radiation keeps drawing in monsters, so moving it will be very hard.\nReady for impact? This is a big job."
+],
+"StringQuestText:304051": [
+"Anomaly Detection [01]",
+"An unreadable black zone has appeared at these map coordinates.\nIt isn't an Ashen Creature signal, and it isn't terrain.\nGo take a look, even if you only bring back a photo."
+],
+"StringQuestText:304052": [
+"Anomaly Detection [02]",
+"Gravity readings around here have been off lately. Walking feels floaty.\nWe suspect a special mutant is disrupting the magnetic field. Find the source and eliminate it, or nobody can move."
+],
+"StringQuestText:304053": [
+"Anomaly Detection [03]",
+"Strange spores fill the air. Breathe in too many and you will hallucinate.\nFind the mother spreading them before your suit's filter runs out.\nBe quick, and don't let the hallucinations cloud your judgement."
+],
+"StringQuestText:304054": [
+"Anomaly Detection [04]",
+"Since you're over there, could you test our new detector for me?\nJust carry it around these marked points.\nIt may attract some curious Ashen Creatures, but that's part of the test!"
+],
+"StringCollectItemText:10299011": [
+"Mr. Li's Tape: Fishing",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"As a kid Mr. Li loved fishing but was terrible at it. That is why every 100 baits now cost 1,000 fishing rods."
+],
+"StringCollectItemText:10299012": [
+"Mr. Li's Tape: Beachcombing",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"As a kid, going from level 70 to 80 meant beachcombing all year round. He still insists on it, so he got beaten up."
+],
+"StringCollectItemText:10299013": [
+"Mr. Li's Tape: Mr. Li's Monologue",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"The first time I touched an 8-bit console as a kid, I knew I would make my own game one day. After more than ten years at big studios, I started my own company seven years ago. Sticking with it has been really hard. But giving up would be even harder. If you can hear this, you are still here with us. There is a lot left to fix and a lot of new content to make. We will keep working to make the game better, bit by bit. Thank you for always being here, and I hope you will still be here in the future."
+],
+"StringCollectItemText:10299014": [
+"Mr. Li's Tape: Seafood Soup",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"Which dish needs 12 bottles of soy sauce and 12 of salt? The saltiest thing Mr. Li ate as a kid: seafood soup."
+],
+"StringCollectItemText:10299015": [
+"Mr. Li's Tape: Trash in the Sea",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"Why is there only trash in the sea? Because as a kid Mr. Li pretended the dump outside his house was the ocean and swam around in it alone."
+],
+"StringCollectItemText:10299016": [
+"Mr. Li's Tape: More Yarn Balls",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"Hey, know why failing can sometimes give you more yarn balls? Mr. Li studied dark alchemy as a kid."
+],
+"StringCollectItemText:10299017": [
+"Mr. Li's Tape: Weapon Balance",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"As a kid Mr. Li stood on a stool to reach something and took a big fall because his balance was terrible. So the worse a weapon's balance, the more often it does super-low damage."
+],
+"StringCollectItemText:10299018": [
+"Mr. Li's Tape: Lemon Floor Lamp",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"The floor lamp Mr. Li made for his home as a kid was made of lemons."
+],
+"StringCollectItemText:10299019": [
+"Mr. Li's Tape: Cabinet Door Blocks WiFi",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"As a kid Mr. Li found that opening his cabinet door knocked out WiFi for the whole building."
+],
+"StringCollectItemText:10299020": [
+"Mr. Li's Tape: Hair Dye",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"As a kid Mr. Li got his hair dyed at a shady salon. It took ten tries to get the color he wanted once."
+],
+"StringCollectItemText:10299021": [
+"Mr. Li's Tape: Ammo and Stamina",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"Playing with a slingshot as a kid, Mr. Li found his ammo count depended on his constitution."
+],
+"StringCollectItemText:10299022": [
+"Mr. Li's Tape: Crossdressing",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"As a kid, Mr. Li had to take a potion before he could fit into a little dress."
+],
+"StringCollectItemText:10299023": [
+"Mr. Li's Tape: Four Bottles of Salt, Three of Oil",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"An ordinary meal takes four bottles of salt and three of oil, because Mr. Li lived through a famine as a kid."
+],
+"StringCollectItemText:10299024": [
+"Mr. Li's Tape: Crafting",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"Crafting at 75% success and half of them fail? Hmph. Mr. Li's math was taught by the PE teacher."
+],
+"StringCollectItemText:10299025": [
+"Mr. Li's Tape: Never Learned B",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"Mr. Li's English was also, also, also taught by the PE teacher. So he only learned A, C, D, E, F, G and never B."
+],
+"StringCollectItemText:10299026": [
+"Mr. Li's Tape: Five-Salt Fried Rice",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"Mr. Li has always liked strong flavors: five bottles of salt in plain egg fried rice."
+],
+"StringCollectItemText:10299027": [
+"Mr. Li's Tape: Double Jump",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"Hey, did you know? Mr. Li only learned to run in second grade, but learned the double jump in first grade."
+],
+"StringCollectItemText:10299028": [
+"Mr. Li's Tape: Nine Lemons, Twelve Carrots",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"As a kid Mr. Li had never eaten lemons or carrots. So when he had octopus sashimi he shouted: \"Give me nine lemons and 12 carrots!\""
+],
+"StringCollectItemText:10299029": [
+"Mr. Li's Tape: Trash by the Piece",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"All the trash in the fishing guide is counted \"per fish\", because Mr. Li's Chinese class was also taught by the PE teacher."
+],
+"StringCollectItemText:10299030": [
+"Mr. Li's Tape: One Vest",
+"A mysterious tape with a certain company boss's embarrassing childhood stories.",
+"One day as a kid, Mr. Li cut up three pieces of clothing to make a single vest."
+],
+"StringShop:18200": [
+"Camellia Moon Memories Shop",
+"Game",
+"",
+"",
+""
+],
+"StringShop:18300": [
+"Materials Shop",
+"Material",
+"",
+"",
+""
+],
+"StringShop:20100": [
+"Anniversary Shop",
+"Active",
+"",
+"",
+""
+],
+"StringShop:20200": [
+"Anniversary Package Shop",
+"Active",
+"",
+"",
+""
+],
+"StringShop:20300": [
+"Event Shop",
+"Active",
+"",
+"",
+""
+],
+"StringGacha:2001": [
+"Standard Recruitment - Pretty Idol UP",
+"〓Recruitment Info〓\n[Standard Recruitment UP] is open. SSR Salvager \"Momo\" has 6× her usual rate.\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SR Salvager.\n※An SSR Salvager is guaranteed within 70 pulls.\n※The pity count resets whenever you get an SSR Salvager.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Single pulls count toward pity.\n\n〓Base Rates〓\nSSR Salvager 1.00% (2.1% including pity)\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Chokma; when an SSR Salvager is pulled, Momo is 6× more likely (Momo 50%, others 8.33% each)\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 0.80%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record/Stairway of Time/Field Corridor/Clocktower Library/Wheel of Time/Cherry-Blossom Fantasy/Melody of Peace/The Tiger's New Robes/Reflected in Her Eyes/Snack Street/Naoki's Joy/The Witch's Break/Anime Protagonist/Magic Spin-Spin-Spin/Star, Sound Wave, Unstable\n\nSR Footage 92.20%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Salvager: +1500 [Appearance Tickets]\nSR Salvager: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Salvagers〓\nA duplicate SSR Salvager (from any source) becomes 3 of her promotion tokens and 16 Stardust until she reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Salvager (from any source) becomes 3 of her promotion tokens and 3 Stardust until she reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGacha:2002": [
+"",
+"〓Recruitment Info〓\n[Standard Footage Recruitment] is a permanent banner\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SR Footage.\n※Within 70 pulls on this banner, an SSR Footage is guaranteed.\n※The pity count resets whenever you get an SSR Footage.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Single pulls count toward pity.\n\n〓Base Rates〓\nSSR Salvager 0.80%\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Cho/Aurele\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 1.00%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record\n\nSR Footage 92.20%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Footage: +1500 [Appearance Tickets]\nSR Footage: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Salvagers〓\nA duplicate SSR Salvager (from any source) becomes 3 promotion tokens and 16 Stardust until she reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Salvager (from any source) becomes 3 promotion tokens and 3 Stardust until she reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGacha:3022": [
+"Patchwork Tailor",
+"〓Recruitment Info〓\n[Patchwork Tailor] limited banner is open. SSR Salvager \"Deningha\" has a greatly increased rate.\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SR Salvager.\n※Each SSR Salvager has a 50% chance to be the featured one.\n※The featured Salvager is guaranteed within 70 pulls.\n※The pity count resets whenever you get the featured Salvager.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Pulls count toward pity. Pity is shared across all [Limited] banners and carries over, separate from the [Standard] banner.\n\n〓Base Rates〓\nSSR Salvager 1.00% (2.1% including pity)\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Cho/Aurele/Deningha\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 0.80%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record/Stairway of Time/Field Corridor/Clocktower Library/Wheel of Time/Cherry-Blossom Fantasy/Melody of Peace/The Tiger's New Robes/Reflected in Her Eyes/Snack Street/Naoki's Joy/The Witch's Break/Anime Protagonist/Magic Spin-Spin-Spin/Star, Sound Wave, Unstable/Dreamscape/Halloween Candy Dream/The Golden of Mahjong's Dream/Schedule\n\nSR Footage 92.20%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Salvager: +1500 [Appearance Tickets]\nSR Salvager: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Salvagers〓\nA duplicate SSR Salvager (from any source) becomes 3 of her promotion tokens and 16 Stardust until she reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Salvager (from any source) becomes 3 of her promotion tokens and 3 Stardust until she reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGacha:3023": [
+"Fog City Detective",
+"〓Recruitment Info〓\n[Fog City Detective] limited banner is open. SSR Salvager \"Molly\" has a greatly increased rate.\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SR Salvager.\n※Each SSR Salvager has a 50% chance to be the featured one.\n※The featured Salvager is guaranteed within 70 pulls.\n※The pity count resets whenever you get the featured Salvager.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Pulls count toward pity. Pity is shared across all [Limited] banners and carries over, separate from the [Standard] banner.\n\n〓Base Rates〓\nSSR Salvager 1.00% (2.1% including pity)\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Cho/Aurele/Molly\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 0.80%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record/Stairway of Time/Field Corridor/Clocktower Library/Wheel of Time/Cherry-Blossom Fantasy/Melody of Peace/The Tiger's New Robes/Reflected in Her Eyes/Snack Street/Naoki's Joy/The Witch's Break/Anime Protagonist/Magic Spin-Spin-Spin/Star, Sound Wave, Unstable/Dreamscape/Halloween Candy Dream/The Golden of Mahjong's Dream/Schedule\n\nSR Footage 92.20%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Salvager: +1500 [Appearance Tickets]\nSR Salvager: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Salvagers〓\nA duplicate SSR Salvager (from any source) becomes 3 of her promotion tokens and 16 Stardust until she reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Salvager (from any source) becomes 3 of her promotion tokens and 3 Stardust until she reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGacha:8000": [
+"",
+"〓Recruitment Info〓\n[Newcomer Footage Selector] limited banner is open. Your chosen SSR Footage has a greatly increased rate.\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SR Salvager.\n※Each SSR Footage has a 50% chance to be the featured one.\n※The featured Footage is guaranteed within 70 pulls.\n※The banner closes once you get your chosen Footage.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Pulls here don't count toward shared pity; pity is separate from [Standard Footage] and [Limited Footage] banners.\n\n〓Base Rates〓\nSSR Salvager 0.50%\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Cho/Aurele\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 1.00%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record/Selected UP Footage\n\nSR Footage 92.00%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Footage: +1500 [Appearance Tickets]\nSR Footage: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Footage〓\nA duplicate SSR Footage (from any source) becomes 3 of its promotion tokens and 16 Stardust until it reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Footage (from any source) becomes 3 of its promotion tokens and 3 Stardust until it reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGacha:8001": [
+"",
+"〓Recruitment Info〓\n[Basic Footage Selector] limited banner is open. Your chosen SSR Footage has a greatly increased rate.\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SR Salvager.\n※Each SSR Footage has a 50% chance to be the featured one.\n※The featured Footage is guaranteed within 70 pulls.\n※The banner closes once you get your chosen Footage.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Pulls here don't count toward shared pity; pity is separate from [Standard Footage] and [Limited Footage] banners.\n\n〓Base Rates〓\nSSR Salvager 0.50%\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Cho/Aurele\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 1.00%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record/Selected UP Footage\n\nSR Footage 92.00%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Footage: +1500 [Appearance Tickets]\nSR Footage: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Footage〓\nA duplicate SSR Footage (from any source) becomes 3 of its promotion tokens and 16 Stardust until it reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Footage (from any source) becomes 3 of its promotion tokens and 3 Stardust until it reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGacha:8002": [
+"",
+"〓Recruitment Info〓\n[Advanced Footage Selector] limited banner is open. Your chosen SSR Footage has a greatly increased rate.\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SSR weapon.\n※Each SSR Footage has a 50% chance to be the featured one.\n※The featured Footage is guaranteed within 70 pulls.\n※The banner closes once you get your chosen Footage.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Pulls here don't count toward shared pity; pity is separate from [Standard Footage] and [Limited Footage] banners.\n\n〓Base Rates〓\nSSR Salvager 0.50%\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Cho/Aurele\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 1.00%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record/Selected UP Footage\n\nSR Footage 92.00%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Footage: +1500 [Appearance Tickets]\nSR Footage: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Footage〓\nA duplicate SSR Footage (from any source) becomes 3 of its promotion tokens and 16 Stardust until it reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Footage (from any source) becomes 3 of its promotion tokens and 3 Stardust until it reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGacha:9000": [
+"Newcomer Selector",
+"〓Recruitment Info〓\n[Newcomer Selector Banner] limited banner is open. Your chosen SSR Salvager has a greatly increased rate.\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SR Salvager.\n※Each SSR Salvager has a 50% chance to be the featured one.\n※The featured Salvager is guaranteed within 70 pulls.\n※The pity count resets whenever you get the featured Salvager.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Pulls here don't count toward shared pity; pity is separate from [Standard] and [Limited] banners.\n\n〓Base Rates〓\nSSR Salvager 1.00% (2.1% including pity)\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Cho/Aurele/Selected UP Salvager\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 0.80%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record/Stairway of Time/Field Corridor/Clocktower Library/Wheel of Time/Cherry-Blossom Fantasy/Melody of Peace/The Tiger's New Robes/Reflected in Her Eyes/Snack Street/Naoki's Joy/The Witch's Break/Anime Protagonist/Magic Spin-Spin-Spin/Star, Sound Wave, Unstable/Dreamscape/Halloween Candy Dream/The Golden of Mahjong's Dream/Schedule\n\nSR Footage 92.20%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Salvager: +1500 [Appearance Tickets]\nSR Salvager: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Salvagers〓\nA duplicate SSR Salvager (from any source) becomes 3 of her promotion tokens and 16 Stardust until she reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Salvager (from any source) becomes 3 of her promotion tokens and 3 Stardust until she reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGacha:9001": [
+"",
+"〓Recruitment Info〓\n[Selector Banner] limited banner is open. Your chosen SSR Salvager has a greatly increased rate.\n\n〓Recruitment Rules〓\n※Every 10-pull guarantees at least 1 SR Salvager.\n※Each SSR Salvager has a 50% chance to be the featured one.\n※The featured Salvager is guaranteed within 70 pulls.\n※The pity count resets whenever you get the featured Salvager.\n※Special memorial Footage earned from the main story joins the pool automatically.\n※Pulls here don't count toward shared pity; pity is separate from [Standard] and [Limited] banners.\n\n〓Base Rates〓\nSSR Salvager 1.00% (2.1% including pity)\nLexy/Flavoure/Momo/Nicy/Miao/Lynn/Cho/Aurele/Selected UP Salvager\n\nSR Salvager 6.00%\nFei/Shiika/Tutu/Cacao/Kobushi/Dove\n\nSSR Footage 0.80%\nBase Footage: Miao and Meow/Aftertaste/The Locked Room/An Unexpected Call/Gathering Lotus/Rose Garden/Catch the Breeze/Interrogation Record/Stairway of Time/Field Corridor/Clocktower Library/Wheel of Time/Cherry-Blossom Fantasy/Melody of Peace/The Tiger's New Robes/Reflected in Her Eyes/Snack Street/Naoki's Joy/The Witch's Break/Anime Protagonist/Magic Spin-Spin-Spin/Star, Sound Wave, Unstable/Dreamscape/Halloween Candy Dream/The Golden of Mahjong's Dream/Schedule\n\nSR Footage 92.20%\nBase Footage: Cacao's Day Off/Today's Look/Warm Winter Morning Tea/Day Off/The Clock Tower/Ski Training/Idol SHOW/The Next Stop/Field/Fast-Food Time/Path in a Bottle/Taking Shape/Poolside Holiday/Reading Nook/Polar Photoshoot/Floating/At the Café/Latte Art/The City from Above/Reverie/Seaside Holiday/Time to Fight/Into the Wild/Momo's Day Off/Welcome/Daisies/Night Patrol/Fitting Room/Rest in the Shade/Mirror World/Lolomay's Gift/A Child's Game/Farewell, Witch/A Song for You All/Listen to Our Song/A Wish as Bright as a Star\n\n※Story Footage cannot be pulled until you have reached its story and obtained it.\n\n〓Notes〓\nEvery pull also gives [Appearance Tickets]\nSSR Salvager: +1500 [Appearance Tickets]\nSR Salvager: +500 [Appearance Tickets]\nSSR Footage: +500 [Appearance Tickets]\nSR Footage: +50 [Appearance Tickets]\n\n〓Duplicate Salvagers〓\nA duplicate SSR Salvager (from any source) becomes 3 of her promotion tokens and 16 Stardust until she reaches 5 stars; after that, 40 Stardust.\n\nA duplicate SR Salvager (from any source) becomes 3 of her promotion tokens and 3 Stardust until she reaches 5 stars; after that, 12 Stardust.\n\n〓Duplicate Footage〓\nDuplicate Footage gives 20 Stardust (SSR) or 15 Star Sand (SR).",
+"",
+"",
+""
+],
+"StringGlobal:20214": [
+"Search-Fight-Extract",
+"",
+""
+],
+"StringAbility:40010": [
+"[Behaim] Bug-catching luck chance: 0/15%",
+"[Behaim] Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40011": [
+"[Behaim] Bug-catching luck chance: 3/15%",
+"[Behaim] Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40012": [
+"[Behaim] Bug-catching luck chance: 6/15%",
+"[Behaim] Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40013": [
+"[Behaim] Bug-catching luck chance: 9/15%",
+"[Behaim] Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40014": [
+"[Behaim] Bug-catching luck chance: 12/15%",
+"[Behaim] Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40015": [
+"[Behaim] Bug-catching luck chance: 15/15%",
+"[Behaim] Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40020": [
+"Bug-catching luck chance: 0/5%",
+"Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40021": [
+"Bug-catching luck chance: 1/5%",
+"Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40022": [
+"Bug-catching luck chance: 2/5%",
+"Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40023": [
+"Bug-catching luck chance: 3/5%",
+"Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40024": [
+"Bug-catching luck chance: 4/5%",
+"Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40025": [
+"Bug-catching luck chance: 5/5%",
+"Bug-catching luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40030": [
+"[Behaim] Gathering luck chance: 0/15%",
+"[Behaim] Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40031": [
+"[Behaim] Gathering luck chance: 3/15%",
+"[Behaim] Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40032": [
+"[Behaim] Gathering luck chance: 6/15%",
+"[Behaim] Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40033": [
+"[Behaim] Gathering luck chance: 9/15%",
+"[Behaim] Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40034": [
+"[Behaim] Gathering luck chance: 12/15%",
+"[Behaim] Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40035": [
+"[Behaim] Gathering luck chance: 15/15%",
+"[Behaim] Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40040": [
+"Gathering luck chance: 0/5%",
+"Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40041": [
+"Gathering luck chance: 1/5%",
+"Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40042": [
+"Gathering luck chance: 2/5%",
+"Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40043": [
+"Gathering luck chance: 3/5%",
+"Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40044": [
+"Gathering luck chance: 4/5%",
+"Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40045": [
+"Gathering luck chance: 5/5%",
+"Gathering luck chance:",
+"",
+"",
+""
+],
+"StringAbility:40050": [
+"[Behaim] Increases Break If Attack First: 0/20%",
+"[Behaim] Increases Break If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40051": [
+"[Behaim] Increases Break If Attack First: 4/20%",
+"[Behaim] Increases Break If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40052": [
+"[Behaim] Increases Break If Attack First: 8/20%",
+"[Behaim] Increases Break If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40053": [
+"[Behaim] Increases Break If Attack First: 12/20%",
+"[Behaim] Increases Break If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40054": [
+"[Behaim] Increases Break If Attack First: 16/20%",
+"[Behaim] Increases Break If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40055": [
+"[Behaim] Increases Break If Attack First: 20/20%",
+"[Behaim] Increases Break If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40060": [
+"HP (%): 0/2%",
+"HP (%)",
+"",
+"",
+""
+],
+"StringAbility:40061": [
+"Current Health Percentage： 0.4/2%",
+"HP (%)",
+"",
+"",
+""
+],
+"StringAbility:40062": [
+"Current Health Percentage： 0.8/2%",
+"HP (%)",
+"",
+"",
+""
+],
+"StringAbility:40063": [
+"Current Health Percentage： 1.2/2%",
+"HP (%)",
+"",
+"",
+""
+],
+"StringAbility:40064": [
+"Current Health Percentage： 1.6/2%",
+"HP (%)",
+"",
+"",
+""
+],
+"StringAbility:40065": [
+"Current Health Percentage： 2/2%",
+"HP (%)",
+"",
+"",
+""
+],
+"StringAbility:40070": [
+"Move speed: 0/0.25",
+"Movement Speed",
+"",
+"",
+""
+],
+"StringAbility:40071": [
+"Move speed: 0.05/0.25",
+"Movement Speed",
+"",
+"",
+""
+],
+"StringAbility:40072": [
+"Move speed: 0.1/0.25",
+"Movement Speed",
+"",
+"",
+""
+],
+"StringAbility:40073": [
+"Move speed: 0.15/0.25",
+"Movement Speed",
+"",
+"",
+""
+],
+"StringAbility:40074": [
+"Move speed: 0.2/0.25",
+"Movement Speed",
+"",
+"",
+""
+],
+"StringAbility:40075": [
+"Move speed: 0.25/0.25",
+"Movement Speed",
+"",
+"",
+""
+],
+"StringAbility:40080": [
+"CRIT DMG: 0/3%",
+"CRIT DMG",
+"",
+"",
+""
+],
+"StringAbility:40081": [
+"CRIT DMG: 0.6/3%",
+"CRIT DMG",
+"",
+"",
+""
+],
+"StringAbility:40082": [
+"CRIT DMG: 1.2/3%",
+"CRIT DMG",
+"",
+"",
+""
+],
+"StringAbility:40083": [
+"CRIT DMG: 1.8/3%",
+"CRIT DMG",
+"",
+"",
+""
+],
+"StringAbility:40084": [
+"CRIT DMG: 2.4/3%",
+"CRIT DMG",
+"",
+"",
+""
+],
+"StringAbility:40085": [
+"CRIT DMG: 3/3%",
+"CRIT DMG",
+"",
+"",
+""
+],
+"StringAbility:40090": [
+"[Behaim] Increases Ultimate If Attack First: 0/60",
+"[Behaim] Increases Ultimate If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40091": [
+"[Behaim] Increases Ultimate If Attack First: 12/60",
+"[Behaim] Increases Ultimate If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40092": [
+"[Behaim] Increases Ultimate If Attack First: 24/60",
+"[Behaim] Increases Ultimate If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40093": [
+"[Behaim] Increases Ultimate If Attack First: 36/60",
+"[Behaim] Increases Ultimate If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40094": [
+"[Behaim] Increases Ultimate If Attack First: 48/60",
+"[Behaim] Increases Ultimate If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40095": [
+"[Behaim] Increases Ultimate If Attack First: 60/60",
+"[Behaim] Increases Ultimate If Attack First",
+"",
+"",
+""
+],
+"StringAbility:40100": [
+"CRIT Rate： 1/0%",
+"CRIT Rate",
+"",
+"",
+""
+],
+"StringAbility:40101": [
+"CRIT Rate： 0.2/1%",
+"CRIT Rate",
+"",
+"",
+""
+],
+"StringAbility:40102": [
+"CRIT Rate： 0.4/1%",
+"CRIT Rate",
+"",
+"",
+""
+],
+"StringAbility:40103": [
+"CRIT Rate： 0.6/1%",
+"CRIT Rate",
+"",
+"",
+""
+],
+"StringAbility:40104": [
+"CRIT Rate： 0.8/1%",
+"CRIT Rate",
+"",
+"",
+""
+],
+"StringAbility:40105": [
+"CRIT Rate： 1/1%",
+"CRIT Rate",
+"",
+"",
+""
+],
+"StringAbility:40110": [
+"[Behaim] Sprint cost reduction: 0/12.5%",
+"[Behaim] Sprint cost reduction:",
+"",
+"",
+""
+],
+"StringAbility:40111": [
+"[Behaim] Sprint cost reduction: 2.5/12.5%",
+"[Behaim] Sprint cost reduction:",
+"",
+"",
+""
+],
+"StringAbility:40112": [
+"[Behaim] Sprint cost reduction: 5/12.5%",
+"[Behaim] Sprint cost reduction:",
+"",
+"",
+""
+],
+"StringAbility:40113": [
+"[Behaim] Sprint cost reduction: 7.5/12.5%",
+"[Behaim] Sprint cost reduction:",
+"",
+"",
+""
+],
+"StringAbility:40114": [
+"[Behaim] Sprint cost reduction: 10/12.5%",
+"[Behaim] Sprint cost reduction:",
+"",
+"",
+""
+],
+"StringAbility:40115": [
+"[Behaim] Sprint cost reduction: 12.5/12.5%",
+"[Behaim] Sprint cost reduction:",
+"",
+"",
+""
+],
+"StringAbility:40120": [
+"Sprint Cost Reduction: 0/5%",
+"Sprint Cost Reduction",
+"",
+"",
+""
+],
+"StringAbility:40121": [
+"Reduced Sprinting Cost： 1/5%",
+"Sprint Cost Reduction",
+"",
+"",
+""
+],
+"StringAbility:40122": [
+"Reduced Sprinting Cost： 2/5%",
+"Sprint Cost Reduction",
+"",
+"",
+""
+],
+"StringAbility:40123": [
+"Reduced Sprinting Cost： 3/5%",
+"Sprint Cost Reduction",
+"",
+"",
+""
+],
+"StringAbility:40124": [
+"Reduced Sprinting Cost： 4/5%",
+"Sprint Cost Reduction",
+"",
+"",
+""
+],
+"StringAbility:40125": [
+"Reduced Sprinting Cost： 5/5%",
+"Sprint Cost Reduction",
+"",
+"",
+""
+],
+"StringAchieve:13040111": [
+"Source Suppression [01]",
+""
+],
+"StringAchieve:13040121": [
+"Source Suppression [02]",
+""
+],
+"StringAchieve:13040131": [
+"Source Suppression [03]",
+""
+],
+"StringAchieve:13040141": [
+"Source Suppression [04]",
+""
+],
+"StringAchieve:13040211": [
+"Base Station Maintenance [01]",
+""
+],
+"StringAchieve:13040221": [
+"Base Station Maintenance [02]",
+""
+],
+"StringAchieve:13040231": [
+"Base Station Maintenance [03]",
+""
+],
+"StringAchieve:13040241": [
+"Base Station Maintenance [04]",
+""
+],
+"StringAchieve:13040311": [
+"Emergency Rescue [01]",
+""
+],
+"StringAchieve:13040321": [
+"Emergency Rescue [02]",
+""
+],
+"StringAchieve:13040331": [
+"Emergency Rescue [03]",
+""
+],
+"StringAchieve:13040341": [
+"Emergency Rescue [04]",
+""
+],
+"StringAchieve:13040411": [
+"Deep Recovery [01]",
+""
+],
+"StringAchieve:13040421": [
+"Deep Recovery [02]",
+""
+],
+"StringAchieve:13040431": [
+"Deep Recovery [03]",
+""
+],
+"StringAchieve:13040441": [
+"Deep Recovery [04]",
+""
+],
+"StringAchieve:13040511": [
+"Anomaly Detection [01]",
+""
+],
+"StringAchieve:13040521": [
+"Anomaly Detection [02]",
+""
+],
+"StringAchieve:13040531": [
+"Anomaly Detection [03]",
+""
+],
+"StringAchieve:13040541": [
+"Anomaly Detection [04]",
+""
+],
+"StringAchieve:12200911": [
+"An unexpected guest arrives at the café.",
+"[Side Story] Their Own Seniors"
+],
+"StringAchieve:12200921": [
+"After Kobushi leaves, a figure quietly approaches...",
+""
+],
+"StringAchieve:12200931": [
+"They come to a deserted corner.",
+""
+],
+"StringAchieve:12201011": [
+"After the reading, Lolomay returns to the real world...",
+""
+],
+"StringAchieve:12201021": [
+"Lolomay decides to wait at the café.",
+"[Side Story] Eyes That See Fate"
+],
+"StringAchieve:12400511": [
+"Unna hides in the shadows",
+""
+],
+"StringAchieve:12400521": [
+"Go to the café",
+"[Side Story] Candy for the Children"
+],
+"StringAchieve:12400531": [
+"Go to the general store",
+"[Side Story] Candy for the Children"
+],
+"StringAchieve:12400541": [
+"Go to the snack shop",
+"[Side Story] Candy for the Children"
+],
+"StringAchieve:12400551": [
+"Go to Rota Corporation",
+"[Side Story] Candy for the Children"
+],
+"StringAchieve:18100121": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100122": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100123": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100124": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100125": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100126": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100127": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100131": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100132": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100133": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100134": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100135": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100136": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100137": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100141": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100142": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100143": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100144": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100145": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100146": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100147": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100151": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100152": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100153": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100154": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100155": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100156": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100157": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100161": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100162": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100163": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100164": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100165": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100166": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100167": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100171": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100172": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100173": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100174": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100175": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100176": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100177": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100181": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100182": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100183": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100184": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100185": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100186": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100187": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100191": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100192": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100193": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100194": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100195": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100196": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100197": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100201": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100202": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100203": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100204": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100205": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100206": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100207": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100211": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100212": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100213": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100214": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100215": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100216": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100217": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100221": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100222": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100223": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100224": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100225": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100226": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100227": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:18100231": [
+"Reach a total score of 1,350,000",
+""
+],
+"StringAchieve:18100232": [
+"Reach a total score of 2,970,000",
+""
+],
+"StringAchieve:18100233": [
+"Reach a total score of 5,580,000",
+""
+],
+"StringAchieve:18100234": [
+"Reach a total score of 8,550,000",
+""
+],
+"StringAchieve:18100235": [
+"Reach a total score of 14,400,000",
+""
+],
+"StringAchieve:18100236": [
+"Reach a total score of 22,900,000",
+""
+],
+"StringAchieve:18100237": [
+"Reach a total score of 38,600,000",
+""
+],
+"StringAchieve:44030030": [
+"Reach Level 20",
+""
+],
+"StringAchieve:44030031": [
+"Reach Level 60",
+""
+],
+"StringAchieve:44030032": [
+"Reach Level 80",
+""
+],
+"StringAchieve:44030033": [
+"Fight together 10 times",
+""
+],
+"StringAchieve:44030034": [
+"Battle together 50 times",
+""
+],
+"StringAchieve:44030035": [
+"Battle together 100 times",
+""
+],
+"StringAchieve:44030036": [
+"Fight as party leader 10 times",
+""
+],
+"StringAchieve:44030037": [
+"Complete 30 battles as Team Leader",
+""
+],
+"StringAchieve:80509101": [
+"Defeat Pudding Pup once",
+""
+],
+"StringAchieve:80509102": [
+"Defeat Umbrella Yokai once",
+""
+],
+"StringAchieve:80509103": [
+"Defeat Sunshine Doll once",
+""
+],
+"StringAchieve:80509104": [
+"Defeat Small Lantern once",
+""
+],
+"StringAchieve:80509105": [
+"Defeat Spiked Pufferfish once",
+""
+],
+"StringAchieve:80509106": [
+"Defeat Crow Earl once",
+""
+],
+"StringAchieve:80509107": [
+"Defeat Gingerbread Minion once",
+""
+],
+"StringAchieve:80509108": [
+"Defeat Candy Gentleman once",
+""
+],
+"StringAchieve:80509109": [
+"Defeat Embroidered Ball Dragon once",
+""
+],
+"StringAchieve:80509110": [
+"Defeat Red-robed Lion Head once",
+""
+],
+"StringAchieve:80509111": [
+"Defeat Gunner once",
+""
+],
+"StringAchieve:80509112": [
+"Defeat Candy Bomb once",
+""
+],
+"StringAchieve:80509113": [
+"Defeat Pudding Pup (Sakura) once",
+""
+],
+"StringAchieve:80509114": [
+"Defeat Trap: Toothsome Steam-Basket once",
+""
+],
+"StringAchieve:80509115": [
+"Defeat Weeping Man once",
+""
+],
+"StringAchieve:80509116": [
+"Defeat Crunchy Snowman once",
+""
+],
+"StringAchieve:80509201": [
+"Log in for 60 days in total",
+""
+],
+"StringAchieve:80509301": [
+"Current top-up amount",
+""
+],
+"StringAchieve:80509302": [
+"Top up 29 CNY in total",
+""
+],
+"StringAchieve:80509303": [
+"Top up 89 CNY in total",
+""
+],
+"StringAchieve:80509304": [
+"Top up 199 CNY in total",
+""
+],
+"StringAchieve:80509305": [
+"Top up 399 CNY in total",
+""
+],
+"StringAchieve:80509306": [
+"Top up 799 CNY in total",
+""
+],
+"StringAchieve:80509401": [
+"Current top-up amount",
+""
+],
+"StringAchieve:80509402": [
+"Top up 10 CNY in total",
+""
+],
+"StringAchieve:80509403": [
+"Top up 50 CNY in total",
+""
+],
+"StringAchieve:80509404": [
+"Top up 200 CNY in total",
+""
+],
+"StringAchieve:80509405": [
+"Top up 300 CNY in total",
+""
+],
+"StringAchieve:9010700": [
+"Unlocked after obtaining the [Suplex] emote item",
+""
+],
+"StringAchieve:9109399": [
+"A photo sticker with a special design. How to get it is unknown for now.",
+""
+],
+"StringAchieve:9109400": [
+"A photo sticker with a special design. How to get it is unknown for now.",
+""
+],
+"StringAchieve:9109401": [
+"A photo sticker with a special design. How to get it is unknown for now.",
+""
+],
+"StringAchieve:9109402": [
+"A photo sticker with a special design. How to get it is unknown for now.",
+""
+],
+"StringAchieve:9109403": [
+"A photo sticker with a special design. How to get it is unknown for now.",
+""
+],
+"StringAchieve:9109404": [
+"A photo sticker with a special design. How to get it is unknown for now.",
+""
+],
+"StringAchieve:93612025": [
+"From Pass Season 15",
+""
+],
+"StringAchieve:93612026": [
+"From Pass Season 15",
+""
+],
+"StringAchieve:93612027": [
+"From Pass Season 16",
+""
+],
+"StringAchieve:93612028": [
+"From Pass Season 16",
+""
+],
+"StringAchieve:93622025": [
+"From Pass Season 20",
+""
+],
+"StringAchieve:93622026": [
+"From Pass Season 20",
+""
+],
+"StringAchieve:93622027": [
+"From Pass Season 21",
+""
+],
+"StringAchieve:93622028": [
+"From Pass Season 21",
+""
+],
+"StringAchieve:93700057": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700058": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700059": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700060": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700061": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700062": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700063": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700064": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700065": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700066": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700067": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700068": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700069": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700070": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700071": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700072": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700073": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700074": [
+"Obtained from special events",
+""
+],
+"StringAchieve:93700075": [
+"Obtained from special events",
+""
+],
+"StringAchieve:150440121": [
+"Craft Updraft [2] once",
+""
+],
+"StringAchieve:150440122": [
+"Craft Updraft [2] 3 times",
+""
+],
+"StringAchieve:150440123": [
+"Craft Updraft [2] 5 times",
+""
+],
+"StringAchieve:150440124": [
+"Craft Updraft [2] 10 times",
+""
+],
+"StringAchieve:142008211": [
+"Craft Little Laurel Beret once",
+""
+],
+"StringAchieve:142008212": [
+"Craft Little Laurel Beret 2 times",
+""
+],
+"StringAchieve:142008213": [
+"Craft Little Laurel Beret 3 times",
+""
+],
+"StringAchieve:142008214": [
+"Craft Little Laurel Beret 4 times",
+""
+],
+"StringAchieve:146440011": [
+"Craft Vampire's Wing once",
+""
+],
+"StringAchieve:146440012": [
+"Craft Vampire's Wing 2 times",
+""
+],
+"StringAchieve:146440013": [
+"Craft Vampire's Wing 3 times",
+""
+],
+"StringAchieve:146440014": [
+"Craft Vampire's Wing 4 times",
+""
+],
+"StringAchieve:142010511": [
+"Craft Primrose Bloom Headpiece once",
+""
+],
+"StringAchieve:142010512": [
+"Craft Primrose Bloom Headpiece 2 times",
+""
+],
+"StringAchieve:142010513": [
+"Craft Primrose Bloom Headpiece 3 times",
+""
+],
+"StringAchieve:142010514": [
+"Craft Primrose Bloom Headpiece 4 times",
+""
+],
+"StringAchieve:142010521": [
+"Craft Primrose Bloom Braids once",
+""
+],
+"StringAchieve:142010522": [
+"Craft Primrose Bloom Braids 2 times",
+""
+],
+"StringAchieve:142010523": [
+"Craft Primrose Bloom Braids 3 times",
+""
+],
+"StringAchieve:142010524": [
+"Craft Primrose Bloom Braids 4 times",
+""
+],
+"StringAchieve:142010531": [
+"Craft Primrose Bloom Dress once",
+""
+],
+"StringAchieve:142010532": [
+"Craft Primrose Bloom Dress 2 times",
+""
+],
+"StringAchieve:142010533": [
+"Craft Primrose Bloom Dress 3 times",
+""
+],
+"StringAchieve:142010534": [
+"Craft Primrose Bloom Dress 4 times",
+""
+],
+"StringAchieve:142010621": [
+"Craft Night Gothic Twintails once",
+""
+],
+"StringAchieve:142010622": [
+"Craft Night Gothic Twintails 2 times",
+""
+],
+"StringAchieve:142010623": [
+"Craft Night Gothic Twintails 3 times",
+""
+],
+"StringAchieve:142010624": [
+"Craft Night Gothic Twintails 4 times",
+""
+],
+"StringAchieve:142010631": [
+"Craft Night Gothic Dress once",
+""
+],
+"StringAchieve:142010632": [
+"Craft Night Gothic Dress 2 times",
+""
+],
+"StringAchieve:142010633": [
+"Craft Night Gothic Dress 3 times",
+""
+],
+"StringAchieve:142010634": [
+"Craft Night Gothic Dress 4 times",
+""
+],
+"StringAchieve:142010641": [
+"Craft Night Gothic Wings once",
+""
+],
+"StringAchieve:142010642": [
+"Craft Night Gothic Wings 2 times",
+""
+],
+"StringAchieve:142010643": [
+"Craft Night Gothic Wings 3 times",
+""
+],
+"StringAchieve:142010644": [
+"Craft Night Gothic Wings 4 times",
+""
+],
+"StringAchieve:142010651": [
+"Craft Night Gothic Parasol once",
+""
+],
+"StringAchieve:142010652": [
+"Craft Night Gothic Parasol 2 times",
+""
+],
+"StringAchieve:142010653": [
+"Craft Night Gothic Parasol 3 times",
+""
+],
+"StringAchieve:142010654": [
+"Craft Night Gothic Parasol 4 times",
+""
+],
+"StringAchieve:142010811": [
+"Craft Midsummer Beach Sun Hat once",
+""
+],
+"StringAchieve:142010812": [
+"Craft Midsummer Beach Sun Hat 2 times",
+""
+],
+"StringAchieve:142010813": [
+"Craft Midsummer Beach Sun Hat 3 times",
+""
+],
+"StringAchieve:142010814": [
+"Craft Midsummer Beach Sun Hat 4 times",
+""
+],
+"StringAchieve:142010821": [
+"Craft Midsummer Beach Long Hair once",
+""
+],
+"StringAchieve:142010822": [
+"Craft Midsummer Beach Long Hair 2 times",
+""
+],
+"StringAchieve:142010823": [
+"Craft Midsummer Beach Long Hair 3 times",
+""
+],
+"StringAchieve:142010824": [
+"Craft Midsummer Beach Long Hair 4 times",
+""
+],
+"StringAchieve:142010831": [
+"Craft Midsummer Beach Off-Shoulder Set once",
+""
+],
+"StringAchieve:142010832": [
+"Craft Midsummer Beach Off-Shoulder Set 2 times",
+""
+],
+"StringAchieve:142010833": [
+"Craft Midsummer Beach Off-Shoulder Set 3 times",
+""
+],
+"StringAchieve:142010834": [
+"Craft Midsummer Beach Off-Shoulder Set 4 times",
+""
+],
+"StringAchieve:142010841": [
+"Craft Midsummer Beach Sunglasses once",
+""
+],
+"StringAchieve:142010842": [
+"Craft Midsummer Beach Sunglasses 2 times",
+""
+],
+"StringAchieve:142010843": [
+"Craft Midsummer Beach Sunglasses 3 times",
+""
+],
+"StringAchieve:142010844": [
+"Craft Midsummer Beach Sunglasses 4 times",
+""
+],
+"StringAchieve:142010851": [
+"Craft Midsummer Beach Sunglasses once",
+""
+],
+"StringAchieve:142010852": [
+"Craft Midsummer Beach Sunglasses 2 times",
+""
+],
+"StringAchieve:142010853": [
+"Craft Midsummer Beach Sunglasses 3 times",
+""
+],
+"StringAchieve:142010854": [
+"Craft Midsummer Beach Sunglasses 4 times",
+""
+],
+"StringAchieve:141002811": [
+"Craft Little Grey Bear Plush Hat once",
+""
+],
+"StringAchieve:141002821": [
+"Craft Little Grey Bear Hairstyle once",
+""
+],
+"StringAchieve:141002831": [
+"Craft Little Grey Bear Academy Sweater once",
+""
+],
+"StringAchieve:141002841": [
+"Craft Little Grey Bear Back Ornament once",
+""
+],
+"StringAchieve:141002851": [
+"Craft Little Gray Bear Glasses Frame once",
+""
+],
+"StringAchieve:141002812": [
+"Craft Little Grey Bear Plush Hat 2 times",
+""
+],
+"StringAchieve:141002822": [
+"Craft Little Grey Bear Hairstyle 2 times",
+""
+],
+"StringAchieve:141002832": [
+"Craft Little Grey Bear Academy Sweater 2 times",
+""
+],
+"StringAchieve:141002842": [
+"Craft Little Grey Bear Back Ornament 2 times",
+""
+],
+"StringAchieve:141002852": [
+"Craft Little Gray Bear Glasses Frame 2 times",
+""
+],
+"StringAchieve:141002813": [
+"Craft Little Grey Bear Plush Hat 3 times",
+""
+],
+"StringAchieve:141002823": [
+"Craft Little Grey Bear Hairstyle 3 times",
+""
+],
+"StringAchieve:141002833": [
+"Craft Little Grey Bear Academy Sweater 3 times",
+""
+],
+"StringAchieve:141002843": [
+"Craft Little Grey Bear Back Ornament 3 times",
+""
+],
+"StringAchieve:141002853": [
+"Craft Little Gray Bear Glasses Frame 3 times",
+""
+],
+"StringAchieve:141002814": [
+"Craft Little Grey Bear Plush Hat 4 times",
+""
+],
+"StringAchieve:141002824": [
+"Craft Little Grey Bear Hairstyle 4 times",
+""
+],
+"StringAchieve:141002834": [
+"Craft Little Grey Bear Academy Sweater 4 times",
+""
+],
+"StringAchieve:141002844": [
+"Craft Little Grey Bear Back Ornament 4 times",
+""
+],
+"StringAchieve:141002854": [
+"Craft Little Gray Bear Glasses Frame 4 times",
+""
+],
+"StringAchieve:142010721": [
+"Craft Cute Star Hairstyle once",
+""
+],
+"StringAchieve:142010722": [
+"Craft Cute Star Hairstyle 2 times",
+""
+],
+"StringAchieve:142010723": [
+"Craft Cute Star Hairstyle 3 times",
+""
+],
+"StringAchieve:142010724": [
+"Craft Cute Star Hairstyle 4 times",
+""
+],
+"StringAchieve:142010731": [
+"Craft Cute Star Dress once",
+""
+],
+"StringAchieve:142010732": [
+"Craft Cute Star Dress 2 times",
+""
+],
+"StringAchieve:142010733": [
+"Craft Cute Star Dress 3 times",
+""
+],
+"StringAchieve:142010734": [
+"Craft Cute Star Dress 4 times",
+""
+],
+"StringRiddle:22": [
+"Plan a route to <color=red>light up the tiles under your feet</color>. Like a one-stroke drawing, never cross the same tile twice.\n\n<color=red>Step on every tile</color> in one go and a chest will appear.",
+"Light up the tiles in one go",
+"Tiles left",
+"",
+"One-Stroke Tiles"
+],
+"StringChat:700057": [
+"[Special | Fei Chopping Veggies]",
+"",
+"",
+""
+],
+"StringChat:700058": [
+"[Special | Fei Squishing Cheeks]",
+"",
+"",
+""
+],
+"StringChat:700059": [
+"[Special | Lolomay: Nice!]",
+"",
+"",
+""
+],
+"StringChat:700060": [
+"[Special | Dove Fish]",
+"",
+"",
+""
+],
+"StringChat:700061": [
+"[Special | Lolomay on the Phone]",
+"",
+"",
+""
+],
+"StringChat:700062": [
+"[Special | Kobushi lol]",
+"",
+"",
+""
+],
+"StringChat:700063": [
+"[Special | Molly Says Hi]",
+"",
+"",
+""
+],
+"StringChat:700064": [
+"[Special | Fei Holding a Mushroom]",
+"",
+"",
+""
+],
+"StringChat:700065": [
+"[Special | Gazetter: As Expected of Me]",
+"",
+"",
+""
+],
+"StringChat:700066": [
+"[Special | Lacy Speechless]",
+"",
+"",
+""
+],
+"StringChat:700067": [
+"[Special | Fei Surprised]",
+"",
+"",
+""
+],
+"StringChat:700068": [
+"[Special | Fei Babbling]",
+"",
+"",
+""
+],
+"StringChat:700069": [
+"[Special | Kobushi: Leave It to Me]",
+"",
+"",
+""
+],
+"StringChat:700070": [
+"[Sunshine Doll | Rain]",
+"",
+"",
+""
+],
+"StringChat:700071": [
+"[Special | Molly Feeling Guilty]",
+"",
+"",
+""
+],
+"StringChat:700072": [
+"[Pompompurin | Melting in the Heat]",
+"",
+"",
+""
+],
+"StringChat:700073": [
+"[Special | Lolomay: Onegai]",
+"",
+"",
+""
+],
+"StringChat:700074": [
+"[Special | Fei Feast]",
+"",
+"",
+""
+],
+"StringChat:700075": [
+"[Special | Lexy: Ehehe]",
+"",
+"",
+""
+],
+"StringExpression:10700": [
+"Suplex",
+"",
+"",
+""
+],
+"StringExpression:2008": [
+"Shovel",
+"",
+"",
+""
+],
+"StringExpression:3320": [
+"Connie's Dance",
+"",
+"",
+""
+],
+"StringExpression:3325": [
+"So Lonely",
+"",
+"",
+""
+],
+"StringExpression:3330": [
+"Refined Person 1",
+"",
+"",
+""
+],
+"StringExpression:3335": [
+"Refined Person 2",
+"",
+"",
+""
+],
+"StringExpression:3340": [
+"Refined Person 3",
+"",
+"",
+""
+],
+"StringExpression:3345": [
+"Refined Person 4",
+"",
+"",
+""
+],
+"StringExpression:3350": [
+"Refined Person 5",
+"",
+"",
+""
+],
+"StringExpression:3355": [
+"Refined Person 6",
+"",
+"",
+""
+],
+"StringExpression:3360": [
+"Refined Person 7",
+"",
+"",
+""
+],
+"StringExpression:3365": [
+"Refined Person 8",
+"",
+"",
+""
+],
+"StringExpression:3370": [
+"Refined Person 9",
+"",
+"",
+""
+],
+"StringExpression:3375": [
+"Refined Person 10",
+"",
+"",
+""
+],
+"StringExpression:3380": [
+"Refined Person 11",
+"",
+"",
+""
+],
+"StringExpression:3385": [
+"Sesame Bug",
+"",
+"",
+""
+],
+"StringExpression:3390": [
+"Ballet Bow",
+"",
+"",
+""
+],
+"StringExpression:3395": [
+"Hand Dance",
+"",
+"",
+""
+],
+"StringExpression:3400": [
+"Refined Person 12",
+"",
+"",
+""
+],
+"StringExpression:3405": [
+"Refined Person 13",
+"",
+"",
+""
+],
+"StringExpression:3410": [
+"Sneeze",
+"",
+"",
+""
+],
+"StringExpression:3415": [
+"Roll Right",
+"",
+"",
+""
+],
+"StringExpression:3420": [
+"Roll Left",
+"",
+"",
+""
+],
+"StringExpression:3425": [
+"Deflated",
+"",
+"",
+""
+],
+"StringStory:2001412": [
+"The Upside-Down World - 1",
+""
+],
+"StringStory:2001422": [
+"The Upside-Down World - 2",
+""
+],
+"StringExtraChapter:200141": [
+"The Upside-Down World",
+"Complete Main Story Chapter 7, Part 11"
+],
+"StringManualText:10013": [
+"Pet Food Storehouse",
+"Open daily",
+"",
+"",
+""
+],
+"StringManualText:108": [
+"Orison School",
+"Wishing Star School",
+"",
+"",
+""
+],
+"StringMail:27": [
+"Rota Koi special reward!",
+"The OverField Team",
+"Dear Lucky Captain,\n\nThank you so much for supporting us during the Anniversary. Please accept this token of our thanks.\n\nWe hope to ride the waves with you again next anniversary!"
+],
+"StringHead:9399": [
+"Aurele - Clear Whisper",
+"Aurele's special profile sticker. Change it from your phone's profile picture.",
+""
+],
+"StringHead:9400": [
+"Tutu - Bedtime Story",
+"Tutu's special profile sticker. Change it from your phone's profile picture.",
+""
+],
+"StringHead:9401": [
+"Moon - Snug Slumber",
+"Moon's special profile sticker. Change it from your phone's profile picture.",
+""
+],
+"StringHead:9402": [
+"Anime Lead L",
+"A special formal profile sticker. Change it from your phone's profile picture.",
+""
+],
+"StringHead:9403": [
+"Anime Lead M",
+"A special formal profile sticker. Change it from your phone's profile picture.",
+""
+],
+"StringHead:9404": [
+"Anime Lead R",
+"A special formal profile sticker. Change it from your phone's profile picture.",
+""
+],
+"StringActivity:5072": [
+"Warm Breeze Tree",
+""
+],
+"StringActivity:5073": [
+"\"Lion Dancing Girl\" Yin",
+""
+],
+"StringActivity:5074": [
+"\"Vampire Girl\" Unna",
+""
+],
+"StringActivity:5075": [
+"Netherworld Courtyard",
+""
+],
+"StringActivity:5076": [
+"Pass",
+""
+],
+"StringActivity:5077": [
+"\"Fortune Teller\" Lolomay",
+""
+],
+"StringActivity:5078": [
+"Rota Hotpot Restaurant",
+""
+],
+"StringActivity:5079": [
+"Pass",
+""
+],
+"StringActivity:5080": [
+"\"Mountain Boy\" Naoki",
+""
+],
+"StringActivity:5081": [
+"Childhood Tree",
+""
+],
+"StringActivity:2014": [
+"14 Days at School",
+""
+],
+"StringActivity:26010810": [
+"Meteor Gacha",
+""
+],
+"StringActivity:26010840": [
+"Baseball Tree",
+""
+],
+"StringActivity:26010841": [
+"Hotpot",
+""
+],
+"StringActivity:26010820": [
+"Food Festival",
+""
+],
+"StringActivity:26010830": [
+"Molly",
+""
+],
+"StringActivity:26010860": [
+"Night Violet",
+""
+],
+"StringActivity:26010880": [
+"Event Shop",
+""
+],
+"StringActivity:26012910": [
+"Meteor Gacha",
+""
+],
+"StringActivity:26012940": [
+"Banquet Tree",
+""
+],
+"StringActivity:26012941": [
+"Elegance Tree",
+""
+],
+"StringActivity:26012970": [
+"Pass",
+""
+],
+"StringActivity:26012990": [
+"Pass",
+""
+],
+"StringActivity:260226070": [
+"Pass",
+""
+],
+"StringActivity:260226090": [
+"Pass",
+""
+],
+"StringActivity:260226040": [
+"Pure Heart Tree",
+""
+],
+"StringActivity:260311040": [
+"Spring Sweets",
+""
+],
+"StringActivity:260311030": [
+"\"Fantasy Fangirl\" Aurele",
+""
+],
+"StringActivity:260311140": [
+"Teddy Bear",
+""
+],
+"StringActivity:260311060": [
+"Heart Chair",
+""
+],
+"StringActivity:260311061": [
+"Star-Heart Pony",
+""
+],
+"StringActivity:260326150": [
+"Beat Up Mr. Li",
+""
+],
+"StringActivity:260326160": [
+"Beat Up Mr. Li - Invite Event",
+""
+],
+"StringActivity:260326170": [
+"Beat Up Mr. Li - Return Event",
+""
+],
+"StringActivity:260326100": [
+"Anniversary Check-in (10 days)",
+""
+],
+"StringActivity:260326020": [
+"Anniversary Celebration",
+""
+],
+"StringActivity:260326021": [
+"Anniversary Packages",
+""
+],
+"StringActivity:260326022": [
+"Anniversary Coin Shop",
+""
+],
+"StringActivity:260326023": [
+"Anniversary Rewards",
+""
+],
+"StringActivity:260326130": [
+"Daily Monster Treasure Hunt",
+""
+],
+"StringActivity:260326131": [
+"Anniversary Wishes",
+""
+],
+"StringActivity:260326180": [
+"Anniversary Lottery",
+""
+],
+"StringActivity:260326070": [
+"Pass",
+""
+],
+"StringActivity:260326090": [
+"Pass",
+""
+],
+"StringActivity:260326040": [
+"When the Sakura Falls",
+""
+],
+"StringActivity:260430070": [
+"Pass",
+""
+],
+"StringActivity:260430090": [
+"Pass Showcase",
+""
+],
+"StringActivity:260430100": [
+"May Day Check-in (8 days)",
+""
+],
+"StringActivity:260430021": [
+"May Day Limited Shop",
+""
+],
+"StringActivity:260430022": [
+"May Day Top-up Rewards",
+""
+],
+"StringActivity:260430030": [
+"\"Little Magician\" Lacy",
+""
+],
+"StringActivity:260514030": [
+"\"Cool Idol\" Meng",
+""
+],
+"StringActivity:260514020": [
+"Rain-Fed Fish",
+""
+],
+"StringActivity:260514010": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260514011": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260514040": [
+"Co-creation Tree I",
+""
+],
+"StringActivity:260514041": [
+"Co-creation Tree II",
+""
+],
+"StringActivity:260514070": [
+"Pass",
+""
+],
+"StringActivity:260514090": [
+"Pass",
+""
+],
+"StringActivity:260625070": [
+"Pass",
+""
+],
+"StringActivity:260625090": [
+"Pass",
+""
+],
+"StringActivity:260625010": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260625011": [
+"Zodiac Gacha",
+""
+],
+"StringActivity:260625012": [
+"Starlight Gacha",
+""
+],
+"StringActivity:260625013": [
+"Starlight Gacha",
+""
+],
+"StringActivity:260625014": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260625015": [
+"Zodiac Gacha",
+""
+],
+"StringActivity:260625016": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260625017": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260625100": [
+"7-day Check-in",
+""
+],
+"StringActivity:260715070": [
+"Pass",
+""
+],
+"StringActivity:260715090": [
+"Pass",
+""
+],
+"StringActivity:260715040": [
+"Co-creation Tree IV",
+""
+],
+"StringActivity:260715100": [
+"7-day Check-in",
+""
+],
+"StringActivity:260715041": [
+"Resource Tree",
+""
+],
+"StringActivity:260715016": [
+"Zodiac Gacha",
+""
+],
+"StringActivity:260715017": [
+"Starlight Gacha",
+""
+],
+"StringActivity:260715018": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260715019": [
+"Zodiac Gacha",
+""
+],
+"StringActivity:260715020": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260715037": [
+"\"Weather Child\" CC",
+""
+],
+"StringActivity:260730036": [
+"\"Weather Child\" CC",
+""
+],
+"StringActivity:260730037": [
+"\"Divine Calculator\" Sixi",
+""
+],
+"StringActivity:260730038": [
+"\"Mysterious Reporter\" Connie",
+""
+],
+"StringActivity:260730042": [
+"Co-creation Tree VII",
+""
+],
+"StringActivity:260730043": [
+"Co-creation Tree VIII",
+""
+],
+"StringActivity:260730044": [
+"Co-creation Tree IX",
+""
+],
+"StringActivity:260730045": [
+"Co-creation Tree X",
+""
+],
+"StringActivity:260730010": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260730070": [
+"Pass",
+""
+],
+"StringActivity:260730090": [
+"Pass",
+""
+],
+"StringActivity:260730071": [
+"Pass",
+""
+],
+"StringActivity:260730091": [
+"Pass",
+""
+],
+"StringActivity:260815010": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260815011": [
+"Meteor Gacha",
+""
+],
+"StringActivity:260815040": [
+"Doggy Ride",
+""
+],
+"StringActivity:260815110": [
+"7-day Check-in",
+""
+],
+"StringActivity:260815041": [
+"Red Winter Tree",
+""
+],
+"StringActivity:260815120": [
+"Halloween Photo Wall",
+""
+],
+"StringActivity:260815090": [
+"Pass",
+""
+],
+"StringActivity:260815030": [
+"\"Fog City Detective\" Molly",
+""
+],
+"StringActivity:260815070": [
+"Pass",
+""
+],
+"StringHelp:1007": [
+"Event Guide",
+"<b>Event:</b>\n\n<b>1. Trick-or-Treat Candy Hunt:</b>\nDeep in the courtyard are three candies glowing with a strange light, said to be the ghosts' dearest treasures:\n  <b><color=#008000>Green Candy</color></b>\n  <b><color=#8A2BE2>Purple Candy</color></b>\n  <b><color=#FFA500>Orange Candy</color></b>\n\nThey are all hidden behind the event stage bosses, waiting for brave Salvagers to find them!\n\n<b>2. The Mysterious Ghost Badge:</b>\nCollect all three candies to make a <b>Colorful Candy Bag</b>! Open it for a <b><color=#8A2BE2>Ghost Badge</color></b>, the only currency for event rewards!\n\n<b>3. Challenge! \"Netherworld Courtyard\":</b>\nEvery day the event screen gives you 2 <b>Event Stage Challenge Tickets</b> from the ghosts: their invitation to play!\n\n    The ghosts hide in the courtyard; their glow and sounds help you find them.\n    When you find one, open your profile at the top left, take out the camera and snap! Freeze their panicked faces!\n    Photographed ghosts shyly drop their <b><color=#FFA500>power-up items</color></b> and run. Each item has its own powerful effect to help you beat strong enemies!\n\n<b>Tip:</b> every item has surprising effects. Experiment and find your favorite way to catch ghosts!\n\n<b>Note</b>: after each boss reward, the challenge ticket vanishes in a puff of smoke.\n\n<b>4. Gifts under the Wishing Tree:</b>\nTake your <b><color=#8A2BE2>Ghost Badges</color></b> to the <b><color=#FFA500>Wishing Tree</color></b> in the top-left menu. They say the ancient tree spirit answers wishes for badges with exclusive Halloween gifts!\n\nSo, got your courage and your camera ready?\n\n<b>This Halloween, let's go ghost-hunting together!</b>"
+],
+"StringHelp:1009": [
+"Event Guide",
+"<b>Event:</b>\n\n<b>1. Trick-or-Treat Candy Hunt:</b>\nDeep in the courtyard are three candies glowing with a strange light, said to be the ghosts' dearest treasures:\n  <b><color=#008000>Green Candy</color></b>\n  <b><color=#8A2BE2>Purple Candy</color></b>\n  <b><color=#FFA500>Orange Candy</color></b>\n\nThey are all hidden behind the event stage bosses, waiting for brave Salvagers to find them!\n\n<b>2. The Mysterious Ghost Badge:</b>\nCollect all three candies to make a <b>Colorful Candy Bag</b>! Open it for a <b><color=#8A2BE2>Ghost Badge</color></b>, the only currency for event rewards!\n\n<b>3. Challenge! \"Netherworld Courtyard\":</b>\nEvery day the event screen gives you 2 <b>Event Stage Challenge Tickets</b> from the ghosts: their invitation to play!\n\n    The ghosts hide in the courtyard; their glow and sounds help you find them.\n    When you find one, open your profile at the top left, take out the camera and snap! Freeze their panicked faces!\n    Photographed ghosts shyly drop their <b><color=#FFA500>power-up items</color></b> and run. Each item has its own powerful effect to help you beat strong enemies!\n\n<b>Tip:</b> every item has surprising effects. Experiment and find your favorite way to catch ghosts!\n\n<b>Note</b>: after each boss reward, the challenge ticket vanishes in a puff of smoke.\n\n<b>4. Halloween Gifts from the Cauldron:</b>\nTake your <b><color=#8A2BE2>Ghost Badges</color></b> to the <b><color=#FFA500>Cauldron</color></b>, open the <b>Halloween Event Shop</b> and pick your favorite Halloween gifts!\n\nYou can also press <b>Reward Exchange</b> at the bottom of the event page to open the shop directly.\n\nSo, got your courage and your camera ready?\n\n<b>This Halloween, let's go ghost-hunting together!</b>"
+],
+"StringActivityTurntable:7027": [
+"",
+"〓Gacha Machine Rules〓\n※Each draw costs 1 Gacha Coin. Your first single draw is 90% off.\n※This machine has 13 kinds of items, 45 in total: 3 themed items and 10 regular items.\n※Each draw removes 1 of that item; once an item reaches 0 it can no longer be drawn.\n※Once all themed items are drawn, everything left is given to you as a reward.\n※If a 10-draw empties the machine or the themed items run out early, unused Gacha Coins are refunded.\n※Once all items and rewards are obtained, the machine closes.\n※Unused Gacha Coins are kept after the event and work in future machines.\n\n〓Initial Draw Rates〓\nPrimrose Bloom Headpiece x1 3%\nPrimrose Bloom Braids x1 3%\nPrimrose Bloom Dress x1 3%\nStarstones x60 3%\nStarstones x120 3%\ngold x10000 20%\nPlaid Green Star Pendant x1 3%\nDye x2 10%\nHeartfelt Chocolate x1 16%\nWish Stone x3 10%\nRecruit Ticket x1 3%\nDye x1 20%\nHeartfelt Candy x10 3%",
+"",
+"",
+""
+],
+"StringActivityTurntable:7028": [
+"",
+"〓Gacha Machine Rules〓\n※Each draw costs 1 Gacha Coin. Your first single draw is 90% off.\n※This machine has 13 kinds of items, 45 in total: 3 themed items and 10 regular items.\n※Each draw removes 1 of that item; once an item reaches 0 it can no longer be drawn.\n※Once all themed items are drawn, everything left is given to you as a reward.\n※If a 10-draw empties the machine or the themed items run out early, unused Gacha Coins are refunded.\n※Once all items and rewards are obtained, the machine closes.\n※Unused Gacha Coins are kept after the event and work in future machines.\n\n〓Initial Draw Rates〓\nNight Gothic Twintails x1 3%\nNight Gothic Dress x1 3%\nNight Gothic Wings x1 3%\nStarstones x60 3%\nStarstones x120 3%\ngold x10000 20%\nNight Gothic Parasol x1 3%\nDye x2 10%\nHeartfelt Chocolate x1 16%\nWish Stone x3 10%\nRecruit Ticket x1 3%\nDye x1 20%\nHeartfelt Candy x10 3%",
+"",
+"",
+""
+],
+"StringActivityTurntable:7029": [
+"",
+"〓Gacha Machine Rules〓\n※Each draw costs 1 Gacha Coin. Your first single draw is 90% off.\n※This machine has 13 kinds of items, 45 in total: 3 themed items and 10 regular items.\n※Each draw removes 1 of that item; once an item reaches 0 it can no longer be drawn.\n※Once all themed items are drawn, everything left is given to you as a reward.\n※If a 10-draw empties the machine or the themed items run out early, unused Gacha Coins are refunded.\n※Once all items and rewards are obtained, the machine closes.\n※Unused Gacha Coins are kept after the event and work in future machines.\n\n〓Initial Draw Rates〓\nMidsummer Beach Sun Hat x1 3%\nMidsummer Beach Long Hair x1 3%\nMidsummer Beach Off-Shoulder Set x1 3%\nStarstones x60 3%\nStarstones x120 3%\ngold x10000 20%\nMidsummer Beach Sunglasses x1 3%\nDye x2 10%\nHeartfelt Chocolate x1 16%\nWish Stone x3 10%\nRecruit Ticket x1 3%\nDye x1 20%\nHeartfelt Candy x10 3%",
+"",
+"",
+""
+],
+"StringBossRush:1003": [
+"United Calculation S3",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1004": [
+"United Calculation S4",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1005": [
+"United Calculation S5",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1006": [
+"United Calculation S6",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1007": [
+"United Calculation S7",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1008": [
+"United Calculation S8",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1009": [
+"United Calculation S9",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1010": [
+"United Calculation S10",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1011": [
+"United Calculation S11",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1012": [
+"United Calculation S12",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1013": [
+"United Calculation S13",
+"",
+"",
+"",
+"",
+""
+],
+"StringBossRush:1014": [
+"United Calculation S14",
+"",
+"",
+"",
+"",
+""
+],
+"StringMusicItem:31": [
+"Gong",
+""
+],
+"StringMusicItem:32": [
+"Shang",
+""
+],
+"StringMusicItem:33": [
+"Jue",
+""
+],
+"StringMusicItem:34": [
+"Zhi",
+""
+],
+"StringMusicItem:35": [
+"Yu",
+""
+]
+}

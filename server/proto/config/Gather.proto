@@ -1,0 +1,71 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGatherDatas {
+  protocol.GatherDatas Gather = 1;
+  protocol.GatherRewardDatas GatherReward = 2;
+  protocol.MainCityGatherDatas MainCityGather = 3;
+  protocol.GatherRuleDatas GatherRule = 4;
+}
+message GatherDatas {
+  repeated protocol.GatherConfigure datas = 1;
+}
+message GatherConfigure {
+  int32 ID = 1;
+  repeated protocol.GatherGroupInfo GatherGroupInfo = 2;
+}
+message GatherGroupInfo {
+  int32 Reward = 1;
+  int32 Weight = 2;
+  int32 NewGatherType = 3;
+  int32 NewWeaponType = 4;
+  string Path = 5;
+  string Prefab = 6;
+}
+message GatherRewardDatas {
+  repeated protocol.GatherRewardConfigure datas = 1;
+}
+message GatherRewardConfigure {
+  int32 ID = 1;
+  repeated protocol.GatherRewardGroupInfo GatherRewardGroupInfo = 2;
+}
+message GatherRewardGroupInfo {
+  int32 Index = 1;
+  int32 ItemID = 2;
+  int32 Count = 3;
+  bool HasModel = 4;
+  bool Lucky = 5;
+  string Path = 6;
+  int32 BuffID = 7;
+  int32 Duration = 8;
+}
+message MainCityGatherDatas {
+  repeated protocol.MainCityGatherConfigure datas = 1;
+}
+message MainCityGatherConfigure {
+  int32 ID = 1;
+  repeated protocol.GatherRewardGroupWithTime GatherRewardGroupWithTime = 2;
+}
+message GatherRewardGroupWithTime {
+  int32 Time = 1;
+  int32 GatherRewardID = 2;
+}
+message GatherRuleDatas {
+  repeated protocol.GatherRuleConfigure datas = 1;
+}
+message GatherRuleConfigure {
+  int32 ID = 1;
+  int32 WoodNum = 2;
+  int32 FlowerNum = 3;
+  int32 StoneNum = 4;
+  int32 ButterflyNum = 5;
+  int32 WaterNum = 6;
+  int32 PickNum = 7;
+  int32 LuckyFinishwoodNum = 8;
+  int32 LuckyFinishflowerNum = 9;
+  int32 LuckyFinishstoneNum = 10;
+  int32 LuckyFinishbutterflyNum = 11;
+  int32 LuckyFinishwaterNum = 12;
+  int32 LuckyFinishpickNum = 13;
+}

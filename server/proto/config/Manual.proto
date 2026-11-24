@@ -1,0 +1,62 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllManualDatas {
+  protocol.ManualDatas Manual = 1;
+  protocol.ManualDungeonDatas ManualDungeon = 2;
+  protocol.ManualShowRewardDatas ManualShowReward = 3;
+}
+message ManualDatas {
+  repeated protocol.ManualConfigure datas = 1;
+}
+message ManualConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 IconID = 3;
+  repeated protocol.ManualItems ManualItems = 4;
+}
+message ManualItems {
+  int32 Index = 1;
+  int32 IndexIconID = 2;
+  int32 IndexTextID = 3;
+  bool IsTransfer = 4;
+  int32 TransferSceneID = 5;
+  int32 RewardID = 6;
+  int32 UnLockRewardID = 7;
+  int32 FlagID = 8;
+  repeated float Position = 9;
+  repeated float Rotation = 10;
+}
+message ManualDungeonDatas {
+  repeated protocol.ManualDungeonConfigure datas = 1;
+}
+message ManualDungeonConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 IconID = 3;
+  repeated protocol.ManualDungeonItems ManualDungeonItems = 4;
+}
+message ManualDungeonItems {
+  int32 TransferSceneID = 1;
+  int32 UnLockRewardID = 2;
+  int32 FlagID = 3;
+  repeated float Position = 4;
+  repeated float Rotation = 5;
+  int32 IndexIconID = 6;
+  int32 IndexTextID = 7;
+  bool IsShowUnlock = 8;
+}
+message ManualShowRewardDatas {
+  repeated protocol.ManualShowRewardConfigure datas = 1;
+}
+message ManualShowRewardConfigure {
+  int32 ID = 1;
+  repeated protocol.ManualRewardItems ManualRewardItems = 2;
+}
+message ManualRewardItems {
+  int32 ItemID = 1;
+  int32 ShowNum = 2;
+  repeated int32 NeedItems = 3;
+  int32 ShowItemID = 4;
+}

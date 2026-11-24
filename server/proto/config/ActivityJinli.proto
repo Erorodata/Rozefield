@@ -1,0 +1,18 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllActivityJinliDatas {
+  protocol.JinliDatas Jinli = 1;
+}
+message JinliDatas {
+  repeated protocol.JinliConfigure datas = 1;
+}
+message JinliConfigure {
+  int32 ID = 1;
+  string SettleTime = 2;
+  int32 Params1 = 3;
+  int32 Params2 = 4;
+  int32 Params3 = 5;
+  int32 Params4 = 6;
+}

@@ -1,0 +1,16 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllBookDatas {
+  protocol.BookDatas Book = 1;
+}
+message BookDatas {
+  repeated protocol.BookConfigure datas = 1;
+}
+message BookConfigure {
+  int32 ID = 1;
+  int32 BookID = 2;
+  int32 ItemID = 3;
+  int32 CollectionID = 4;
+}

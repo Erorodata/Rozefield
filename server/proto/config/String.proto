@@ -1,0 +1,584 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllStringDatas {
+  protocol.StringItemTextDatas StringItemText = 1;
+  protocol.StringDungeonDatas StringDungeon = 2;
+  protocol.StringPosterDatas StringPoster = 3;
+  protocol.StringFlagDatas StringFlag = 4;
+  protocol.StringPlayerNameDatas StringPlayerName = 5;
+  protocol.StringCharacterNameDatas StringCharacterName = 6;
+  protocol.StringSpellDatas StringSpell = 7;
+  protocol.StringNpcDatas StringNpc = 8;
+  protocol.StringBattleNormalTextDatas StringBattleNormalText = 9;
+  protocol.StringBattleGuideTextDatas StringBattleGuideText = 10;
+  protocol.StringBattleWeaponTextDatas StringBattleWeaponText = 11;
+  protocol.StringBattleGatherTextDatas StringBattleGatherText = 12;
+  protocol.StringBattleDefenderTextDatas StringBattleDefenderText = 13;
+  protocol.StringQuestDatas StringQuestText = 14;
+  protocol.StringQuestResourceDatas StringQuestResourceText = 15;
+  protocol.StringCookDatas StringCookText = 16;
+  protocol.PassiveDescDatas PassiveDesc = 17;
+  protocol.StringSceneDatas StringScene = 18;
+  protocol.StringCollectFileDatas StringCollectFileText = 19;
+  protocol.StringCollectDataDatas StringCollectDataText = 20;
+  protocol.StringCollectItemDatas StringCollectItemText = 21;
+  protocol.StringCollectTapeDatas StringCollectTapeText = 22;
+  protocol.StringCollectBookDatas StringCollectBookText = 23;
+  protocol.StringCollectPortalDatas StringCollectPortalText = 24;
+  protocol.StringCollectPhotoItemDatas StringCollectPhotoItem = 25;
+  protocol.StringAreaDatas StringAreaText = 26;
+  protocol.StringMoonStoneDatas StringMoonStoneText = 27;
+  protocol.StringRandomEventDatas StringRandomEventText = 28;
+  protocol.StringShopDatas StringShop = 29;
+  protocol.StringGachaDatas StringGacha = 30;
+  protocol.StringGlobalDatas StringGlobal = 31;
+  protocol.StringAbilityDatas StringAbility = 32;
+  protocol.StringAchieveDatas StringAchieve = 33;
+  protocol.StringRiddleDatas StringRiddle = 34;
+  protocol.StringChallengeDatas StringChallenge = 35;
+  protocol.StringExploreDatas StringExplore = 36;
+  protocol.StringNpcQuestDatas StringNpcQuest = 37;
+  protocol.StringChatDatas StringChat = 38;
+  protocol.StringPlayerLevelDatas StringPlayerLevel = 39;
+  protocol.StringBuffDatas StringBuff = 40;
+  protocol.StringExpressionDatas StringExpression = 41;
+  protocol.StringStoryDatas StringStory = 42;
+  protocol.StringExtraChapterDatas StringExtraChapter = 43;
+  protocol.StringExtraChapterTitleDatas StringExtraChapterTitle = 44;
+  protocol.StringGlobalBuffDatas StringGlobalBuff = 45;
+  protocol.StringDialogDatas StringDialogText = 46;
+  protocol.StringFishDatas StringFishText = 47;
+  protocol.StringMakeDatas StringMakeText = 48;
+  protocol.StringHandicraftDatas StringHandicraftText = 49;
+  protocol.StringSpinDatas StringSpinText = 50;
+  protocol.StringManualDatas StringManualText = 51;
+  protocol.StringMailDatas StringMail = 52;
+  protocol.StringAbyssDatas StringAbyss = 53;
+  protocol.StringHeadDatas StringHead = 54;
+  protocol.StringItemSourceDatas StringItemSource = 55;
+  protocol.StringMiniMapDatas StringMiniMap = 56;
+  protocol.StringAchieveQuestDatas StringAchieveQuest = 57;
+  protocol.StringWorldLevelDatas StringWorldLevel = 58;
+  protocol.StringActivityDatas StringActivity = 59;
+  protocol.StringLifeGatherDatas StringLifeGather = 60;
+  protocol.StringHelpDatas StringHelp = 61;
+  protocol.StringTeamGameplayDatas StringTeamGameplay = 62;
+  protocol.StringMiniGameDatas StringMiniGame = 63;
+  protocol.StringIntimacyDatas StringIntimacy = 64;
+  protocol.StringActivityTurntableDatas StringActivityTurntable = 65;
+  protocol.StringHomeItemThemeDatas StringHomeItemTheme = 66;
+  protocol.StringBossRushDatas StringBossRush = 67;
+  protocol.StringMusicItemDatas StringMusicItem = 68;
+  protocol.StringGuideDatas StringGuide = 69;
+  protocol.RestaurantGameItemDatas RestaurantGameItem = 70;
+  protocol.RestaurantGameTitleDatas RestaurantGameTitle = 71;
+  protocol.StringPetDatas StringPet = 72;
+}
+message StringItemTextDatas {
+  repeated protocol.StringItemTextConfigure datas = 1;
+}
+message StringItemTextConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringDungeonDatas {
+  repeated protocol.StringDungeonConfigure datas = 1;
+}
+message StringDungeonConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringPosterDatas {
+  repeated protocol.StringPosterConfigure datas = 1;
+}
+message StringPosterConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringFlagDatas {
+  repeated protocol.StringFlagConfigure datas = 1;
+}
+message StringFlagConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringPlayerNameDatas {
+  repeated protocol.StringPlayerNameConfigure datas = 1;
+}
+message StringPlayerNameConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCharacterNameDatas {
+  repeated protocol.StringCharacterNameConfigure datas = 1;
+}
+message StringCharacterNameConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringSpellDatas {
+  repeated protocol.StringSpellConfigure datas = 1;
+}
+message StringSpellConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringNpcDatas {
+  repeated protocol.StringNpcConfigure datas = 1;
+}
+message StringNpcConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringBattleNormalTextDatas {
+  repeated protocol.StringBattleNormalTextConfigure datas = 1;
+}
+message StringBattleNormalTextConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringBattleGuideTextDatas {
+  repeated protocol.StringBattleGuideTextConfigure datas = 1;
+}
+message StringBattleGuideTextConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringBattleWeaponTextDatas {
+  repeated protocol.StringBattleWeaponTextConfigure datas = 1;
+}
+message StringBattleWeaponTextConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringBattleGatherTextDatas {
+  repeated protocol.StringBattleGatherTextConfigure datas = 1;
+}
+message StringBattleGatherTextConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringBattleDefenderTextDatas {
+  repeated protocol.StringBattleDefenderTextConfigure datas = 1;
+}
+message StringBattleDefenderTextConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringQuestDatas {
+  repeated protocol.StringQuestConfigure datas = 1;
+}
+message StringQuestConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringQuestResourceDatas {
+  repeated protocol.StringQuestResourceConfigure datas = 1;
+}
+message StringQuestResourceConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCookDatas {
+  repeated protocol.StringCookConfigure datas = 1;
+}
+message StringCookConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message PassiveDescDatas {
+  repeated protocol.PassiveDescConfigure datas = 1;
+}
+message PassiveDescConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringSceneDatas {
+  repeated protocol.StringSceneConfigure datas = 1;
+}
+message StringSceneConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCollectFileDatas {
+  repeated protocol.StringCollectFileConfigure datas = 1;
+}
+message StringCollectFileConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCollectDataDatas {
+  repeated protocol.StringCollectDataConfigure datas = 1;
+}
+message StringCollectDataConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCollectItemDatas {
+  repeated protocol.StringCollectItemConfigure datas = 1;
+}
+message StringCollectItemConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCollectTapeDatas {
+  repeated protocol.StringCollectTapeConfigure datas = 1;
+}
+message StringCollectTapeConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCollectBookDatas {
+  repeated protocol.StringCollectBookConfigure datas = 1;
+}
+message StringCollectBookConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCollectPortalDatas {
+  repeated protocol.StringCollectPortalConfigure datas = 1;
+}
+message StringCollectPortalConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringCollectPhotoItemDatas {
+  repeated protocol.StringCollectPhotoItemConfigure datas = 1;
+}
+message StringCollectPhotoItemConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringAreaDatas {
+  repeated protocol.StringAreaConfigure datas = 1;
+}
+message StringAreaConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringMoonStoneDatas {
+  repeated protocol.StringMoonStoneConfigure datas = 1;
+}
+message StringMoonStoneConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringRandomEventDatas {
+  repeated protocol.StringRandomEventConfigure datas = 1;
+}
+message StringRandomEventConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringShopDatas {
+  repeated protocol.StringShopConfigure datas = 1;
+}
+message StringShopConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringGachaDatas {
+  repeated protocol.StringGachaConfigure datas = 1;
+}
+message StringGachaConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringGlobalDatas {
+  repeated protocol.StringGlobalConfigure datas = 1;
+}
+message StringGlobalConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringAbilityDatas {
+  repeated protocol.StringAbilityConfigure datas = 1;
+}
+message StringAbilityConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringAchieveDatas {
+  repeated protocol.StringAchieveConfigure datas = 1;
+}
+message StringAchieveConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringRiddleDatas {
+  repeated protocol.StringRiddleConfigure datas = 1;
+}
+message StringRiddleConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringChallengeDatas {
+  repeated protocol.StringChallengeConfigure datas = 1;
+}
+message StringChallengeConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringExploreDatas {
+  repeated protocol.StringExploreConfigure datas = 1;
+}
+message StringExploreConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringNpcQuestDatas {
+  repeated protocol.StringNpcQuestConfigure datas = 1;
+}
+message StringNpcQuestConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringChatDatas {
+  repeated protocol.StringChatConfigure datas = 1;
+}
+message StringChatConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringPlayerLevelDatas {
+  repeated protocol.StringPlayerLevelConfigure datas = 1;
+}
+message StringPlayerLevelConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringBuffDatas {
+  repeated protocol.StringBuffConfigure datas = 1;
+}
+message StringBuffConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringExpressionDatas {
+  repeated protocol.StringExpressionConfigure datas = 1;
+}
+message StringExpressionConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringStoryDatas {
+  repeated protocol.StringStoryConfigure datas = 1;
+}
+message StringStoryConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringExtraChapterDatas {
+  repeated protocol.StringExtraChapterConfigure datas = 1;
+}
+message StringExtraChapterConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringExtraChapterTitleDatas {
+  repeated protocol.StringExtraChapterTitleConfigure datas = 1;
+}
+message StringExtraChapterTitleConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringGlobalBuffDatas {
+  repeated protocol.StringGlobalBuffConfigure datas = 1;
+}
+message StringGlobalBuffConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringDialogDatas {
+  repeated protocol.StringDialogConfigure datas = 1;
+}
+message StringDialogConfigure {
+  int32 ID = 1;
+  string Key = 2;
+  string Title = 3;
+  string Content = 4;
+}
+message StringFishDatas {
+  repeated protocol.StringFishConfigure datas = 1;
+}
+message StringFishConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringMakeDatas {
+  repeated protocol.StringMakeConfigure datas = 1;
+}
+message StringMakeConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringHandicraftDatas {
+  repeated protocol.StringHandicraftConfigure datas = 1;
+}
+message StringHandicraftConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringSpinDatas {
+  repeated protocol.StringSpinConfigure datas = 1;
+}
+message StringSpinConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringManualDatas {
+  repeated protocol.StringManualConfigure datas = 1;
+}
+message StringManualConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringMailDatas {
+  repeated protocol.StringMailConfigure datas = 1;
+}
+message StringMailConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringAbyssDatas {
+  repeated protocol.StringAbyssConfigure datas = 1;
+}
+message StringAbyssConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringHeadDatas {
+  repeated protocol.StringHeadConfigure datas = 1;
+}
+message StringHeadConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringItemSourceDatas {
+  repeated protocol.StringItemSourceConfigure datas = 1;
+}
+message StringItemSourceConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringMiniMapDatas {
+  repeated protocol.StringMiniMapConfigure datas = 1;
+}
+message StringMiniMapConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringAchieveQuestDatas {
+  repeated protocol.StringAchieveQuestConfigure datas = 1;
+}
+message StringAchieveQuestConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringWorldLevelDatas {
+  repeated protocol.StringWorldLevelConfigure datas = 1;
+}
+message StringWorldLevelConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringActivityDatas {
+  repeated protocol.StringActivityConfigure datas = 1;
+}
+message StringActivityConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringLifeGatherDatas {
+  repeated protocol.StringLifeGatherConfigure datas = 1;
+}
+message StringLifeGatherConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringHelpDatas {
+  repeated protocol.StringHelpConfigure datas = 1;
+}
+message StringHelpConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringTeamGameplayDatas {
+  repeated protocol.StringTeamGameplayConfigure datas = 1;
+}
+message StringTeamGameplayConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringMiniGameDatas {
+  repeated protocol.StringMiniGameConfigure datas = 1;
+}
+message StringMiniGameConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringIntimacyDatas {
+  repeated protocol.StringIntimacyConfigure datas = 1;
+}
+message StringIntimacyConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringActivityTurntableDatas {
+  repeated protocol.StringActivityTurntableConfigure datas = 1;
+}
+message StringActivityTurntableConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringHomeItemThemeDatas {
+  repeated protocol.StringHomeItemThemeConfigure datas = 1;
+}
+message StringHomeItemThemeConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringBossRushDatas {
+  repeated protocol.StringBossRushConfigure datas = 1;
+}
+message StringBossRushConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringMusicItemDatas {
+  repeated protocol.StringMusicItemConfigure datas = 1;
+}
+message StringMusicItemConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringGuideDatas {
+  repeated protocol.StringGuideConfigure datas = 1;
+}
+message StringGuideConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message RestaurantGameItemDatas {
+  repeated protocol.RestaurantGameItemConfigure datas = 1;
+}
+message RestaurantGameItemConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message RestaurantGameTitleDatas {
+  repeated protocol.RestaurantGameTitleConfigure datas = 1;
+}
+message RestaurantGameTitleConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}
+message StringPetDatas {
+  repeated protocol.StringPetConfigure datas = 1;
+}
+message StringPetConfigure {
+  int32 ID = 1;
+  repeated string Text = 2;
+}

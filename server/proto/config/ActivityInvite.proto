@@ -1,0 +1,36 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllActivityInviteDatas {
+  protocol.ActivityInviteDatas ActivityInvite = 1;
+  protocol.ActivityInviteQuestDatas ActivityInviteQuest = 2;
+}
+message ActivityInviteDatas {
+  repeated protocol.ActivityInviteConfigure datas = 1;
+}
+message ActivityInviteConfigure {
+  int32 ID = 1;
+  int32 InvitorQuestGroup = 2;
+  repeated protocol.ActivityInviteItem ActivityInviteItem = 3;
+}
+message ActivityInviteItem {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}
+message ActivityInviteQuestDatas {
+  repeated protocol.ActivityInviteQuestConfigure datas = 1;
+}
+message ActivityInviteQuestConfigure {
+  int32 ID = 1;
+  repeated protocol.ActivityInvitePoolItems ActivityInviteQuestPoolItem = 2;
+}
+message ActivityInvitePoolItems {
+  int32 AchieveID = 1;
+  int32 CompleteID = 2;
+  repeated protocol.ActivityInvitePoolRewardItems ActivityInvitePoolRewardItem = 3;
+}
+message ActivityInvitePoolRewardItems {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}

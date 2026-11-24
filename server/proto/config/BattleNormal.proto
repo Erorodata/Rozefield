@@ -1,0 +1,23 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllBattleNormalDatas {
+  protocol.BattleNormalDatas BattleNormal = 1;
+}
+message BattleNormalDatas {
+  repeated protocol.BattleNormalConfigure datas = 1;
+}
+message BattleNormalConfigure {
+  int32 ID = 1;
+  int32 TextID = 2;
+  int32 IconID = 3;
+  int32 PreTaskID = 4;
+  int32 StartVoiceID = 5;
+  string AssetFullName = 6;
+  int32 ReviseLevel = 7;
+  int32 MonsterLevel = 8;
+  int32 RecommendLv = 9;
+  int32 NewUnlockTaskType = 10;
+  int32 NewTaskType = 11;
+}

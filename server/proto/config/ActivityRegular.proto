@@ -1,0 +1,36 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllActivityRegularDatas {
+  protocol.ActivityRegularDatas ActivityRegular = 1;
+  protocol.ActivityRegularPoolDatas ActivityRegularPool = 2;
+}
+message ActivityRegularDatas {
+  repeated protocol.ActivityRegularConfigure datas = 1;
+}
+message ActivityRegularConfigure {
+  int32 ID = 1;
+  int32 DailyPoolID = 2;
+  int32 DailyRefreshPoolID = 3;
+  int32 RandomPoolID = 4;
+  int32 PoolID = 5;
+  int32 NPCID = 6;
+  int32 NpcShopID = 7;
+}
+message ActivityRegularPoolDatas {
+  repeated protocol.ActivityRegularPoolConfigure datas = 1;
+}
+message ActivityRegularPoolConfigure {
+  int32 ID = 1;
+  repeated protocol.ActivityRegularPoolItems ActivityRegularPoolItem = 2;
+}
+message ActivityRegularPoolItems {
+  int32 AchieveID = 1;
+  int32 Days = 2;
+  repeated protocol.ActivityRegularPoolRewardItems ActivityRegularPoolRewardItem = 3;
+}
+message ActivityRegularPoolRewardItems {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}

@@ -1,0 +1,14 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllFishPondDatas {
+  protocol.FishPondDatas FishPond = 1;
+}
+message FishPondDatas {
+  repeated protocol.FishPondConfigure datas = 1;
+}
+message FishPondConfigure {
+  int32 ID = 1;
+  float FishPondPool = 2;
+}

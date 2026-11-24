@@ -1,0 +1,402 @@
+﻿Error: 0
+InfoConfigure表中无法查找到ID为10301的数据
+0x00007ffb7f6aa30d (UnityPlayer) UnityMain
+0x00007ffb7f6af343 (UnityPlayer) UnityMain
+0x00007ffb7f699925 (UnityPlayer) UnityMain
+0x00007ffb7fc74e7e (UnityPlayer) UnityMain
+0x00007ffb7eed1ede (UnityPlayer) 
+0x00007ffb6ed01fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed6defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed031e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb69d0c309 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb698f1c92 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4925b8 (UnityPlayer) 
+0x00007ffb7f4e72e5 (UnityPlayer) 
+0x00007ffb7f4af408 (UnityPlayer) 
+0x00007ffb7f4aeeed (UnityPlayer) 
+0x00007ffb7f4af28f (UnityPlayer) 
+0x00007ffb7f4fc2f6 (UnityPlayer) 
+0x00007ffb7f1b1ea8 (UnityPlayer) 
+0x00007ffb7f1b2b1c (UnityPlayer) 
+0x00007ffb7ef53e13 (UnityPlayer) 
+0x00007ffb6cc0689e (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a545e83 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6cc5479a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a545a1b (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77a881 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a778e5a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77c506 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77ba4a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb68fd9a28 (GameAssembly) mono_domain_set
+0x00007ffb691c5768 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4925b8 (UnityPlayer) 
+0x00007ffb7f4e72e5 (UnityPlayer) 
+0x00007ffb7f4af408 (UnityPlayer) 
+0x00007ffb7f4aeeed (UnityPlayer) 
+0x00007ffb7f4af28f (UnityPlayer) 
+0x00007ffb7f4fec0d (UnityPlayer) 
+0x00007ffb7f4ff424 (UnityPlayer) 
+0x00007ffb7f3231e8 (UnityPlayer) 
+0x00007ffb7f32527d (UnityPlayer) 
+0x00007ffb7f323b4b (UnityPlayer) 
+0x00007ffb7f326331 (UnityPlayer) 
+0x00007ffb7f325fcd (UnityPlayer) 
+0x00007ffb7f309c6a (UnityPlayer) 
+0x00007ffb7f309d10 (UnityPlayer) 
+0x00007ffb7f30c9e8 (UnityPlayer) 
+0x00007ffb7f50d475 (UnityPlayer) 
+0x00007ffb7f50bdbb (UnityPlayer) 
+0x00007ffb7f510f76 (UnityPlayer) 
+0x00007ffb7f5138db (UnityPlayer) UnityMain
+0x00007ff7826011f2 (launcher) 
+0x00007ffc5b5adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffc5ca79c6c (ntdll) RtlUserThreadStart
+
+Error: 1
+初始座椅ID不能为0
+0x00007ffb7f6aa30d (UnityPlayer) UnityMain
+0x00007ffb7f6af343 (UnityPlayer) UnityMain
+0x00007ffb7f699925 (UnityPlayer) UnityMain
+0x00007ffb7fc74e7e (UnityPlayer) UnityMain
+0x00007ffb7eed1ede (UnityPlayer) 
+0x00007ffb6ed01fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed6defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed031e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6aa20a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a779c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77bdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a787472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed830df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4adfc5 (UnityPlayer) 
+0x00007ffb7f4b1e27 (UnityPlayer) 
+0x00007ffb7f4b1433 (UnityPlayer) 
+0x00007ffb7ef4712a (UnityPlayer) 
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4af523 (UnityPlayer) 
+0x00007ffb7f4af606 (UnityPlayer) 
+0x00007ffb7f1b0af0 (UnityPlayer) 
+0x00007ffb7f309c6a (UnityPlayer) 
+0x00007ffb7f309d10 (UnityPlayer) 
+0x00007ffb7f30c9e8 (UnityPlayer) 
+0x00007ffb7f50d475 (UnityPlayer) 
+0x00007ffb7f50bdbb (UnityPlayer) 
+0x00007ffb7f510f76 (UnityPlayer) 
+0x00007ffb7f5138db (UnityPlayer) UnityMain
+0x00007ff7826011f2 (launcher) 
+0x00007ffc5b5adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffc5ca79c6c (ntdll) RtlUserThreadStart
+
+Error: 2
+初始座椅ID不能为0
+0x00007ffb7f6aa30d (UnityPlayer) UnityMain
+0x00007ffb7f6af343 (UnityPlayer) UnityMain
+0x00007ffb7f699925 (UnityPlayer) UnityMain
+0x00007ffb7fc74e7e (UnityPlayer) UnityMain
+0x00007ffb7eed1ede (UnityPlayer) 
+0x00007ffb6ed01fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed6defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed031e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6aa20a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a779c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77bdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a787472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed830df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4adfc5 (UnityPlayer) 
+0x00007ffb7f4b1e27 (UnityPlayer) 
+0x00007ffb7f4b1433 (UnityPlayer) 
+0x00007ffb7ef4712a (UnityPlayer) 
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4af523 (UnityPlayer) 
+0x00007ffb7f4af606 (UnityPlayer) 
+0x00007ffb7f1b0af0 (UnityPlayer) 
+0x00007ffb7f309c6a (UnityPlayer) 
+0x00007ffb7f309d10 (UnityPlayer) 
+0x00007ffb7f30c9e8 (UnityPlayer) 
+0x00007ffb7f50d475 (UnityPlayer) 
+0x00007ffb7f50bdbb (UnityPlayer) 
+0x00007ffb7f510f76 (UnityPlayer) 
+0x00007ffb7f5138db (UnityPlayer) UnityMain
+0x00007ff7826011f2 (launcher) 
+0x00007ffc5b5adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffc5ca79c6c (ntdll) RtlUserThreadStart
+
+Error: 3
+初始座椅ID不能为0
+0x00007ffb7f6aa30d (UnityPlayer) UnityMain
+0x00007ffb7f6af343 (UnityPlayer) UnityMain
+0x00007ffb7f699925 (UnityPlayer) UnityMain
+0x00007ffb7fc74e7e (UnityPlayer) UnityMain
+0x00007ffb7eed1ede (UnityPlayer) 
+0x00007ffb6ed01fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed6defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed031e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6aa20a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a779c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77bdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a787472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed830df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4adfc5 (UnityPlayer) 
+0x00007ffb7f4b1e27 (UnityPlayer) 
+0x00007ffb7f4b1433 (UnityPlayer) 
+0x00007ffb7ef4712a (UnityPlayer) 
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4af523 (UnityPlayer) 
+0x00007ffb7f4af606 (UnityPlayer) 
+0x00007ffb7f1b0af0 (UnityPlayer) 
+0x00007ffb7f309c6a (UnityPlayer) 
+0x00007ffb7f309d10 (UnityPlayer) 
+0x00007ffb7f30c9e8 (UnityPlayer) 
+0x00007ffb7f50d475 (UnityPlayer) 
+0x00007ffb7f50bdbb (UnityPlayer) 
+0x00007ffb7f510f76 (UnityPlayer) 
+0x00007ffb7f5138db (UnityPlayer) UnityMain
+0x00007ff7826011f2 (launcher) 
+0x00007ffc5b5adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffc5ca79c6c (ntdll) RtlUserThreadStart
+
+Error: 4
+初始座椅ID不能为0
+0x00007ffb7f6aa30d (UnityPlayer) UnityMain
+0x00007ffb7f6af343 (UnityPlayer) UnityMain
+0x00007ffb7f699925 (UnityPlayer) UnityMain
+0x00007ffb7fc74e7e (UnityPlayer) UnityMain
+0x00007ffb7eed1ede (UnityPlayer) 
+0x00007ffb6ed01fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed6defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed031e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6aa20a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a779c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77bdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a787472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed830df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4adfc5 (UnityPlayer) 
+0x00007ffb7f4b1e27 (UnityPlayer) 
+0x00007ffb7f4b1433 (UnityPlayer) 
+0x00007ffb7ef4712a (UnityPlayer) 
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4af523 (UnityPlayer) 
+0x00007ffb7f4af606 (UnityPlayer) 
+0x00007ffb7f1b0af0 (UnityPlayer) 
+0x00007ffb7f309c6a (UnityPlayer) 
+0x00007ffb7f309d10 (UnityPlayer) 
+0x00007ffb7f30c9e8 (UnityPlayer) 
+0x00007ffb7f50d475 (UnityPlayer) 
+0x00007ffb7f50bdbb (UnityPlayer) 
+0x00007ffb7f510f76 (UnityPlayer) 
+0x00007ffb7f5138db (UnityPlayer) UnityMain
+0x00007ff7826011f2 (launcher) 
+0x00007ffc5b5adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffc5ca79c6c (ntdll) RtlUserThreadStart
+
+Error: 5
+InfoConfigure表中无法查找到ID为10301的数据
+0x00007ffb7f6aa30d (UnityPlayer) UnityMain
+0x00007ffb7f6af343 (UnityPlayer) UnityMain
+0x00007ffb7f699925 (UnityPlayer) UnityMain
+0x00007ffb7fc74e7e (UnityPlayer) UnityMain
+0x00007ffb7eed1ede (UnityPlayer) 
+0x00007ffb6ed01fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed6defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6ed031e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb69d0c309 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb698f1c92 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c5706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4925b8 (UnityPlayer) 
+0x00007ffb7f4e72e5 (UnityPlayer) 
+0x00007ffb7f4af408 (UnityPlayer) 
+0x00007ffb7f4aeeed (UnityPlayer) 
+0x00007ffb7f4af28f (UnityPlayer) 
+0x00007ffb7f4fc2f6 (UnityPlayer) 
+0x00007ffb7f1b1ea8 (UnityPlayer) 
+0x00007ffb7f1b2b1c (UnityPlayer) 
+0x00007ffb7ef53e13 (UnityPlayer) 
+0x00007ffb6cc0689e (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a545e83 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6cc5479a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a545a1b (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77a881 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a778e5a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77c506 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb6a77ba4a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb68fd9a28 (GameAssembly) mono_domain_set
+0x00007ffb691c5768 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb691c56a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffb7f48f268 (UnityPlayer) 
+0x00007ffb7f492492 (UnityPlayer) 
+0x00007ffb7f4925b8 (UnityPlayer) 
+0x00007ffb7f4e72e5 (UnityPlayer) 
+0x00007ffb7f4af408 (UnityPlayer) 
+0x00007ffb7f4aeeed (UnityPlayer) 
+0x00007ffb7f4af28f (UnityPlayer) 
+0x00007ffb7f4fec0d (UnityPlayer) 
+0x00007ffb7f4ff424 (UnityPlayer) 
+0x00007ffb7f3231e8 (UnityPlayer) 
+0x00007ffb7f32527d (UnityPlayer) 
+0x00007ffb7f323b4b (UnityPlayer) 
+0x00007ffb7f326331 (UnityPlayer) 
+0x00007ffb7f325fcd (UnityPlayer) 
+0x00007ffb7f309c6a (UnityPlayer) 
+0x00007ffb7f309d10 (UnityPlayer) 
+0x00007ffb7f30c9e8 (UnityPlayer) 
+0x00007ffb7f50d475 (UnityPlayer) 
+0x00007ffb7f50bdbb (UnityPlayer) 
+0x00007ffb7f510f76 (UnityPlayer) 
+0x00007ffb7f5138db (UnityPlayer) UnityMain
+0x00007ff7826011f2 (launcher) 
+0x00007ffc5b5adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffc5ca79c6c (ntdll) RtlUserThreadStart
+
+Exception: 6
+ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.ForceSetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.TrySetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellController.OnUpdate () (at <00000000000000000000000000000000>:0)
+UpdateManager.Update () (at <00000000000000000000000000000000>:0)
+
+Exception: 7
+ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellController.DoInterrupt () (at <00000000000000000000000000000000>:0)
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.ForceSetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.TrySetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellController.OnUpdate () (at <00000000000000000000000000000000>:0)
+UpdateManager.Update () (at <00000000000000000000000000000000>:0)
+
+Exception: 8
+ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.ForceSetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.TrySetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellController.OnUpdate () (at <00000000000000000000000000000000>:0)
+UpdateManager.Update () (at <00000000000000000000000000000000>:0)
+
+Exception: 9
+ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.ForceSetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.TrySetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellController.OnUpdate () (at <00000000000000000000000000000000>:0)
+UpdateManager.Update () (at <00000000000000000000000000000000>:0)
+
+Exception: 10
+ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellController.DoInterrupt () (at <00000000000000000000000000000000>:0)
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellController.DoInterrupt () (at <00000000000000000000000000000000>:0)
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellController.DoInterrupt () (at <00000000000000000000000000000000>:0)
+SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) (at <00000000000000000000000000000000>:0)
+Buff_536.OnBuffRemove () (at <00000000000000000000000000000000>:0)
+BuffBase.TryRemoveBuff () (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, BuffBase buff) (at <00000000000000000000000000000000>:0)
+BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) (at <00000000000000000000000000000000>:0)
+CallbackSignal`1[T].Invoke (T t) (at <00000000000000000000000000000000>:0)
+SpellController.Stop (System.Boolean destroy) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.ForceSetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellStateMachine.TrySetState (SpellState state) (at <00000000000000000000000000000000>:0)
+SpellController.OnUpdate () (at <00000000000000000000000000000000>:0)
+UpdateManager.Update () (at <00000000000000000000000000000000>:0)
+

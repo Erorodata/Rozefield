@@ -1,0 +1,3595 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package pb;
+import "common.proto";
+import "enum.proto";
+
+enum HideType {
+  HideType_NONE = 0;
+  HideType_Account_Type = 1;
+  HideType_SIGN_Type = 2;
+  HideType_Abyss_Rank_Type = 4;
+}
+enum MailOperateType {
+  MailOperateType_NONE = 0;
+  MailOperateType_READ = 1;
+  MailOperateType_DELETE_ALL_READED = 3;
+  MailOperateType_CLAIM_ALL = 4;
+  MailOperateType_CLAIM = 5;
+  MailOperateType_COLLECT = 6;
+}
+enum TreasureBoxType {
+  TREASURE_BOX_TYPE_STATIC = 0;
+  TREASURE_BOX_TYPE_DYNAMIC = 1;
+}
+enum InterActionPushType {
+  Default = 0;
+  Immediately = 1;
+  AddKeepingStatus = 2;
+  RemovingStatus = 3;
+}
+enum ClientLogLevel {
+  CLIENT_LOG_LEVEL_DEBUG = 0;
+  CLIENT_LOG_LEVEL_INFO = 1;
+  CLIENT_LOG_LEVEL_WARN = 2;
+  CLIENT_LOG_LEVEL_ERROR = 4;
+  CLIENT_LOG_LEVEL_FATAL = 5;
+}
+enum GenericMsgId {
+  GENERIC_MSG_ID_NONE = 0;
+  GENERIC_MSG_ID_MP_PLAY_ROOM_DURATION_NOTICE = 1;
+  GENERIC_MSG_ID_DUNGEON_MULTI = 2;
+  GENERIC_MSG_ID_MP_BEACON_PLAYER_READY = 3;
+  GENERIC_MSG_ID_WEATHER_FORECAST = 4;
+  GENERIC_MSG_ID_PAYMENT_ADD_DYE_SCHEME = 5;
+  GENERIC_MSG_ID_EMOTION_MOON_SCENE = 6;
+  GENERIC_MSG_ID_RESET_DYE_PARAMETER = 7;
+  GENERIC_MSG_ID_GET_PLAYER_PREFER_CHANNEL_TYPE = 8;
+  GENERIC_MSG_ID_SET_PLAYER_PREFER_CHANNEL_TYPE = 9;
+}
+enum MPPlayRoomEventType {
+  MPPlayRoomEvent_None = 0;
+  MPPlayRoomEvent_GameReady = 1;
+  MPPlayRoomEvent_GameStart = 2;
+  MPPlayRoomEvent_GameFinish = 3;
+  MPPlayRoomEvent_DestroyObject = 4;
+  MPPlayRoomEvent_EnterPlatform = 5;
+  MPPlayRoomEvent_LeavePlatform = 6;
+  MPPlayRoomEvent_EnterMagicArea = 7;
+  MPPlayRoomEvent_LeaveMagicArea = 8;
+  MPPlayRoomEvent_ShowPlatform = 9;
+  MPPlayRoomEvent_HidePlatform = 10;
+  MPPlayRoomEvent_StartHidePlatform = 11;
+  MPPlayRoomEvent_SinkObject = 12;
+  MPPlayRoomEvent_SendProjectile = 13;
+}
+enum MoonSpotOperateType {
+  OperateType_Invalid = 0;
+  OperateType_Place = 1;
+  OperateType_Remove = 2;
+  OperateType_Move = 3;
+}
+enum ActivitySandbagRewardType {
+  RewardType_Box = 0;
+  RewardType_Server = 1;
+}
+message VerifyLoginTokenReq {  // msg_id 1001
+  uint32 account_type = 1;
+  string sdkUid = 2;
+  string login_token = 3;
+  string channelCode = 4;
+  pb.AccountOSType os = 5;
+  string sdkUid2 = 6;
+  string login_token2 = 7;
+  uint32 account_type2 = 8;
+  pb.AccountOSType os2 = 9;
+  string device_uuid = 10;
+  pb.LanguageType language = 11;
+}
+message VerifyLoginTokenRsp {  // msg_id 1002
+  pb.StatusCode status = 1;
+  uint32 user_id = 2;
+  uint32 account_type = 3;
+  string sdkUid = 4;
+  bool is_server_open = 5;
+  string text = 6;
+  uint32 time_left = 7;
+  pb.AccountOSType os = 8;
+  int64 ban_end_time = 9;
+  string device_uuid = 10;
+  string ban_reason = 11;
+}
+message PlayerLoginReq {  // msg_id 1003
+  string lang = 1;
+  string client_version = 2;
+  string resource_version = 3;
+  string device_uuid = 4;
+  string device_model = 5;
+  string version_number = 6;
+  string analysis_distinct_id = 7;
+  uint32 force_scene_id = 8;
+  bool is_reconnect = 9;
+  string network = 10;
+  string ip = 11;
+  string ipv6 = 12;
+  string os_name = 13;
+  string os_ver = 14;
+  uint32 client_seq_id = 15;
+  uint32 server_seq_id = 16;
+  bytes fg_info = 17;
+  pb.LanguageType language = 18;
+}
+message PlayerLoginRsp {  // msg_id 1004
+  pb.StatusCode status = 1;
+  int64 server_time_ms = 2;
+  string region_name = 3;
+  uint32 register_time = 4;
+  int32 player_age_range = 5;
+  uint32 tags = 6;
+  string analysis_account_id = 7;
+  bool is_reconnect = 8;
+  uint32 server_time_zone = 10;
+  string player_name = 11;
+  bool reconnect_success = 12;
+  uint32 client_seq_id = 13;
+  uint32 server_seq_id = 14;
+  string client_log_server_token = 15;
+  uint32 scene_id = 16;
+  uint32 channel_id = 17;
+}
+message PlayerMainDataReq {  // msg_id 1005
+}
+message PlayerMainDataRsp {  // msg_id 1006
+  pb.StatusCode status = 1;
+  uint32 player_id = 2;
+  string player_name = 3;
+  int64 player_time_offset = 4;
+  bool is_today_first_login = 5;
+  repeated uint32 unlockFunctions = 6;
+  uint32 level = 7;
+  uint32 exp = 8;
+  uint32 head = 9;
+  string sign = 10;
+  uint32 phone_background = 11;
+  uint32 world_level = 12;
+  uint32 create_time = 13;
+  repeated pb.Character characters = 14;
+  pb.Team team = 15;
+  uint32 scene_id = 16;
+  uint32 channel_id = 17;
+  pb.ESexType sex = 18;
+  pb.QuestDetail quest_detail = 19;
+  repeated pb.PlayerBuff player_buffs = 20;
+  repeated uint32 reward_levels = 21;
+  repeated pb.ForbiddenInfo forbidden_infos = 22;
+  pb.UnSaveOutfitDyeScheme unSaveOutfitDyeScheme = 23;
+  pb.PlayerDropRateInfo playerDropRateInfo = 24;
+  pb.PlayerQuestionnaireInfo questionnaire_info = 25;
+  uint32 player_label = 26;
+  uint32 channel_label = 27;
+  int64 monthCardOverDueTime = 28;
+  uint32 gardenLikesNum = 29;
+  repeated pb.BaseItem furnitureItemInfo = 30;
+  uint32 monthCardRewardDays = 31;
+  uint32 totalGuaranteeDyeNum = 32;
+  string birthday = 33;
+  bool isHideBirthday = 34;
+  uint32 hideValue = 35;
+  int32 accountType = 36;
+  pb.PlayerDailyTask daily_task = 37;
+  pb.PlayerAppearance appearance = 38;
+  bool sp_open_status = 39;
+  bool sp_check_status = 40;
+  repeated uint32 placed_characters = 41;
+  uint32 phone_case = 42;
+  int64 recall_end_time = 43;
+  uint32 pet_instance_id = 44;
+  string inheritCode = 80;
+  bool hasInheritGift = 81;
+}
+message PlayerPingReq {  // msg_id 1007
+  int64 client_time_ms = 1;
+}
+message PlayerPingRsp {  // msg_id 1008
+  pb.StatusCode status = 1;
+  int64 client_time_ms = 2;
+  int64 server_time_ms = 3;
+}
+message PlayerOfflineReq {  // msg_id 1009
+}
+message PlayerOfflineRsp {  // msg_id 1010
+  pb.StatusCode status = 1;
+  pb.PlayerOfflineReason reason = 2;
+  int64 server_next_open_time = 3;
+}
+message GmCodeReq {  // msg_id 1013
+  string param = 1;
+}
+message GmCodeRsp {  // msg_id 1014
+  pb.StatusCode status = 1;
+  string result = 2;
+  repeated uint32 online_players = 3;
+  repeated pb.GmRewardInfo reward_infos = 4;
+}
+message GmRewardInfo {
+  uint32 item_id = 1;
+  int64 num = 2;
+  uint32 level = 3;
+}
+message SceneDataNotice {  // msg_id 1016
+  pb.StatusCode status = 1;
+  pb.SceneData data = 2;
+}
+message NeedLoginNotice {  // msg_id 1022
+  pb.StatusCode status = 1;
+}
+message CharacterSkillLevelUpReq {  // msg_id 1035
+  uint32 char_id = 1;
+  uint32 skill_id = 2;
+}
+message CharacterSkillLevelUpRsp {  // msg_id 1036
+  pb.StatusCode status = 1;
+  uint32 char_id = 2;
+  repeated pb.ItemDetail items = 3;
+  pb.CharacterSkill skill = 4;
+}
+message CharacterStarUpReq {  // msg_id 1037
+  uint32 charId = 1;
+}
+message CharacterStarUpRsp {  // msg_id 1038
+  pb.StatusCode status = 1;
+  uint32 charId = 2;
+  uint32 star = 3;
+  repeated pb.ItemDetail items = 4;
+}
+message CharacterLevelUpReq {  // msg_id 1039
+  uint32 charId = 1;
+  repeated int64 nums = 2;
+}
+message CharacterLevelUpRsp {  // msg_id 1040
+  pb.StatusCode status = 1;
+  uint32 charId = 2;
+  uint32 level = 3;
+  uint32 exp = 4;
+}
+message CharacterLevelBreakReq {  // msg_id 1041
+  uint32 charId = 1;
+}
+message CharacterLevelBreakRsp {  // msg_id 1042
+  pb.StatusCode status = 1;
+  uint32 charId = 2;
+  uint32 level = 3;
+  uint32 exp = 4;
+  uint32 maxLevel = 5;
+}
+message TeamCharExpUpdateNotice {  // msg_id 1044
+  pb.StatusCode status = 1;
+  repeated pb.CharacterLevelInfo charLevels = 2;
+}
+message PlayerEnergyInfoReq {  // msg_id 1051
+}
+message PlayerEnergyInfoRsp {  // msg_id 1052
+  pb.StatusCode status = 1;
+  uint32 energyBuyNum = 2;
+  pb.ItemDetail energyItem = 3;
+}
+message PlayerEnergyBuyReq {  // msg_id 1053
+}
+message PlayerEnergyBuyRsp {  // msg_id 1054
+  pb.StatusCode status = 1;
+  uint32 energyBuyNum = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message MailBriefData {
+  uint32 mail_id = 1;
+  uint32 model_id = 2;
+  pb.MailState mail_state = 3;
+  string sender = 4;
+  int64 send_time = 5;
+  pb.MailContentType content_type = 6;
+  string title = 7;
+  string content = 8;
+  uint32 overdueDay = 9;
+  repeated pb.ItemDetail reward = 10;
+  repeated pb.BaseItem items = 11;
+  bool is_questionnaire = 12;
+  bool collect_status = 13;
+  bool is_gem_duel = 14;
+}
+message GetMailsReq {  // msg_id 1121
+}
+message GetMailsRsp {  // msg_id 1122
+  pb.StatusCode status = 1;
+  repeated pb.MailBriefData mails = 2;
+}
+message OperateMailsReq {  // msg_id 1125
+  pb.MailOperateType operate_type = 1;
+  uint32 mail_id = 2;
+}
+message OperateMailsRsp {  // msg_id 1126
+  pb.StatusCode status = 1;
+  repeated pb.MailBriefData mails = 2;
+  repeated pb.ItemDetail claim_result = 3;
+  repeated uint32 deleted_mail_ids = 4;
+  pb.MailOperateType operate_type = 5;
+  bool collect_status = 6;
+}
+message ReceiveMailNotice {  // msg_id 1128
+  pb.StatusCode status = 1;
+  pb.MailBriefData mail = 2;
+  uint32 deleted_mail_id = 3;
+}
+message ChangeSceneChannelReq {  // msg_id 1201
+  uint32 scene_id = 1;
+  uint32 channel_label = 2;
+  pb.Vector3 pos = 3;
+  pb.Vector3 rot = 4;
+  bool not_in_scene = 5;
+  string password = 6;
+  uint32 target_player_label = 7;
+  bytes fg_info = 8;
+}
+message ChangeSceneChannelRsp {  // msg_id 1202
+  pb.StatusCode status = 1;
+  uint32 scene_id = 2;
+  uint32 channel_id = 3;
+  uint32 channel_label = 4;
+  int64 password_allow_time = 5;
+  uint32 target_player_id = 6;
+}
+message PlayerSceneRecordReq {  // msg_id 1203
+  pb.PlayerRecorderData data = 1;
+}
+message PlayerSceneRecordRsp {  // msg_id 1204
+  pb.StatusCode status = 1;
+}
+message PlayerSceneSyncDataNotice {  // msg_id 1206
+  pb.StatusCode status = 1;
+  repeated pb.SceneSyncData data = 2;
+}
+message SceneSyncData {
+  uint32 player_id = 1;
+  repeated pb.PlayerRecorderData data = 2;
+}
+message ServerSceneSyncDataNotice {  // msg_id 1208
+  pb.StatusCode status = 1;
+  repeated pb.ServerSceneSyncData data = 2;
+}
+message ServerSceneSyncData {
+  uint32 player_id = 1;
+  repeated pb.SceneServerData serverData = 2;
+}
+message PlayerRecorderData {
+  repeated pb.CharacterRecorderData charRecorderDataLst = 1;
+  int64 ping = 2;
+  repeated pb.SyncFrameData frameData = 3;
+  repeated pb.NetworkEventData networkEvent = 4;
+  repeated pb.CharacterRecorderData petRecordDataLst = 5;
+}
+message CharacterRecorderData {
+  uint32 charId = 1;
+  repeated pb.SyncRecorderProperty dataLst = 2;
+  pb.Vector3 pos = 3;
+  pb.Vector3 rot = 4;
+}
+message SyncFrameData {
+  uint32 id = 1;
+  pb.Vector3 position = 2;
+  pb.Vector3 velocity = 3;
+  pb.Vector3 eulerAngles = 4;
+  pb.Vector3 angularVelocity = 5;
+  uint32 state = 6;
+  uint32 itemId = 7;
+}
+message SyncRecorderProperty {
+  int32 syncType = 1;
+  int32 framestamp = 2;
+  bool isStatic = 3;
+  bool forceMove = 4;
+  pb.Vector3 pos = 5;
+  pb.Vector3 rot = 6;
+  bool animeIsGrounded = 7;
+  bool animeIsLooping = 8;
+  bool animeIsGliding = 9;
+  bool animeIsPhone = 10;
+  bool animeIsDeath = 11;
+  float animeInputSpeed = 12;
+  float animeVerticalSpeed = 13;
+  int32 commandType = 14;
+  repeated int32 commandInts = 15;
+  repeated float commandFloats = 16;
+  repeated pb.Vector3 commonVector3s = 17;
+  repeated bool commandBools = 18;
+}
+message SetArchiveInfoReq {  // msg_id 1211
+  string key = 1;
+  string value = 2;
+}
+message SetArchiveInfoRsp {  // msg_id 1212
+  pb.StatusCode status = 1;
+  string key = 2;
+  string value = 3;
+}
+message GetArchiveInfoReq {  // msg_id 1213
+  string key = 1;
+}
+message GetArchiveInfoRsp {  // msg_id 1214
+  pb.StatusCode status = 1;
+  string key = 2;
+  string value = 3;
+}
+message ChallengeFriendRankReq {  // msg_id 1301
+}
+message ChallengeFriendRankInfo {
+  pb.PlayerBriefInfo playerInfo = 1;
+  pb.PlayerChallengeCache challenge = 2;
+}
+message ChallengeFriendRankRsp {  // msg_id 1302
+  pb.StatusCode status = 1;
+  repeated pb.ChallengeFriendRankInfo rankInfo = 2;
+  pb.PlayerChallengeCache selfChallenge = 3;
+}
+message ChallengeStateUpdateReq {  // msg_id 1321
+  uint32 challenge_id = 1;
+  pb.BattleState battle_state = 2;
+  uint32 use_time = 3;
+}
+message ChallengeStateUpdateRsp {  // msg_id 1322
+  pb.StatusCode status = 1;
+  pb.ChallengeData challenge_data = 2;
+  pb.DynamicTreasureBoxBaseData dynamicTreasureBoxBaseInfo = 3;
+}
+message RiddleStateUpdateReq {  // msg_id 1323
+  uint32 riddle_id = 1;
+  pb.BattleState battle_state = 2;
+  bool is_win = 3;
+}
+message RiddleStateUpdateRsp {  // msg_id 1324
+  pb.StatusCode status = 1;
+  pb.RiddleData riddle_data = 2;
+  pb.DynamicTreasureBoxBaseData dynamicTreasureBoxBaseInfo = 3;
+}
+message FlagBattleStateUpdateReq {  // msg_id 1325
+  uint32 battle_id = 1;
+  pb.BattleState battle_state = 2;
+  pb.EMissionType mission_type = 3;
+}
+message FlagBattleStateUpdateRsp {  // msg_id 1326
+  pb.StatusCode status = 1;
+  pb.FlagBattleData battle_data = 2;
+  pb.DynamicTreasureBoxBaseData dynamicTreasureBoxBaseInfo = 3;
+}
+message BattleEncounterStateUpdateReq {  // msg_id 1327
+  uint32 encounter_id = 1;
+  pb.BattleState battleState = 2;
+}
+message BattleEncounterStateUpdateRsp {  // msg_id 1328
+  pb.StatusCode status = 1;
+  pb.BattleEncounterData encounter = 2;
+  pb.DynamicTreasureBoxBaseData dynamicTreasureBoxBaseInfo = 3;
+}
+message BattleEncounterInfoReq {  // msg_id 1329
+  repeated uint32 encounter_ids = 1;
+}
+message BattleEncounterInfoRsp {  // msg_id 1330
+  pb.StatusCode status = 1;
+  repeated pb.BattleEncounterData encounters = 2;
+}
+message DungeonRepeatEnterReq {  // msg_id 1331
+  uint32 char1 = 1;
+  uint32 char2 = 2;
+  uint32 char3 = 3;
+}
+message DungeonRepeatEnterRsp {  // msg_id 1332
+  pb.StatusCode status = 1;
+  pb.SceneTeam team = 2;
+  pb.DungeonData dungeon_data = 3;
+  repeated pb.ItemDetail updateItem = 4;
+  repeated pb.TreasureBoxData treasureBoxes = 5;
+  uint32 currentGatherGroupId = 6;
+  repeated pb.GatherLimit gatherLimits = 7;
+}
+message DungeonViewReq {  // msg_id 1333
+  uint32 dungeon_id = 1;
+}
+message DungeonViewRsp {  // msg_id 1334
+  pb.StatusCode status = 1;
+  pb.DungeonData dungeon_data = 2;
+  repeated pb.Achieve taskDataLst = 3;
+}
+message DungeonEnterReq {  // msg_id 1335
+  uint32 char1 = 1;
+  uint32 char2 = 2;
+  uint32 char3 = 3;
+  uint32 dungeon_id = 4;
+  uint32 cost_item_id = 5;
+  pb.Vector3 Pos = 6;
+  pb.Vector3 Rot = 7;
+}
+message DungeonEnterRsp {  // msg_id 1336
+  pb.StatusCode status = 1;
+  pb.SceneTeam team = 2;
+  pb.DungeonData dungeon_data = 3;
+  repeated pb.ItemDetail updateItem = 4;
+  repeated pb.TreasureBoxData treasureBoxes = 5;
+  uint32 currentGatherGroupId = 6;
+  repeated pb.GatherLimit gatherLimits = 7;
+}
+message DungeonExitReq {  // msg_id 1337
+  bool isForceExit = 1;
+}
+message DungeonExitRsp {  // msg_id 1338
+  pb.StatusCode status = 1;
+  uint32 scene_id = 2;
+}
+message DungeonFinishReq {  // msg_id 1339
+}
+message DungeonFinishRsp {  // msg_id 1340
+  pb.StatusCode status = 1;
+  uint32 scene_id = 2;
+  pb.DungeonData dungeon_data = 3;
+  repeated pb.ItemDetail updateItems = 4;
+  repeated pb.ItemDetail rewards = 5;
+}
+message CollectCoinReq {  // msg_id 1341
+  uint32 coinIndex = 1;
+}
+message CollectCoinRsp {  // msg_id 1342
+  pb.StatusCode status = 1;
+  uint32 coinIndex = 2;
+  repeated pb.ItemDetail rewards = 3;
+}
+message DungeonTaskFinishRewardReq {  // msg_id 1343
+  uint32 dungeon_id = 1;
+}
+message DungeonTaskFinishRewardRsp {  // msg_id 1344
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message DungeonStarRewardReq {  // msg_id 1345
+  uint32 dungeon_id = 1;
+}
+message DungeonStarRewardRsp {  // msg_id 1346
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message DungeonOperateReq {  // msg_id 1347
+  enum DungeonOperateType {
+    START = 0;
+    END = 1;
+  }
+  pb.DungeonOperateReq.DungeonOperateType operateType = 1;
+  pb.AbyssRankType bonusType = 2;
+}
+message DungeonOperateRsp {  // msg_id 1348
+  pb.StatusCode status = 1;
+  uint64 consumeTime = 2;
+  uint32 star = 3;
+}
+message PlayerTimeOffsetNotice {  // msg_id 1352
+  pb.StatusCode status = 1;
+  int64 player_time_offset = 2;
+  int64 server_real_time = 3;
+}
+message DungeonSweepReq {  // msg_id 1353
+  uint32 dungeon_id = 1;
+}
+message DungeonSweepRsp {  // msg_id 1354
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message ItemSweepReq {  // msg_id 1355
+  uint32 item_id = 1;
+  uint32 count = 2;
+  bool is_sweep = 3;
+}
+message ItemSweepRsp {  // msg_id 1356
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message GetOneTypeLifePictorialBookCountReq {  // msg_id 1365
+  pb.LifeType life_type = 1;
+}
+message GetOneTypeLifePictorialBookCountRsp {  // msg_id 1366
+  pb.StatusCode status = 1;
+  repeated pb.LifeAchieveCount lifeAchieveCountLst = 2;
+}
+message LifeProficiencyNotice {  // msg_id 1368
+  pb.StatusCode status = 1;
+  pb.LifeProficiency lifeProficiency = 2;
+}
+message GetLifeInfoReq {  // msg_id 1369
+  pb.LifeType life_type = 1;
+}
+message GetLifeInfoRsp {  // msg_id 1370
+  pb.StatusCode status = 1;
+  pb.LifeBaseInfo lifeBaseInfo = 2;
+  pb.LifeSkill lifeSkill = 3;
+  pb.LifeAchieve lifeAchieve = 4;
+}
+message FishingResultNotice {  // msg_id 1374
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+}
+message LifeSkillLevelUpNotice {  // msg_id 1376
+  pb.StatusCode status = 1;
+  repeated pb.LifeSkill lifeSkills = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message LifeAchieveNotice {  // msg_id 1378
+  pb.StatusCode status = 1;
+  repeated pb.LifeAchieve lifeAchieves = 2;
+}
+message CookingFoodReq {  // msg_id 1379
+  uint32 food_id = 1;
+  bool hasCampFire = 2;
+}
+message CookingFoodRsp {  // msg_id 1380
+  pb.StatusCode status = 1;
+  pb.LifeCommonResult lifeCommonResult = 2;
+}
+message MakePropReq {  // msg_id 1381
+  uint32 make_id = 1;
+}
+message MakePropRsp {  // msg_id 1382
+  pb.StatusCode status = 1;
+  pb.LifeCommonResult lifeCommonResult = 2;
+}
+message HandicraftReq {  // msg_id 1383
+  uint32 handicraft_id = 1;
+}
+message HandicraftRsp {  // msg_id 1384
+  pb.StatusCode status = 1;
+  pb.LifeCommonResult lifeCommonResult = 2;
+}
+message SewingReq {  // msg_id 1385
+  uint32 Sewing_id = 1;
+}
+message SewingRsp {  // msg_id 1386
+  pb.StatusCode status = 1;
+  pb.LifeCommonResult lifeCommonResult = 2;
+}
+message GetLifeAchievementRewardReq {  // msg_id 1387
+  uint32 achieve_id = 1;
+  pb.LifeType life_type = 2;
+}
+message GetLifeAchievementRewardRsp {  // msg_id 1388
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  repeated uint32 rewarded_achieve_ids = 3;
+}
+message LifeLeveUpReq {  // msg_id 1389
+  pb.LifeType life_type = 1;
+}
+message LifeLeveUpRsp {  // msg_id 1390
+  pb.StatusCode status = 1;
+  pb.LifeBaseInfo lifeBaseInfo = 2;
+}
+message GetLifeAchieveReq {  // msg_id 1391
+  pb.LifeType life_type = 1;
+}
+message GetLifeAchieveRsp {  // msg_id 1392
+  pb.StatusCode status = 1;
+  pb.LifeAchieve lifeAchieve = 2;
+}
+message LifeSkillLevelUpReq {  // msg_id 1393
+  pb.LifeType life_type = 1;
+  uint32 skill_id = 2;
+  bool is_force_study = 3;
+}
+message LifeSkillLevelUpRsp {  // msg_id 1394
+  pb.StatusCode status = 1;
+  pb.LifeSkill lifeSkills = 2;
+  repeated pb.ItemDetail items = 3;
+  bool is_force_study = 4;
+}
+message GetLifeSkillReq {  // msg_id 1395
+  pb.LifeType life_type = 1;
+}
+message GetLifeSkillRsp {  // msg_id 1396
+  pb.StatusCode status = 1;
+  pb.LifeType life_type = 2;
+  repeated pb.SingleLifeSkillInfo skillInfo = 3;
+}
+message FishingReq {  // msg_id 1397
+  bool is_cancel = 1;
+  uint32 fishing_box_id = 2;
+  uint32 fishing_rod_id = 3;
+  uint32 fishing_pond_id = 4;
+}
+message FishingRsp {  // msg_id 1398
+  pb.StatusCode status = 1;
+  bool isCancel = 2;
+  pb.FishingEventResult fishingEventResult = 3;
+}
+message PackNotice {  // msg_id 1400
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  uint32 tempPackMaxSize = 3;
+  bool isClearTempPack = 4;
+}
+message GetWeaponReq {  // msg_id 1401
+  pb.EWeaponSystemType weaponSystemType = 1;
+  uint32 startIndex = 2;
+  uint32 endIndex = 3;
+}
+message GetWeaponRsp {  // msg_id 1402
+  pb.StatusCode status = 1;
+  repeated pb.WeaponInstance weapons = 2;
+  uint32 totalNum = 3;
+  uint32 endIndex = 4;
+}
+message GetArmorReq {  // msg_id 1403
+  pb.EWeaponSystemType weaponSystemType = 1;
+  uint32 startIndex = 2;
+  uint32 endIndex = 3;
+}
+message GetArmorRsp {  // msg_id 1404
+  pb.StatusCode status = 1;
+  repeated pb.ArmorInstance armors = 2;
+  uint32 totalNum = 3;
+  uint32 endIndex = 4;
+}
+message GetPosterReq {  // msg_id 1405
+  uint32 startIndex = 1;
+  uint32 endIndex = 2;
+}
+message GetPosterRsp {  // msg_id 1406
+  pb.StatusCode status = 1;
+  repeated pb.PosterInstance posters = 2;
+  uint32 totalNum = 3;
+  uint32 endIndex = 4;
+}
+message TempPackItemDropReq {  // msg_id 1407
+  uint32 index = 1;
+}
+message TempPackItemDropRsp {  // msg_id 1408
+  pb.StatusCode status = 1;
+  pb.TempPack tempPack = 2;
+}
+message TempPackItemStoreReq {  // msg_id 1409
+}
+message TempPackItemStoreRsp {  // msg_id 1410
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+}
+message TempPackSortReq {  // msg_id 1411
+}
+message TempPackSortRsp {  // msg_id 1412
+  pb.StatusCode status = 1;
+  pb.TempPack tempPack = 2;
+}
+message TempPackWearEquipReq {  // msg_id 1413
+  uint32 index = 1;
+  uint32 charId = 2;
+}
+message TempPackWearEquipRsp {  // msg_id 1414
+  pb.StatusCode status = 1;
+  pb.TempPack tempPack = 2;
+}
+message GetAllCharacterEquipReq {  // msg_id 1415
+}
+message GetAllCharacterEquipRsp {  // msg_id 1416
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+}
+message CharacterEquipUpdateReq {  // msg_id 1417
+  uint32 charId = 1;
+  pb.EquipmentPreset equipmentPreset = 2;
+}
+message CharacterEquipUpdateRsp {  // msg_id 1418
+  pb.StatusCode status = 1;
+  repeated pb.Character character = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message CharacterEquipPresetSwitchReq {  // msg_id 1419
+  uint32 charId = 1;
+  uint32 presetIndex = 2;
+}
+message CharacterEquipPresetSwitchRsp {  // msg_id 1420
+  pb.StatusCode status = 1;
+  uint32 presetIndex = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message PosterStarUpReq {  // msg_id 1421
+  uint32 posterInstanceId = 1;
+  repeated uint32 costPosterInstanceId = 2;
+}
+message PosterStarUpRsp {  // msg_id 1422
+  pb.StatusCode status = 1;
+  uint32 posterInstanceId = 2;
+  repeated uint32 costPosterInstanceId = 3;
+  uint32 star = 4;
+  repeated pb.Character character = 5;
+}
+message PosterIllustrationListReq {  // msg_id 1423
+}
+message PosterIllustrationListRsp {  // msg_id 1424
+  pb.StatusCode status = 1;
+  repeated pb.PosterIllustration posterIllustrations = 2;
+}
+message PosterIllustrationRewardReq {  // msg_id 1425
+  uint32 posterIllustrationId = 1;
+}
+message PosterIllustrationRewardRsp {  // msg_id 1426
+  pb.StatusCode status = 1;
+  pb.PosterIllustration posterIllustration = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message LockEquipReq {  // msg_id 1427
+  enum LockEquip_EquipType {
+    LockEquip_EquipType_Weapon = 0;
+    LockEquip_EquipType_Armor = 1;
+  }
+  uint32 instanceId = 1;
+  pb.LockEquipReq.LockEquip_EquipType equipType = 2;
+}
+message LockEquipRsp {  // msg_id 1428
+  pb.StatusCode status = 1;
+}
+message PlayerTagUpdateNotice {  // msg_id 1442
+  pb.StatusCode status = 1;
+  uint32 tags = 2;
+}
+message GachaListReq {  // msg_id 1443
+}
+message GachaListRsp {  // msg_id 1444
+  pb.StatusCode status = 1;
+  repeated pb.GachaInfo gachas = 2;
+}
+message GachaReq {  // msg_id 1445
+  uint32 gachaId = 1;
+  bool isSingle = 2;
+}
+message GachaRsp {  // msg_id 1446
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  pb.GachaInfo info = 3;
+}
+message GachaFullPickReq {  // msg_id 1447
+  uint32 gachaId = 1;
+  uint32 itemId = 2;
+}
+message GachaFullPickRsp {  // msg_id 1448
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail item = 2;
+}
+message GachaRecordReq {  // msg_id 1449
+  uint32 gachaId = 1;
+  uint32 page = 2;
+}
+message GachaRecordRsp {  // msg_id 1450
+  pb.StatusCode status = 1;
+  uint32 gachaId = 2;
+  uint32 page = 3;
+  uint32 totalPage = 4;
+  repeated pb.PlayerGachaRecord records = 5;
+}
+message GamePlayRewardReq {  // msg_id 1451
+  uint32 rewardId = 1;
+  uint32 num = 2;
+}
+message GamePlayRewardRsp {  // msg_id 1452
+  pb.StatusCode status = 1;
+  pb.DynamicTreasureBoxBaseData dynamicTreasureBoxInfo = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message ModuleCloseNotice {  // msg_id 1454
+  pb.StatusCode status = 1;
+  repeated pb.CloseModuleData data = 2;
+}
+message GetCharacterAchievementListReq {  // msg_id 1479
+  uint32 characterId = 1;
+}
+message GetCharacterAchievementListRsp {  // msg_id 1480
+  pb.StatusCode status = 1;
+  repeated pb.Achieve characterAchievementLst = 2;
+  repeated uint32 hasRewardedIds = 3;
+  bool isUnlockedPayment = 4;
+  uint32 characterId = 5;
+  repeated uint32 rewardedIdLst = 6;
+}
+message GetCharacterAchievementAwardReq {  // msg_id 1481
+  uint32 characterId = 1;
+  uint32 rewardIndex = 2;
+}
+message GetCharacterAchievementAwardRsp {  // msg_id 1482
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  repeated uint32 rewardedIndexLst = 3;
+  uint32 characterId = 4;
+}
+message GetCharacterAchievementUnlockPaymentReq {  // msg_id 1483
+  uint32 characterId = 1;
+}
+message GetCharacterAchievementUnlockPaymentRsp {  // msg_id 1484
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail updateItem = 2;
+  bool isUnlock = 3;
+  uint32 characterId = 4;
+}
+message GetCharacterAchievementBadgeAwardReq {  // msg_id 1485
+  uint32 characterId = 1;
+  uint32 achievementId = 2;
+}
+message GetCharacterAchievementBadgeAwardRsp {  // msg_id 1486
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail updateItems = 2;
+  repeated pb.Achieve achieves = 3;
+  repeated uint32 rewardedAchievementIdLst = 4;
+}
+message ChangeNickNameReq {  // msg_id 1511
+  string nickName = 1;
+  string birthday = 2;
+}
+message ChangeNickNameRsp {  // msg_id 1512
+  pb.StatusCode status = 1;
+  string nickName = 2;
+  repeated pb.ItemDetail items = 3;
+  int64 renameAllowTime = 4;
+}
+message ChangeSignReq {  // msg_id 1513
+  string sign = 1;
+}
+message ChangeSignRsp {  // msg_id 1514
+  pb.StatusCode status = 1;
+  string sign = 2;
+}
+message ChangeHeadReq {  // msg_id 1515
+  uint32 head = 1;
+}
+message ChangeHeadRsp {  // msg_id 1516
+  pb.StatusCode status = 1;
+  uint32 head = 2;
+}
+message ChangePhoneBackgroundReq {  // msg_id 1517
+  uint32 phoneBackground = 1;
+}
+message ChangePhoneBackgroundRsp {  // msg_id 1518
+  pb.StatusCode status = 1;
+  uint32 phoneBackground = 2;
+}
+message PlayerLevelExpNotice {  // msg_id 1520
+  pb.StatusCode status = 1;
+  uint32 level = 2;
+  uint32 exp = 3;
+}
+message ChangePlayerSexReq {  // msg_id 1521
+  pb.ESexType sex = 1;
+}
+message ChangePlayerSexRsp {  // msg_id 1522
+  pb.StatusCode status = 1;
+  pb.ESexType sex = 2;
+}
+message WorldLevelAchieveListReq {  // msg_id 1523
+}
+message WorldLevelAchieveListRsp {  // msg_id 1524
+  pb.StatusCode status = 1;
+  repeated pb.Achieve achieves = 2;
+  repeated uint32 unlockWorldLevels = 3;
+}
+message UnlockWorldLevelReq {  // msg_id 1525
+  uint32 world_level = 1;
+}
+message UnlockWorldLevelRsp {  // msg_id 1526
+  pb.StatusCode status = 1;
+  uint32 world_level = 2;
+}
+message ChangeWorldLevelReq {  // msg_id 1527
+  uint32 world_level = 1;
+}
+message ChangeWorldLevelRsp {  // msg_id 1528
+  pb.StatusCode status = 1;
+  uint32 world_level = 2;
+}
+message UnlockHeadListReq {  // msg_id 1529
+}
+message UnlockHeadListRsp {  // msg_id 1530
+  pb.StatusCode status = 1;
+  repeated uint32 heads = 2;
+}
+message PlayerLevelRewardReq {  // msg_id 1531
+  uint32 level = 1;
+}
+message PlayerLevelRewardRsp {  // msg_id 1532
+  pb.StatusCode status = 1;
+  uint32 level = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message ForbiddenInfoNotice {  // msg_id 1534
+  pb.StatusCode status = 1;
+  pb.ForbiddenInfo forbiddenInfo = 2;
+}
+message ClientIFIxGMNotice {  // msg_id 1536
+  pb.StatusCode status = 1;
+  string result = 2;
+}
+message SpeechRecyclingNotice {  // msg_id 1538
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+}
+message ChangePhoneCaseReq {  // msg_id 1539
+  uint32 phoneCase = 1;
+}
+message ChangePhoneCaseRsp {  // msg_id 1540
+  pb.StatusCode status = 1;
+  uint32 phoneCase = 2;
+}
+message FlagUnlockAddNotice {  // msg_id 1580
+  pb.StatusCode status = 1;
+  repeated uint32 flagIds = 2;
+}
+message FlagUnLockRemoveNotice {  // msg_id 1582
+  pb.StatusCode status = 1;
+  repeated uint32 flagIds = 2;
+}
+message TutorialReq {  // msg_id 1589
+  uint32 tutorial_id = 1;
+  string tutorial_name = 2;
+}
+message TutorialRsp {  // msg_id 1590
+  pb.StatusCode status = 1;
+}
+message PlayerUnlockFunctionNotice {  // msg_id 1600
+  pb.StatusCode status = 1;
+  repeated uint32 unlockFunctions = 2;
+}
+message PlayerAbilityListReq {  // msg_id 1611
+}
+message PlayerAbilityListRsp {  // msg_id 1612
+  pb.StatusCode status = 1;
+  repeated pb.PlayerAbility abilityList = 2;
+}
+message PlayerAbilityLevelUpReq {  // msg_id 1613
+  uint32 abilityId = 1;
+}
+message PlayerAbilityLevelUpRsp {  // msg_id 1614
+  pb.StatusCode status = 1;
+  pb.PlayerAbility ability = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message PlayerAbilityUnlockNotice {  // msg_id 1616
+  pb.StatusCode status = 1;
+  uint32 abilityId = 2;
+}
+message PlayerVitalityReq {  // msg_id 1621
+}
+message PlayerVitalityRsp {  // msg_id 1622
+  pb.StatusCode status = 1;
+  uint32 vitalityBuyNum = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message PlayerVitalityBuyReq {  // msg_id 1623
+}
+message PlayerVitalityBuyRsp {  // msg_id 1624
+  pb.StatusCode status = 1;
+  uint32 vitalityBuyNum = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message AbilityBadgeListReq {  // msg_id 1631
+  uint32 sceneId = 1;
+}
+message AbilityBadgeListRsp {  // msg_id 1632
+  pb.StatusCode status = 1;
+  repeated pb.AbilityBadgePageInfo abilityBadgePages = 2;
+  repeated pb.Achieve abilityBadgeAchieves = 3;
+  repeated uint32 abilityBadgeRewardAchieveIds = 4;
+}
+message AbilityBadgePageBoxActiveReq {  // msg_id 1633
+  uint32 page = 1;
+  uint32 boxId = 2;
+}
+message AbilityBadgePageBoxActiveRsp {  // msg_id 1634
+  pb.StatusCode status = 1;
+  uint32 page = 2;
+  uint32 boxId = 3;
+  repeated pb.ItemDetail items = 4;
+}
+message AbilityBadgePageRewardReq {  // msg_id 1635
+  uint32 page = 1;
+}
+message AbilityBadgePageRewardRsp {  // msg_id 1636
+  pb.StatusCode status = 1;
+  uint32 page = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message AbilityBadgeAchieveRewardReq {  // msg_id 1637
+  repeated uint32 achieveIds = 1;
+}
+message AbilityBadgeAchieveRewardRsp {  // msg_id 1638
+  pb.StatusCode status = 1;
+  repeated uint32 achieveIds = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message UpdateTeamReq {  // msg_id 1641
+  uint32 char1 = 1;
+  uint32 char2 = 2;
+  uint32 char3 = 3;
+}
+message UpdateTeamRsp {  // msg_id 1642
+  pb.StatusCode status = 1;
+}
+message OutfitDyeUnlockIndexReq {  // msg_id 1645
+  uint32 outfitId = 1;
+  uint32 index = 2;
+}
+message OutfitDyeUnlockIndexRsp {  // msg_id 1646
+  pb.StatusCode status = 1;
+}
+message OutfitDyeReq {  // msg_id 1647
+  uint32 outfitId = 1;
+  float uvy = 2;
+  uint32 pos = 3;
+  uint32 schemeIndex = 4;
+  uint32 addRateColorIndex = 5;
+  pb.PosColor specifyColor = 6;
+}
+message OutfitDyeRsp {  // msg_id 1648
+  pb.StatusCode status = 1;
+  uint32 outfitId = 2;
+  pb.PosColor posColor = 3;
+  uint32 totalGuaranteeDyeNum = 4;
+}
+message OutfitPresetUpdateNotice {  // msg_id 1650
+  pb.StatusCode status = 1;
+  repeated pb.Character chars = 2;
+}
+message OutfitColorantSelectReq {  // msg_id 1651
+  uint32 outfitId = 1;
+  uint32 colorantItemId = 2;
+}
+message OutfitColorantSelectRsp {  // msg_id 1652
+  pb.StatusCode status = 1;
+  optional pb.OutfitDyeParam param = 2;
+}
+message OutfitRandomColorReq {  // msg_id 1653
+  uint32 outfitId = 1;
+  float uvy = 2;
+}
+message OutfitRandomColorRsp {  // msg_id 1654
+  pb.StatusCode status = 1;
+  uint32 outfitId = 2;
+  pb.PosColor posColor = 3;
+}
+message OutFitDyeSaveReq {  // msg_id 1655
+  uint32 outfitId = 1;
+  uint32 schemeIndex = 2;
+  uint32 pos = 3;
+  bool isSaveDyeResult = 4;
+}
+message OutFitDyeSaveRsp {  // msg_id 1656
+  pb.StatusCode status = 1;
+  uint32 schemeIndex = 2;
+  pb.PosColor posColor = 3;
+  repeated pb.ItemDetail items = 4;
+  bool isSaveDyeResult = 5;
+}
+message OutfitPresetUpdateReq {  // msg_id 1657
+  uint32 charId = 1;
+  pb.OutfitPreset preset = 2;
+}
+message OutfitPresetUpdateRsp {  // msg_id 1658
+  pb.StatusCode status = 1;
+  uint32 charId = 2;
+  pb.OutfitPreset preset = 3;
+}
+message OutfitPresetSwitchReq {  // msg_id 1659
+  uint32 charId = 1;
+  uint32 usePresetIndex = 2;
+}
+message OutfitPresetSwitchRsp {  // msg_id 1660
+  pb.StatusCode status = 1;
+  uint32 charId = 2;
+  uint32 usePresetIndex = 3;
+}
+message OutfitHideSwitchReq {  // msg_id 1661
+  uint32 charId = 1;
+  pb.OutfitHideInfo hideInfo = 2;
+}
+message OutfitHideSwitchRsp {  // msg_id 1662
+  pb.StatusCode status = 1;
+  uint32 charId = 2;
+  pb.OutfitHideInfo hideInfo = 3;
+}
+message UpdateCharacterAppearanceReq {  // msg_id 1671
+  uint32 charId = 1;
+  pb.CharacterAppearance appearance = 2;
+}
+message UpdateCharacterAppearanceRsp {  // msg_id 1672
+  pb.StatusCode status = 1;
+  uint32 charId = 2;
+  pb.CharacterAppearance appearance = 3;
+}
+message CharacterAppearanceUpdateNotice {  // msg_id 1674
+  pb.StatusCode status = 1;
+  pb.CharacterAppearance appearance = 2;
+}
+message ShopInfoReq {  // msg_id 1675
+  uint32 shopId = 1;
+}
+message ShopInfoRsp {  // msg_id 1676
+  pb.StatusCode status = 1;
+  uint32 shopId = 2;
+  repeated pb.ShopGrid grids = 3;
+}
+message ShopBuyReq {  // msg_id 1677
+  uint32 shopId = 1;
+  uint32 gridId = 2;
+  uint32 buyTimes = 3;
+  uint32 itemId = 4;
+}
+message ShopBuyRsp {  // msg_id 1678
+  pb.StatusCode status = 1;
+  uint32 shopId = 2;
+  pb.ShopGrid grids = 3;
+  repeated pb.ItemDetail items = 5;
+}
+message ShopRefreshNotice {  // msg_id 1680
+  pb.StatusCode status = 1;
+  repeated uint32 shopId = 2;
+}
+message PlaceFurnitureReq {  // msg_id 1681
+  uint32 furnitureItemId = 1;
+  pb.Vector3 pos = 2;
+  pb.Vector3 rot = 3;
+  int64 furnitureId = 4;
+  uint32 layerNum = 5;
+}
+message PlaceFurnitureRsp {  // msg_id 1682
+  pb.StatusCode status = 1;
+  pb.FurnitureDetailsInfo furnitureDetailsInfo = 2;
+}
+message TakeOutFurnitureReq {  // msg_id 1683
+  int64 furnitureId = 1;
+  bool isPutInPackage = 2;
+}
+message TakeOutFurnitureRsp {  // msg_id 1684
+  pb.StatusCode status = 1;
+  int64 furnitureId = 2;
+}
+message GetGardenInfoReq {  // msg_id 1685
+}
+message GetGardenInfoRsp {  // msg_id 1686
+  pb.StatusCode status = 1;
+  pb.GardenBaseInfo gardenInfo = 2;
+}
+message SwitchGardenStatusReq {  // msg_id 1687
+  bool isOpen = 1;
+  string password = 2;
+}
+message SwitchGardenStatusRsp {  // msg_id 1688
+  pb.StatusCode status = 1;
+  bool isOpen = 2;
+  string password = 3;
+  int64 password_expire_time = 4;
+}
+message DoLikesReq {  // msg_id 1693
+}
+message DoLikesRsp {  // msg_id 1694
+  pb.StatusCode status = 1;
+  uint32 leftLikeNums = 2;
+  int64 likeNums = 3;
+}
+message SceneGardenFurnitureUpdateNotice {  // msg_id 1696
+  pb.StatusCode status = 1;
+  pb.FurnitureDetailsInfo furniture_info = 2;
+}
+message SceneGardenFurnitureRemoveNotice {  // msg_id 1698
+  pb.StatusCode status = 1;
+  int64 furniture_id = 2;
+  uint32 item_id = 3;
+  repeated pb.ItemDetail updateItems = 4;
+}
+message WeaponInscriptionInlaidReq {  // msg_id 1701
+  uint32 weaponInstanceId = 1;
+  uint32 inscriptionId = 2;
+}
+message WeaponInscriptionInlaidRsp {  // msg_id 1702
+  pb.StatusCode status = 1;
+  repeated pb.WeaponInstance weaponInstances = 2;
+  repeated pb.Inscription inscriptions = 3;
+  repeated pb.ItemDetail items = 4;
+}
+message WeaponInscriptionRemoveReq {  // msg_id 1703
+  uint32 weaponInstanceId = 1;
+}
+message WeaponInscriptionRemoveRsp {  // msg_id 1704
+  pb.StatusCode status = 1;
+  uint32 weaponInstanceId = 2;
+}
+message ShopInitNotice {  // msg_id 1706
+  pb.StatusCode status = 1;
+  repeated pb.PlayerShopInfo playerShop = 2;
+}
+message QuestDetail {
+  repeated pb.Chapter chapters = 1;
+  pb.DailyQuestBonus dailyQuestBonusDayLeft = 2;
+  pb.DailyQuestBonus dailyQuestBonusWeekLeft = 3;
+  pb.RandomQuestBonus randomQuestBonusLeft = 4;
+  repeated pb.Quest quests = 5;
+}
+message QuestNotice {  // msg_id 1718
+  pb.StatusCode status = 1;
+  repeated pb.Quest quests = 2;
+  pb.DailyQuestBonus dailyQuestDayBonusInfo = 3;
+  pb.RandomQuestBonus randomQuestBonusInfo = 4;
+}
+message AchieveNotice {  // msg_id 1720
+  pb.StatusCode status = 1;
+  repeated pb.Achieve achieves = 2;
+}
+message GmNotice {  // msg_id 1722
+  pb.StatusCode status = 1;
+  repeated string notice = 2;
+  repeated pb.LanguageContext global_notice = 3;
+}
+message AcceptQuestReq {  // msg_id 1723
+  uint32 questId = 1;
+  pb.EQuestType questType = 2;
+}
+message AcceptQuestRsp {  // msg_id 1724
+  pb.StatusCode status = 1;
+  pb.Quest quest = 2;
+}
+message ClaimQuestRewardReq {  // msg_id 1725
+  uint32 questId = 1;
+  pb.EQuestType questType = 2;
+}
+message ClaimQuestRewardRsp {  // msg_id 1726
+  pb.StatusCode status = 1;
+  pb.Quest quest = 2;
+  repeated pb.ItemDetail items = 3;
+  pb.RandomQuestBonus randomQuestBonus = 4;
+}
+message FriendSearchReq {  // msg_id 1727
+  string searchArgs = 1;
+}
+message FriendSearchRsp {  // msg_id 1728
+  pb.StatusCode status = 1;
+  pb.PlayerBriefInfo data = 2;
+  pb.FriendStatus friendStatus = 3;
+}
+message FriendAddReq {  // msg_id 1729
+  uint32 player_id = 1;
+}
+message FriendAddRsp {  // msg_id 1730
+  pb.StatusCode status = 1;
+}
+message FriendDelReq {  // msg_id 1731
+  uint32 player_id = 1;
+}
+message FriendDelRsp {  // msg_id 1732
+  pb.StatusCode status = 1;
+}
+message FriendBlackReq {  // msg_id 1733
+  uint32 player_id = 1;
+  bool isRemove = 2;
+}
+message FriendBlackRsp {  // msg_id 1734
+  pb.StatusCode status = 1;
+}
+message FriendHandleReq {  // msg_id 1735
+  uint32 player_id = 1;
+  bool isAgree = 2;
+}
+message FriendHandleRsp {  // msg_id 1736
+  pb.StatusCode status = 1;
+}
+message FriendHandleNotice {  // msg_id 1738
+  pb.StatusCode status = 1;
+  pb.FriendHandleType type = 2;
+  uint32 targetPlayerId = 3;
+}
+message FriendReq {  // msg_id 1739
+  pb.FriendListType type = 1;
+}
+message FriendRsp {  // msg_id 1740
+  pb.StatusCode status = 1;
+  repeated pb.FriendBriefInfo info = 2;
+}
+message FriendBriefInfo {
+  string alias = 1;
+  pb.PlayerBriefInfo info = 2;
+  uint32 friend_tag = 3;
+  uint32 friend_intimacy = 4;
+  uint32 friend_background = 5;
+}
+message CollectingReq {  // msg_id 1741
+  uint32 itemId = 1;
+}
+message CollectingRsp {  // msg_id 1742
+  pb.StatusCode status = 1;
+  repeated pb.CollectionData collections = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message CollectionRewardReq {  // msg_id 1743
+  uint32 itemId = 1;
+}
+message CollectionRewardRsp {  // msg_id 1744
+  pb.StatusCode status = 1;
+  pb.PBCollectionRewardData collectionRewardData = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message TreasureBoxOpenReq {  // msg_id 1745
+  pb.TreasureBoxType boxType = 1;
+  uint32 treasureBoxIndex = 2;
+  pb.TreasureBoxLocType loc_type = 3;
+}
+message TreasureBoxOpenRsp {  // msg_id 1746
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  int64 nextRefreshTime = 3;
+}
+message TreasureBoxPickupReq {  // msg_id 1747
+  pb.TreasureBoxType boxType = 1;
+  uint32 boxIndex = 2;
+  int32 pickIndex = 3;
+  pb.TreasureBoxLocType loc_type = 4;
+}
+message TreasureBoxPickupRsp {  // msg_id 1748
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+}
+message PickupReq {  // msg_id 1749
+  uint32 dropItemIndex = 1;
+  int32 pickIndex = 2;
+}
+message PickupRsp {  // msg_id 1750
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+}
+message GatherItem {
+  uint32 Index = 1;
+  int32 Reward = 2;
+  bool isLucky = 3;
+}
+message GroupGatherLimit {
+  uint32 gatherGroupId = 1;
+  pb.GatherLimit gatherLimit = 2;
+}
+message SceneGatherLimit {
+  uint32 sceneId = 1;
+  repeated pb.GatherLimit gatherLimits = 2;
+}
+message GatherReq {  // msg_id 1751
+  pb.GatherItem gatherItem = 1;
+}
+message GatherRsp {  // msg_id 1752
+  pb.StatusCode status = 1;
+  uint32 index = 2;
+  repeated pb.ItemDetail items = 3;
+  pb.GroupGatherLimit groupGatherLimit = 4;
+  pb.SceneGatherLimit sceneGatherLimit = 5;
+  uint32 itemLevel = 6;
+}
+message GatherSceneLimitRecoveryNotice {  // msg_id 1754
+  pb.StatusCode status = 1;
+  repeated pb.SceneGatherLimit sceneGatherLimits = 2;
+}
+message GetAchieveGroupAwardReq {  // msg_id 1755
+  uint32 groupId = 1;
+}
+message GetAchieveGroupAwardRsp {  // msg_id 1756
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message GetAchieveGroupListReq {  // msg_id 1757
+}
+message GetAchieveGroupListRsp {  // msg_id 1758
+  pb.StatusCode status = 1;
+  repeated uint32 rewardedGroupIdLst = 2;
+}
+message GetOneAchieveAwardReq {  // msg_id 1759
+  uint32 achieveId = 1;
+}
+message GetOneAchieveAwardRsp {  // msg_id 1760
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message GetAchieveOneGroupReq {  // msg_id 1761
+  uint32 groupId = 1;
+}
+message GetAchieveOneGroupRsp {  // msg_id 1762
+  pb.StatusCode status = 1;
+  pb.OneGroupAchieveInfo currentGroupAchieveInfo = 2;
+  bool isReward = 3;
+}
+message AchieveFinishNotice {  // msg_id 1764
+  pb.StatusCode status = 1;
+  pb.FinishAchieveInfo finishInfo = 2;
+}
+message SetFriendExtInfoReq {  // msg_id 1781
+  uint32 playerId = 1;
+  repeated pb.SetFriendExtInfoData data = 2;
+}
+message SetFriendExtInfoData {
+  uint32 type = 1;
+  string value = 3;
+  uint32 intValue = 4;
+}
+message SetFriendExtInfoRsp {  // msg_id 1782
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+  repeated pb.SetFriendExtInfoData data = 3;
+}
+message SceneSitChairReq {  // msg_id 1801
+  int64 chairId = 1;
+  int32 seatId = 2;
+  bool isSit = 3;
+}
+message SceneSitChairRsp {  // msg_id 1802
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+  int64 chairId = 3;
+  int32 seatId = 4;
+  bool isSit = 5;
+}
+message NpcTalkReq {  // msg_id 1803
+  enum NpcTalkType {
+    NpcTalkType_Npc = 0;
+    NpcTalkType_Mechanism = 1;
+  }
+  uint32 id = 1;
+  pb.NpcTalkReq.NpcTalkType talkType = 2;
+}
+message NpcTalkRsp {  // msg_id 1804
+  pb.StatusCode status = 1;
+}
+message ExploreInitReq {  // msg_id 1819
+}
+message ExploreInitRsp {  // msg_id 1820
+  pb.StatusCode status = 1;
+  repeated pb.PlayerExploreInfo explore = 2;
+  repeated pb.PlayerExploreInfo activityExplore = 3;
+}
+message ExploreReq {  // msg_id 1821
+  uint32 exploreId = 1;
+  bool isActivity = 2;
+}
+message ExploreRsp {  // msg_id 1822
+  pb.StatusCode status = 1;
+  bool isActivity = 2;
+  pb.PlayerExploreInfo explore = 3;
+}
+message ExploreQuickFinishReq {  // msg_id 1823
+  uint32 exploreId = 1;
+  bool isActivity = 2;
+}
+message ExploreQuickFinishRsp {  // msg_id 1824
+  pb.StatusCode status = 1;
+  bool isActivity = 2;
+  pb.PlayerExploreInfo explore = 3;
+}
+message ExploreRewardReq {  // msg_id 1825
+  uint32 exploreId = 1;
+  bool isActivity = 2;
+}
+message ExploreRewardRsp {  // msg_id 1826
+  pb.StatusCode status = 1;
+  bool isActivity = 2;
+  uint32 exploreId = 3;
+  pb.PlayerExploreInfo explore = 4;
+  repeated pb.ItemDetail rewardItem = 5;
+  uint32 intervalId = 7;
+}
+message ExploreCancelReq {  // msg_id 1827
+  uint32 exploreId = 1;
+  bool isActivity = 2;
+}
+message ExploreCancelRsp {  // msg_id 1828
+  pb.StatusCode status = 1;
+  uint32 exploreId = 2;
+  bool isActivity = 3;
+  pb.PlayerExploreInfo explore = 4;
+}
+message ExploreCollectRewardReq {  // msg_id 1829
+  uint32 exploreId = 1;
+  bool isActivity = 2;
+}
+message ExploreCollectRewardRsp {  // msg_id 1830
+  pb.StatusCode status = 1;
+  bool isActivity = 2;
+  uint32 exploreId = 3;
+  pb.PlayerExploreInfo explore = 4;
+  repeated pb.ItemDetail rewardItem = 5;
+}
+message IntervalChangeNotice {  // msg_id 1832
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+  uint32 intervalId = 3;
+  int64 finishTime = 4;
+}
+message IntervalStartReq {  // msg_id 1833
+}
+message IntervalStartRsp {  // msg_id 1834
+  pb.StatusCode status = 1;
+  uint32 exploreId = 2;
+  int64 finishTime = 3;
+}
+message IntervalJoinReq {  // msg_id 1835
+  uint32 friendId = 1;
+  string intervalParam = 2;
+}
+message IntervalJoinRsp {  // msg_id 1836
+  pb.StatusCode status = 1;
+  string friendId = 2;
+  uint32 exploreId = 3;
+  int64 finishTime = 4;
+}
+message IntervalQuickReq {  // msg_id 1837
+}
+message IntervalQuickRsp {  // msg_id 1838
+  pb.StatusCode status = 1;
+  uint32 exploreId = 2;
+  int64 finishTime = 3;
+}
+message IntervalRewardReq {  // msg_id 1839
+  uint32 friendId = 1;
+  string intervalParam = 2;
+}
+message IntervalRewardRsp {  // msg_id 1840
+  pb.StatusCode status = 1;
+  uint32 friendId = 2;
+  uint32 exploreId = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message FriendIntervalInitReq {  // msg_id 1841
+}
+message FriendIntervalInitRsp {  // msg_id 1842
+  pb.StatusCode status = 1;
+  repeated pb.IntervalInfo friendInfos = 2;
+  repeated pb.IntervalInfo joinInfos = 3;
+}
+message SelfIntervalInitReq {  // msg_id 1843
+}
+message SelfIntervalInitRsp {  // msg_id 1844
+  pb.StatusCode status = 1;
+  uint32 intervalId = 2;
+  int64 endTime = 3;
+  bool isStart = 4;
+  pb.IntervalInfo interval = 5;
+}
+message MonsterDeadReq {  // msg_id 1851
+  uint32 monsterId = 1;
+  uint32 monsterIndex = 2;
+}
+message MonsterDeadRsp {  // msg_id 1852
+  pb.StatusCode status = 1;
+  uint32 monsterIndex = 2;
+  pb.DropItem dropItem = 3;
+}
+message ManualListReq {  // msg_id 1861
+}
+message ManualListRsp {  // msg_id 1862
+  pb.StatusCode status = 1;
+  repeated pb.ManualFlag flags = 2;
+}
+message ManualFlagUnlockReq {  // msg_id 1863
+  uint32 flagId = 1;
+}
+message ManualFlagUnlockRsp {  // msg_id 1864
+  pb.StatusCode status = 1;
+  pb.ManualFlag flag = 2;
+}
+message ManualFlagRewardReq {  // msg_id 1865
+  uint32 flagId = 1;
+}
+message ManualFlagRewardRsp {  // msg_id 1866
+  pb.StatusCode status = 1;
+  pb.ManualFlag flag = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message SceneProcessListReq {  // msg_id 1871
+}
+message SceneProcessListRsp {  // msg_id 1872
+  pb.StatusCode status = 1;
+  repeated pb.SceneProcess sceneProcessList = 2;
+}
+message PlayerBuffNotice {  // msg_id 1880
+  pb.StatusCode status = 1;
+  repeated pb.PlayerBuff player_buffs = 2;
+}
+message SupplyBoxInfoReq {  // msg_id 1891
+}
+message SupplyBoxInfoRsp {  // msg_id 1892
+  pb.StatusCode status = 1;
+  int64 nextRewardTime = 2;
+}
+message SupplyBoxRewardReq {  // msg_id 1893
+}
+message SupplyBoxRewardRsp {  // msg_id 1894
+  pb.StatusCode status = 1;
+  int64 nextRewardTime = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message AreaCloseReq {  // msg_id 1901
+  uint32 areaId = 1;
+}
+message AreaCloseRsp {  // msg_id 1902
+  pb.StatusCode status = 1;
+  pb.AreaData area = 2;
+}
+message AreaUnlockReq {  // msg_id 1903
+  uint32 areaId = 1;
+}
+message AreaUnlockRsp {  // msg_id 1904
+  pb.StatusCode status = 1;
+  pb.AreaData area = 2;
+}
+message AreaLevelUpReq {  // msg_id 1905
+  uint32 areaId = 1;
+}
+message AreaLevelUpRsp {  // msg_id 1906
+  pb.StatusCode status = 1;
+  pb.AreaData area = 2;
+  repeated pb.ItemDetail items = 3;
+  repeated pb.Achieve achieves = 4;
+}
+message AreaAchieveListReq {  // msg_id 1907
+  uint32 areaId = 1;
+}
+message AreaAchieveListRsp {  // msg_id 1908
+  pb.StatusCode status = 1;
+  uint32 areaId = 2;
+  repeated pb.Achieve achieves = 3;
+}
+message PopEmojiNotice {  // msg_id 1910
+  pb.StatusCode status = 1;
+  uint32 emojiId = 2;
+  uint32 fromPlayerId = 3;
+}
+message PopEmojiReq {  // msg_id 1911
+  uint32 emojiId = 1;
+}
+message PopEmojiRsp {  // msg_id 1912
+  pb.StatusCode status = 1;
+}
+message PlaceCampFireReq {  // msg_id 1913
+  pb.Vector3 pos = 1;
+  pb.Vector3 rot = 2;
+  uint32 actionId = 3;
+}
+message PlaceCampFireRsp {  // msg_id 1914
+  pb.StatusCode status = 1;
+  pb.CampFire campFire = 2;
+}
+message PlaceCampFireNotice {  // msg_id 1916
+  pb.StatusCode status = 1;
+  repeated pb.CampFire campFires = 2;
+}
+message SceneWeatherChangeNotice {  // msg_id 1918
+  pb.StatusCode status = 1;
+  pb.WeatherType weatherType = 2;
+}
+message SceneInterActionPlayStatusReq {  // msg_id 1919
+  pb.ScenePlayerActionStatus actionStatus = 1;
+  pb.InterActionPushType pushType = 2;
+}
+message SceneInterActionPlayStatusRsp {  // msg_id 1920
+  pb.StatusCode status = 1;
+}
+message SceneInterActionPlayStatusNotice {  // msg_id 1922
+  pb.StatusCode status = 1;
+  pb.ScenePlayerActionStatus actionStatus = 2;
+  pb.InterActionPushType pushType = 3;
+  uint32 playerId = 4;
+}
+message RemoveCampFireReq {  // msg_id 1923
+  uint32 campFireId = 1;
+}
+message RemoveCampFireRsp {  // msg_id 1924
+  pb.StatusCode status = 1;
+}
+message RemoveCampFireNotice {  // msg_id 1926
+  pb.StatusCode status = 1;
+  repeated uint32 campFireId = 2;
+}
+message ChangeChatChannelReq {  // msg_id 1930
+  uint32 channel_id = 1;
+}
+message ChangeChatChannelRsp {  // msg_id 1931
+  pb.StatusCode status = 1;
+  uint32 channel_id = 2;
+}
+message SendChatMsgReq {  // msg_id 1933
+  pb.ChatChannelType type = 1;
+  uint32 playerId = 2;
+  string text = 3;
+  uint32 expression = 4;
+}
+message SendChatMsgRsp {  // msg_id 1934
+  pb.StatusCode status = 1;
+  string text = 2;
+}
+message ChatMsgNotice {  // msg_id 1936
+  pb.StatusCode status = 1;
+  pb.ChatChannelType type = 2;
+  pb.ChatMsgData msg = 3;
+}
+message ChatMsgRecordInitNotice {  // msg_id 1938
+  pb.StatusCode status = 1;
+  pb.ChatChannelType type = 2;
+  repeated pb.ChatMsgData msg = 3;
+}
+message ChatUnLockExpressionNotice {  // msg_id 1940
+  pb.StatusCode status = 1;
+  repeated uint32 expressionId = 2;
+}
+message CollectVoiceRegionReq {  // msg_id 1951
+  uint32 voiceId = 1;
+}
+message CollectVoiceRegionRsp {  // msg_id 1952
+  pb.StatusCode status = 1;
+  uint32 voiceId = 2;
+}
+message CharacterDeadReq {  // msg_id 1953
+  uint32 character_id = 1;
+}
+message CharacterDeadRsp {  // msg_id 1954
+  pb.StatusCode status = 1;
+}
+message CharacterGatherWeaponUpdateReq {  // msg_id 1955
+  uint32 character_id = 1;
+  uint32 weapon_id = 2;
+}
+message CharacterGatherWeaponUpdateRsp {  // msg_id 1956
+  pb.StatusCode status = 1;
+}
+message EquipDisassembleReq {  // msg_id 1957
+  repeated uint32 weaponIds = 1;
+  repeated uint32 armorIds = 2;
+}
+message EquipDisassembleRsp {  // msg_id 1958
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  repeated pb.Character character = 3;
+  repeated uint32 weaponIds = 4;
+  repeated uint32 armorIds = 5;
+}
+message ItemUseReq {  // msg_id 1959
+  uint32 itemId = 1;
+  uint32 num = 2;
+  uint32 chooseItemId = 3;
+}
+message ItemUseRsp {  // msg_id 1960
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  uint32 dungeonId = 3;
+}
+message WeaponStrengthReq {  // msg_id 1961
+  uint32 weaponInstanceId = 1;
+}
+message WeaponStrengthRsp {  // msg_id 1962
+  pb.StatusCode status = 1;
+  uint32 weaponInstanceId = 2;
+  uint32 strengthLevel = 3;
+}
+message ArmorStrengthReq {  // msg_id 1963
+  uint32 armorInstanceId = 2;
+}
+message ArmorStrengthRsp {  // msg_id 1964
+  pb.StatusCode status = 1;
+  uint32 armorInstanceId = 2;
+  uint32 strengthLevel = 3;
+}
+message OtherPlayerInfoReq {  // msg_id 1965
+  uint32 playerId = 1;
+}
+message OtherPlayerInfoRsp {  // msg_id 1966
+  pb.StatusCode status = 1;
+  pb.PlayerBriefInfo otherInfo = 2;
+  pb.FriendStatus friendStatus = 3;
+  string alias = 4;
+  uint32 friend_tag = 5;
+  uint32 friend_intimacy = 6;
+  uint32 friend_background = 7;
+}
+message SendActionReq {  // msg_id 1967
+  uint32 actionId = 1;
+}
+message SendActionRsp {  // msg_id 1968
+  pb.StatusCode status = 1;
+}
+message SendActionNotice {  // msg_id 1970
+  pb.StatusCode status = 1;
+  uint32 actionId = 2;
+  uint32 fromPlayerId = 3;
+  string fromPlayerName = 4;
+  bool isStudy = 5;
+  int64 endTime = 6;
+  uint32 multipleNeedCount = 8;
+}
+message SendActionStudyNotice {  // msg_id 1972
+  pb.StatusCode status = 1;
+  uint32 actionId = 2;
+  uint32 fromPlayerId = 3;
+  string fromPlayerName = 4;
+  int64 endTime = 5;
+}
+message SendActionAddNotice {  // msg_id 1974
+  pb.StatusCode status = 1;
+  uint32 actionId = 2;
+  uint32 fromPlayerId = 3;
+}
+message SendMultipleActionNotice {  // msg_id 1976
+  pb.StatusCode status = 1;
+  uint32 actionId = 2;
+  uint32 fromPlayerId = 3;
+  int64 endTime = 4;
+}
+message MultipleActionAcceptReq {  // msg_id 1977
+  pb.StatusCode status = 1;
+  uint32 actionId = 2;
+  uint32 fromPlayerId = 3;
+}
+message MultipleActionAcceptRsp {  // msg_id 1978
+  pb.StatusCode status = 1;
+}
+message SendMultipleActionCompleteNotice {  // msg_id 1980
+  pb.StatusCode status = 1;
+  uint32 actionId = 2;
+  uint32 fromPlayerId = 3;
+  repeated uint32 actionPlayerIds = 4;
+}
+message ActivityChangeNotice {  // msg_id 1982
+  pb.StatusCode status = 1;
+  bool isOpen = 2;
+  repeated uint32 activityId = 3;
+}
+message ActivitySignInDataNotice {  // msg_id 1984
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivitySignIn info = 2;
+}
+message ActivitySignInReq {  // msg_id 1985
+  uint32 activityId = 1;
+  uint32 day = 2;
+}
+message ActivitySignInRsp {  // msg_id 1986
+  pb.StatusCode status = 1;
+  uint32 day = 2;
+  uint32 rewardId = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message PlayerNotInSceneChannelNotice {  // msg_id 1988
+  pb.StatusCode status = 1;
+  uint32 msg_id = 2;
+  uint32 packet_id = 3;
+}
+message ActivityQuestDataNotice {  // msg_id 1990
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivityQuest info = 2;
+}
+message ActivityQuestRewardReq {  // msg_id 1991
+  uint32 activityId = 1;
+  uint32 param = 2;
+  bool isProgress = 3;
+}
+message ActivityQuestRewardRsp {  // msg_id 1992
+  pb.StatusCode status = 1;
+  uint32 param = 2;
+  uint32 rewardId = 3;
+  bool isProgress = 4;
+  repeated pb.ItemDetail rewards = 5;
+}
+message ActivityRegularDataNotice {  // msg_id 1994
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivityRegular info = 2;
+}
+message ActivityRegularRewardReq {  // msg_id 1995
+  uint32 activityId = 1;
+  uint32 param = 2;
+  uint32 poolType = 3;
+}
+message ActivityRegularRewardRsp {  // msg_id 1996
+  pb.StatusCode status = 1;
+  uint32 param = 2;
+  uint32 poolType = 3;
+  repeated pb.ItemDetail rewards = 5;
+}
+message GetCollectItemIdsReq {  // msg_id 1997
+}
+message GetCollectItemIdsRsp {  // msg_id 1998
+  pb.StatusCode status = 1;
+  repeated uint32 itemIds = 2;
+}
+message ClapReq {  // msg_id 1999
+  bool isCancel = 1;
+  pb.Vector3 position = 2;
+  pb.Vector3 forward = 3;
+  uint32 movementId = 4;
+}
+message ClapRsp {  // msg_id 2000
+  pb.StatusCode status = 1;
+  uint32 movementId = 2;
+  bool isCancel = 3;
+}
+message ClapResultNotice {  // msg_id 2002
+  pb.StatusCode status = 1;
+  repeated uint32 matchedPlayerIdLst = 2;
+  uint32 movementId = 3;
+}
+message ThrowDiceReq {  // msg_id 2003
+  uint32 diceId = 1;
+  pb.Vector3 position = 2;
+  uint32 pips = 3;
+}
+message ThrowDiceRsp {  // msg_id 2004
+  pb.StatusCode status = 1;
+}
+message ThrowDiceNotice {  // msg_id 2006
+  pb.StatusCode status = 1;
+  pb.Vector3 position = 2;
+  uint32 pips = 3;
+  string playerName = 4;
+  uint32 diceId = 5;
+}
+message ThrowDiceResultNotice {  // msg_id 2008
+  pb.StatusCode status = 1;
+  repeated pb.ThrowDiceResultListByZone zoneResultLst = 2;
+}
+message AchieveActionUnLockNotice {  // msg_id 2010
+  pb.StatusCode status = 1;
+  repeated uint32 actionIdLst = 2;
+  map<uint32, int64> studyAction = 3;
+}
+message PrivateChatOfflineNotice {  // msg_id 2012
+  pb.StatusCode status = 1;
+  repeated pb.PrivateChatOffline offlineMsg = 2;
+}
+message PrivateChatMsgRecordReq {  // msg_id 2013
+  uint32 targetPlayerId = 1;
+}
+message PrivateChatMsgRecordRsp {  // msg_id 2014
+  pb.StatusCode status = 1;
+  repeated pb.ChatMsgData msgRecord = 2;
+}
+message SystemNotice {  // msg_id 2016
+  pb.StatusCode status = 1;
+  pb.SystemNoticeData notice = 2;
+}
+message PlayerTiredDropNotice {  // msg_id 2018
+  pb.StatusCode status = 1;
+  pb.PlayerDropRateInfo dropRateInfo = 2;
+}
+message NewQuestionnaireNotice {  // msg_id 2020
+  pb.StatusCode status = 1;
+  repeated pb.QuestionnaireBrief list = 2;
+}
+message CreatePayOrderReq {  // msg_id 2101
+  uint32 shopId = 1;
+  uint32 gridId = 2;
+  string productName = 3;
+  string productDescription = 4;
+  string blibliPCSignParam = 5;
+  uint32 toPlayerId = 6;
+  uint32 poolId = 7;
+}
+message CreatePayOrderRsp {  // msg_id 2102
+  pb.StatusCode status = 1;
+  string orderId = 2;
+  string resultStr = 3;
+}
+message PaySendGoodsNotice {  // msg_id 2104
+  pb.StatusCode status = 1;
+  uint32 shopId = 2;
+  pb.ShopGrid grids = 3;
+  string orderId = 5;
+  repeated pb.ItemDetail items = 6;
+  uint32 toPlayerId = 7;
+}
+message PackNotShowNotice {  // msg_id 2106
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+}
+message AbyssSeasonNotice {  // msg_id 2110
+  pb.StatusCode status = 1;
+  uint32 inProgressSeasonId = 2;
+}
+message AbyssInfoReq {  // msg_id 2111
+}
+message AbyssInfoRsp {  // msg_id 2112
+  pb.StatusCode status = 1;
+  pb.AbyssInfo abyssInfo = 2;
+  uint32 inProgressSeasonId = 3;
+}
+message AbyssQuestRewardReq {  // msg_id 2113
+  uint32 seasonId = 1;
+  uint32 conditionId = 2;
+}
+message AbyssQuestRewardRsp {  // msg_id 2114
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message AbyssTeamUpdateReq {  // msg_id 2115
+  pb.Team abyssTeam = 1;
+  uint32 dungeonId = 2;
+  uint32 teamIndex = 3;
+  pb.AbyssRankType bonus_type = 4;
+}
+message AbyssTeamUpdateRsp {  // msg_id 2116
+  pb.StatusCode status = 1;
+}
+message AbyssTeamSwitchReq {  // msg_id 2117
+  pb.AbyssRankType bonus_type = 1;
+}
+message AbyssTeamSwitchRsp {  // msg_id 2118
+  pb.StatusCode status = 1;
+  pb.SceneTeam team = 2;
+}
+message AbyssFriendRankReq {  // msg_id 2119
+  uint32 seasonId = 1;
+}
+message AbyssFriendRankInfo {
+  pb.PlayerBriefInfo playerInfo = 1;
+  pb.AbyssSeasonInfo abyssInfo = 2;
+}
+message AbyssFriendRankRsp {  // msg_id 2120
+  pb.StatusCode status = 1;
+  repeated pb.AbyssFriendRankInfo rankList = 2;
+}
+message ActivityGiftRewardReq {  // msg_id 2121
+  uint32 activityId = 1;
+  uint32 achieveId = 2;
+}
+message ActivityGiftRewardRsp {  // msg_id 2122
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message ActivityGiftDataNotice {  // msg_id 2124
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivityGift info = 2;
+  repeated pb.Achieve questInfoLst = 3;
+}
+message MonthCardNotice {  // msg_id 2126
+  pb.StatusCode status = 1;
+  int64 over_due_time = 2;
+  bool isRewardToday = 3;
+}
+message CharacterBpBuyNotice {  // msg_id 2128
+  pb.StatusCode status = 1;
+  uint32 characterId = 2;
+}
+message ActivityBattlePassBuyNotice {  // msg_id 2130
+  pb.StatusCode status = 1;
+  uint32 activityBattlePassId = 2;
+  uint32 battlePassLv = 3;
+  uint32 totalExp = 4;
+  uint32 currentExp = 5;
+}
+message ActivityBattlePassBuyExpReq {  // msg_id 2131
+  uint32 activityBattlePassId = 2;
+}
+message ActivityBattlePassBuyExpRsp {  // msg_id 2132
+  pb.StatusCode status = 1;
+  uint32 activityBattlePassId = 2;
+  uint32 battlePassLv = 3;
+  uint32 totalExp = 4;
+  uint32 currentExp = 5;
+}
+message GetActivityBattlePassLevelRewardReq {  // msg_id 2133
+  uint32 activityBattlePassId = 2;
+  uint32 level = 3;
+  bool isGetFreeReward = 4;
+}
+message GetActivityBattlePassLevelRewardRsp {  // msg_id 2134
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message GetActivityBattlePassQuestRewardReq {  // msg_id 2135
+  uint32 activityBattlePassId = 1;
+  uint32 achieveId = 2;
+}
+message GetActivityBattlePassQuestRewardRsp {  // msg_id 2136
+  pb.StatusCode status = 1;
+  uint32 addExp = 2;
+  uint32 currentLv = 3;
+  uint32 currentWeekExp = 4;
+  uint32 currentTotalExp = 5;
+  uint32 currentExp = 6;
+}
+message ActivityBattlePassInfoNotice {  // msg_id 2138
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivityBattlePass info = 2;
+  repeated pb.Achieve questInfoLst = 3;
+}
+message ActivityGiftBuyNotice {  // msg_id 2140
+  pb.StatusCode status = 1;
+  uint32 activityGiftId = 2;
+}
+message UseRedemptionCodeReq {  // msg_id 2151
+  string code = 1;
+}
+message UseRedemptionCodeRsp {  // msg_id 2152
+  pb.StatusCode status = 1;
+  string code = 2;
+  repeated pb.ItemDetail rewards = 3;
+}
+message FireworksStartNotice {  // msg_id 2160
+  pb.StatusCode status = 1;
+  pb.FireworksInfo fireworksInfo = 2;
+}
+message ReportReq {  // msg_id 2170
+  pb.ReportStatus report_status = 1;
+  pb.ChatChannelType chat_channel = 2;
+  uint32 reported_player_id = 3;
+  string reported_role_name = 4;
+  int32 reported_role_level = 5;
+  string reason = 6;
+  string chat_content = 7;
+  int64 code = 8;
+}
+message ReportRsp {  // msg_id 2171
+  pb.StatusCode status = 1;
+}
+message ClientLogAuthReq {  // msg_id 2201
+  uint32 player_id = 1;
+  string log_server_token = 2;
+  string device_id = 3;
+  string os = 4;
+  string os_version = 5;
+  string app_version = 6;
+  string network_type = 7;
+  int64 game_launch_time = 8;
+  string device_model = 9;
+}
+message ClientLogAuthRsp {  // msg_id 2202
+  pb.StatusCode status = 1;
+}
+message ClientLogMessageReq {  // msg_id 2203
+  repeated pb.ClientLogMessage logs = 1;
+  repeated string remove_template_hash = 2;
+}
+message ClientLogMessage {
+  uint32 client_log_seq_id = 1;
+  string log_template = 2;
+  string log_template_hash = 3;
+  pb.ClientLogLevel log_level = 4;
+  int64 client_time_ms = 5;
+  int32 channel = 6;
+  repeated pb.CommonParam params = 7;
+}
+message ClientLogMessageRsp {  // msg_id 2204
+  pb.StatusCode status = 1;
+  repeated pb.ClientLogMessage logs = 2;
+  repeated string remove_template_hash = 3;
+}
+message GardenLikeRecordReq {  // msg_id 2205
+}
+message GardenLikeRecordRsp {  // msg_id 2206
+  pb.StatusCode status = 1;
+  repeated pb.GardenLikeRecordInfo record = 2;
+}
+message GardenLikeRecordInfo {
+  uint32 playerId = 1;
+  string name = 2;
+  uint32 head = 3;
+  uint32 like_num = 4;
+  string sign = 5;
+  uint32 team_leader_badge = 6;
+}
+message OptionalUpPoolItemReq {  // msg_id 2207
+  uint32 gacha_id = 1;
+  uint32 poo_id = 2;
+  uint32 item_id = 3;
+}
+message OptionalUpPoolItemRsp {  // msg_id 2208
+  pb.StatusCode status = 1;
+  pb.GachaInfo info = 2;
+}
+message ActionStudyReq {  // msg_id 2209
+  uint32 playerId = 1;
+  uint32 actionId = 2;
+}
+message ActionStudyRsp {  // msg_id 2210
+  pb.StatusCode status = 1;
+}
+message ActionStudyNotice {  // msg_id 2212
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+  string name = 3;
+  uint32 actionId = 4;
+}
+message CharacterReviveReq {  // msg_id 2213
+  uint32 character_id = 1;
+}
+message CharacterReviveRsp {  // msg_id 2214
+  pb.StatusCode status = 1;
+}
+message QuestionnaireRemoveNotice {  // msg_id 2231
+  pb.StatusCode status = 1;
+  uint32 id = 2;
+}
+message ChangeChatChannelNotice {  // msg_id 2232
+  pb.StatusCode status = 1;
+  uint32 channel_id = 2;
+}
+message ActivityInviteNotice {  // msg_id 2251
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivityInviteData info = 2;
+}
+message ActivityInviteRewardClaimReq {  // msg_id 2252
+  uint32 activity_id = 1;
+  uint32 condition_id = 2;
+}
+message ActivityInviteRewardClaimRsp {  // msg_id 2253
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  uint32 condition_id = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message InviteCodeUseReq {  // msg_id 2254
+  string code = 1;
+}
+message InviteCodeUseRsp {  // msg_id 2255
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message ActivityInviteCountUpdateNotice {  // msg_id 2256
+  pb.StatusCode status = 1;
+  uint32 invited_total = 2;
+  map<uint32, uint32> invited_count = 3;
+}
+message AccountNameBindingCancelReq {  // msg_id 2263
+}
+message AccountNameBindingCancelRsp {  // msg_id 2264
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+}
+message GenericGameAReq {  // msg_id 2301
+  uint32 generic_msg_id = 1;
+  repeated pb.CommonParam params = 2;
+  map<string, string> param_map = 3;
+}
+message GenericGameARsp {  // msg_id 2302
+  pb.StatusCode status = 1;
+  uint32 generic_msg_id = 2;
+  repeated pb.CommonParam params = 3;
+  map<string, string> param_map = 4;
+}
+message GenericGameBReq {  // msg_id 2303
+  uint32 generic_msg_id = 1;
+  repeated pb.CommonParam params = 2;
+  map<string, string> param_map = 3;
+}
+message GenericGameBRsp {  // msg_id 2304
+  pb.StatusCode status = 1;
+  uint32 generic_msg_id = 2;
+  repeated pb.CommonParam params = 3;
+  map<string, string> param_map = 4;
+}
+message GenericSceneAReq {  // msg_id 2305
+  uint32 generic_msg_id = 1;
+  repeated pb.CommonParam params = 2;
+  map<string, string> param_map = 3;
+}
+message GenericSceneARsp {  // msg_id 2306
+  pb.StatusCode status = 1;
+  uint32 generic_msg_id = 2;
+  repeated pb.CommonParam params = 3;
+  map<string, string> param_map = 4;
+}
+message GenericSceneBReq {  // msg_id 2307
+  uint32 generic_msg_id = 1;
+  repeated pb.CommonParam params = 2;
+  map<string, string> param_map = 3;
+}
+message GenericSceneBRsp {  // msg_id 2308
+  pb.StatusCode status = 1;
+  uint32 generic_msg_id = 2;
+  repeated pb.CommonParam params = 3;
+  map<string, string> param_map = 4;
+}
+message MonthCardRewardReq {  // msg_id 2309
+}
+message MonthCardRewardRsp {  // msg_id 2310
+  pb.StatusCode status = 1;
+  uint32 monthCardRewardDays = 2;
+}
+message FurnitureItemChangeNotice {  // msg_id 2312
+  pb.StatusCode status = 1;
+  pb.BaseItem furnitureItemInfo = 2;
+}
+message ChangeIsHideBirthdayReq {  // msg_id 2313
+}
+message ChangeIsHideBirthdayRsp {  // msg_id 2314
+  pb.StatusCode status = 1;
+}
+message TransmitSceneReq {  // msg_id 2315
+  uint32 friend_id = 1;
+}
+message TransmitSceneRsp {  // msg_id 2316
+  pb.StatusCode status = 1;
+  uint32 scene_id = 2;
+  uint32 channel_id = 3;
+}
+message ChangeHideTypeReq {  // msg_id 2317
+  pb.HideType hide_type = 1;
+}
+message ChangeHideTypeRsp {  // msg_id 2318
+  pb.StatusCode status = 1;
+  uint32 hide_value = 2;
+}
+message GameRefreshNotice {  // msg_id 2320
+  pb.StatusCode status = 1;
+}
+message MPTeamCreateReq {  // msg_id 2406
+  string team_name = 1;
+  uint32 mode_id = 2;
+  uint32 sub_mode_id = 3;
+  uint32 character_id = 4;
+}
+message MPTeamCreateRsp {  // msg_id 2407
+  pb.StatusCode status = 1;
+  pb.MPTeamDetail team_detail = 2;
+}
+message MPSwapCharacterReq {  // msg_id 2412
+  uint32 character_id = 1;
+}
+message MPSwapCharacterRsp {  // msg_id 2413
+  pb.StatusCode status = 1;
+  pb.MPPlayerInfo new_info = 2;
+}
+message MPBeaconActionReq {  // msg_id 2414
+  pb.MPBeaconAction action = 1;
+  pb.Vector3 position = 2;
+  pb.Vector3 rotation = 3;
+}
+message MPBeaconActionRsp {  // msg_id 2415
+  pb.StatusCode status = 1;
+  pb.MPBeacon beacon = 2;
+  uint32 team_id = 3;
+}
+message MPTeamBeaconNotice {  // msg_id 2418
+  pb.StatusCode status = 1;
+  pb.MPBeacon beacon = 2;
+  uint32 team_id = 3;
+}
+message MPTeamGameModeChangeReq {  // msg_id 2419
+  uint32 mode_id = 1;
+  uint32 sub_mode_id = 2;
+}
+message MPTeamGameModeChangeRsp {  // msg_id 2420
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+  pb.MPGameModeInfo game_mode = 3;
+}
+message MPTeamGameModeChangeNotice {  // msg_id 2421
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+  pb.MPGameModeInfo game_mode = 3;
+}
+message MPTeamInfoReq {  // msg_id 2422
+  uint32 team_id = 1;
+}
+message MPTeamInfoRsp {  // msg_id 2423
+  pb.StatusCode status = 1;
+  pb.MPTeamDetail team_detail = 2;
+}
+message SceneMPBeaconNotice {  // msg_id 2424
+  pb.StatusCode status = 1;
+  map<uint32, pb.MPBeacon> beacons = 2;
+}
+message MPBeaconCanStartNotice {  // msg_id 2430
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+  bool can_start = 3;
+}
+message MPGameStartReq {  // msg_id 2431
+}
+message MPGameStartRsp {  // msg_id 2432
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+}
+message MPTeamRenameReq {  // msg_id 2441
+  string new_name = 1;
+}
+message MPTeamRenameRsp {  // msg_id 2442
+  pb.StatusCode status = 1;
+  string new_name = 2;
+  uint32 team_id = 3;
+}
+message MPTeamInviteReq {  // msg_id 2443
+  uint32 target_id = 1;
+}
+message MPTeamInviteRsp {  // msg_id 2444
+  pb.StatusCode status = 1;
+}
+message MPTeamJoinReq {  // msg_id 2445
+  uint32 team_id = 1;
+  uint32 character_id = 2;
+}
+message MPTeamJoinRsp {  // msg_id 2446
+  pb.StatusCode status = 1;
+  pb.MPTeamDetail team_detail = 2;
+}
+message MPTeamQuitReq {  // msg_id 2447
+}
+message MPTeamQuitRsp {  // msg_id 2448
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+}
+message MPTeamKickMemberReq {  // msg_id 2449
+  uint32 target_id = 1;
+}
+message MPTeamKickMemberRsp {  // msg_id 2450
+  pb.StatusCode status = 1;
+  uint32 target_id = 2;
+}
+message MPTeamDismissReq {  // msg_id 2451
+}
+message MPTeamDismissRsp {  // msg_id 2452
+  pb.StatusCode status = 1;
+}
+message MPTeamDismissNotice {  // msg_id 2453
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+}
+message MPTeamInviteNotice {  // msg_id 2454
+  pb.StatusCode status = 1;
+  uint32 inviter = 2;
+  pb.MPTeamBase team_base = 3;
+}
+message MPTeamPlayerKickedNotice {  // msg_id 2455
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+}
+message PlayerNotInMPTeamNotice {  // msg_id 2456
+  pb.StatusCode status = 1;
+  uint32 msg_id = 2;
+  uint32 packet_id = 3;
+}
+message MPTeamMemberNotice {  // msg_id 2458
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+  pb.MPTeamMembers members = 3;
+}
+message MPTeamRenameNotice {  // msg_id 2460
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+  string team_name = 3;
+}
+message PlayerMPGameNotice {  // msg_id 2462
+  pb.StatusCode status = 1;
+  pb.MPTeamDetail m_p_team = 2;
+  pb.MPPlayRoomInfo m_p_room = 3;
+  pb.MPBeacon beacon = 4;
+}
+message MPRoomAssignHostNotice {  // msg_id 2465
+  pb.StatusCode status = 1;
+  uint32 room_id = 2;
+}
+message MPRoomDismissNotice {  // msg_id 2467
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+}
+message MPRoomEnterNotice {  // msg_id 2468
+  pb.StatusCode status = 1;
+  pb.MPPlayRoomInfo room_info = 2;
+  pb.MPGameModeInfo game_mode_info = 3;
+}
+message MPBeaconPlayerReadyReq {  // msg_id 2469
+  uint32 team_id = 1;
+  bool is_ready = 2;
+}
+message MPBeaconPlayerReadyRsp {  // msg_id 2470
+  pb.StatusCode status = 1;
+}
+message MPPlayRoomEventReq {  // msg_id 2501
+  repeated pb.MPPlayRoomEvent events = 1;
+}
+message MPPlayRoomEventRsp {  // msg_id 2502
+  pb.StatusCode status = 1;
+}
+message MPPlayRoomEvent {
+  int32 event_type = 1;
+  int32 id = 2;
+  int64 time = 3;
+  uint32 player_id = 4;
+  int32 play_mode = 5;
+  int64 game_start_time = 6;
+  pb.GenericParam generic_param = 7;
+  int32 star = 8;
+  uint32 count = 9;
+}
+message MPPlayRoomEventNotice {  // msg_id 2504
+  pb.StatusCode status = 1;
+  repeated pb.MPPlayRoomEvent events = 2;
+}
+message MPPlayRoomRankDestroyObject {
+  uint32 player_id = 1;
+  uint32 count = 2;
+}
+message MPPlayRoomRankMagicPlatform {
+  uint32 player_id = 1;
+  int64 time = 2;
+}
+message MPPlayRoomRankCollapseObject {
+  uint32 player_id = 1;
+  uint32 count = 2;
+}
+message MPRoomRankSinkObjectPlayer {
+  uint32 player_id = 1;
+  uint32 score = 2;
+}
+message MPRoomRankSinkObjectSide {
+  uint32 side_id = 1;
+  pb.EMPPVPResult result = 2;
+  repeated pb.MPRoomRankSinkObjectPlayer players = 3;
+}
+message MPRoomRankSinkObject {
+  repeated pb.MPRoomRankSinkObjectSide sides = 1;
+}
+message MPPlayRoomRankInfo {
+  int32 star = 1;
+  repeated pb.MPPlayRoomRankDestroyObject destroy_object = 2;
+  repeated pb.MPPlayRoomRankMagicPlatform magic_platform = 3;
+  repeated pb.MPPlayRoomRankCollapseObject collapse_object = 5;
+  pb.MPRoomRankSinkObject sink_object = 4;
+}
+message MPPlayRoomInfo {
+  bool is_ready = 1;
+  int64 game_start_time = 2;
+  pb.MPPlayRoomInfoDestroyObject destroy_object = 3;
+  pb.MPPlayRoomInfoMagicPlatform magic_platform = 4;
+  pb.MPPlayRoomInfoSinkObject sink_object = 5;
+}
+message MPPlayRoomInfoDestroyObject {
+  repeated int32 remain_object_list = 1;
+}
+message MPPlayRoomInfoMagicPlatform {
+  repeated int32 show_platform_list = 1;
+  repeated uint32 finished_player_list = 2;
+}
+message MPSinkObjectSideInfo {
+  uint32 side_id = 1;
+  map<uint32, uint32> players = 2;
+  uint32 hits_to_sink = 3;
+  uint32 hit_taken = 4;
+}
+message MPPlayRoomInfoSinkObject {
+  repeated pb.MPSinkObjectSideInfo sides = 1;
+  uint32 projectile_count = 2;
+}
+message MPPlayRoomReadyReq {  // msg_id 2505
+  bool ready = 1;
+}
+message MPPlayRoomReadyRsp {  // msg_id 2506
+  pb.StatusCode status = 1;
+}
+message HandingFurnitureReq {  // msg_id 2507
+  uint32 itemId = 1;
+}
+message HandingFurnitureRsp {  // msg_id 2508
+  pb.StatusCode status = 1;
+  int64 furnitureId = 2;
+}
+message TakeOutHandingFurnitureReq {  // msg_id 2509
+  int64 furnitureId = 1;
+}
+message TakeOutHandingFurnitureRsp {  // msg_id 2510
+  pb.StatusCode status = 1;
+  int64 furnitureId = 2;
+}
+message SceneTransmitReq {  // msg_id 2511
+  uint32 player_id = 1;
+}
+message SceneTransmitRsp {  // msg_id 2512
+  pb.StatusCode status = 1;
+  uint32 scene_id = 2;
+  uint32 channel_id = 3;
+  uint32 channel_label = 4;
+}
+message MPPlayRoomSettlementNotice {  // msg_id 2514
+  pb.StatusCode status = 1;
+  pb.MPPlayRoomRankInfo rank = 2;
+  uint32 gameplayId = 3;
+  int32 play_mode = 4;
+  repeated pb.ItemDetail rewards = 5;
+  repeated pb.ItemDetail extraRewards = 6;
+  int64 total_consume_time = 7;
+}
+message MPPlayRoomRewardInfoReq {  // msg_id 2515
+}
+message MPPlayRoomRewardInfoRsp {  // msg_id 2516
+  pb.StatusCode status = 1;
+  uint32 score_day_remain = 2;
+  uint32 score_week_remain = 3;
+  uint32 extra_bonus_day_remain = 4;
+  uint32 extra_bonus_week_remain = 5;
+  uint32 extra_mag_day_remain = 6;
+  uint32 extra_mag_week_remain = 7;
+}
+message MPPlayRoomExitReq {  // msg_id 2517
+}
+message MPPlayRoomExitRsp {  // msg_id 2518
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+}
+message MPPlayRoomExitNotice {  // msg_id 2519
+  pb.StatusCode status = 1;
+  uint32 team_id = 2;
+  uint32 player_id = 3;
+}
+message UploadFGBytesNotice {  // msg_id 2520
+  pb.StatusCode status = 1;
+}
+message UploadFGBytesReq {  // msg_id 2521
+  bytes info = 1;
+}
+message UploadFGBytesRsp {  // msg_id 2522
+  pb.StatusCode status = 1;
+}
+message BuyGameCoinReq {  // msg_id 2531
+  uint32 buy_count = 1;
+}
+message BuyGameCoinRsp {  // msg_id 2532
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail itemDetails = 2;
+}
+message FreezePlayerActionNotice {  // msg_id 2534
+  pb.StatusCode status = 1;
+  uint32 verification_code = 2;
+}
+message UnfreezePlayerActionReq {  // msg_id 2535
+  uint32 verification_code = 1;
+}
+message UnfreezePlayerActionRsp {  // msg_id 2536
+  pb.StatusCode status = 1;
+}
+message UploadPhotoShareReq {  // msg_id 2551
+  bytes file = 1;
+  string title = 2;
+  string tag1 = 3;
+  string tag2 = 4;
+  pb.CameraParameters camera_param = 5;
+  bool is_activity = 6;
+  string tag3 = 7;
+}
+message UploadPhotoShareRsp {  // msg_id 2552
+  pb.StatusCode status = 1;
+  pb.PhotoDetailInfo info = 2;
+}
+message ChangePhotoShareTitleReq {  // msg_id 2553
+  int64 code = 1;
+  string title = 2;
+  string tag1 = 3;
+  string tag2 = 4;
+}
+message ChangePhotoShareTitleRsp {  // msg_id 2554
+  pb.StatusCode status = 1;
+  string title = 2;
+  string tag1 = 3;
+  string tag2 = 4;
+}
+message PhotoShareSearchReq {  // msg_id 2555
+  pb.PhotoSearchType search_type = 1;
+  pb.PhotoSearchTextType text_type = 2;
+  string text = 3;
+  uint32 startIndex = 4;
+  uint32 endIndex = 5;
+}
+message PhotoShareSearchRsp {  // msg_id 2556
+  pb.StatusCode status = 1;
+  repeated pb.PhotoPreviewInfo photos = 2;
+  uint32 totalNum = 3;
+  uint32 endIndex = 4;
+  uint32 todayUploadLimit = 5;
+  repeated pb.PhotoPreviewInfo activity_photos = 6;
+  uint32 uploadMaxNum = 7;
+}
+message PhotoShareDetailReq {  // msg_id 2557
+  int64 code = 1;
+  pb.PhotoSearchType search_type = 2;
+}
+message PhotoShareDetailRsp {  // msg_id 2558
+  pb.StatusCode status = 1;
+  pb.PhotoDetailInfo info = 2;
+}
+message OperatePhotoShareReq {  // msg_id 2559
+  int64 code = 1;
+  pb.PhotoOperateType operate_type = 2;
+  uint32 activity_id = 3;
+}
+message OperatePhotoShareRsp {  // msg_id 2560
+  pb.StatusCode status = 1;
+  int64 code = 2;
+}
+message PhotoShareCopyFashionDyeReq {  // msg_id 2561
+  int64 code = 1;
+  pb.PhotoShareOutfit outfit = 2;
+  uint32 activity_id = 3;
+}
+message PhotoShareCopyFashionDyeRsp {  // msg_id 2562
+  pb.StatusCode status = 1;
+}
+message PhotoSharePaymentAddUploadGridReq {  // msg_id 2563
+}
+message PhotoSharePaymentAddUploadGridRsp {  // msg_id 2564
+  pb.StatusCode status = 1;
+}
+message GetExpressAddressReq {  // msg_id 2571
+}
+message GetExpressAddressRsp {  // msg_id 2572
+  pb.StatusCode status = 1;
+  string name = 2;
+  string phone = 3;
+  string address = 4;
+  repeated pb.BaseItem items = 5;
+  string orderNo = 6;
+}
+message UploadExpressAddressReq {  // msg_id 2573
+  string name = 1;
+  string phone = 2;
+  string address = 3;
+  repeated pb.BaseItem items = 4;
+}
+message UploadExpressAddressRsp {  // msg_id 2574
+  pb.StatusCode status = 1;
+  repeated pb.BaseItem items = 2;
+  string orderNo = 3;
+}
+message CollectMoonReq {  // msg_id 2575
+  uint32 moonId = 1;
+}
+message CollectMoonRsp {  // msg_id 2576
+  pb.StatusCode status = 1;
+  uint32 moonId = 2;
+  repeated pb.ItemDetail rewards = 3;
+}
+message GetCollectMoonInfoReq {  // msg_id 2577
+  uint32 sceneId = 1;
+}
+message EmotionMoonInfo {
+  uint32 moonId = 1;
+  bool interacted = 2;
+}
+message GetCollectMoonInfoRsp {  // msg_id 2578
+  pb.StatusCode status = 1;
+  uint32 sceneId = 2;
+  repeated uint32 collectedMoonIds = 3;
+  repeated pb.EmotionMoonInfo emotionMoons = 4;
+}
+message CollectMoonInfoUpdateNotice {  // msg_id 2580
+  pb.StatusCode status = 1;
+}
+message EmotionMoonInteractReq {  // msg_id 2581
+  uint32 emotionMoonId = 1;
+}
+message EmotionMoonInteractRsp {  // msg_id 2582
+  pb.StatusCode status = 1;
+  pb.EmotionMoonInfo info = 2;
+}
+message BlessTreeNotice {  // msg_id 2584
+  pb.StatusCode status = 1;
+  map<uint32, pb.PlayerBlessTreeInfo> tress = 2;
+}
+message BlessTreeReq {  // msg_id 2585
+  uint32 defId = 1;
+}
+message BlessTreeRsp {  // msg_id 2586
+  pb.StatusCode status = 1;
+  uint32 defId = 2;
+  pb.PlayerBlessTreeInfo tress = 3;
+}
+message BlessTreeUnlockReq {  // msg_id 2587
+  uint32 defId = 1;
+  uint32 treeId = 2;
+}
+message BlessTreeUnlockRsp {  // msg_id 2588
+  pb.StatusCode status = 1;
+  uint32 defId = 2;
+  uint32 treeId = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message DailyTaskUpdateNotice {  // msg_id 2601
+  pb.StatusCode status = 1;
+  map<uint32, uint32> tasks = 2;
+  uint32 today_converted = 3;
+  uint32 exchange_times_left = 4;
+  uint32 progress = 5;
+}
+message DailyTaskExchangeReq {  // msg_id 2602
+  bool exchange_all = 1;
+}
+message DailyTaskExchangeRsp {  // msg_id 2603
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+  uint32 today_converted = 3;
+  uint32 exchange_times_left = 4;
+}
+message MPGameWeaponUpdateNotice {  // msg_id 2604
+  pb.StatusCode status = 1;
+  uint32 instance_id = 2;
+}
+message GardenFurnitureRemoveAllReq {  // msg_id 2611
+}
+message GardenFurnitureRemoveAllRsp {  // msg_id 2612
+  pb.StatusCode status = 1;
+}
+message GardenFurnitureBatchUpdateNotice {  // msg_id 2614
+  pb.StatusCode status = 1;
+  uint32 player_id = 2;
+  uint32 furniturePointNum = 3;
+  repeated pb.FurnitureDetailsInfo new_furniture_list = 4;
+}
+message GardenFurnitureSaveReq {  // msg_id 2615
+  uint32 scheme_id = 1;
+}
+message GardenFurnitureSaveRsp {  // msg_id 2616
+  pb.StatusCode status = 1;
+  uint32 scheme_id = 2;
+}
+message GardenFurnitureApplySchemeReq {  // msg_id 2617
+  uint32 scheme_id = 1;
+}
+message GardenFurnitureApplySchemeRsp {  // msg_id 2618
+  pb.StatusCode status = 1;
+  uint32 scheme_id = 2;
+}
+message GardenSchemeFurnitureListReq {  // msg_id 2619
+  uint32 scheme_id = 1;
+}
+message GardenSchemeFurnitureListRsp {  // msg_id 2620
+  pb.StatusCode status = 1;
+  uint32 scheme_id = 2;
+  repeated uint32 furnitureItemId = 3;
+}
+message GardenFurnitureSchemeSetNameReq {  // msg_id 2621
+  uint32 scheme_id = 1;
+  string name = 2;
+}
+message GardenFurnitureSchemeSetNameRsp {  // msg_id 2622
+  pb.StatusCode status = 1;
+  uint32 scheme_id = 2;
+  string name = 3;
+}
+message GardenFurnitureSchemeReq {  // msg_id 2623
+}
+message GardenFurnitureSchemeRsp {  // msg_id 2624
+  pb.StatusCode status = 1;
+  map<uint32, string> schemes = 2;
+}
+message GardenPlaceCharacterReq {  // msg_id 2625
+  uint32 character_id = 1;
+  int64 furniture_id = 2;
+  int32 seat_id = 3;
+  bool is_remove = 4;
+}
+message GardenPlaceCharacterRsp {  // msg_id 2626
+  pb.StatusCode status = 1;
+  uint32 character_id = 2;
+  int64 furniture_id = 3;
+  int32 seat_id = 4;
+  bool is_remove = 5;
+}
+message GardenPlaceCharacterNotice {  // msg_id 2628
+  pb.StatusCode status = 1;
+  pb.ScenePlacedCharacter character = 2;
+  uint32 remove_character_id = 3;
+}
+message GMRecommendChannelNotice {  // msg_id 2630
+  pb.StatusCode status = 1;
+  repeated pb.GMRecommendChannel channel_list = 2;
+}
+message UpdatePlayerAppearanceReq {  // msg_id 2631
+  pb.PlayerAppearance appearance = 1;
+}
+message UpdatePlayerAppearanceRsp {  // msg_id 2632
+  pb.StatusCode status = 1;
+  pb.PlayerAppearance appearance = 2;
+}
+message ActivityTurntableDataNotice {  // msg_id 2634
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivityTurntable activities = 2;
+}
+message ActivityTurntableDrawReq {  // msg_id 2635
+  uint32 activity_id = 1;
+  uint32 draw_times = 2;
+}
+message ActivityTurntableDrawRsp {  // msg_id 2636
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  repeated uint32 rewardIndexes = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message ActivityTurntableRecordReq {  // msg_id 2637
+  uint32 activity_id = 1;
+  uint32 page = 2;
+}
+message ActivityTurntableRecordRsp {  // msg_id 2638
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  uint32 page = 3;
+  uint32 totalPage = 4;
+  repeated pb.TurntableDrawRecord records = 5;
+}
+message AbyssServerRankNotice {  // msg_id 2648
+  pb.StatusCode status = 1;
+  uint32 rank = 2;
+}
+message UseItemFriendIntimacyReq {  // msg_id 2651
+  uint32 item_id = 1;
+  uint32 friend_id = 2;
+}
+message UseItemFriendIntimacyRsp {  // msg_id 2652
+  pb.StatusCode status = 1;
+  uint32 friend_id = 2;
+  uint32 intimacy = 3;
+}
+message IntimacyGiftDayCountNotice {  // msg_id 2658
+  pb.StatusCode status = 1;
+  uint32 count = 2;
+}
+message AbyssAllServerRankReq {  // msg_id 2661
+  uint32 seasonId = 1;
+  pb.AbyssRankType bonus_type = 2;
+}
+message AbyssAllServerRankInfo {
+  uint32 seasonId = 1;
+  uint32 totalTime = 2;
+  pb.PlayerBriefInfo playerInfo = 5;
+}
+message AbyssAllServerRankRsp {  // msg_id 2662
+  pb.StatusCode status = 1;
+  repeated pb.AbyssAllServerRankInfo rankList = 2;
+}
+message ChangeMusicalItemReq {  // msg_id 2671
+  pb.MusicalItemSource source = 1;
+  int64 musical_item_instance_id = 2;
+}
+message ChangeMusicalItemRsp {  // msg_id 2672
+  pb.StatusCode status = 1;
+  pb.MusicalItemSource source = 2;
+  int64 musical_item_instance_id = 3;
+  uint32 musical_item_id = 4;
+}
+message PlayMusicNoteReq {  // msg_id 2673
+  uint32 music_note_id = 1;
+  uint32 join_player_id = 2;
+}
+message PlayMusicNoteRsp {  // msg_id 2674
+  pb.StatusCode status = 1;
+  uint32 player_id = 2;
+  uint32 music_note_id = 3;
+  int64 start_time = 4;
+}
+message WishListOperateReq {  // msg_id 2681
+  pb.WishListOperateType operateType = 1;
+  uint32 shopId = 2;
+  uint32 gridId = 3;
+}
+message WishListOperateRsp {  // msg_id 2682
+  pb.StatusCode status = 1;
+  pb.WishListOperateType operateType = 2;
+  uint32 shopId = 3;
+  uint32 gridId = 4;
+  uint32 poolId = 5;
+}
+message WishListByShopIdReq {  // msg_id 2683
+  uint32 shopId = 1;
+  uint32 gridId = 2;
+}
+message WishListByShopIdRsp {  // msg_id 2684
+  pb.StatusCode status = 1;
+  repeated pb.FriendBriefInfo info = 2;
+  uint32 weekSendCount = 3;
+}
+message WishListByFriendIdReq {  // msg_id 2685
+  uint32 playerId = 1;
+}
+message WishListByFriendIdRsp {  // msg_id 2686
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+  repeated pb.WishListInfo wishList = 3;
+  uint32 weekSendCount = 4;
+}
+message WishListBuyNotice {  // msg_id 2688
+  pb.StatusCode status = 1;
+  uint32 shopId = 2;
+  pb.ShopGrid grids = 3;
+}
+message WishListBuyReq {  // msg_id 2689
+  uint32 playerId = 1;
+  pb.WishListInfo info = 2;
+}
+message WishListBuyRsp {  // msg_id 2690
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+  pb.WishListInfo info = 3;
+  uint32 weekSendCount = 4;
+}
+message SPOperateReq {  // msg_id 2695
+  pb.SPOperateType operateType = 1;
+  string password = 2;
+  string old_password = 3;
+}
+message SPOperateRsp {  // msg_id 2696
+  pb.StatusCode status = 1;
+  pb.SPOperateType operateType = 2;
+  bool sp_open_status = 3;
+  bool sp_check_status = 4;
+}
+message BossRushInfoReq {  // msg_id 2701
+  uint32 season_id = 1;
+}
+message BossRushInfoRsp {  // msg_id 2702
+  pb.StatusCode status = 1;
+  pb.BossRushInfo info = 2;
+}
+message BossRushStartChallengeReq {  // msg_id 2703
+  uint32 season_id = 1;
+  int32 stage_index = 2;
+}
+message BossRushStartChallengeRsp {  // msg_id 2704
+  pb.StatusCode status = 1;
+  uint32 season_id = 2;
+  pb.BossRushStageInfo stage_info = 3;
+}
+message BossRushEnterStageReq {  // msg_id 2705
+  uint32 season_id = 1;
+  repeated uint32 characters = 2;
+}
+message BossRushEnterStageRsp {  // msg_id 2706
+  pb.StatusCode status = 1;
+  uint32 season_id = 2;
+  pb.BossRushStageBattleInfo battle_info = 3;
+}
+message BossRushStartBattleReq {  // msg_id 2707
+  uint32 season_id = 1;
+}
+message BossRushStartBattleRsp {  // msg_id 2708
+  pb.StatusCode status = 1;
+  uint32 season_id = 2;
+  int32 stage_index = 3;
+  int64 battle_start_time = 4;
+}
+message BossRushLeaveStageReq {  // msg_id 2709
+  uint32 season_id = 1;
+  uint64 total_damage_hp = 2;
+  bool win = 3;
+  pb.BossRushStageBattleInfo battle_info = 4;
+}
+message BossRushLeaveStageRsp {  // msg_id 2710
+  pb.StatusCode status = 1;
+  uint64 stage_best_score = 2;
+  uint64 best_total_score = 3;
+  uint32 total_rank_ratio = 4;
+}
+message BossRushFriendRankReq {  // msg_id 2711
+  uint32 season_id = 1;
+}
+message BossRushFriendRankInfo {
+  pb.PlayerBriefInfo player_info = 1;
+  pb.BossRushRankInfo rank_info = 2;
+}
+message BossRushFriendRankRsp {  // msg_id 2712
+  pb.StatusCode status = 1;
+  uint32 season_id = 2;
+  repeated pb.BossRushFriendRankInfo rank_info = 3;
+}
+message BossRushFriendDetailReq {  // msg_id 2713
+  uint32 player_id = 1;
+}
+message BossRushSeasonDetailStage {
+  int32 stage_index = 1;
+  uint64 best_score = 2;
+  bool is_passed = 3;
+  repeated pb.BossRushSeasonDetailStageTeam teams = 4;
+}
+message BossRushSeasonDetail {
+  uint32 season_id = 1;
+  uint64 score = 2;
+  uint32 rank_ratio = 3;
+  repeated pb.BossRushSeasonDetailStage stage = 4;
+}
+message BossRushFriendDetailRsp {  // msg_id 2714
+  pb.StatusCode status = 1;
+  uint32 player_id = 2;
+  repeated pb.BossRushSeasonDetail details = 3;
+}
+message BossRushTerminateChallengeReq {  // msg_id 2715
+  uint32 season_id = 1;
+}
+message BossRushTerminateChallengeRsp {  // msg_id 2716
+  pb.StatusCode status = 1;
+  uint32 season_id = 2;
+}
+message BossRushQuestRewardReq {  // msg_id 2717
+  uint32 season_id = 1;
+  uint32 achieve_id = 2;
+}
+message BossRushQuestRewardRsp {  // msg_id 2718
+  pb.StatusCode status = 1;
+  uint32 season_id = 2;
+  uint32 achieve_id = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message RestaurantGameInfoReq {  // msg_id 2731
+  uint32 activity_id = 1;
+}
+message RestaurantGameInfoRsp {  // msg_id 2732
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  repeated pb.RestaurantGameGridInfo grid_list = 3;
+  pb.RestaurantGameDungeonInfo dungeon_info = 4;
+}
+message RestaurantGameOperateReq {  // msg_id 2733
+  uint32 activity_id = 1;
+  pb.RestaurantGameOperateType type = 2;
+  uint32 buy_pool_id = 3;
+  repeated uint32 grid = 4;
+}
+message RestaurantGameOperateRsp {  // msg_id 2734
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  repeated pb.RestaurantGameGridInfo grid = 3;
+  repeated pb.ItemDetail itemDetails = 4;
+}
+message RestaurantGameEatReq {  // msg_id 2735
+  uint32 customer_index = 1;
+  uint32 grid = 2;
+  uint32 activity_id = 3;
+}
+message RestaurantGameEatRsp {  // msg_id 2736
+  pb.StatusCode status = 1;
+  uint32 customer_index = 2;
+  repeated pb.RestaurantGameGridInfo grid = 3;
+  pb.RestaurantGameDungeonInfo dungeon_info = 4;
+  uint32 activity_id = 5;
+}
+message RestaurantGameDayNotice {  // msg_id 2738
+  pb.StatusCode status = 1;
+  pb.RestaurantGameDungeonInfo dungeon_info = 2;
+  uint32 activity_id = 3;
+}
+message RestaurantGameQuestRewardReq {  // msg_id 2739
+  uint32 quest_id = 1;
+  uint32 activity_id = 2;
+}
+message RestaurantGameQuestRewardRsp {  // msg_id 2740
+  pb.StatusCode status = 1;
+  pb.RestaurantGameQuestInfo quest = 2;
+  repeated pb.ItemDetail itemDetails = 3;
+  uint32 activity_id = 4;
+}
+message MoonQuestGamePlayRewardNotice {  // msg_id 2742
+  pb.StatusCode status = 1;
+  uint32 id = 2;
+  repeated pb.ItemDetail rewards = 3;
+}
+message PlaceMoonSpotReq {  // msg_id 2743
+  pb.MoonSpotOperateType operate = 1;
+  pb.MoonSpotData data = 2;
+}
+message PlaceMoonSpotRsp {  // msg_id 2744
+  pb.StatusCode status = 1;
+}
+message PlaceMoonSpotNotice {  // msg_id 2746
+  pb.StatusCode status = 1;
+  pb.MoonSpotOperateType operate = 2;
+  pb.MoonSpotData data = 3;
+  uint32 player_id = 4;
+}
+message SetRoomDecorReq {  // msg_id 2747
+  repeated pb.RoomDecorData decor_list = 1;
+}
+message SetRoomDecorRsp {  // msg_id 2748
+  pb.StatusCode status = 1;
+}
+message RoomDecorNotice {  // msg_id 2750
+  pb.StatusCode status = 1;
+  repeated pb.RoomDecorData decor_list = 2;
+}
+message DungeonOpenFinalBoxNotice {  // msg_id 2760
+  pb.StatusCode status = 1;
+  uint32 dungeonId = 2;
+}
+message SceneSitVehicleReq {  // msg_id 2765
+  uint32 chairId = 1;
+  int32 seatId = 2;
+  bool isSit = 3;
+}
+message SceneSitVehicleRsp {  // msg_id 2766
+  pb.StatusCode status = 1;
+  uint32 playerId = 2;
+  uint32 chairId = 3;
+  int32 seatId = 4;
+  bool isSit = 5;
+}
+message InheritCodeUseReq {  // msg_id 3001
+  string code = 1;
+}
+message InheritCodeUseRsp {  // msg_id 3002
+  pb.StatusCode status = 1;
+  string codeStr = 2;
+  repeated pb.ItemDetail rewards = 3;
+}
+message ActivitySandbagNotice {  // msg_id 4500
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivitySandbag info = 2;
+}
+message ActivitySandbagRewardReq {  // msg_id 4501
+  uint32 activity_id = 1;
+  pb.ActivitySandbagRewardType reward_type = 2;
+  repeated uint32 seq_list = 3;
+}
+message ActivitySandbagRewardRsp {  // msg_id 4502
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  repeated uint32 seq_list = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message ActivitySandbagHitReq {  // msg_id 4503
+  uint32 activity_id = 1;
+  uint32 npc_id = 2;
+  uint32 hit_count = 3;
+}
+message ActivitySandbagHitRsp {  // msg_id 4504
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  uint32 npc_id = 3;
+  uint32 hit_count = 4;
+}
+message ActivitySandbagDropNotice {  // msg_id 4508
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  repeated pb.PlayerActivityDailyBox box_list = 3;
+}
+message ActivityRecallNotice {  // msg_id 4510
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivityRecallData info = 2;
+}
+message ActivityRecallRewardClaimReq {  // msg_id 4511
+  uint32 activity_id = 1;
+  uint32 condition_id = 2;
+}
+message ActivityRecallRewardClaimRsp {  // msg_id 4512
+  pb.StatusCode status = 1;
+  uint32 activity_id = 2;
+  uint32 condition_id = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message RecallCodeUseReq {  // msg_id 4513
+  string code = 1;
+}
+message RecallCodeUseRsp {  // msg_id 4514
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail rewards = 2;
+}
+message ActivityUploadWishTxtReq {  // msg_id 4515
+  string txt = 1;
+  uint32 activity_id = 2;
+}
+message ActivityUploadWishTxtRsp {  // msg_id 4516
+  pb.StatusCode status = 1;
+  string txt = 2;
+  uint32 activity_id = 3;
+}
+message ActivityKoiNotice {  // msg_id 4518
+  pb.StatusCode status = 1;
+  repeated pb.PlayerActivityKoiData info = 2;
+}
+message ActivityKoiUseItemReq {  // msg_id 4519
+  uint32 num = 1;
+  uint32 activity_id = 2;
+}
+message ActivityKoiUseItemRsp {  // msg_id 4520
+  pb.StatusCode status = 1;
+  uint32 num = 2;
+  repeated string codes = 3;
+  uint32 activity_id = 4;
+}
+message TreasureDigReq {  // msg_id 4521
+  uint32 treasure_id = 1;
+}
+message TreasureDigRsp {  // msg_id 4522
+  pb.StatusCode status = 1;
+  uint32 treasure_id = 2;
+  repeated pb.ItemDetail rewards = 3;
+  bool success = 4;
+}
+message TreasureIllustrationInfoReq {  // msg_id 4523
+}
+message TreasureIllustrationInfoRsp {  // msg_id 4524
+  pb.StatusCode status = 1;
+  repeated uint32 utensil_reward = 2;
+  repeated uint32 book_reward = 3;
+  repeated pb.TreasureAchieve achieves = 4;
+  repeated uint32 treasure_reward = 5;
+  repeated uint32 shovel_reward = 6;
+}
+message TreasureIllustrationRewardReq {  // msg_id 4525
+  pb.EArchaeologyType archaeology_type = 1;
+  uint32 id = 2;
+}
+message TreasureIllustrationRewardRsp {  // msg_id 4526
+  pb.StatusCode status = 1;
+  pb.EArchaeologyType archaeology_type = 2;
+  uint32 id = 3;
+  repeated pb.ItemDetail rewards = 4;
+}
+message GetTreasureAchieveRewardReq {  // msg_id 4527
+  uint32 achieve_id = 1;
+  pb.EArchaeologyType archaeology_type = 2;
+}
+message GetTreasureAchieveRewardRsp {  // msg_id 4528
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  repeated uint32 rewarded_achieve_ids = 3;
+}
+message PetCaptureReq {  // msg_id 4531
+  uint32 monster_id = 1;
+  uint32 hp = 2;
+  uint32 max_hp = 3;
+  uint32 catcher_id = 4;
+  uint32 catch_area_id = 6;
+}
+message PetCaptureRsp {  // msg_id 4532
+  pb.StatusCode status = 1;
+  bool success = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message PetRenameReq {  // msg_id 4533
+  uint32 pet_instance_id = 1;
+  string name = 2;
+}
+message PetRenameRsp {  // msg_id 4534
+  pb.StatusCode status = 1;
+  uint32 pet_instance_id = 2;
+  string name = 3;
+}
+message PetDecomposeReq {  // msg_id 4535
+  repeated uint32 pet_instance_ids = 1;
+}
+message PetDecomposeRsp {  // msg_id 4536
+  pb.StatusCode status = 1;
+  repeated uint32 pet_instance_ids = 2;
+  repeated pb.ItemDetail items = 3;
+}
+message PetWarehouseLimitNotice {  // msg_id 4538
+  pb.StatusCode status = 1;
+  uint32 warehouse_limit = 2;
+}
+message GetPetReq {  // msg_id 4539
+  uint32 startIndex = 1;
+  uint32 endIndex = 2;
+}
+message GetPetRsp {  // msg_id 4540
+  pb.StatusCode status = 1;
+  repeated pb.PetInstance pets = 2;
+  uint32 totalNum = 3;
+  uint32 endIndex = 4;
+}
+message ChangePetReq {  // msg_id 4541
+  uint32 pet_instance_id = 1;
+}
+message ChangePetRsp {  // msg_id 4542
+  pb.StatusCode status = 1;
+  uint32 pet_instance_id = 2;
+}
+message ChooseGachaReq {  // msg_id 4543
+  uint32 choose_gacha_pool = 1;
+  uint32 gacha_id = 2;
+}
+message ChooseGachaRsp {  // msg_id 4544
+  pb.StatusCode status = 1;
+  uint32 choose_gacha_pool = 2;
+  uint32 gacha_id = 3;
+}
+message GomokuSinglePlayerRewardReq {  // msg_id 4600
+  repeated int32 board = 1;
+  bool is_use_game_coin = 2;
+  int32 self = 3;
+  int32 lastRow = 4;
+  int32 lastCol = 5;
+}
+message GomokuSinglePlayerRewardRsp {  // msg_id 4601
+  pb.StatusCode status = 1;
+  repeated pb.ItemDetail items = 2;
+  repeated pb.ItemDetail extraRewards = 3;
+  bool isSelfWin = 4;
+}
+message CollapseFailReq {  // msg_id 4700
+}
+message CollapseFailRsp {  // msg_id 4701
+  pb.StatusCode status = 1;
+}
+message GomokuOnlinePlayerReadyReq {  // msg_id 4602
+  int64 id = 1;
+  uint32 coin_num = 2;
+}
+message GomokuOnlinePlayerReadyRsp {  // msg_id 4603
+  pb.StatusCode status = 1;
+}
+message CollapseFailNotice {  // msg_id 4702
+  pb.StatusCode status = 1;
+  int64 player_id = 2;
+}
+message GomokuOnlinePlayerWatchReq {  // msg_id 4604
+  int64 id = 1;
+}
+message GomokuOnlinePlayerWatchRsp {  // msg_id 4605
+  pb.StatusCode status = 1;
+}
+message GomokuOnlinePlayerNotice {  // msg_id 4606
+  pb.StatusCode status = 1;
+  int64 first_player_id = 2;
+  int64 player1_id = 3;
+  int64 player2_id = 4;
+}
+message GomokuOnlinePlayerWatchNotice {  // msg_id 4607
+  pb.StatusCode status = 1;
+  int64 id = 2;
+  uint32 player_id = 3;
+}
+message GomokuOnlinePlayerRemoveNotice {  // msg_id 4608
+  pb.StatusCode status = 1;
+  int64 id = 2;
+  int64 winner_id = 3;
+  pb.EGomokuOverReason over_reason = 4;
+}
+message GetGomokuOnlineChessboardReq {  // msg_id 4609
+  int64 id = 1;
+}
+message GetGomokuOnlineChessboardRsp {  // msg_id 4610
+  pb.StatusCode status = 1;
+  pb.EGomokuChessBoardStatus boardState = 2;
+  repeated pb.PlayerBriefInfo chest_players = 3;
+  repeated pb.PlayerBriefInfo watch_players = 4;
+  uint32 next_player_id = 5;
+  int64 turn_deadline = 6;
+  repeated int32 board = 7;
+}
+message GomokuOnlinePlayerPlaceStoneReq {  // msg_id 4611
+  int64 id = 1;
+  int32 row = 2;
+  int32 col = 3;
+}
+message GomokuOnlinePlayerPlaceStoneRsp {  // msg_id 4612
+  pb.StatusCode status = 1;
+  bool is_win = 2;
+  uint32 next_player_id = 3;
+  int64 turn_deadline = 4;
+}
+message GomokuOnlinePlayerPlaceStoneNotice {  // msg_id 4613
+  pb.StatusCode status = 1;
+  int64 id = 2;
+  int32 row = 3;
+  int32 col = 4;
+  int32 chess = 5;
+  uint32 next_player_id = 6;
+  int64 turn_deadline = 7;
+  bool is_win = 8;
+}
+message GomokuOnlinePlayerLeaveReq {  // msg_id 4614
+  int64 id = 1;
+}
+message GomokuOnlinePlayerLeaveRsp {  // msg_id 4615
+  pb.StatusCode status = 1;
+}
+message GomokuOnlinePlayerLeaveNotice {  // msg_id 4616
+  pb.StatusCode status = 1;
+  int64 id = 2;
+  uint32 player_id = 3;
+  bool is_player = 4;
+}
+message GomokuOnlinePlayerStartPlayReq {  // msg_id 4617
+  int64 id = 1;
+}
+message GomokuOnlinePlayerStartPlayRsp {  // msg_id 4618
+  pb.StatusCode status = 1;
+  int64 turn_deadline = 2;
+}
+message GomokuOnlinePlayerStartPlayNotice {  // msg_id 4619
+  pb.StatusCode status = 1;
+  int64 id = 2;
+  uint32 first_player_id = 3;
+  int64 turn_deadline = 4;
+}
+message GomokuOnlineSettlementNotice {  // msg_id 4620
+  pb.StatusCode status = 1;
+  int64 id = 2;
+  bool is_win = 3;
+  pb.EGomokuOverReason over_reason = 4;
+  repeated pb.ItemDetail items = 5;
+}

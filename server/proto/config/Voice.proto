@@ -1,0 +1,243 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllVoiceDatas {
+  protocol.VoiceCollectPhotoDatas VoiceCollectPhoto = 1;
+  protocol.VoiceCollectDataDatas VoiceCollectData = 2;
+  protocol.VoiceCollectFileDatas VoiceCollectFile = 3;
+  protocol.VoiceCollectBookDatas VoiceCollectBook = 4;
+  protocol.VoiceCollectTapeDatas VoiceCollectTape = 5;
+  protocol.VoiceCollectItemDatas VoiceCollectItem = 6;
+  protocol.VoiceCollectPortalDatas VoiceCollectPortal = 7;
+  protocol.VoiceCollectPhotoItemDatas VoiceCollectPhotoItem = 8;
+  protocol.VoiceScenicDatas VoiceScenic = 9;
+  protocol.VoiceCollectCrystalDatas VoiceCollectCrystal = 10;
+  protocol.VoiceAreaDatas VoiceArea = 11;
+  protocol.VoiceQuestDatas VoiceQuest = 12;
+  protocol.VoiceAchieveDatas VoiceAchieve = 13;
+  protocol.VoiceRegionDatas VoiceRegion = 14;
+  protocol.VoiceGatherDatas VoiceGather = 15;
+  protocol.VoiceBattleDatas VoiceBattle = 16;
+  protocol.VoiceCharacterDatas VoiceCharacter = 17;
+  protocol.VoiceItemLevelDatas VoiceItemLevel = 18;
+}
+message VoiceCollectPhotoDatas {
+  repeated protocol.VoiceCollectPhotoConfigure datas = 1;
+}
+message VoiceCollectPhotoConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCollectDataDatas {
+  repeated protocol.VoiceCollectDataConfigure datas = 1;
+}
+message VoiceCollectDataConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCollectFileDatas {
+  repeated protocol.VoiceCollectFileConfigure datas = 1;
+}
+message VoiceCollectFileConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCollectBookDatas {
+  repeated protocol.VoiceCollectBookConfigure datas = 1;
+}
+message VoiceCollectBookConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCollectTapeDatas {
+  repeated protocol.VoiceCollectTapeConfigure datas = 1;
+}
+message VoiceCollectTapeConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCollectItemDatas {
+  repeated protocol.VoiceCollectItemConfigure datas = 1;
+}
+message VoiceCollectItemConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCollectPortalDatas {
+  repeated protocol.VoiceCollectPortalConfigure datas = 1;
+}
+message VoiceCollectPortalConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCollectPhotoItemDatas {
+  repeated protocol.VoiceCollectPhotoItemConfigure datas = 1;
+}
+message VoiceCollectPhotoItemConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceScenicDatas {
+  repeated protocol.VoiceScenicConfigure datas = 1;
+}
+message VoiceScenicConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCollectCrystalDatas {
+  repeated protocol.VoiceCollectCrystalConfigure datas = 1;
+}
+message VoiceCollectCrystalConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceAreaDatas {
+  repeated protocol.VoiceAreaConfigure datas = 1;
+}
+message VoiceAreaConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceQuestDatas {
+  repeated protocol.VoiceQuestConfigure datas = 1;
+}
+message VoiceQuestConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceAchieveDatas {
+  repeated protocol.VoiceAchieveConfigure datas = 1;
+}
+message VoiceAchieveConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceRegionDatas {
+  repeated protocol.VoiceRegionConfigure datas = 1;
+}
+message VoiceRegionConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceGatherDatas {
+  repeated protocol.VoiceGatherConfigure datas = 1;
+}
+message VoiceGatherConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceBattleDatas {
+  repeated protocol.VoiceBattleConfigure datas = 1;
+}
+message VoiceBattleConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}
+message VoiceCharacterDatas {
+  repeated protocol.VoiceCharacterConfigure datas = 1;
+}
+message VoiceCharacterConfigure {
+  int32 ID = 1;
+  repeated protocol.VoiceCharacterItem VoiceCharacterItem = 2;
+}
+message VoiceCharacterItem {
+  string SoundPath = 1;
+  float SoundVolume = 2;
+  int32 Level = 3;
+  int32 NewVoiceType = 4;
+  string TextValue = 5;
+  string VoiceName = 6;
+}
+message VoiceItemLevelDatas {
+  repeated protocol.VoiceItemLevelConfigure datas = 1;
+}
+message VoiceItemLevelConfigure {
+  int32 ID = 1;
+  string SoundPath = 2;
+  float SoundVolume = 3;
+  repeated string TextSpeaker = 4;
+  repeated string TextContent = 5;
+  repeated float TextStartTime = 6;
+  repeated float TextEndTime = 7;
+}

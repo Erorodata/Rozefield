@@ -1,0 +1,56 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllTreasureBoxDatas {
+  protocol.TreasureBoxDatas TreasureBox = 1;
+  protocol.CollectionTreasureBoxDatas CollectionTreasureBox = 2;
+  protocol.EncounterTreasureBoxDatas EncounterTreasureBox = 3;
+  protocol.RiddleTreasureBoxDatas RiddleTreasureBox = 4;
+  protocol.GameTreasureBoxDatas GameTreasureBox = 5;
+}
+message TreasureBoxDatas {
+  repeated protocol.TreasureBoxConfigure datas = 1;
+}
+message TreasureBoxConfigure {
+  int32 ID = 1;
+  int32 RelateID = 2;
+  int32 NewTreasureBoxType = 3;
+  int32 NewTreasureBoxRewardShowType = 4;
+  int32 NewTreasureBoxRewardType = 5;
+}
+message CollectionTreasureBoxDatas {
+  repeated protocol.CollectionTreasureBoxConfigure datas = 1;
+}
+message CollectionTreasureBoxConfigure {
+  int32 ID = 1;
+  repeated int32 RefreshTime = 2;
+  int32 NewRefreshType = 3;
+}
+message EncounterTreasureBoxDatas {
+  repeated protocol.EncounterTreasureBoxConfigure datas = 1;
+}
+message EncounterTreasureBoxConfigure {
+  int32 ID = 1;
+  string TreasureRes = 2;
+  int32 AutoDisappear = 3;
+  int32 Disappear = 4;
+}
+message RiddleTreasureBoxDatas {
+  repeated protocol.RiddleTreasureBoxConfigure datas = 1;
+}
+message RiddleTreasureBoxConfigure {
+  int32 ID = 1;
+  string TreasureRes = 2;
+  int32 AutoDisappear = 3;
+  int32 Disappear = 4;
+}
+message GameTreasureBoxDatas {
+  repeated protocol.GameTreasureBoxConfigure datas = 1;
+}
+message GameTreasureBoxConfigure {
+  int32 ID = 1;
+  string TreasureRes = 2;
+  int32 AutoDisappear = 3;
+  int32 Disappear = 4;
+}

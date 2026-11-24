@@ -1,0 +1,32 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_BattleStageDatas {
+  protocol.GemDuelBattleStageDatas GemDuelBattleStage = 1;
+}
+message GemDuelBattleStageDatas {
+  repeated protocol.GemDuelBattleStageConfigure datas = 1;
+}
+message GemDuelBattleStageConfigure {
+  int32 ID = 1;
+  int32 StageBuffID = 2;
+  int32 Turn = 3;
+  int32 GemMod = 4;
+  int32 Enemy1 = 5;
+  int32 Level1 = 6;
+  int32 Star1 = 7;
+  repeated int32 EnemySkillUnlock1 = 8;
+  int32 Enemy2 = 9;
+  int32 Level2 = 10;
+  int32 Star2 = 11;
+  repeated int32 EnemySkillUnlock2 = 12;
+  int32 Enemy3 = 13;
+  int32 Level3 = 14;
+  int32 Star3 = 15;
+  repeated int32 EnemySkillUnlock3 = 16;
+  int32 Enemy4 = 17;
+  int32 Level4 = 18;
+  int32 Star4 = 19;
+  repeated int32 EnemySkillUnlock4 = 20;
+}

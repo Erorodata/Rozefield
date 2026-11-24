@@ -1,0 +1,31 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_BuffDatas {
+  protocol.GemDuelBuffDatas GemDuelBuff = 1;
+  protocol.GemDuelBuffEffectDatas GemDuelBuffEffect = 2;
+}
+message GemDuelBuffDatas {
+  repeated protocol.GemDuelBuffConfigure datas = 1;
+}
+message GemDuelBuffConfigure {
+  int32 ID = 1;
+  int32 Icon = 2;
+  int32 Text = 3;
+  int32 BuffType = 4;
+  int32 BuffTag = 5;
+  int32 SelfRepair = 6;
+  repeated int32 BuffEffectID = 7;
+}
+message GemDuelBuffEffectDatas {
+  repeated protocol.GemDuelBuffEffectConfigure datas = 1;
+}
+message GemDuelBuffEffectConfigure {
+  int32 ID = 1;
+  int32 param1 = 2;
+  int32 param2 = 3;
+  int32 param3 = 4;
+  int32 param4 = 5;
+  int32 NewIEffectType = 6;
+}

@@ -1,0 +1,841 @@
+21/11/2026 8:55:31 PM	ResManager init success
+21/11/2026 8:55:31 PM	OnHotFixCS load success
+21/11/2026 8:55:31 PM	baseUrl: https://sdkapi-of-global.inutan.com
+21/11/2026 8:55:31 PM	productCode: 14893566846394405145332210454456
+21/11/2026 8:55:31 PM	channelCode: default
+21/11/2026 8:55:31 PM	QuickSDK_Oversea_steam onInitSuccess SDKChannelId: 16666
+21/11/2026 8:55:31 PM	af_device_id: <UUID>
+21/11/2026 8:55:31 PM	Parsed Command Line Arguments:
+21/11/2026 8:55:31 PM	H:\SteamLibrary\steamapps\common\OverField\launcher.exe=
+21/11/2026 8:55:31 PM	commandLineArgs : 1
+21/11/2026 8:55:31 PM	commandLineArg : H:\SteamLibrary\steamapps\common\OverField\launcher.exe
+21/11/2026 8:55:31 PM	QuickSDK_Oversea_steam SDKUid : 
+21/11/2026 8:55:31 PM	FairGuardSDK Init ret: 1
+21/11/2026 8:55:31 PM	buildGUID: ef00bcd296e82ea4ebeeced2acc8d6e0 version: 1.0.9 systemLanguage: English
+21/11/2026 8:55:31 PM	GetLoginUrlList version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+21/11/2026 8:55:31 PM	GetLoginUrlList b: True str: 
+21/11/2026 8:55:32 PM	RequestFallBackLoginServer over： http://150.5.132.155:18881
+21/11/2026 8:55:35 PM	SyncGMConfig, getClientVersionAddress: http://dsp-global-of.inutan.com:18881/dispatch/client_hot_update version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+21/11/2026 8:55:35 PM	SyncGMConfig response, b: True str: {"status":true,"message":"success","hotOssUrl":"https://d2b0sg4npngm2p.cloudfront.net/Resources;http://cdn-of-global.inutan.com/Resources","currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","server":"jp_global_prod","ssAppId":"3e9b196609224f889fbc769234200511","ssServerUrl":"https://te-receiver-aws.thinkingdata.jp","open_gm":false,"open_error_log":false,"open_netConnecting_log":false,"ipAddress":"<PLAYER_IP>","payUrl":"http://150.5.131.114:19701","isTestServer":false,"error_log_level":2,"server_id":"31000","open_cs":false,"serverTime":1795265736752}
+21/11/2026 8:55:35 PM	[ThinkingData] Info: TDAnalytics SDK initialize success, AppId = 3e9b196609224f889fbc769234200511, ServerUrl = https://te-receiver-aws.thinkingdata.jp, Mode = Normal, TimeZone = Local, DeviceId = <DEVICE_ID>, Lib = Unity, LibVersion = 3.1.0.1
+21/11/2026 8:55:35 PM	[ThinkingData] Info: Enqueue data: 
+{"#type":"user_set","#time":"2026-11-21 20:55:36.865","#distinct_id":"<DISTINCT_ID>","#account_id":"<ACCOUNT_ID>","#uuid":"<UUID>","properties":{}}
+  AppId: 3e9b196609224f889fbc769234200511
+21/11/2026 8:55:35 PM	[ThinkingData] Info: Enqueue data: 
+{"#type":"track","#time":"2026-11-21 20:55:36.865","#distinct_id":"<DISTINCT_ID>","#event_name":"ta_app_start","#account_id":"<ACCOUNT_ID>","#uuid":"<UUID>","properties":{"ip":"<PLAYER_IP>","app_channel":"16666","os_name":"windows","os_ver":"Windows 11  (10.0.26340) 64bit","app_ver":"1.0.9","network":"wifi","server":"jp_global_prod","udid":"<DEVICE_ID>","device_model":"<DEVICE_MODEL>","cps_id":"","zone_offset":0,"#device_id":"<DEVICE_ID>","#os":"Windows","#os_version":"Windows 11  (10.0.26340) 64bit","#screen_height":1080,"#screen_width":1920,"#manufacturer":"NVIDIA","#device_model":"<DEVICE_MODEL>","#app_version":"1.0.9","#bundle_id":"","#lib":"Unity","#lib_version":"3.1.0.1","#system_language":"en","#network_type":"LAN","#zone_offset":8}}
+  AppId: 3e9b196609224f889fbc769234200511
+21/11/2026 8:55:35 PM	SSSDKSystem Initialized DistinctId: <DISTINCT_ID>
+21/11/2026 8:55:35 PM	The location is invalid : Assets/ResMain/Main/UI/UI_Root_Logo/UGUI/SpriteAtlas_UI_Root_Logo.spriteatlas
+21/11/2026 8:55:36 PM	SyncGMConfig, getClientVersionAddress: http://dsp-global-of.inutan.com:18881/dispatch/client_hot_update version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+21/11/2026 8:55:36 PM	SyncGMConfig response, b: True str: {"status":true,"message":"success","hotOssUrl":"https://d2b0sg4npngm2p.cloudfront.net/Resources;http://cdn-of-global.inutan.com/Resources","currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","server":"jp_global_prod","ssAppId":"3e9b196609224f889fbc769234200511","ssServerUrl":"https://te-receiver-aws.thinkingdata.jp","open_gm":false,"open_error_log":false,"open_netConnecting_log":false,"ipAddress":"<PLAYER_IP>","payUrl":"http://150.5.131.114:19701","isTestServer":false,"error_log_level":2,"server_id":"31000","open_cs":false,"serverTime":1795265737892}
+21/11/2026 8:55:36 PM	HotUpdateSystem OnCheckHotUpdateStart IsVerifyProgramVersion: True
+21/11/2026 8:55:36 PM	localProgramVersion: 2026-10-24-12-00-58 gmProgramVersion: 2026-10-24-12-00-58 gmPatchVersion: 2026-11-09-11-50-10
+21/11/2026 8:55:36 PM	_originVersion: 2026-11-09-11-50-10
+21/11/2026 8:55:36 PM	HotUpdateSystem Updated PackageManifest Succeed
+21/11/2026 8:55:38 PM	HotUpdateSystem Not found any download files !
+21/11/2026 8:55:38 PM	HotUpdateSystem OnHotUpdateEnd
+21/11/2026 8:55:38 PM	OnHotFixCS load success
+21/11/2026 8:55:38 PM	PostProcess
+21/11/2026 8:55:38 PM	ZPrePassRendererFeature
+21/11/2026 8:55:38 PM	MinimapPlanarReflection BeforeGBuffer
+21/11/2026 8:55:38 PM	CharacterMaskPassRendererFeature
+21/11/2026 8:55:38 PM	CameraProportionPassRendererFeature
+21/11/2026 8:55:38 PM	AODecals
+21/11/2026 8:55:38 PM	Toon Outline
+21/11/2026 8:55:38 PM	Outline feature enabled
+21/11/2026 8:55:39 PM	OnMaxLODLevel:0
+21/11/2026 8:55:39 PM	OnMipmapBias:0
+21/11/2026 8:55:39 PM	初始化设置 ISettingsSystem 成功
+21/11/2026 8:55:40 PM	登录界面拉取游戏公告成功
+21/11/2026 8:55:40 PM	登录界面拉取游戏公告图片成功
+21/11/2026 8:55:41 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_GameNotice/Processed/SpriteAtlas_UI_Root_GameNotice.spriteatlas
+21/11/2026 8:55:43 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_MessageBoxTop/Processed/SpriteAtlas_UI_Root_MessageBoxTop.spriteatlas
+21/11/2026 8:55:43 PM	The location is invalid : Assets/ResMain/Main/UI/UI_Root_HotUpdate/UGUI/SpriteAtlas_UI_Root_HotUpdate.spriteatlas
+21/11/2026 8:55:45 PM	currentAppChannel: Channel_Oversea_Steam
+21/11/2026 8:55:46 PM	SceneOptimizers->CameraSystem.Instance.sceneOPT:True,SystemInfo.maxTextureArraySlices:2048,SystemInfo.systemMemorySize:32690,SystemInfo.graphicsMemorySize12113
+21/11/2026 8:55:46 PM	运行时一键关闭Renderer的ReflectionProbe
+21/11/2026 8:55:46 PM	运行时一键关闭Renderer的LightProbe
+21/11/2026 8:55:46 PM	一键关闭Renderer的动态遮挡剔除
+21/11/2026 8:55:46 PM	一键设置Renderer的MotionVectors为CameraOnly
+21/11/2026 8:55:46 PM	运行时一键设置Animator剔除
+21/11/2026 8:55:46 PM	运行时一键优化DecalLight
+21/11/2026 8:55:46 PM	运行时一键优化LightPlane
+21/11/2026 8:55:46 PM	运行时Combine合并SceneItem网格
+21/11/2026 8:55:46 PM	运行时设置LODGroup尺寸
+21/11/2026 8:55:46 PM	运行时静态合批阴影
+21/11/2026 8:55:46 PM	CombineVirtualTexture->Is4GDevice:False,Is6GDevice:->False,是否开启虚拟纹理:False
+21/11/2026 8:55:46 PM	运行时合并LOD0网格
+21/11/2026 8:55:46 PM	DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+21/11/2026 8:55:46 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+21/11/2026 8:55:46 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+21/11/2026 8:55:46 PM	[Singleton] An instance of Tayx.Graphy.GraphyManager is trying to be accessed, but it wasn't initialized first. Make sure to add an instance of Tayx.Graphy.GraphyManager in the scene before  trying to access it.
+21/11/2026 8:55:46 PM	RequestRegionInfo response, b: True str: {"status":true,"message":"success","gate_tcp_ip":"150.5.131.114","gate_tcp_port":11001,"is_server_open":true,"text":"","client_log_tcp_ip":"150.5.131.114","client_log_tcp_port":21001,"currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","photo_share_cdn_url":"https://jp-global-photo-prod.inutan.com/jp_global_prod"}
+21/11/2026 8:55:46 PM	QuickSDK_Oversea_steam 调用sdk login
+21/11/2026 8:55:46 PM	Pipe server started. Waiting for connection...
+21/11/2026 8:55:46 PM	Waiting for client connection...
+21/11/2026 8:55:46 PM	url https://sdkapi-of-global.inutan.com/openapi/oauth?openId=pcsdk&successUrl=https://sdkapi-of-global.inutan.com/loginSuccess.html&cancelUrl=https://sdkapi-of-global.inutan.com/loginCancel.html&productCode=14893566846394405145332210454456&channelCode=default&stopClose=1&theme=en&lang=en&sign=
+21/11/2026 8:55:46 PM	start exe gameName||qgpc&action||callLogin&url||aHR0cHM6Ly9zZGthcGktb2YtZ2xvYmFsLmludXRhbi5jb20vb3BlbmFwaS9vYXV0aD9vcGVuSWQ9cGNzZGsmc3VjY2Vzc1VybD1odHRwczovL3Nka2FwaS1vZi1nbG9iYWwuaW51dGFuLmNvbS9sb2dpblN1Y2Nlc3MuaHRtbCZjYW5jZWxVcmw9aHR0cHM6Ly9zZGthcGktb2YtZ2xvYmFsLmludXRhbi5jb20vbG9naW5DYW5jZWwuaHRtbCZwcm9kdWN0Q29kZT0xNDg5MzU2Njg0NjM5NDQwNTE0NTMzMjIxMDQ1NDQ1NiZjaGFubmVsQ29kZT1kZWZhdWx0JnN0b3BDbG9zZT0xJnRoZW1lPWVuJmxhbmc9ZW4mc2lnbj0=&width||470&height||475&loadStyle||1&showTaskIcon||null&w_left||-8&w_top||-8&w_height||1048&w_width||1936&lang||en&closeButton||true&topWindow||1
+21/11/2026 8:55:46 PM	Process started with PID: 27896
+21/11/2026 8:55:48 PM	OnMessageReceived: {"action":"init","params":{}}
+21/11/2026 8:55:48 PM	Waiting for client connection...
+21/11/2026 8:55:48 PM	aciton init
+21/11/2026 8:55:56 PM	OnMessageReceived: {"action":"loginSuccess","params":{"authToken":"<TOKEN>","timeleft":"-1","uid":"<ACCOUNT_ID>","userToken":"<TOKEN>","username":"<EMAIL>"}}
+21/11/2026 8:55:56 PM	Waiting for client connection...
+21/11/2026 8:55:56 PM	aciton loginSuccess
+21/11/2026 8:55:56 PM	timeLeft is less than 0.
+21/11/2026 8:55:56 PM	Cannot send LogEvent, the Appsflyer SDK is stopped
+21/11/2026 8:55:56 PM	[Heartbeat] 启动心跳协程
+21/11/2026 8:55:56 PM	QuickSDK_Oversea_steam onLoginSuccess uid: <ACCOUNT_ID> username: <EMAIL> token: <TOKEN>
+21/11/2026 8:55:56 PM	Customer User ID has been set
+21/11/2026 8:55:56 PM	{"timestamp":"1795265756335","device_os_version":"11-10.0.26340-64","device_model":"<DEVICE_MODEL>","app_version":"1.0.0","device_ids":[{"type":"custom","value":"<UUID>"}],"request_id":"<UUID>","limit_ad_tracking":false,"customer_user_id":"<ACCOUNT_ID>"}
+21/11/2026 8:55:56 PM	登录界面拉取游戏公告成功
+21/11/2026 8:55:56 PM	Request type: FIRST_OPEN_REQUEST
+21/11/2026 8:55:56 PM	Is success: ProtocolError
+21/11/2026 8:55:56 PM	Response Code: 401
+21/11/2026 8:55:56 PM	error: HTTP/1.1 401 Unauthorized
+21/11/2026 8:55:56 PM	Please try to send the request to 'sandbox-events.appsflyer.com' instead of 'events.appsflyer.com' in order to debug.
+21/11/2026 8:55:56 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:55:57 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_GameNotice/Processed/SpriteAtlas_UI_Root_GameNotice.spriteatlas
+21/11/2026 8:56:08 PM	FgInfo bytes: null
+21/11/2026 8:56:08 PM	serverTime1 : 11/21/2026 8:56:08 PM
+21/11/2026 8:56:08 PM	OnPlayerLoginRsp sceneId: 9999 是否需要强更包： True
+21/11/2026 8:56:08 PM	CheckBackGroundDownloadAssets forceDownload: True
+21/11/2026 8:56:08 PM	FairGuardSDK SetUserInfo ret: 1
+21/11/2026 8:56:08 PM	updateRole
+21/11/2026 8:56:08 PM	updateRole Success: {"status":true,"data":null,"message":"role up success"}
+21/11/2026 8:56:09 PM	地牢奖励日志：离开地牢 finish:False count:0
+21/11/2026 8:56:09 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Login/Processed/SpriteAtlas_UI_Root_Login.spriteatlas
+21/11/2026 8:56:11 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+Error--------------------------------------------------------------------------------------------
+21/11/2026 8:56:13 PM	InfoConfigure表中无法查找到ID为10301的数据
+0x00007ffac027a30d (UnityPlayer) UnityMain
+0x00007ffac027f343 (UnityPlayer) UnityMain
+0x00007ffac0269925 (UnityPlayer) UnityMain
+0x00007ffac0844e7e (UnityPlayer) UnityMain
+0x00007ffabfaa1ede (UnityPlayer) 
+0x00007ffaaecb1fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed1defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaecb31e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa9cbc309 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa98a1c92 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac00625b8 (UnityPlayer) 
+0x00007ffac00b72e5 (UnityPlayer) 
+0x00007ffac007f408 (UnityPlayer) 
+0x00007ffac007eeed (UnityPlayer) 
+0x00007ffac007f28f (UnityPlayer) 
+0x00007ffac00cc2f6 (UnityPlayer) 
+0x00007ffabfd81ea8 (UnityPlayer) 
+0x00007ffabfd82b1c (UnityPlayer) 
+0x00007ffabfb23e13 (UnityPlayer) 
+0x00007ffaacbb689e (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa4f5e83 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaacc0479a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa4f5a1b (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa72a881 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa728e5a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa72c506 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa72ba4a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa8f89a28 (GameAssembly) mono_domain_set
+0x00007ffaa9175768 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac00625b8 (UnityPlayer) 
+0x00007ffac00b72e5 (UnityPlayer) 
+0x00007ffac007f408 (UnityPlayer) 
+0x00007ffac007eeed (UnityPlayer) 
+0x00007ffac007f28f (UnityPlayer) 
+0x00007ffac00cec0d (UnityPlayer) 
+0x00007ffac00cf424 (UnityPlayer) 
+0x00007ffabfef31e8 (UnityPlayer) 
+0x00007ffabfef527d (UnityPlayer) 
+0x00007ffabfef3b4b (UnityPlayer) 
+0x00007ffabfef6331 (UnityPlayer) 
+0x00007ffabfef5fcd (UnityPlayer) 
+0x00007ffabfed9c6a (UnityPlayer) 
+0x00007ffabfed9d10 (UnityPlayer) 
+0x00007ffabfedc9e8 (UnityPlayer) 
+0x00007ffac00dd475 (UnityPlayer) 
+0x00007ffac00dbdbb (UnityPlayer) 
+0x00007ffac00e0f76 (UnityPlayer) 
+0x00007ffac00e38db (UnityPlayer) UnityMain
+0x00007ff7e6ee11f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+---------------------------------------------------------------------------------------------------------------------
+21/11/2026 8:56:13 PM	SceneOptimizers->CameraSystem.Instance.sceneOPT:True,SystemInfo.maxTextureArraySlices:2048,SystemInfo.systemMemorySize:32690,SystemInfo.graphicsMemorySize12113
+21/11/2026 8:56:13 PM	运行时一键关闭Renderer的ReflectionProbe
+21/11/2026 8:56:13 PM	运行时一键关闭Renderer的LightProbe
+21/11/2026 8:56:13 PM	一键关闭Renderer的动态遮挡剔除
+21/11/2026 8:56:13 PM	一键设置Renderer的MotionVectors为CameraOnly
+21/11/2026 8:56:13 PM	运行时一键设置Animator剔除
+21/11/2026 8:56:13 PM	运行时一键优化DecalLight
+21/11/2026 8:56:13 PM	运行时一键优化LightPlane
+21/11/2026 8:56:13 PM	Combine mesh instance 4 is null.
+21/11/2026 8:56:13 PM	Combine mesh instance 13 is null.
+21/11/2026 8:56:13 PM	Combine mesh instance 47 is null.
+21/11/2026 8:56:13 PM	Combine mesh instance 6 is null.
+21/11/2026 8:56:13 PM	Combine mesh instance 5 is null.
+21/11/2026 8:56:13 PM	Combine mesh instance 5 is null.
+21/11/2026 8:56:13 PM	Combine mesh instance 5 is null.
+21/11/2026 8:56:13 PM	运行时Combine合并SceneItem网格
+21/11/2026 8:56:14 PM	运行时设置LODGroup尺寸
+21/11/2026 8:56:14 PM	运行时静态合批阴影
+21/11/2026 8:56:14 PM	CombineVirtualTexture->Is4GDevice:False,Is6GDevice:->False,是否开启虚拟纹理:False
+21/11/2026 8:56:14 PM	运行时合并LOD0网格
+21/11/2026 8:56:14 PM	DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+21/11/2026 8:56:14 PM	EnterCurrentScene 
+21/11/2026 8:56:14 PM	EnterCurrentScene SceneDataNotice start 
+21/11/2026 8:56:14 PM	True
+Error--------------------------------------------------------------------------------------------
+21/11/2026 8:56:14 PM	初始座椅ID不能为0
+0x00007ffac027a30d (UnityPlayer) UnityMain
+0x00007ffac027f343 (UnityPlayer) UnityMain
+0x00007ffac0269925 (UnityPlayer) UnityMain
+0x00007ffac0844e7e (UnityPlayer) UnityMain
+0x00007ffabfaa1ede (UnityPlayer) 
+0x00007ffaaecb1fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed1defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaecb31e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa9d0a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa729c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa72bdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa737472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed330df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007dfc5 (UnityPlayer) 
+0x00007ffac0081e27 (UnityPlayer) 
+0x00007ffac0081433 (UnityPlayer) 
+0x00007ffabfb1712a (UnityPlayer) 
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007f523 (UnityPlayer) 
+0x00007ffac007f606 (UnityPlayer) 
+0x00007ffabfd80af0 (UnityPlayer) 
+0x00007ffabfed9c6a (UnityPlayer) 
+0x00007ffabfed9d10 (UnityPlayer) 
+0x00007ffabfedc9e8 (UnityPlayer) 
+0x00007ffac00dd475 (UnityPlayer) 
+0x00007ffac00dbdbb (UnityPlayer) 
+0x00007ffac00e0f76 (UnityPlayer) 
+0x00007ffac00e38db (UnityPlayer) UnityMain
+0x00007ff7e6ee11f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+---------------------------------------------------------------------------------------------------------------------
+Error--------------------------------------------------------------------------------------------
+21/11/2026 8:56:14 PM	初始座椅ID不能为0
+0x00007ffac027a30d (UnityPlayer) UnityMain
+0x00007ffac027f343 (UnityPlayer) UnityMain
+0x00007ffac0269925 (UnityPlayer) UnityMain
+0x00007ffac0844e7e (UnityPlayer) UnityMain
+0x00007ffabfaa1ede (UnityPlayer) 
+0x00007ffaaecb1fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed1defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaecb31e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa9d0a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa729c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa72bdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa737472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed330df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007dfc5 (UnityPlayer) 
+0x00007ffac0081e27 (UnityPlayer) 
+0x00007ffac0081433 (UnityPlayer) 
+0x00007ffabfb1712a (UnityPlayer) 
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007f523 (UnityPlayer) 
+0x00007ffac007f606 (UnityPlayer) 
+0x00007ffabfd80af0 (UnityPlayer) 
+0x00007ffabfed9c6a (UnityPlayer) 
+0x00007ffabfed9d10 (UnityPlayer) 
+0x00007ffabfedc9e8 (UnityPlayer) 
+0x00007ffac00dd475 (UnityPlayer) 
+0x00007ffac00dbdbb (UnityPlayer) 
+0x00007ffac00e0f76 (UnityPlayer) 
+0x00007ffac00e38db (UnityPlayer) UnityMain
+0x00007ff7e6ee11f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+---------------------------------------------------------------------------------------------------------------------
+Error--------------------------------------------------------------------------------------------
+21/11/2026 8:56:14 PM	初始座椅ID不能为0
+0x00007ffac027a30d (UnityPlayer) UnityMain
+0x00007ffac027f343 (UnityPlayer) UnityMain
+0x00007ffac0269925 (UnityPlayer) UnityMain
+0x00007ffac0844e7e (UnityPlayer) UnityMain
+0x00007ffabfaa1ede (UnityPlayer) 
+0x00007ffaaecb1fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed1defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaecb31e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa9d0a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa729c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa72bdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa737472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed330df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007dfc5 (UnityPlayer) 
+0x00007ffac0081e27 (UnityPlayer) 
+0x00007ffac0081433 (UnityPlayer) 
+0x00007ffabfb1712a (UnityPlayer) 
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007f523 (UnityPlayer) 
+0x00007ffac007f606 (UnityPlayer) 
+0x00007ffabfd80af0 (UnityPlayer) 
+0x00007ffabfed9c6a (UnityPlayer) 
+0x00007ffabfed9d10 (UnityPlayer) 
+0x00007ffabfedc9e8 (UnityPlayer) 
+0x00007ffac00dd475 (UnityPlayer) 
+0x00007ffac00dbdbb (UnityPlayer) 
+0x00007ffac00e0f76 (UnityPlayer) 
+0x00007ffac00e38db (UnityPlayer) UnityMain
+0x00007ff7e6ee11f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+---------------------------------------------------------------------------------------------------------------------
+Error--------------------------------------------------------------------------------------------
+21/11/2026 8:56:15 PM	初始座椅ID不能为0
+0x00007ffac027a30d (UnityPlayer) UnityMain
+0x00007ffac027f343 (UnityPlayer) UnityMain
+0x00007ffac0269925 (UnityPlayer) UnityMain
+0x00007ffac0844e7e (UnityPlayer) UnityMain
+0x00007ffabfaa1ede (UnityPlayer) 
+0x00007ffaaecb1fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed1defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaecb31e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa9d0a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa729c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa72bdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa737472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed330df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007dfc5 (UnityPlayer) 
+0x00007ffac0081e27 (UnityPlayer) 
+0x00007ffac0081433 (UnityPlayer) 
+0x00007ffabfb1712a (UnityPlayer) 
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007f523 (UnityPlayer) 
+0x00007ffac007f606 (UnityPlayer) 
+0x00007ffabfd80af0 (UnityPlayer) 
+0x00007ffabfed9c6a (UnityPlayer) 
+0x00007ffabfed9d10 (UnityPlayer) 
+0x00007ffabfedc9e8 (UnityPlayer) 
+0x00007ffac00dd475 (UnityPlayer) 
+0x00007ffac00dbdbb (UnityPlayer) 
+0x00007ffac00e0f76 (UnityPlayer) 
+0x00007ffac00e38db (UnityPlayer) UnityMain
+0x00007ff7e6ee11f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+---------------------------------------------------------------------------------------------------------------------
+Error--------------------------------------------------------------------------------------------
+21/11/2026 8:56:16 PM	座椅ID重复：10<ACCOUNT_ID>022
+0x00007ffac027a30d (UnityPlayer) UnityMain
+0x00007ffac027f343 (UnityPlayer) UnityMain
+0x00007ffac0269925 (UnityPlayer) UnityMain
+0x00007ffac0844e7e (UnityPlayer) UnityMain
+0x00007ffabfaa1ede (UnityPlayer) 
+0x00007ffaaecb1fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed1defc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaecb31e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa9d1830 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa9ce78d (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa9c42c6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007f523 (UnityPlayer) 
+0x00007ffac007ef81 (UnityPlayer) 
+0x00007ffac007f28f (UnityPlayer) 
+0x00007ffac00cc2f6 (UnityPlayer) 
+0x00007ffabfcc9882 (UnityPlayer) 
+0x00007ffabfb0a643 (UnityPlayer) 
+0x00007ffaaa6160c1 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa612eed (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa6109f2 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa6528ab (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa6522b3 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaa73749a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaaed330df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007dfc5 (UnityPlayer) 
+0x00007ffac0081e27 (UnityPlayer) 
+0x00007ffac0081433 (UnityPlayer) 
+0x00007ffabfb1712a (UnityPlayer) 
+0x00007ffaa9175706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa91756a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffac005f268 (UnityPlayer) 
+0x00007ffac0062492 (UnityPlayer) 
+0x00007ffac007f523 (UnityPlayer) 
+0x00007ffac007f606 (UnityPlayer) 
+0x00007ffabfd80af0 (UnityPlayer) 
+0x00007ffabfed9c6a (UnityPlayer) 
+0x00007ffabfed9d10 (UnityPlayer) 
+0x00007ffabfedc9e8 (UnityPlayer) 
+0x00007ffac00dd475 (UnityPlayer) 
+0x00007ffac00dbdbb (UnityPlayer) 
+0x00007ffac00e0f76 (UnityPlayer) 
+0x00007ffac00e38db (UnityPlayer) UnityMain
+0x00007ff7e6ee11f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+---------------------------------------------------------------------------------------------------------------------
+21/11/2026 8:56:16 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+21/11/2026 8:56:16 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+21/11/2026 8:56:16 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+21/11/2026 8:56:16 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+21/11/2026 8:56:16 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+21/11/2026 8:56:16 PM	[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+21/11/2026 8:56:17 PM	[Singleton] An instance of Tayx.Graphy.GraphyManager is trying to be accessed, but it wasn't initialized first. Make sure to add an instance of Tayx.Graphy.GraphyManager in the scene before  trying to access it.
+21/11/2026 8:56:17 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 8:56:17 PM	The referenced script on this Behaviour (Game Object '') is missing!
+21/11/2026 8:56:17 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 8:56:17 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 8:56:17 PM	The referenced script on this Behaviour (Game Object '召回1') is missing!
+21/11/2026 8:56:17 PM	The referenced script on this Behaviour (Game Object '召回1') is missing!
+21/11/2026 8:56:17 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 8:56:17 PM	The referenced script on this Behaviour (Game Object '') is missing!
+21/11/2026 8:56:17 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 8:56:17 PM	The referenced script on this Behaviour (Game Object '') is missing!
+21/11/2026 8:56:17 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 8:56:17 PM	The referenced script on this Behaviour (Game Object '') is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 8:56:18 PM	The referenced script (Inutan.UI_ActivityList_ViewAPI_FullServer) on this Behaviour is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '全服1') is missing!
+21/11/2026 8:56:18 PM	The referenced script (Inutan.UI_ActivityList_ViewAPI_ReCall) on this Behaviour is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '召回1') is missing!
+21/11/2026 8:56:18 PM	The referenced script (Inutan.UI_ActivityReCall_ViewCtrl) on this Behaviour is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '召回1') is missing!
+21/11/2026 8:56:18 PM	The referenced script (Inutan.UI_ActivityReCall_ViewCtrl) on this Behaviour is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '回归1') is missing!
+21/11/2026 8:56:18 PM	The referenced script (Inutan.UI_ActivityList_ViewAPI_ReCall) on this Behaviour is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '回归1') is missing!
+21/11/2026 8:56:18 PM	The referenced script (Inutan.UI_ActivityFullServer_ViewCtrl) on this Behaviour is missing!
+21/11/2026 8:56:18 PM	The referenced script on this Behaviour (Game Object '全服1') is missing!
+21/11/2026 8:56:19 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowArgumentOutOfRange_IndexException()) ► Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+
+  at UI_Main_ViewCtrl+<>c__DisplayClass196_0.<Set_Spell_Button_Cooldown>b__1 (System.Single x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+21/11/2026 8:56:19 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowArgumentOutOfRange_IndexException()) ► Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+
+  at UI_Main_ViewCtrl+<>c__DisplayClass196_0.<Set_Spell_Button_Cooldown>b__1 (System.Single x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+21/11/2026 8:56:19 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowArgumentOutOfRange_IndexException()) ► Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+
+  at UI_Main_ViewCtrl+<>c__DisplayClass196_0.<Set_Spell_Button_Cooldown>b__1 (System.Single x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+21/11/2026 8:56:19 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowArgumentOutOfRange_IndexException()) ► Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+
+  at UI_Main_ViewCtrl+<>c__DisplayClass196_0.<Set_Spell_Button_Cooldown>b__1 (System.Single x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+21/11/2026 8:56:19 PM	登录界面拉取游戏公告成功
+21/11/2026 8:56:20 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:56:20 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_GameNotice/Processed/SpriteAtlas_UI_Root_GameNotice.spriteatlas
+21/11/2026 8:56:27 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+21/11/2026 8:56:28 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_ActivityList/Processed/SpriteAtlas_UI_Root_ActivityList.spriteatlas
+21/11/2026 8:56:30 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:56:38 PM	[Animancer] 跳过播放：动画资源不可用。Unit=[Player] Module=jump_glide Clip=null
+21/11/2026 8:56:38 PM	FgInfo bytes: null
+21/11/2026 8:56:38 PM	OnChannelJumpCallback | 切换场景频道
+21/11/2026 8:56:38 PM	[Character_Base@Skin]renderer有Null的项!!!
+21/11/2026 8:56:38 PM	[Character_Base@Skin]renderer有Null的项!!!
+21/11/2026 8:56:38 PM	[Character_Base@Skin]renderer有Null的项!!!
+21/11/2026 8:56:39 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:56:40 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+21/11/2026 8:56:41 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+21/11/2026 8:57:06 PM	[Heartbeat] 心跳上报：20:57:06
+21/11/2026 8:57:30 PM	No mesh data available for mesh sm_Magnifying on particle system SmallHearts_2. Make sure Read/Write Enabled is set in the importer to work on the particle system renderer
+21/11/2026 8:57:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:58:06 PM	[Heartbeat] 心跳上报：20:58:06
+21/11/2026 8:58:22 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:58:23 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:58:23 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:58:35 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Home/Processed/SpriteAtlas_UI_Root_Home.spriteatlas
+21/11/2026 8:58:44 PM	No mesh data available for mesh Weapon_PixelSun on particle system cube_3. Make sure Read/Write Enabled is set in the importer to work on the particle system renderer
+21/11/2026 8:58:44 PM	No mesh data available for mesh Weapon_PixelSun on particle system cube_3. Make sure Read/Write Enabled is set in the importer to work on the particle system renderer
+21/11/2026 8:58:48 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+21/11/2026 8:58:53 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+21/11/2026 8:58:57 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 8:58:57 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 8:58:59 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 8:58:59 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 8:58:59 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:59:05 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 8:59:05 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 8:59:06 PM	[Heartbeat] 心跳上报：20:59:06
+21/11/2026 8:59:07 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 8:59:07 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 8:59:09 PM	No mesh data available for mesh Weapon_PixelSun on particle system cube_3. Make sure Read/Write Enabled is set in the importer to work on the particle system renderer
+21/11/2026 8:59:09 PM	No mesh data available for mesh Weapon_PixelSun on particle system cube_3. Make sure Read/Write Enabled is set in the importer to work on the particle system renderer
+21/11/2026 8:59:20 PM	up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 8:59:23 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector2 <DOJumpAnchorPos>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+21/11/2026 8:59:25 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 8:59:25 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 8:59:25 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 8:59:27 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:59:28 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:59:29 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:59:50 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:59:51 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 8:59:51 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 8:59:56 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 8:59:57 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Home/Processed/SpriteAtlas_UI_Root_Home.spriteatlas
+21/11/2026 9:00:03 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:00:05 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:00:05 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:00:06 PM	[Heartbeat] 心跳上报：21:00:06
+21/11/2026 9:00:13 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:00:19 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+21/11/2026 9:00:21 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+21/11/2026 9:00:25 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:00:26 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:00:28 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:00:29 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Home/Processed/SpriteAtlas_UI_Root_Home.spriteatlas
+21/11/2026 9:00:33 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:00:33 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:00:48 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:00:58 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:01:07 PM	[Heartbeat] 心跳上报：21:01:07
+21/11/2026 9:01:08 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:01:10 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:01:22 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:01:24 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:01:29 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:01:31 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:01:35 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:01:35 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:01:39 PM	PostProcess
+21/11/2026 9:01:39 PM	ZPrePassRendererFeature
+21/11/2026 9:01:39 PM	MinimapPlanarReflection BeforeGBuffer
+21/11/2026 9:01:39 PM	CharacterMaskPassRendererFeature
+21/11/2026 9:01:39 PM	CameraProportionPassRendererFeature
+21/11/2026 9:01:39 PM	AODecals
+21/11/2026 9:01:39 PM	Toon Outline
+21/11/2026 9:01:39 PM	Outline feature enabled
+21/11/2026 9:01:39 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:01:47 PM	PostProcess
+21/11/2026 9:01:47 PM	ZPrePassRendererFeature
+21/11/2026 9:01:47 PM	MinimapPlanarReflection BeforeGBuffer
+21/11/2026 9:01:47 PM	CharacterMaskPassRendererFeature
+21/11/2026 9:01:47 PM	CameraProportionPassRendererFeature
+21/11/2026 9:01:47 PM	AODecals
+21/11/2026 9:01:47 PM	Toon Outline
+21/11/2026 9:01:47 PM	Outline feature enabled
+21/11/2026 9:01:47 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:01:51 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:01:51 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:01:52 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_ProgressTips/Processed/SpriteAtlas_UI_Root_ProgressTips.spriteatlas
+21/11/2026 9:01:54 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:01:54 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:06 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:06 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 9:02:06 PM	The referenced script on this Behaviour (Game Object '') is missing!
+21/11/2026 9:02:06 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 9:02:06 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 9:02:06 PM	The referenced script on this Behaviour (Game Object '召回1') is missing!
+21/11/2026 9:02:06 PM	The referenced script on this Behaviour (Game Object '召回1') is missing!
+21/11/2026 9:02:06 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 9:02:06 PM	The referenced script on this Behaviour (Game Object '') is missing!
+21/11/2026 9:02:06 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 9:02:06 PM	The referenced script on this Behaviour (Game Object '') is missing!
+21/11/2026 9:02:06 PM	The referenced script (Unknown) on this Behaviour is missing!
+21/11/2026 9:02:06 PM	The referenced script on this Behaviour (Game Object '') is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '<null>') is missing!
+21/11/2026 9:02:07 PM	The referenced script (Inutan.UI_ActivityList_ViewAPI_FullServer) on this Behaviour is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '全服1') is missing!
+21/11/2026 9:02:07 PM	The referenced script (Inutan.UI_ActivityList_ViewAPI_ReCall) on this Behaviour is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '召回1') is missing!
+21/11/2026 9:02:07 PM	The referenced script (Inutan.UI_ActivityReCall_ViewCtrl) on this Behaviour is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '召回1') is missing!
+21/11/2026 9:02:07 PM	The referenced script (Inutan.UI_ActivityReCall_ViewCtrl) on this Behaviour is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '回归1') is missing!
+21/11/2026 9:02:07 PM	The referenced script (Inutan.UI_ActivityList_ViewAPI_ReCall) on this Behaviour is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '回归1') is missing!
+21/11/2026 9:02:07 PM	The referenced script (Inutan.UI_ActivityFullServer_ViewCtrl) on this Behaviour is missing!
+21/11/2026 9:02:07 PM	The referenced script on this Behaviour (Game Object '全服1') is missing!
+21/11/2026 9:02:07 PM	[Heartbeat] 心跳上报：21:02:07
+21/11/2026 9:02:10 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:02:11 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+21/11/2026 9:02:12 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_ActivityList/Processed/SpriteAtlas_UI_Root_ActivityList.spriteatlas
+21/11/2026 9:02:16 PM	up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:02:20 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:02:20 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:02:20 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:02:22 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:22 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:34 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:02:34 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:02:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:35 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:46 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:02:46 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:02:47 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:47 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:47 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:02:57 PM	up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:03:01 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:03:01 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:03:01 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:03:05 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:03:05 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:03:05 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:03:07 PM	[Heartbeat] 心跳上报：21:03:07
+21/11/2026 9:03:13 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:03:14 PM	任务额外弹出纯图公告:9001,62
+21/11/2026 9:03:14 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:03:15 PM	up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:03:18 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:03:18 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:03:19 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:03:19 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:03:24 PM	踏入生效特效 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:03:26 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+21/11/2026 9:03:27 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:03:28 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+21/11/2026 9:04:07 PM	[Heartbeat] 心跳上报：21:04:07
+21/11/2026 9:05:07 PM	[Heartbeat] 心跳上报：21:05:07
+21/11/2026 9:05:27 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+21/11/2026 9:06:07 PM	[Heartbeat] 心跳上报：21:06:07
+21/11/2026 9:07:07 PM	[Heartbeat] 心跳上报：21:07:07
+21/11/2026 9:08:07 PM	[Heartbeat] 心跳上报：21:08:07
+21/11/2026 9:08:49 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:08:50 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:08:52 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:08:54 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:08:57 PM	Weapon_TwoHandSword_06(Clone) | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:08:57 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:08:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Selection/Processed/SpriteAtlas_UI_Root_Selection.spriteatlas
+21/11/2026 9:08:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Character/Processed/SpriteAtlas_UI_Root_Character.spriteatlas
+21/11/2026 9:09:07 PM	[Heartbeat] 心跳上报：21:09:07
+21/11/2026 9:10:07 PM	[Heartbeat] 心跳上报：21:10:07
+21/11/2026 9:11:08 PM	[Heartbeat] 心跳上报：21:11:08
+21/11/2026 9:12:08 PM	[Heartbeat] 心跳上报：21:12:08
+21/11/2026 9:13:09 PM	[Heartbeat] 心跳上报：21:13:09
+21/11/2026 9:14:09 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+21/11/2026 9:14:09 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+21/11/2026 9:14:09 PM	[Heartbeat] 心跳上报：21:14:09
+21/11/2026 9:15:09 PM	[Heartbeat] 心跳上报：21:15:09
+21/11/2026 9:15:36 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:15:56 PM	up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:16:09 PM	[Heartbeat] 心跳上报：21:16:09
+21/11/2026 9:16:36 PM	Spell_2020501 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:16:36 PM	Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:16:36 PM	Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:17:09 PM	[Heartbeat] 心跳上报：21:17:09
+21/11/2026 9:18:09 PM	[Heartbeat] 心跳上报：21:18:09
+21/11/2026 9:18:10 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (UnityEngine.Vector3 <DOMove>b__0()) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.ShortcutExtensions+<>c__DisplayClass32_0.<DOMove>b__0 () [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Plugins.Vector3Plugin.EvaluateAndApply (DG.Tweening.Plugins.Options.VectorOptions options, DG.Tweening.Tween t, System.Boolean isRelative, DG.Tweening.Core.DOGetter`1[T] getter, DG.Tweening.Core.DOSetter`1[T] setter, System.Single elapsed, UnityEngine.Vector3 startValue, UnityEngine.Vector3 changeValue, System.Single duration, System.Boolean usingInversePosition, System.Int32 newCompletedSteps, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.ApplyInternalCycle (DG.Tweening.Sequence s, System.Single fromPos, System.Single toPos, DG.Tweening.Core.Enums.UpdateMode updateMode, System.Boolean useInverse, System.Boolean prevPosIsInverse, System.Boolean multiCycleStep) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.DoApplyTween (DG.Tweening.Sequence s, System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+
+21/11/2026 9:18:10 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+21/11/2026 9:19:10 PM	[Heartbeat] 心跳上报：21:19:10
+21/11/2026 9:20:10 PM	[Heartbeat] 心跳上报：21:20:10
+21/11/2026 9:21:10 PM	[Heartbeat] 心跳上报：21:21:10
+21/11/2026 9:22:10 PM	[Heartbeat] 心跳上报：21:22:10
+21/11/2026 9:23:10 PM	[Heartbeat] 心跳上报：21:23:10
+21/11/2026 9:24:10 PM	[Heartbeat] 心跳上报：21:24:10
+21/11/2026 9:24:49 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:25:10 PM	[Heartbeat] 心跳上报：21:25:10
+21/11/2026 9:26:10 PM	[Heartbeat] 心跳上报：21:26:10
+21/11/2026 9:27:10 PM	[Heartbeat] 心跳上报：21:27:10
+21/11/2026 9:28:10 PM	[Heartbeat] 心跳上报：21:28:10
+21/11/2026 9:28:11 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:28:12 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:28:18 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Setting/Processed/SpriteAtlas_UI_Root_Setting.spriteatlas
+21/11/2026 9:29:10 PM	[Heartbeat] 心跳上报：21:29:10
+21/11/2026 9:30:10 PM	[Heartbeat] 心跳上报：21:30:10
+21/11/2026 9:31:10 PM	[Heartbeat] 心跳上报：21:31:10
+21/11/2026 9:32:10 PM	[Heartbeat] 心跳上报：21:32:10
+21/11/2026 9:33:10 PM	[Heartbeat] 心跳上报：21:33:10
+21/11/2026 9:33:13 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:33:22 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:33:35 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:33:41 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:33:45 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:33:54 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:33:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:34:03 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:34:08 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:34:10 PM	[Heartbeat] 心跳上报：21:34:10
+21/11/2026 9:35:10 PM	[Heartbeat] 心跳上报：21:35:10
+21/11/2026 9:35:37 PM	<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector2 <DOJumpAnchorPos>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+21/11/2026 9:36:08 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:36:10 PM	[Heartbeat] 心跳上报：21:36:10
+21/11/2026 9:36:16 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:36:27 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:36:43 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:36:57 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:36:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:36:59 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:37:01 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:37:04 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Home/Processed/SpriteAtlas_UI_Root_Home.spriteatlas
+21/11/2026 9:37:04 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:37:08 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:37:10 PM	[Heartbeat] 心跳上报：21:37:10
+21/11/2026 9:38:10 PM	[Heartbeat] 心跳上报：21:38:10
+21/11/2026 9:39:10 PM	[Heartbeat] 心跳上报：21:39:10
+21/11/2026 9:40:10 PM	[Heartbeat] 心跳上报：21:40:10
+21/11/2026 9:40:11 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 9:40:14 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:40:18 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+21/11/2026 9:40:50 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:40:55 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Setting/Processed/SpriteAtlas_UI_Root_Setting.spriteatlas
+21/11/2026 9:40:58 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:41:10 PM	[Heartbeat] 心跳上报：21:41:10
+21/11/2026 9:42:10 PM	[Heartbeat] 心跳上报：21:42:10
+21/11/2026 9:43:10 PM	[Heartbeat] 心跳上报：21:43:10
+21/11/2026 9:44:10 PM	[Heartbeat] 心跳上报：21:44:10
+21/11/2026 9:45:10 PM	[Heartbeat] 心跳上报：21:45:10
+21/11/2026 9:46:10 PM	[Heartbeat] 心跳上报：21:46:10
+21/11/2026 9:46:20 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 9:47:05 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+21/11/2026 9:47:10 PM	[Heartbeat] 心跳上报：21:47:10
+21/11/2026 9:48:10 PM	[Heartbeat] 心跳上报：21:48:10
+21/11/2026 9:49:10 PM	[Heartbeat] 心跳上报：21:49:10
+21/11/2026 9:50:11 PM	[Heartbeat] 心跳上报：21:50:11
+21/11/2026 9:51:11 PM	[Heartbeat] 心跳上报：21:51:11
+21/11/2026 9:52:11 PM	[Heartbeat] 心跳上报：21:52:11
+21/11/2026 9:53:11 PM	[Heartbeat] 心跳上报：21:53:11
+21/11/2026 9:53:57 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:53:57 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:53:57 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:54:11 PM	[Heartbeat] 心跳上报：21:54:11
+21/11/2026 9:54:17 PM	up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:54:26 PM	This pool contained a null despawned clone, did you accidentally destroy it?
+21/11/2026 9:54:57 PM	Spell_2020501 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:54:57 PM	Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:54:57 PM	Spell_2020501_投掷物_单个线索rank02爆炸区域 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:54:57 PM	Spell_2020501_投掷物_单个线索rank02爆炸区域 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:54:57 PM	Spell_2020501_投掷物_单个线索rank02爆炸区域 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:54:57 PM	Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+21/11/2026 9:55:11 PM	[Heartbeat] 心跳上报：21:55:11
+21/11/2026 9:56:11 PM	[Heartbeat] 心跳上报：21:56:11
+21/11/2026 9:57:11 PM	[Heartbeat] 心跳上报：21:57:11
+21/11/2026 9:58:11 PM	[Heartbeat] 心跳上报：21:58:11
+21/11/2026 9:59:11 PM	[Heartbeat] 心跳上报：21:59:11
+21/11/2026 10:00:11 PM	[Heartbeat] 心跳上报：22:00:11
+21/11/2026 10:01:11 PM	[Heartbeat] 心跳上报：22:01:11
+21/11/2026 10:02:11 PM	[Heartbeat] 心跳上报：22:02:11
+21/11/2026 10:03:00 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 10:03:03 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+21/11/2026 10:03:11 PM	[Heartbeat] 心跳上报：22:03:11
+21/11/2026 10:03:28 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 10:03:46 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 10:03:46 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+21/11/2026 10:03:49 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 10:04:04 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 10:04:11 PM	[Heartbeat] 心跳上报：22:04:11
+21/11/2026 10:04:31 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+21/11/2026 10:04:38 PM	卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas

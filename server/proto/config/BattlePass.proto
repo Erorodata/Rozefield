@@ -1,0 +1,40 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllBattlePassDatas {
+  protocol.BattlePassDatas BattlePass = 1;
+  protocol.BattlePassQuesetDatas BattlePassQueset = 2;
+}
+message BattlePassDatas {
+  repeated protocol.BattlePassConfigure datas = 1;
+}
+message BattlePassConfigure {
+  int32 ID = 1;
+  int32 ShopID = 2;
+  int32 MaxExp = 3;
+  int32 DayQuestID = 4;
+  int32 WeekQuestID = 5;
+  int32 SeasonQuestID = 6;
+  repeated protocol.BattlePassLevelUp BattlePassLevelUps = 7;
+}
+message BattlePassLevelUp {
+  int32 Level = 1;
+  int32 Exp = 2;
+  repeated protocol.BattlePassRewards BattlePassReward = 3;
+}
+message BattlePassRewards {
+  int32 ItemID = 1;
+  int32 ItemNum = 2;
+}
+message BattlePassQuesetDatas {
+  repeated protocol.BattlePassQuesetConfigure datas = 1;
+}
+message BattlePassQuesetConfigure {
+  int32 ID = 1;
+  repeated protocol.BattlePassQuesetItems BattlePassQuesetItem = 2;
+}
+message BattlePassQuesetItems {
+  int32 AchieveID = 1;
+  int32 Exp = 2;
+}

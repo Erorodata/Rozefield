@@ -1,0 +1,17 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGpuQualityDatas {
+  protocol.GpuQualityInfoDatas GpuQualityInfo = 1;
+}
+message GpuQualityInfoDatas {
+  repeated protocol.GpuQualityInfoConfigure datas = 1;
+}
+message GpuQualityInfoConfigure {
+  int32 ID = 1;
+  string Name = 2;
+  int32 Quality = 3;
+  int32 ZPrePass = 4;
+  repeated int32 UnlockQuality = 5;
+}

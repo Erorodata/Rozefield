@@ -1,0 +1,20 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGemDuel_GiftBagDatas {
+  protocol.GemDuelGiftBagDatas GemDuelGiftBag = 1;
+}
+message GemDuelGiftBagDatas {
+  repeated protocol.GemDuelGiftBagConfigure datas = 1;
+}
+message GemDuelGiftBagConfigure {
+  int32 ID = 1;
+  int32 PlayerLv = 2;
+  bool IsAutoOpen = 3;
+  int32 UseItemID = 4;
+  int32 UseItemCount = 5;
+  int32 RewardPoolGroupID = 6;
+  float RewardPoolGroupRate = 7;
+  string AssetPath = 8;
+}

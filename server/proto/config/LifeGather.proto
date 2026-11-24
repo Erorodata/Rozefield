@@ -1,0 +1,66 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllLifeGatherDatas {
+  protocol.LifeGatherDatas LifeGather = 1;
+  protocol.LifeGatherItemDatas LifeGatherItem = 2;
+  protocol.LifeGatherSpellDatas LifeGatherSpell = 3;
+}
+message LifeGatherDatas {
+  repeated protocol.LifeGatherConfigure datas = 1;
+}
+message LifeGatherConfigure {
+  int32 ID = 1;
+  int32 UpgradeLevelByProficiency = 2;
+  int32 NeedItemID = 3;
+  int32 NeedItemCount = 4;
+  repeated protocol.LifeGatherLevelAchieveConfigureItem LifeGatherLevelAchieve = 5;
+}
+message LifeGatherLevelAchieveConfigureItem {
+  int32 AchieveConditionID = 1;
+  int32 Proficiency = 2;
+  int32 CompleteLimit = 3;
+}
+message LifeGatherItemDatas {
+  repeated protocol.LifeGatherItemConfigure datas = 1;
+}
+message LifeGatherItemConfigure {
+  int32 ID = 1;
+  bool IsShow = 2;
+  int32 NeedFormulaItemID = 3;
+  int32 GatherLevel = 4;
+  int32 NeedItemID = 5;
+  int32 NeedItemCount = 6;
+  int32 ItemID = 7;
+  repeated protocol.LifeGatherAchieveConfigureItem LifeGatherAchieveRewards = 8;
+  int32 NewGatherType = 9;
+}
+message LifeGatherAchieveConfigureItem {
+  int32 AchieveConditionID = 1;
+  int32 RewardID = 2;
+}
+message LifeGatherSpellDatas {
+  repeated protocol.LifeGatherSpellConfigure datas = 1;
+}
+message LifeGatherSpellConfigure {
+  int32 ID = 1;
+  repeated protocol.LifeGatherSpellItemsConfigureItem LifeGatherSpellItems = 2;
+}
+message LifeGatherSpellItemsConfigureItem {
+  int32 Level = 1;
+  int32 IconID = 2;
+  int32 TextID = 3;
+  int32 NewLifeSpellEffectType = 4;
+  float SpellParam1 = 5;
+  float SpellParam2 = 6;
+  int32 NeedGatherLevel = 7;
+  int32 NeedTime = 8;
+  int32 NeedCurrencyID = 9;
+  int32 NeedCurrencyCount = 10;
+  repeated protocol.LifeGatherNeedItems LifeGatherNeedItem = 11;
+}
+message LifeGatherNeedItems {
+  int32 NeedItemID = 1;
+  int32 NeedItemCount = 2;
+}

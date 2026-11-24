@@ -1,0 +1,16 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllGlobalBuffDatas {
+  protocol.GlobalBuffDatas GlobalBuff = 1;
+}
+message GlobalBuffDatas {
+  repeated protocol.GlobalBuffConfigure datas = 1;
+}
+message GlobalBuffConfigure {
+  int32 ID = 1;
+  int32 NameID = 2;
+  int32 IconID = 3;
+  int32 NewGlobalBuffDefineType = 4;
+}

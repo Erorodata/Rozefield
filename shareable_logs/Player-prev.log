@@ -1,0 +1,2197 @@
+AS: AutoStreaming module initializing.
+[Physics::Module] Initialized MultithreadedJobDispatcher with {0} workers.
+Loading player data from H:/SteamLibrary/steamapps/common/OverField/launcher_Data/data.unity3d
+Initialize engine version: 2021.3.45f2c1 (8058fe21db2f)
+[Subsystems] Discovering subsystems at path H:/SteamLibrary/steamapps/common/OverField/launcher_Data/UnitySubsystems
+GfxDevice: creating device client; threaded=1; jobified=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: <GPU>
+    Vendor:   NVIDIA
+    VRAM:     12113 MB
+    Driver:   32.0.16.1742
+<RI> Initializing input.
+
+<RI> Input initialized.
+
+<RI> Initialized touch support.
+
+UnloadTime: 9.017300 ms
+Odin Serializer ArchitectureInfo initialization with defaults (all unaligned read/writes disabled).
+Odin Serializer detected whitelisted runtime platform WindowsPlayer and memory read test succeeded; enabling all unaligned memory read/writes.
+ResManager init success
+OnHotFixCS load success
+baseUrl: https://sdkapi-of-global.inutan.com
+productCode: 14893566846394405145332210454456
+channelCode: default
+QuickSDK_Oversea_steam onInitSuccess SDKChannelId: 16666
+af_device_id: <UUID>
+Parsed Command Line Arguments:
+H:\SteamLibrary\steamapps\common\OverField\launcher.exe=
+commandLineArgs : 1
+commandLineArg : H:\SteamLibrary\steamapps\common\OverField\launcher.exe
+QuickSDK_Oversea_steam SDKUid : 
+FairGuardSDK Init ret: 1
+buildGUID: ef00bcd296e82ea4ebeeced2acc8d6e0 version: 1.0.9 systemLanguage: English
+GetLoginUrlList version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+GetLoginUrlList b: True str: 
+RequestFallBackLoginServer over： http://150.5.132.155:18881
+SyncGMConfig, getClientVersionAddress: http://dsp-global-of.inutan.com:18881/dispatch/client_hot_update version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+Unloading 5 Unused Serialized files (Serialized files now loaded: 6)
+UnloadTime: 0.673500 ms
+Unloading 7 unused Assets to reduce memory usage. Loaded Objects now: 13317.
+Total: 19.749500 ms (FindLiveObjects: 0.676300 ms CreateObjectMapping: 0.606300 ms MarkObjects: 18.403300 ms  DeleteObjects: 0.063200 ms)
+
+SyncGMConfig response, b: True str: {"status":true,"message":"success","hotOssUrl":"https://d2b0sg4npngm2p.cloudfront.net/Resources;http://cdn-of-global.inutan.com/Resources","currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","server":"jp_global_prod","ssAppId":"3e9b196609224f889fbc769234200511","ssServerUrl":"https://te-receiver-aws.thinkingdata.jp","open_gm":false,"open_error_log":false,"open_netConnecting_log":false,"ipAddress":"<PLAYER_IP>","payUrl":"http://150.5.131.114:19701","isTestServer":false,"error_log_level":2,"server_id":"31000","open_cs":false,"serverTime":1795361144173}
+[ThinkingData] Info: TDAnalytics SDK initialize success, AppId = 3e9b196609224f889fbc769234200511, ServerUrl = https://te-receiver-aws.thinkingdata.jp, Mode = Normal, TimeZone = Local, DeviceId = <DEVICE_ID>, Lib = Unity, LibVersion = 3.1.0.1
+[ThinkingData] Info: Enqueue data: 
+{"#type":"user_set","#time":"2026-11-22 23:25:44.291","#distinct_id":"<DISTINCT_ID>","#account_id":"<ACCOUNT_ID>","#uuid":"<UUID>","properties":{}}
+  AppId: 3e9b196609224f889fbc769234200511
+[ThinkingData] Info: Enqueue data: 
+{"#type":"track","#time":"2026-11-22 23:25:44.291","#distinct_id":"<DISTINCT_ID>","#event_name":"ta_app_start","#account_id":"<ACCOUNT_ID>","#uuid":"<UUID>","properties":{"ip":"<PLAYER_IP>","app_channel":"16666","os_name":"windows","os_ver":"Windows 11  (10.0.26340) 64bit","app_ver":"1.0.9","network":"wifi","server":"jp_global_prod","udid":"<DEVICE_ID>","device_model":"<DEVICE_MODEL>","cps_id":"","zone_offset":0,"#device_id":"<DEVICE_ID>","#os":"Windows","#os_version":"Windows 11  (10.0.26340) 64bit","#screen_height":1080,"#screen_width":1920,"#manufacturer":"NVIDIA","#device_model":"<DEVICE_MODEL>","#app_version":"1.0.9","#bundle_id":"","#lib":"Unity","#lib_version":"3.1.0.1","#system_language":"en","#network_type":"LAN","#zone_offset":8}}
+  AppId: 3e9b196609224f889fbc769234200511
+SSSDKSystem Initialized DistinctId: <DISTINCT_ID>
+The location is invalid : Assets/ResMain/Main/UI/UI_Root_Logo/UGUI/SpriteAtlas_UI_Root_Logo.spriteatlas
+Unloading 1 Unused Serialized files (Serialized files now loaded: 5)
+Unloading 35 unused Assets to reduce memory usage. Loaded Objects now: 13245.
+Total: 29.987000 ms (FindLiveObjects: 0.798000 ms CreateObjectMapping: 1.762400 ms MarkObjects: 27.325600 ms  DeleteObjects: 0.100600 ms)
+
+Unloading 1 Unused Serialized files (Serialized files now loaded: 7)
+UnloadTime: 0.230300 ms
+Unloading 11 unused Assets to reduce memory usage. Loaded Objects now: 13226.
+Total: 17.226800 ms (FindLiveObjects: 0.629600 ms CreateObjectMapping: 0.665300 ms MarkObjects: 15.804500 ms  DeleteObjects: 0.126900 ms)
+
+SyncGMConfig, getClientVersionAddress: http://dsp-global-of.inutan.com:18881/dispatch/client_hot_update version: 2026-10-24-12-00-58 version2: ef00bcd296e82ea4ebeeced2acc8d6e0 accountType: 16666 os: 0 lastloginsdkuid: <ACCOUNT_ID>
+SyncGMConfig response, b: True str: {"status":true,"message":"success","hotOssUrl":"https://d2b0sg4npngm2p.cloudfront.net/Resources;http://cdn-of-global.inutan.com/Resources","currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","server":"jp_global_prod","ssAppId":"3e9b196609224f889fbc769234200511","ssServerUrl":"https://te-receiver-aws.thinkingdata.jp","open_gm":false,"open_error_log":false,"open_netConnecting_log":false,"ipAddress":"<PLAYER_IP>","payUrl":"http://150.5.131.114:19701","isTestServer":false,"error_log_level":2,"server_id":"31000","open_cs":false,"serverTime":1795361145029}
+HotUpdateSystem OnCheckHotUpdateStart IsVerifyProgramVersion: True
+localProgramVersion: 2026-10-24-12-00-58 gmProgramVersion: 2026-10-24-12-00-58 gmPatchVersion: 2026-11-09-11-50-10
+_originVersion: 2026-11-09-11-50-10
+HotUpdateSystem Updated PackageManifest Succeed
+HotUpdateSystem Not found any download files !
+HotUpdateSystem OnHotUpdateEnd
+OnHotFixCS load success
+PostProcess
+ZPrePassRendererFeature
+MinimapPlanarReflection BeforeGBuffer
+CharacterMaskPassRendererFeature
+CameraProportionPassRendererFeature
+AODecals
+Toon Outline
+Outline feature enabled
+OnMaxLODLevel:0
+OnMipmapBias:0
+初始化设置 ISettingsSystem 成功
+登录界面拉取游戏公告成功
+登录界面拉取游戏公告图片成功
+卸载界面图集Assets/ResBundle/UI/UI_Root_GameNotice/Processed/SpriteAtlas_UI_Root_GameNotice.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_MessageBoxTop/Processed/SpriteAtlas_UI_Root_MessageBoxTop.spriteatlas
+The location is invalid : Assets/ResMain/Main/UI/UI_Root_HotUpdate/UGUI/SpriteAtlas_UI_Root_HotUpdate.spriteatlas
+Unloading 2 Unused Serialized files (Serialized files now loaded: 184)
+UnloadTime: 0.381700 ms
+Unloading 62 unused Assets to reduce memory usage. Loaded Objects now: 30630.
+Total: 61.261500 ms (FindLiveObjects: 1.793700 ms CreateObjectMapping: 1.189300 ms MarkObjects: 58.017100 ms  DeleteObjects: 0.260900 ms)
+
+Unloading 0 Unused Serialized files (Serialized files now loaded: 184)
+Unloading 22 unused Assets to reduce memory usage. Loaded Objects now: 30657.
+Total: 62.642600 ms (FindLiveObjects: 3.230200 ms CreateObjectMapping: 1.386100 ms MarkObjects: 57.820900 ms  DeleteObjects: 0.204600 ms)
+
+Unloading 2 Unused Serialized files (Serialized files now loaded: 669)
+UnloadTime: 0.331500 ms
+currentAppChannel: Channel_Oversea_Steam
+SceneOptimizers->CameraSystem.Instance.sceneOPT:True,SystemInfo.maxTextureArraySlices:2048,SystemInfo.systemMemorySize:32690,SystemInfo.graphicsMemorySize12113
+运行时一键关闭Renderer的ReflectionProbe
+运行时一键关闭Renderer的LightProbe
+一键关闭Renderer的动态遮挡剔除
+一键设置Renderer的MotionVectors为CameraOnly
+运行时一键设置Animator剔除
+运行时一键优化DecalLight
+运行时一键优化LightPlane
+运行时Combine合并SceneItem网格
+运行时设置LODGroup尺寸
+运行时静态合批阴影
+CombineVirtualTexture->Is4GDevice:False,Is6GDevice:->False,是否开启虚拟纹理:False
+运行时合并LOD0网格
+DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+Unloading 4334 unused Assets to reduce memory usage. Loaded Objects now: 37757.
+Total: 63.105000 ms (FindLiveObjects: 2.845900 ms CreateObjectMapping: 1.283600 ms MarkObjects: 56.864700 ms  DeleteObjects: 2.110400 ms)
+
+Unloading 1 Unused Serialized files (Serialized files now loaded: 662)
+Unloading 58 unused Assets to reduce memory usage. Loaded Objects now: 37703.
+Total: 68.051600 ms (FindLiveObjects: 4.681800 ms CreateObjectMapping: 1.491100 ms MarkObjects: 60.872800 ms  DeleteObjects: 1.005300 ms)
+
+[Singleton] An instance of Tayx.Graphy.GraphyManager is trying to be accessed, but it wasn't initialized first. Make sure to add an instance of Tayx.Graphy.GraphyManager in the scene before  trying to access it.
+RequestRegionInfo response, b: True str: {"status":true,"message":"success","gate_tcp_ip":"150.5.131.114","gate_tcp_port":11001,"is_server_open":true,"text":"","client_log_tcp_ip":"150.5.131.114","client_log_tcp_port":21001,"currentVersion":"2026-10-24-12-00-58_2026-11-09-11-50-10","photo_share_cdn_url":"https://jp-global-photo-prod.inutan.com/jp_global_prod"}
+QuickSDK_Oversea_steam 调用sdk login
+Pipe server started. Waiting for connection...
+Waiting for client connection...
+url https://sdkapi-of-global.inutan.com/openapi/oauth?openId=pcsdk&successUrl=https://sdkapi-of-global.inutan.com/loginSuccess.html&cancelUrl=https://sdkapi-of-global.inutan.com/loginCancel.html&productCode=14893566846394405145332210454456&channelCode=default&stopClose=1&theme=en&lang=en&sign=
+start exe gameName||qgpc&action||callLogin&url||aHR0cHM6Ly9zZGthcGktb2YtZ2xvYmFsLmludXRhbi5jb20vb3BlbmFwaS9vYXV0aD9vcGVuSWQ9cGNzZGsmc3VjY2Vzc1VybD1odHRwczovL3Nka2FwaS1vZi1nbG9iYWwuaW51dGFuLmNvbS9sb2dpblN1Y2Nlc3MuaHRtbCZjYW5jZWxVcmw9aHR0cHM6Ly9zZGthcGktb2YtZ2xvYmFsLmludXRhbi5jb20vbG9naW5DYW5jZWwuaHRtbCZwcm9kdWN0Q29kZT0xNDg5MzU2Njg0NjM5NDQwNTE0NTMzMjIxMDQ1NDQ1NiZjaGFubmVsQ29kZT1kZWZhdWx0JnN0b3BDbG9zZT0xJnRoZW1lPWVuJmxhbmc9ZW4mc2lnbj0=&width||470&height||475&loadStyle||1&showTaskIcon||null&w_left||-1928&w_top||-8&w_height||1048&w_width||1936&lang||en&closeButton||true&topWindow||1
+Process started with PID: 35344
+OnMessageReceived: {"action":"init","params":{}}
+Waiting for client connection...
+aciton init
+QuickSDK_Oversea_steam if (_isLoggingIn)
+OnMessageReceived: {"action":"loginSuccess","params":{"authToken":"<TOKEN>","timeleft":"-1","uid":"<ACCOUNT_ID>","userToken":"<TOKEN>","username":"<EMAIL>"}}
+Waiting for client connection...
+aciton loginSuccess
+timeLeft is less than 0.
+Cannot send LogEvent, the Appsflyer SDK is stopped
+[Heartbeat] 启动心跳协程
+QuickSDK_Oversea_steam onLoginSuccess uid: <ACCOUNT_ID> username: <EMAIL> token: <TOKEN>
+Customer User ID has been set
+{"timestamp":"1795361164558","device_os_version":"11-10.0.26340-64","device_model":"<DEVICE_MODEL>","app_version":"1.0.0","device_ids":[{"type":"custom","value":"<UUID>"}],"request_id":"<UUID>","limit_ad_tracking":false,"customer_user_id":"<ACCOUNT_ID>"}
+登录界面拉取游戏公告成功
+Request type: FIRST_OPEN_REQUEST
+Is success: ProtocolError
+Response Code: 401
+error: HTTP/1.1 401 Unauthorized
+Please try to send the request to 'sandbox-events.appsflyer.com' instead of 'events.appsflyer.com' in order to debug.
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_GameNotice/Processed/SpriteAtlas_UI_Root_GameNotice.spriteatlas
+FgInfo bytes: null
+serverTime1 : 11/22/2026 11:26:16 PM
+OnPlayerLoginRsp sceneId: 9999 是否需要强更包： True
+CheckBackGroundDownloadAssets forceDownload: True
+FairGuardSDK SetUserInfo ret: 1
+updateRole
+updateRole Success: {"status":true,"data":null,"message":"role up success"}
+地牢奖励日志：离开地牢 finish:False count:0
+Unloading 1 Unused Serialized files (Serialized files now loaded: 665)
+[OPTIMIZERS] There is no camera on the scene!
+UnloadTime: 4.765600 ms
+[OPTIMIZERS] New Camera detected and assigned! Camera
+Unloading 1516 unused Assets to reduce memory usage. Loaded Objects now: 32386.
+Total: 126.058600 ms (FindLiveObjects: 2.235400 ms CreateObjectMapping: 1.458600 ms MarkObjects: 108.679000 ms  DeleteObjects: 13.684800 ms)
+
+Unloading 0 Unused Serialized files (Serialized files now loaded: 665)
+Unloading 0 unused Assets to reduce memory usage. Loaded Objects now: 32420.
+Total: 102.422500 ms (FindLiveObjects: 2.669100 ms CreateObjectMapping: 1.088100 ms MarkObjects: 98.622800 ms  DeleteObjects: 0.041700 ms)
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_Login/Processed/SpriteAtlas_UI_Root_Login.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+Unloading 2 Unused Serialized files (Serialized files now loaded: 1318)
+UnloadTime: 0.727600 ms
+InfoConfigure表中无法查找到ID为10301的数据
+0x00007ffaa79ba30d (UnityPlayer) UnityMain
+0x00007ffaa79bf343 (UnityPlayer) UnityMain
+0x00007ffaa79a9925 (UnityPlayer) UnityMain
+0x00007ffaa7f84e7e (UnityPlayer) UnityMain
+0x00007ffaa71e1ede (UnityPlayer) 
+0x00007ffa8ea61fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eacdefc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8ea631e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa89a6c309 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa89651c92 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77a25b8 (UnityPlayer) 
+0x00007ffaa77f72e5 (UnityPlayer) 
+0x00007ffaa77bf408 (UnityPlayer) 
+0x00007ffaa77beeed (UnityPlayer) 
+0x00007ffaa77bf28f (UnityPlayer) 
+0x00007ffaa780c2f6 (UnityPlayer) 
+0x00007ffaa74c1ea8 (UnityPlayer) 
+0x00007ffaa74c2b1c (UnityPlayer) 
+0x00007ffaa7263e13 (UnityPlayer) 
+0x00007ffa8c96689e (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a2a5e83 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8c9b479a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a2a5a1b (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4da881 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4d8e5a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4dc506 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4dba4a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88d39a28 (GameAssembly) mono_domain_set
+0x00007ffa88f25768 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77a25b8 (UnityPlayer) 
+0x00007ffaa77f72e5 (UnityPlayer) 
+0x00007ffaa77bf408 (UnityPlayer) 
+0x00007ffaa77beeed (UnityPlayer) 
+0x00007ffaa77bf28f (UnityPlayer) 
+0x00007ffaa780ec0d (UnityPlayer) 
+0x00007ffaa780f424 (UnityPlayer) 
+0x00007ffaa76331e8 (UnityPlayer) 
+0x00007ffaa763527d (UnityPlayer) 
+0x00007ffaa7633b4b (UnityPlayer) 
+0x00007ffaa7636331 (UnityPlayer) 
+0x00007ffaa7635fcd (UnityPlayer) 
+0x00007ffaa7619c6a (UnityPlayer) 
+0x00007ffaa7619d10 (UnityPlayer) 
+0x00007ffaa761c9e8 (UnityPlayer) 
+0x00007ffaa781d475 (UnityPlayer) 
+0x00007ffaa781bdbb (UnityPlayer) 
+0x00007ffaa7820f76 (UnityPlayer) 
+0x00007ffaa78238db (UnityPlayer) UnityMain
+0x00007ff6a88011f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+SceneOptimizers->CameraSystem.Instance.sceneOPT:True,SystemInfo.maxTextureArraySlices:2048,SystemInfo.systemMemorySize:32690,SystemInfo.graphicsMemorySize12113
+运行时一键关闭Renderer的ReflectionProbe
+运行时一键关闭Renderer的LightProbe
+一键关闭Renderer的动态遮挡剔除
+一键设置Renderer的MotionVectors为CameraOnly
+运行时一键设置Animator剔除
+运行时一键优化DecalLight
+运行时一键优化LightPlane
+Combine mesh instance 4 is null.
+Combine mesh instance 13 is null.
+Combine mesh instance 47 is null.
+Combine mesh instance 6 is null.
+Combine mesh instance 5 is null.
+Combine mesh instance 5 is null.
+Combine mesh instance 5 is null.
+运行时Combine合并SceneItem网格
+运行时设置LODGroup尺寸
+运行时静态合批阴影
+CombineVirtualTexture->Is4GDevice:False,Is6GDevice:->False,是否开启虚拟纹理:False
+运行时合并LOD0网格
+[OPTIMIZERS] There can't be two Optimizers Managers at the same time! I'm removing new one!
+EnterCurrentScene 
+EnterCurrentScene SceneDataNotice start 
+True
+初始座椅ID不能为0
+0x00007ffaa79ba30d (UnityPlayer) UnityMain
+0x00007ffaa79bf343 (UnityPlayer) UnityMain
+0x00007ffaa79a9925 (UnityPlayer) UnityMain
+0x00007ffaa7f84e7e (UnityPlayer) UnityMain
+0x00007ffaa71e1ede (UnityPlayer) 
+0x00007ffa8ea61fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eacdefc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8ea631e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a780a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4d9c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4dbdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4e7472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eae30df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bdfc5 (UnityPlayer) 
+0x00007ffaa77c1e27 (UnityPlayer) 
+0x00007ffaa77c1433 (UnityPlayer) 
+0x00007ffaa725712a (UnityPlayer) 
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bf523 (UnityPlayer) 
+0x00007ffaa77bf606 (UnityPlayer) 
+0x00007ffaa74c0af0 (UnityPlayer) 
+0x00007ffaa7619c6a (UnityPlayer) 
+0x00007ffaa7619d10 (UnityPlayer) 
+0x00007ffaa761c9e8 (UnityPlayer) 
+0x00007ffaa781d475 (UnityPlayer) 
+0x00007ffaa781bdbb (UnityPlayer) 
+0x00007ffaa7820f76 (UnityPlayer) 
+0x00007ffaa78238db (UnityPlayer) UnityMain
+0x00007ff6a88011f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+初始座椅ID不能为0
+0x00007ffaa79ba30d (UnityPlayer) UnityMain
+0x00007ffaa79bf343 (UnityPlayer) UnityMain
+0x00007ffaa79a9925 (UnityPlayer) UnityMain
+0x00007ffaa7f84e7e (UnityPlayer) UnityMain
+0x00007ffaa71e1ede (UnityPlayer) 
+0x00007ffa8ea61fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eacdefc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8ea631e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a780a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4d9c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4dbdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4e7472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eae30df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bdfc5 (UnityPlayer) 
+0x00007ffaa77c1e27 (UnityPlayer) 
+0x00007ffaa77c1433 (UnityPlayer) 
+0x00007ffaa725712a (UnityPlayer) 
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bf523 (UnityPlayer) 
+0x00007ffaa77bf606 (UnityPlayer) 
+0x00007ffaa74c0af0 (UnityPlayer) 
+0x00007ffaa7619c6a (UnityPlayer) 
+0x00007ffaa7619d10 (UnityPlayer) 
+0x00007ffaa761c9e8 (UnityPlayer) 
+0x00007ffaa781d475 (UnityPlayer) 
+0x00007ffaa781bdbb (UnityPlayer) 
+0x00007ffaa7820f76 (UnityPlayer) 
+0x00007ffaa78238db (UnityPlayer) UnityMain
+0x00007ff6a88011f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+初始座椅ID不能为0
+0x00007ffaa79ba30d (UnityPlayer) UnityMain
+0x00007ffaa79bf343 (UnityPlayer) UnityMain
+0x00007ffaa79a9925 (UnityPlayer) UnityMain
+0x00007ffaa7f84e7e (UnityPlayer) UnityMain
+0x00007ffaa71e1ede (UnityPlayer) 
+0x00007ffa8ea61fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eacdefc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8ea631e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a780a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4d9c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4dbdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4e7472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eae30df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bdfc5 (UnityPlayer) 
+0x00007ffaa77c1e27 (UnityPlayer) 
+0x00007ffaa77c1433 (UnityPlayer) 
+0x00007ffaa725712a (UnityPlayer) 
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bf523 (UnityPlayer) 
+0x00007ffaa77bf606 (UnityPlayer) 
+0x00007ffaa74c0af0 (UnityPlayer) 
+0x00007ffaa7619c6a (UnityPlayer) 
+0x00007ffaa7619d10 (UnityPlayer) 
+0x00007ffaa761c9e8 (UnityPlayer) 
+0x00007ffaa781d475 (UnityPlayer) 
+0x00007ffaa781bdbb (UnityPlayer) 
+0x00007ffaa7820f76 (UnityPlayer) 
+0x00007ffaa78238db (UnityPlayer) UnityMain
+0x00007ff6a88011f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+初始座椅ID不能为0
+0x00007ffaa79ba30d (UnityPlayer) UnityMain
+0x00007ffaa79bf343 (UnityPlayer) UnityMain
+0x00007ffaa79a9925 (UnityPlayer) UnityMain
+0x00007ffaa7f84e7e (UnityPlayer) UnityMain
+0x00007ffaa71e1ede (UnityPlayer) 
+0x00007ffa8ea61fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eacdefc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8ea631e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a780a59 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4d9c44 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4dbdbf (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4e7472 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eae30df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bdfc5 (UnityPlayer) 
+0x00007ffaa77c1e27 (UnityPlayer) 
+0x00007ffaa77c1433 (UnityPlayer) 
+0x00007ffaa725712a (UnityPlayer) 
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bf523 (UnityPlayer) 
+0x00007ffaa77bf606 (UnityPlayer) 
+0x00007ffaa74c0af0 (UnityPlayer) 
+0x00007ffaa7619c6a (UnityPlayer) 
+0x00007ffaa7619d10 (UnityPlayer) 
+0x00007ffaa761c9e8 (UnityPlayer) 
+0x00007ffaa781d475 (UnityPlayer) 
+0x00007ffaa781bdbb (UnityPlayer) 
+0x00007ffaa7820f76 (UnityPlayer) 
+0x00007ffaa78238db (UnityPlayer) UnityMain
+0x00007ff6a88011f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+座椅ID重复：10<ACCOUNT_ID>022
+0x00007ffaa79ba30d (UnityPlayer) UnityMain
+0x00007ffaa79bf343 (UnityPlayer) UnityMain
+0x00007ffaa79a9925 (UnityPlayer) UnityMain
+0x00007ffaa7f84e7e (UnityPlayer) UnityMain
+0x00007ffaa71e1ede (UnityPlayer) 
+0x00007ffa8ea61fbc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eacdefc (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8ea631e6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a781830 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a77e78d (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a7742c6 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bf523 (UnityPlayer) 
+0x00007ffaa77bef81 (UnityPlayer) 
+0x00007ffaa77bf28f (UnityPlayer) 
+0x00007ffaa780c2f6 (UnityPlayer) 
+0x00007ffaa7409882 (UnityPlayer) 
+0x00007ffaa724a643 (UnityPlayer) 
+0x00007ffa8a3c60c1 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a3c2eed (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a3c09f2 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4028ab (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4022b3 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8a4e749a (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa8eae30df (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bdfc5 (UnityPlayer) 
+0x00007ffaa77c1e27 (UnityPlayer) 
+0x00007ffaa77c1433 (UnityPlayer) 
+0x00007ffaa725712a (UnityPlayer) 
+0x00007ffa88f25706 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffa88f256a4 (GameAssembly) GlobalizationNative_GetTimeZoneDisplayName
+0x00007ffaa779f268 (UnityPlayer) 
+0x00007ffaa77a2492 (UnityPlayer) 
+0x00007ffaa77bf523 (UnityPlayer) 
+0x00007ffaa77bf606 (UnityPlayer) 
+0x00007ffaa74c0af0 (UnityPlayer) 
+0x00007ffaa7619c6a (UnityPlayer) 
+0x00007ffaa7619d10 (UnityPlayer) 
+0x00007ffaa761c9e8 (UnityPlayer) 
+0x00007ffaa781d475 (UnityPlayer) 
+0x00007ffaa781bdbb (UnityPlayer) 
+0x00007ffaa7820f76 (UnityPlayer) 
+0x00007ffaa78238db (UnityPlayer) UnityMain
+0x00007ff6a88011f2 (launcher) 
+0x00007ffbd40adda7 (KERNEL32) BaseThreadInitThunk
+0x00007ffbd4539c6c (ntdll) RtlUserThreadStart
+
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+Unloading 54063 unused Assets to reduce memory usage. Loaded Objects now: 239948.
+Total: 150.572600 ms (FindLiveObjects: 25.238600 ms CreateObjectMapping: 9.114200 ms MarkObjects: 97.389200 ms  DeleteObjects: 18.830200 ms)
+
+Unloading 2 Unused Serialized files (Serialized files now loaded: 1463)
+Unloading 53 unused Assets to reduce memory usage. Loaded Objects now: 246097.
+Total: 123.893400 ms (FindLiveObjects: 22.018100 ms CreateObjectMapping: 3.851100 ms MarkObjects: 97.676300 ms  DeleteObjects: 0.347400 ms)
+
+[Singleton] An instance of Tayx.Graphy.GraphyManager is trying to be accessed, but it wasn't initialized first. Make sure to add an instance of Tayx.Graphy.GraphyManager in the scene before  trying to access it.
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowArgumentOutOfRange_IndexException()) ► Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+
+  at UI_Main_ViewCtrl+<>c__DisplayClass196_0.<Set_Spell_Button_Cooldown>b__1 (System.Single x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowArgumentOutOfRange_IndexException()) ► Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+
+  at UI_Main_ViewCtrl+<>c__DisplayClass196_0.<Set_Spell_Button_Cooldown>b__1 (System.Single x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowArgumentOutOfRange_IndexException()) ► Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+
+  at UI_Main_ViewCtrl+<>c__DisplayClass196_0.<Set_Spell_Button_Cooldown>b__1 (System.Single x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void ThrowArgumentOutOfRange_IndexException()) ► Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+
+  at UI_Main_ViewCtrl+<>c__DisplayClass196_0.<Set_Spell_Button_Cooldown>b__1 (System.Single x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+登录界面拉取游戏公告成功
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_GameNotice/Processed/SpriteAtlas_UI_Root_GameNotice.spriteatlas
+No mesh data available for mesh sm_Magnifying on particle system SmallHearts_2. Make sure Read/Write Enabled is set in the importer to work on the particle system renderer
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+FgInfo bytes: null
+OnChannelJumpCallback | 切换场景频道
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_3030530 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+[Heartbeat] 心跳上报：23:27:14
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+[Heartbeat] 心跳上报：23:28:14
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Selection/Processed/SpriteAtlas_UI_Root_Selection.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Character/Processed/SpriteAtlas_UI_Root_Character.spriteatlas
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+[Heartbeat] 心跳上报：23:29:15
+[Heartbeat] 心跳上报：23:30:15
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：23:31:15
+[Heartbeat] 心跳上报：23:32:15
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (UnityEngine.Vector3 <DOMove>b__0()) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.ShortcutExtensions+<>c__DisplayClass32_0.<DOMove>b__0 () [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Plugins.Vector3Plugin.EvaluateAndApply (DG.Tweening.Plugins.Options.VectorOptions options, DG.Tweening.Tween t, System.Boolean isRelative, DG.Tweening.Core.DOGetter`1[T] getter, DG.Tweening.Core.DOSetter`1[T] setter, System.Single elapsed, UnityEngine.Vector3 startValue, UnityEngine.Vector3 changeValue, System.Single duration, System.Boolean usingInversePosition, System.Int32 newCompletedSteps, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.ApplyInternalCycle (DG.Tweening.Sequence s, System.Single fromPos, System.Single toPos, DG.Tweening.Core.Enums.UpdateMode updateMode, System.Boolean useInverse, System.Boolean prevPosIsInverse, System.Boolean multiCycleStep) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.DoApplyTween (DG.Tweening.Sequence s, System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+[Heartbeat] 心跳上报：23:33:15
+[Heartbeat] 心跳上报：23:34:16
+[Heartbeat] 心跳上报：23:35:16
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (UnityEngine.Vector3 <DOMove>b__0()) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.ShortcutExtensions+<>c__DisplayClass32_0.<DOMove>b__0 () [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Plugins.Vector3Plugin.EvaluateAndApply (DG.Tweening.Plugins.Options.VectorOptions options, DG.Tweening.Tween t, System.Boolean isRelative, DG.Tweening.Core.DOGetter`1[T] getter, DG.Tweening.Core.DOSetter`1[T] setter, System.Single elapsed, UnityEngine.Vector3 startValue, UnityEngine.Vector3 changeValue, System.Single duration, System.Boolean usingInversePosition, System.Int32 newCompletedSteps, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.ApplyInternalCycle (DG.Tweening.Sequence s, System.Single fromPos, System.Single toPos, DG.Tweening.Core.Enums.UpdateMode updateMode, System.Boolean useInverse, System.Boolean prevPosIsInverse, System.Boolean multiCycleStep) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.DoApplyTween (DG.Tweening.Sequence s, System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+[Heartbeat] 心跳上报：23:36:16
+[Heartbeat] 心跳上报：23:37:16
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：23:38:16
+[Heartbeat] 心跳上报：23:39:16
+[Heartbeat] 心跳上报：23:40:16
+[Animancer] 跳过播放：动画资源不可用。Unit=[Monster]Spiked Pufferfish Module=null Clip=null
+落地水花_游泳_深 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：23:41:16
+[Heartbeat] 心跳上报：23:42:17
+This pool contained a null despawned clone, did you accidentally destroy it?
+[Heartbeat] 心跳上报：23:43:17
+This pool contained a null despawned clone, did you accidentally destroy it?
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：23:44:17
+This pool contained a null despawned clone, did you accidentally destroy it?
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+  at SpellSystem.DoInterruptSpell (Unit caster, System.Int32 spellID) [0x00000] in <00000000000000000000000000000000>:0 
+  at Buff_536.OnBuffRemove () [0x00000] in <00000000000000000000000000000000>:0 
+  at BuffBase.TryRemoveBuff () [0x00000] in <00000000000000000000000000000000>:0 
+  at BuffSystem.RemoveBuff (Unit unit, BuffBase buff) [0x00000] in <00000000000000000000000000000000>:0 
+  at BuffSystem.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) [0x00000] in <00000000000000000000000000000000>:0 
+  at UnitManager+Buff.RemoveBuff (Unit unit, System.Int32 buffID, System.Int32 genID) [0x00000] in <00000000000000000000000000000000>:0 
+  at CallbackSignal`1[T].Invoke (T t) [0x00000] in <00000000000000000000000000000000>:0 
+  at SpellController.Stop (System.Boolean destroy) [0x00000] in <00000000000000000000000000000000>:0 
+  at SpellStateMachine.ForceSetState (SpellState state) [0x00000] in <00000000000000000000000000000000>:0 
+  at SpellStateMachine.TrySetState (SpellState state) [0x00000] in <00000000000000000000000000000000>:0 
+  at SpellController.OnUpdate () [0x00000] in <00000000000000000000000000000000>:0 
+  at UpdateManager.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：23:45:17
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (UnityEngine.Vector3 <DOMove>b__0()) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.ShortcutExtensions+<>c__DisplayClass32_0.<DOMove>b__0 () [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Plugins.Vector3Plugin.EvaluateAndApply (DG.Tweening.Plugins.Options.VectorOptions options, DG.Tweening.Tween t, System.Boolean isRelative, DG.Tweening.Core.DOGetter`1[T] getter, DG.Tweening.Core.DOSetter`1[T] setter, System.Single elapsed, UnityEngine.Vector3 startValue, UnityEngine.Vector3 changeValue, System.Single duration, System.Boolean usingInversePosition, System.Int32 newCompletedSteps, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.ApplyInternalCycle (DG.Tweening.Sequence s, System.Single fromPos, System.Single toPos, DG.Tweening.Core.Enums.UpdateMode updateMode, System.Boolean useInverse, System.Boolean prevPosIsInverse, System.Boolean multiCycleStep) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.DoApplyTween (DG.Tweening.Sequence s, System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+[Heartbeat] 心跳上报：23:46:17
+[Heartbeat] 心跳上报：23:47:17
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+眩晕4s | You're attempting to despawn a gameObject that wasn't spawned from this pool
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+[Heartbeat] 心跳上报：23:48:17
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+This pool contained a null despawned clone, did you accidentally destroy it?
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：23:49:17
+This pool contained a null despawned clone, did you accidentally destroy it?
+眩晕4s | You're attempting to despawn a gameObject that wasn't spawned from this pool
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+This pool contained a null despawned clone, did you accidentally destroy it?
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：23:50:17
+[Heartbeat] 心跳上报：23:51:17
+[Heartbeat] 心跳上报：23:52:17
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：23:53:17
+[Heartbeat] 心跳上报：23:54:17
+[Heartbeat] 心跳上报：23:55:17
+[Animancer] 跳过播放：动画资源不可用。Unit=[Player] Module=jump_glide Clip=null
+[Heartbeat] 心跳上报：23:56:17
+[Heartbeat] 心跳上报：23:57:17
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：23:58:17
+[Heartbeat] 心跳上报：23:59:17
+[Heartbeat] 心跳上报：00:00:17
+[Heartbeat] 心跳上报：00:01:17
+This pool contained a null despawned clone, did you accidentally destroy it?
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+This pool contained a null despawned clone, did you accidentally destroy it?
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:02:17
+[Heartbeat] 心跳上报：00:03:17
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：00:04:17
+落地水花_游泳_深 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:05:17
+This pool contained a null despawned clone, did you accidentally destroy it?
+[Heartbeat] 心跳上报：00:06:17
+[Heartbeat] 心跳上报：00:07:17
+[Heartbeat] 心跳上报：00:08:17
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：00:09:17
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+[Heartbeat] 心跳上报：00:10:17
+落地水花_游泳_深 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:11:19
+This pool contained a null despawned clone, did you accidentally destroy it?
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+[Heartbeat] 心跳上报：00:12:19
+[OPTIMIZERS] Optimizer had saved objects to optimize which are not existing anymore!
+Spell_2020501 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:13:19
+Spell_2020501 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020501_投掷物_单个线索rank02爆炸区域 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+This pool contained a null despawned clone, did you accidentally destroy it?
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+[Heartbeat] 心跳上报：00:14:19
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020501 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:15:19
+[Heartbeat] 心跳上报：00:16:20
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：00:17:20
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+No mesh data available for mesh Weapon_Ball_08 on particle system 弹起. Make sure Read/Write Enabled is set in the importer to work on the particle system renderer
+[Heartbeat] 心跳上报：00:18:32
+[Heartbeat] 心跳上报：00:19:37
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+[Heartbeat] 心跳上报：00:20:39
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+[Heartbeat] 心跳上报：00:21:39
+[Heartbeat] 心跳上报：00:22:40
+[Heartbeat] 心跳上报：00:23:40
+This pool contained a null despawned clone, did you accidentally destroy it?
+[Heartbeat] 心跳上报：00:24:55
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：00:26:05
+[Heartbeat] 心跳上报：00:27:07
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:28:09
+This pool contained a null despawned clone, did you accidentally destroy it?
+眩晕4s | You're attempting to despawn a gameObject that wasn't spawned from this pool
+眩晕触发 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020501 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:29:18
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+This pool contained a null despawned clone, did you accidentally destroy it?
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:30:19
+Spell_2020501_投掷物_线索侦测探针 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+Spell_2020500 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:31:19
+[Heartbeat] 心跳上报：00:32:19
+[Heartbeat] 心跳上报：00:33:19
+[Heartbeat] 心跳上报：00:34:19
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：00:35:19
+[Heartbeat] 心跳上报：00:36:19
+[Heartbeat] 心跳上报：00:37:19
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+[Heartbeat] 心跳上报：00:38:22
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+[Heartbeat] 心跳上报：00:39:22
+[Heartbeat] 心跳上报：00:40:22
+[Heartbeat] 心跳上报：00:41:23
+回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+This pool contained a null despawned clone, did you accidentally destroy it?
+回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:42:23
+This pool contained a null despawned clone, did you accidentally destroy it?
+回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:43:23
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (UnityEngine.Vector3 <DOMove>b__0()) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.ShortcutExtensions+<>c__DisplayClass32_0.<DOMove>b__0 () [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Plugins.Vector3Plugin.EvaluateAndApply (DG.Tweening.Plugins.Options.VectorOptions options, DG.Tweening.Tween t, System.Boolean isRelative, DG.Tweening.Core.DOGetter`1[T] getter, DG.Tweening.Core.DOSetter`1[T] setter, System.Single elapsed, UnityEngine.Vector3 startValue, UnityEngine.Vector3 changeValue, System.Single duration, System.Boolean usingInversePosition, System.Int32 newCompletedSteps, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.ApplyInternalCycle (DG.Tweening.Sequence s, System.Single fromPos, System.Single toPos, DG.Tweening.Core.Enums.UpdateMode updateMode, System.Boolean useInverse, System.Boolean prevPosIsInverse, System.Boolean multiCycleStep) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.DoApplyTween (DG.Tweening.Sequence s, System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+[Heartbeat] 心跳上报：00:44:23
+[Heartbeat] 心跳上报：00:45:23
+This pool contained a null despawned clone, did you accidentally destroy it?
+回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:46:24
+This pool contained a null despawned clone, did you accidentally destroy it?
+回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+This pool contained a null despawned clone, did you accidentally destroy it?
+回复临时 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：00:47:24
+[Heartbeat] 心跳上报：00:48:24
+[Heartbeat] 心跳上报：00:49:24
+卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (UnityEngine.Vector3 <DOMove>b__0()) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.ShortcutExtensions+<>c__DisplayClass32_0.<DOMove>b__0 () [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Plugins.Vector3Plugin.EvaluateAndApply (DG.Tweening.Plugins.Options.VectorOptions options, DG.Tweening.Tween t, System.Boolean isRelative, DG.Tweening.Core.DOGetter`1[T] getter, DG.Tweening.Core.DOSetter`1[T] setter, System.Single elapsed, UnityEngine.Vector3 startValue, UnityEngine.Vector3 changeValue, System.Single duration, System.Boolean usingInversePosition, System.Int32 newCompletedSteps, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.ApplyInternalCycle (DG.Tweening.Sequence s, System.Single fromPos, System.Single toPos, DG.Tweening.Core.Enums.UpdateMode updateMode, System.Boolean useInverse, System.Boolean prevPosIsInverse, System.Boolean multiCycleStep) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.DoApplyTween (DG.Tweening.Sequence s, System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+[Heartbeat] 心跳上报：00:50:25
+[Heartbeat] 心跳上报：00:51:25
+[Heartbeat] 心跳上报：00:52:25
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+[Heartbeat] 心跳上报：00:53:25
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (UnityEngine.Vector3 <DOMove>b__0()) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.ShortcutExtensions+<>c__DisplayClass32_0.<DOMove>b__0 () [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Plugins.Vector3Plugin.EvaluateAndApply (DG.Tweening.Plugins.Options.VectorOptions options, DG.Tweening.Tween t, System.Boolean isRelative, DG.Tweening.Core.DOGetter`1[T] getter, DG.Tweening.Core.DOSetter`1[T] setter, System.Single elapsed, UnityEngine.Vector3 startValue, UnityEngine.Vector3 changeValue, System.Single duration, System.Boolean usingInversePosition, System.Int32 newCompletedSteps, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.ApplyInternalCycle (DG.Tweening.Sequence s, System.Single fromPos, System.Single toPos, DG.Tweening.Core.Enums.UpdateMode updateMode, System.Boolean useInverse, System.Boolean prevPosIsInverse, System.Boolean multiCycleStep) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.DoApplyTween (DG.Tweening.Sequence s, System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+[Heartbeat] 心跳上报：00:54:25
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：00:55:25
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：00:56:25
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+[Heartbeat] 心跳上报：00:57:26
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：00:58:27
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：00:59:28
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:00:28
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:01:28
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:02:28
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:03:28
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:04:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:05:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:06:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:07:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:08:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:09:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:10:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:11:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:12:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:13:29
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:14:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:15:29
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:16:30
+[Character_Base@Skin]renderer有Null的项!!!
+[Character_Base@Skin]renderer有Null的项!!!
+[Character_Base@Skin]renderer有Null的项!!!
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:17:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:18:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:19:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:20:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:21:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:22:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:23:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:24:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:25:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+This pool contained a null despawned clone, did you accidentally destroy it?
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:26:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:27:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Shop/Processed/SpriteAtlas_UI_Root_Shop.spriteatlas
+[Heartbeat] 心跳上报：01:28:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:29:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:30:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - Boolean DoStartup[T1,T2,TPlugOptions](DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions])): the tween will now be killed ► Object reference not set to an instance of an object.
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:31:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:32:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:33:30
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:34:31
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:35:33
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:36:34
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:37:34
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:38:34
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:39:34
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:40:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:41:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:42:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:43:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+[Heartbeat] 心跳上报：01:44:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:45:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_ItemTips/Processed/SpriteAtlas_UI_Root_ItemTips.spriteatlas
+[Heartbeat] 心跳上报：01:46:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:47:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:48:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:49:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:50:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:51:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:52:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_ItemTips/Processed/SpriteAtlas_UI_Root_ItemTips.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:53:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:54:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+[Heartbeat] 心跳上报：01:55:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:56:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_ProgressTips/Processed/SpriteAtlas_UI_Root_ProgressTips.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+[Heartbeat] 心跳上报：01:57:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+[Heartbeat] 心跳上报：01:58:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：01:59:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:00:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:01:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:02:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:03:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:04:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:05:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:06:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Void <DOAnchorPos>b__1(UnityEngine.Vector2)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.DOTweenModuleUI+<>c__DisplayClass13_0.<DOAnchorPos>b__1 (UnityEngine.Vector2 x) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:07:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:08:35
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:09:37
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:10:37
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:11:37
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:12:37
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:13:37
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:14:38
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:15:38
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:16:38
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (Boolean ApplyTween(Single, Int32, Int32, Boolean, DG.Tweening.Core.Enums.UpdateMode, DG.Tweening.Core.Enums.UpdateNotice)) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+[Heartbeat] 心跳上报：02:17:53
+[Heartbeat] 心跳上报：02:19:02
+[Heartbeat] 心跳上报：02:20:02
+[Heartbeat] 心跳上报：02:21:02
+[Heartbeat] 心跳上报：02:22:02
+[Heartbeat] 心跳上报：02:23:03
+[Heartbeat] 心跳上报：02:24:03
+[Heartbeat] 心跳上报：02:25:03
+[Heartbeat] 心跳上报：02:26:03
+[Heartbeat] 心跳上报：02:27:03
+[Heartbeat] 心跳上报：02:28:03
+[Heartbeat] 心跳上报：02:29:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:30:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:31:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:32:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:33:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:34:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:35:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:36:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:37:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:38:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:39:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:40:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:41:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:42:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:43:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_ItemTips/Processed/SpriteAtlas_UI_Root_ItemTips.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:44:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:45:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:46:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+This pool contained a null despawned clone, did you accidentally destroy it?
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+up_01 | You're attempting to despawn a gameObject that wasn't spawned from this pool
+[Heartbeat] 心跳上报：02:47:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:48:03
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:49:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+[Heartbeat] 心跳上报：02:50:04
+<color=#0099bc><b>DOTWEEN ► </b></color>Target or field is missing/null (UnityEngine.Vector3 <DOMove>b__0()) ► Object reference not set to an instance of an object.
+
+  at DG.Tweening.ShortcutExtensions+<>c__DisplayClass32_0.<DOMove>b__0 () [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Plugins.Vector3Plugin.EvaluateAndApply (DG.Tweening.Plugins.Options.VectorOptions options, DG.Tweening.Tween t, System.Boolean isRelative, DG.Tweening.Core.DOGetter`1[T] getter, DG.Tweening.Core.DOSetter`1[T] setter, System.Single elapsed, UnityEngine.Vector3 startValue, UnityEngine.Vector3 changeValue, System.Single duration, System.Boolean usingInversePosition, System.Int32 newCompletedSteps, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenerCore`3[T1,T2,TPlugOptions].ApplyTween (System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode, DG.Tweening.Core.Enums.UpdateNotice updateNotice) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.ApplyInternalCycle (DG.Tweening.Sequence s, System.Single fromPos, System.Single toPos, DG.Tweening.Core.Enums.UpdateMode updateMode, System.Boolean useInverse, System.Boolean prevPosIsInverse, System.Boolean multiCycleStep) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Sequence.DoApplyTween (DG.Tweening.Sequence s, System.Single prevPosition, System.Int32 prevCompletedLoops, System.Int32 newCompletedSteps, System.Boolean useInversePosition, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Tween.DoGoto (DG.Tweening.Tween t, System.Single toPosition, System.Int32 toCompletedLoops, DG.Tweening.Core.Enums.UpdateMode updateMode) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.Tween t, System.Single deltaTime, System.Single independentTime, System.Boolean isSingleTweenManualUpdate) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.TweenManager.Update (DG.Tweening.UpdateType updateType, System.Single deltaTime, System.Single independentTime) [0x00000] in <00000000000000000000000000000000>:0 
+  at DG.Tweening.Core.DOTweenComponent.Update () [0x00000] in <00000000000000000000000000000000>:0 
+
+<color=#0099bc><b>DOTWEEN ► </b></color>Tween startup failed (NULL target/property - UnityEngine.Vector3 <DOMove>b__0()): the tween will now be killed ► Object reference not set to an instance of an object.
+[Heartbeat] 心跳上报：02:51:04
+任务额外弹出纯图公告:9001,62
+任务额外弹出纯图公告:9001,62
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_NpcDelegateTask/Processed/SpriteAtlas_UI_Root_NpcDelegateTask.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+[Heartbeat] 心跳上报：02:52:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:53:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:54:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:55:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:56:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:57:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:58:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：02:59:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Emotion/Processed/SpriteAtlas_UI_Root_Emotion.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:00:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:01:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:02:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:03:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:04:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:05:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:06:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:07:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:08:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:09:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:10:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:11:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:12:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:13:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_ProgressTips/Processed/SpriteAtlas_UI_Root_ProgressTips.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:14:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:15:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:16:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:17:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:18:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:19:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:20:04
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:21:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:22:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:23:05
+[Heartbeat] 心跳上报：03:24:05
+[Heartbeat] 心跳上报：03:25:05
+[Heartbeat] 心跳上报：03:26:05
+[Heartbeat] 心跳上报：03:27:05
+This pool contained a null despawned clone, did you accidentally destroy it?
+[Heartbeat] 心跳上报：03:28:05
+[Heartbeat] 心跳上报：03:29:05
+[Heartbeat] 心跳上报：03:30:05
+[Heartbeat] 心跳上报：03:31:05
+[Heartbeat] 心跳上报：03:32:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_Fishing/Processed/SpriteAtlas_UI_Root_Fishing.spriteatlas
+[Heartbeat] 心跳上报：03:33:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:34:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:35:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_ItemTips/Processed/SpriteAtlas_UI_Root_ItemTips.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:36:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:37:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:38:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:39:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:40:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:41:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:42:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:43:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:44:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:45:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:46:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:47:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:48:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:49:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:50:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:51:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_LifeMaking/Processed/SpriteAtlas_UI_Root_LifeMaking.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardSpecial/Processed/SpriteAtlas_UI_Root_RewardSpecial.spriteatlas
+[Heartbeat] 心跳上报：03:52:05
+[Heartbeat] 心跳上报：03:53:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+FgInfo bytes: null
+OnChannelJumpCallback | 切换场景频道
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_PlayerMenu/Processed/SpriteAtlas_UI_Root_PlayerMenu.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Friend/Processed/SpriteAtlas_UI_Root_Friend.spriteatlas
+[Heartbeat] 心跳上报：03:54:05
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_Connecting/Processed/SpriteAtlas_UI_Root_Connecting.spriteatlas
+卸载界面图集Assets/ResBundle/UI/UI_Root_RewardMultiple/Processed/SpriteAtlas_UI_Root_RewardMultiple.spriteatlas
+Application is quitting...
+Connecting to server...
+Connected to server!
+Pipe server Close.
+Pipe server stopped and resources released.
+Error: Cannot access a closed pipe.
+listeningThread exited.
+Server stopped.
+Terminating process with PID: 35344
+<color=#ff7337><color=#0099bc><b>DOTWEEN ► </b></color> SAFE MODE ►</color> DOTween's safe mode captured 51 errors. This is usually ok (it's what safe mode is there for) but if your game is encountering issues you should set Log Behaviour to Default in DOTween Utility Panel in order to get detailed warnings when an error is captured (consider that these errors are always on the user side).
+- 43 missing target or field errors
+- 8 startup errors
+Memory Statistics:
+[ALLOC_TEMP_TLS] TLS Allocator
+  StackAllocators : 
+    [ALLOC_TEMP_MAIN]
+      Peak usage frame count: [8.0 KB-16.0 KB]: 1796 frames, [16.0 KB-32.0 KB]: 5 frames, [32.0 KB-64.0 KB]: 281 frames, [64.0 KB-128.0 KB]: 481544 frames, [128.0 KB-256.0 KB]: 6845 frames, [256.0 KB-0.5 MB]: 1029 frames, [0.5 MB-1.0 MB]: 404145 frames, [1.0 MB-2.0 MB]: 258 frames, [2.0 MB-4.0 MB]: 6 frames, [4.0 MB-8.0 MB]: 11 frames
+      Initial Block Size 4.0 MB
+      Current Block Size 8.0 MB
+      Peak Allocated Bytes 7.9 MB
+      Overflow Count 1270
+    [ALLOC_TEMP_Loading.AsyncRead]
+      Initial Block Size 64.0 KB
+      Current Block Size 128.0 KB
+      Peak Allocated Bytes 128.0 KB
+      Overflow Count 7
+    [ALLOC_TEMP_Loading.PreloadManager]
+      Initial Block Size 256.0 KB
+      Current Block Size 0.5 MB
+      Peak Allocated Bytes 511.6 KB
+      Overflow Count 12541
+    [ALLOC_TEMP_Background Job.Worker 8]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 25.2 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 6]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 0]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 10]
+      Initial Block Size 32.0 KB
+      Current Block Size 40.0 KB
+      Peak Allocated Bytes 39.6 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 9]
+      Initial Block Size 32.0 KB
+      Current Block Size 40.0 KB
+      Peak Allocated Bytes 38.1 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 5]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 14]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 15.4 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 6]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 6.9 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 4]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 14]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 3]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 13]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 90.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 12]
+      Initial Block Size 32.0 KB
+      Current Block Size 36.0 KB
+      Peak Allocated Bytes 33.1 KB
+      Overflow Count 0
+    [ALLOC_TEMP_EnlightenWorker] x 4
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 15]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 27.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 1]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 24.1 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 2]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 10.8 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 7]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 28.6 KB
+      Overflow Count 0
+    [ALLOC_TEMP_UnityGfxDeviceWorker]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 52.6 KB
+      Overflow Count 0
+    [ALLOC_TEMP_AssetGarbageCollectorHelper] x 15
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 0 B
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 5]
+      Initial Block Size 32.0 KB
+      Current Block Size 44.0 KB
+      Peak Allocated Bytes 41.8 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 9]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 90.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 13]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 21.2 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 8]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 90.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 7]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 90.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 1]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 2]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 3]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 30.1 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 11]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 20.1 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 10]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 0]
+      Initial Block Size 32.0 KB
+      Current Block Size 32.0 KB
+      Peak Allocated Bytes 26.9 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 11]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Job.Worker 12]
+      Initial Block Size 256.0 KB
+      Current Block Size 256.0 KB
+      Peak Allocated Bytes 88.5 KB
+      Overflow Count 0
+    [ALLOC_TEMP_Background Job.Worker 4]
+      Initial Block Size 32.0 KB
+      Current Block Size 40.0 KB
+      Peak Allocated Bytes 39.3 KB
+      Overflow Count 0
+    [ALLOC_TEMP_BatchDeleteObjects]
+      Initial Block Size 64.0 KB
+      Current Block Size 64.0 KB
+      Peak Allocated Bytes 54 B
+      Overflow Count 0
+[ALLOC_DEFAULT] Dual Thread Allocator
+  Peak main deferred allocation count 65925
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 4.0 MB
+      Failed Allocations. Bucket layout:
+        16B: 7 Subsections = 7168 buckets. Failed count: 107609933
+        32B: 40 Subsections = 20480 buckets. Failed count: 47770833
+        48B: 29 Subsections = 9898 buckets. Failed count: 115380611
+        64B: 77 Subsections = 19712 buckets. Failed count: 8610681
+        80B: 67 Subsections = 13721 buckets. Failed count: 2745007
+        96B: 14 Subsections = 2389 buckets. Failed count: 1827155
+        112B: 12 Subsections = 1755 buckets. Failed count: 2658683
+        128B: 10 Subsections = 1280 buckets. Failed count: 6444580
+    [ALLOC_DEFAULT_MAIN]
+      Peak usage frame count: [16.0 MB-32.0 MB]: 363 frames, [32.0 MB-64.0 MB]: 240 frames, [64.0 MB-128.0 MB]: 1507 frames, [128.0 MB-256.0 MB]: 16219 frames, [256.0 MB-0.50 GB]: 254922 frames, [0.50 GB-1.00 GB]: 622669 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 35
+      Peak Allocated memory 0.56 GB
+      Peak Large allocation bytes 140.0 MB
+    [ALLOC_DEFAULT_THREAD]
+      Peak usage frame count: [128.0 MB-256.0 MB]: 895920 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 6
+      Peak Allocated memory 202.9 MB
+      Peak Large allocation bytes 164.0 MB
+[ALLOC_TEMP_JOB_1_FRAME]
+  Initial Block Size 2.0 MB
+  Used Block Count 1
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_2_FRAMES]
+  Initial Block Size 2.0 MB
+  Used Block Count 1
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_4_FRAMES (JobTemp)]
+  Initial Block Size 2.0 MB
+  Used Block Count 12
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_TEMP_JOB_ASYNC (Background)]
+  Initial Block Size 1.0 MB
+  Used Block Count 12
+  Overflow Count (too large) 0
+  Overflow Count (full) 0
+[ALLOC_GFX] Dual Thread Allocator
+  Peak main deferred allocation count 363
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 4.0 MB
+      Failed Allocations. Bucket layout:
+        16B: 7 Subsections = 7168 buckets. Failed count: 107609933
+        32B: 40 Subsections = 20480 buckets. Failed count: 47770833
+        48B: 29 Subsections = 9898 buckets. Failed count: 115380611
+        64B: 77 Subsections = 19712 buckets. Failed count: 8610681
+        80B: 67 Subsections = 13721 buckets. Failed count: 2745007
+        96B: 14 Subsections = 2389 buckets. Failed count: 1827155
+        112B: 12 Subsections = 1755 buckets. Failed count: 2658683
+        128B: 10 Subsections = 1280 buckets. Failed count: 6444580
+    [ALLOC_GFX_MAIN]
+      Peak usage frame count: [64.0 KB-128.0 KB]: 316 frames, [128.0 KB-256.0 KB]: 47 frames, [256.0 KB-0.5 MB]: 2 frames, [4.0 MB-8.0 MB]: 55 frames, [16.0 MB-32.0 MB]: 1688 frames, [32.0 MB-64.0 MB]: 76679 frames, [64.0 MB-128.0 MB]: 817131 frames, [128.0 MB-256.0 MB]: 2 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 9
+      Peak Allocated memory 137.4 MB
+      Peak Large allocation bytes 0 B
+    [ALLOC_GFX_THREAD]
+      Peak usage frame count: [4.0 KB-8.0 KB]: 308 frames, [16.0 KB-32.0 KB]: 57 frames, [128.0 KB-256.0 KB]: 3 frames, [0.5 MB-1.0 MB]: 29 frames, [1.0 MB-2.0 MB]: 142 frames, [2.0 MB-4.0 MB]: 67 frames, [4.0 MB-8.0 MB]: 6 frames, [8.0 MB-16.0 MB]: 8 frames, [16.0 MB-32.0 MB]: 1343 frames, [32.0 MB-64.0 MB]: 10 frames, [64.0 MB-128.0 MB]: 1148 frames, [128.0 MB-256.0 MB]: 892775 frames, [256.0 MB-0.50 GB]: 24 frames
+      Requested Block Size 16.0 MB
+      Peak Block count 19
+      Peak Allocated memory 334.2 MB
+      Peak Large allocation bytes 32.0 MB
+[ALLOC_CACHEOBJECTS] Dual Thread Allocator
+  Peak main deferred allocation count 40474
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 4.0 MB
+      Failed Allocations. Bucket layout:
+        16B: 7 Subsections = 7168 buckets. Failed count: 107609933
+        32B: 40 Subsections = 20480 buckets. Failed count: 47770833
+        48B: 29 Subsections = 9898 buckets. Failed count: 115380611
+        64B: 77 Subsections = 19712 buckets. Failed count: 8610681
+        80B: 67 Subsections = 13721 buckets. Failed count: 2745007
+        96B: 14 Subsections = 2389 buckets. Failed count: 1827155
+        112B: 12 Subsections = 1755 buckets. Failed count: 2658683
+        128B: 10 Subsections = 1280 buckets. Failed count: 6444580
+    [ALLOC_CACHEOBJECTS_MAIN]
+      Peak usage frame count: [16.0 MB-32.0 MB]: 365 frames, [128.0 MB-256.0 MB]: 1743 frames, [256.0 MB-0.50 GB]: 995 frames, [0.50 GB-1.00 GB]: 892817 frames
+      Requested Block Size 4.0 MB
+      Peak Block count 167
+      Peak Allocated memory 0.86 GB
+      Peak Large allocation bytes 296.2 MB
+    [ALLOC_CACHEOBJECTS_THREAD]
+      Peak usage frame count: [128.0 KB-256.0 KB]: 41 frames, [256.0 KB-0.5 MB]: 241 frames, [0.5 MB-1.0 MB]: 85 frames, [1.0 MB-2.0 MB]: 1 frames, [2.0 MB-4.0 MB]: 1 frames, [16.0 MB-32.0 MB]: 2 frames, [32.0 MB-64.0 MB]: 2 frames, [64.0 MB-128.0 MB]: 18 frames, [128.0 MB-256.0 MB]: 191 frames, [256.0 MB-0.50 GB]: 895338 frames
+      Requested Block Size 4.0 MB
+      Peak Block count 106
+      Peak Allocated memory 452.8 MB
+      Peak Large allocation bytes 182.9 MB
+[ALLOC_TYPETREE] Dual Thread Allocator
+  Peak main deferred allocation count 0
+    [ALLOC_BUCKET]
+      Large Block size 4.0 MB
+      Used Block count 1
+      Peak Allocated bytes 4.0 MB
+      Failed Allocations. Bucket layout:
+        16B: 7 Subsections = 7168 buckets. Failed count: 107609933
+        32B: 40 Subsections = 20480 buckets. Failed count: 47770833
+        48B: 29 Subsections = 9898 buckets. Failed count: 115380611
+        64B: 77 Subsections = 19712 buckets. Failed count: 8610681
+        80B: 67 Subsections = 13721 buckets. Failed count: 2745007
+        96B: 14 Subsections = 2389 buckets. Failed count: 1827155
+        112B: 12 Subsections = 1755 buckets. Failed count: 2658683
+        128B: 10 Subsections = 1280 buckets. Failed count: 6444580
+    [ALLOC_TYPETREE_MAIN]
+      Peak usage frame count: [0-1.0 KB]: 35 frames, [4.0 KB-8.0 KB]: 2 frames, [64.0 KB-128.0 KB]: 327 frames, [128.0 KB-256.0 KB]: 1 frames, [4.0 MB-8.0 MB]: 1744 frames, [8.0 MB-16.0 MB]: 778 frames, [16.0 MB-32.0 MB]: 11287 frames, [32.0 MB-64.0 MB]: 166902 frames, [64.0 MB-128.0 MB]: 714844 frames
+      Requested Block Size 2.0 MB
+      Peak Block count 45
+      Peak Allocated memory 86.3 MB
+      Peak Large allocation bytes 0 B
+    [ALLOC_TYPETREE_THREAD]
+      Peak usage frame count: [1.0 KB-2.0 KB]: 42 frames, [64.0 KB-128.0 KB]: 2 frames, [128.0 KB-256.0 KB]: 251 frames, [256.0 KB-0.5 MB]: 72 frames, [0.5 MB-1.0 MB]: 10 frames, [1.0 MB-2.0 MB]: 73 frames, [2.0 MB-4.0 MB]: 67 frames, [4.0 MB-8.0 MB]: 1387 frames, [8.0 MB-16.0 MB]: 73 frames, [16.0 MB-32.0 MB]: 1203 frames, [32.0 MB-64.0 MB]: 892740 frames
+      Requested Block Size 2.0 MB
+      Peak Block count 22
+      Peak Allocated memory 41.7 MB
+      Peak Large allocation bytes 0 B

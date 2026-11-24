@@ -1,0 +1,56 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllMoonStoneDatas {
+  protocol.StoneAreaDataDatas StoneAreaData = 1;
+  protocol.StoneUnlockDataDatas StoneUnlockData = 2;
+  protocol.StoneRewardQuestDataDatas StoneRewardQuestData = 3;
+}
+message StoneAreaDataDatas {
+  repeated protocol.StoneAreaDataConfigure datas = 1;
+}
+message StoneAreaDataConfigure {
+  int32 ID = 1;
+  int32 SceneID = 2;
+  int32 ItemID = 3;
+  int32 UnlockItemID = 4;
+  int32 UnlockID = 5;
+  int32 RewardQuestID = 6;
+  int32 UnlockCount = 7;
+  int32 IconID = 8;
+  int32 TextID = 9;
+  int32 RewardIconID = 10;
+  int32 RewardTextID = 11;
+}
+message StoneUnlockDataDatas {
+  repeated protocol.StoneUnlockDataConfigure datas = 1;
+}
+message StoneUnlockDataConfigure {
+  int32 ID = 1;
+  repeated protocol.StoneUnlockDataGroupInfo StoneUnlockDataGroupInfo = 2;
+}
+message StoneUnlockDataGroupInfo {
+  int32 BoxID = 1;
+  int32 ColumnID = 2;
+  int32 RowID = 3;
+  int32 IconID = 4;
+  int32 StringID = 5;
+  int32 ItemID = 6;
+  int32 ItemCount = 7;
+  repeated int32 RelateBoxIDs = 8;
+  repeated int32 UnlockAchieveID = 9;
+}
+message StoneRewardQuestDataDatas {
+  repeated protocol.StoneRewardQuestDataConfigure datas = 1;
+}
+message StoneRewardQuestDataConfigure {
+  int32 ID = 1;
+  repeated protocol.StoneRewardQuestDataGroupInfo StoneRewardQuestDataGroupInfo = 2;
+}
+message StoneRewardQuestDataGroupInfo {
+  int32 IndexID = 1;
+  int32 IconID = 2;
+  int32 ShowAchieveConditionID = 3;
+  int32 AchieveConditionID = 4;
+}

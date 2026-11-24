@@ -1,0 +1,66 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllPetDatas {
+  protocol.PetDatas Pet = 1;
+  protocol.NatureDatas Nature = 2;
+  protocol.ReleaseRewardDatas ReleaseReward = 3;
+  protocol.CompletenessDatas Completeness = 4;
+}
+message PetDatas {
+  repeated protocol.PetConfigure datas = 1;
+}
+message PetConfigure {
+  int32 ID = 1;
+  int32 MonsterID = 2;
+  bool DecisionCapture = 3;
+  int32 RuleID = 4;
+  int32 Hp = 5;
+  int32 Pow = 6;
+  int32 Str = 7;
+  int32 Int = 8;
+  int32 Dex = 9;
+  int32 Luc = 10;
+  int32 Rarity = 11;
+  repeated int32 ReleaseReward = 12;
+  repeated int32 Parma = 13;
+  int32 NewPetAttackType = 14;
+  int32 NewPetDefendType = 15;
+  int32 NewSpecialFeature = 16;
+}
+message NatureDatas {
+  repeated protocol.NatureConfigure datas = 1;
+}
+message NatureConfigure {
+  int32 ID = 1;
+  int32 NewPetNatureType = 2;
+  int32 NewBuffType = 3;
+  int32 BuffValue = 4;
+  int32 NewDebuffType = 5;
+  int32 DebuffValue = 6;
+  int32 NewSkilledBuffType = 7;
+  repeated int32 SkilledBuffValue = 8;
+  int32 NewLackBuffType = 9;
+  repeated int32 LackBuffValue = 10;
+}
+message ReleaseRewardDatas {
+  repeated protocol.ReleaseRewardConfigure datas = 1;
+}
+message ReleaseRewardConfigure {
+  int32 ID = 1;
+  repeated protocol.ReleaseRewardItem ReleaseRewardItem = 2;
+}
+message ReleaseRewardItem {
+  int32 ReleaseRewardID = 1;
+  int32 ReleaseRewardCount = 2;
+}
+message CompletenessDatas {
+  repeated protocol.CompletenessConfigure datas = 1;
+}
+message CompletenessConfigure {
+  int32 ID = 1;
+  int32 PositiveEffect = 2;
+  int32 ReverseEffect = 3;
+  int32 TextID = 4;
+}

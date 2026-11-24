@@ -1,0 +1,20 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllQuickObtainingDatas {
+  protocol.QuickObtainingDatas QuickObtaining = 1;
+}
+message QuickObtainingDatas {
+  repeated protocol.QuickObtainingConfigure datas = 1;
+}
+message QuickObtainingConfigure {
+  int32 ID = 1;
+  repeated protocol.QuickObtainingItem QuickObtainingItem = 2;
+}
+message QuickObtainingItem {
+  int32 PlayerLevel = 1;
+  int32 Num = 2;
+  int32 NeedVitality = 3;
+  int32 NeedSpecialcurrency = 4;
+}

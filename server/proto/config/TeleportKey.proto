@@ -1,0 +1,17 @@
+// Recovered from OverField client (global-metadata.dat) — do not edit by hand
+syntax = "proto3";
+package protocol;
+
+message AllTeleportKeyDatas {
+  protocol.TeleportKeyDatas TeleportKey = 1;
+}
+message TeleportKeyDatas {
+  repeated protocol.TeleportKeyConfigure datas = 1;
+}
+message TeleportKeyConfigure {
+  int32 ID = 1;
+  repeated protocol.TeleportKeyItem TeleportKeyItem = 2;
+}
+message TeleportKeyItem {
+  int32 NeedUnlockSceneID = 1;
+}
