@@ -193,6 +193,44 @@ def markdown(cfg, m, areas, overall):
     return '\n'.join(out)
 
 
+SQ = {'done': '🟩', 'partial': '🟨', 'blocked': '🟥', 'open': '⬛'}
+
+
+def bar(v, n=30):
+    k = round(v * n)
+    return '▰' * k + '▱' * (n - k)
+
+
+def readme(cfg, m, areas, overall):
+    """Front page of the repo: the progress chart drawn in text (shows even where images are blocked)."""
+    area_vals = [sum(r[1] for r in rows) / len(rows) for _, rows in areas]
+    out = [f'# {cfg["title"]} — {overall * 100:.2f}%', '', f'`{bar(overall, 40)}` **{overall * 100:.2f}%**', '',
+           cfg['subtitle'], '', '| Area | Progress | |', '|---|---|---:|']
+    for (name, _), v in zip(areas, area_vals):
+        out.append(f'| {name} | `{bar(v)}` | **{v * 100:.1f}%** |')
+    out += ['', '🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet', '']
+    for (name, rows), v in zip(areas, area_vals):
+        out += [f'## {name} — {v * 100:.1f}%', '', '| | Item | Status |', '|---|---|---|']
+        for label, val, col, right, note, kind in rows:
+            if kind == 'bar':
+                out.append(f'| {"🟩" if val >= 0.999 else "🟨"} | {label} | `{bar(val, 20)}` {right} |')
+            else:
+                out.append(f'| {SQ[kind]} | {label} | {right}{" — " + note if note else ""} |')
+        out.append('')
+    qc = m['quest_cells']
+    if qc:
+        ex = len([c for c in qc if c != 'none'])
+        out += [f'**Quest steps with a rule:** {ex:,} / {len(qc):,} (`{bar(ex / len(qc))}` {ex / len(qc) * 100:.1f}%)', '']
+    out += ['![Rozefield progress chart](docs/progress.png)', '',
+            f'_Updated {time.strftime("%Y-%m-%d")} by `py server/tools/progress.py` from [docs/checklist.json](docs/checklist.json)._', '',
+            '## About', '',
+            'Rozefield preserves OverField: the archived client and a private server that runs it after the official shutdown.', '',
+            '- [Archive notes: client build, endpoints, protocol, captures](docs/ARCHIVE.md)',
+            '- [Server: setup, login window, backup / import, GM commands](server/README.md)',
+            '- [Checklist (plain)](docs/PROGRESS.md)', '']
+    return '\n'.join(out)
+
+
 def main():
     cfg = json.load(open(os.path.join(DOCS, 'checklist.json'), encoding='utf-8'))
     m = measure()
@@ -205,6 +243,7 @@ def main():
     except Exception as e:
         print('progress.png not updated (pip install cairosvg):', e.__class__.__name__)
     open(os.path.join(DOCS, 'PROGRESS.md'), 'w', encoding='utf-8').write(markdown(cfg, m, areas, overall))
+    open(os.path.join(ROOT, 'README.md'), 'w', encoding='utf-8').write(readme(cfg, m, areas, overall))
     print(f'overall {overall * 100:.2f}% -> docs/progress.svg, docs/PROGRESS.md')
 
 
