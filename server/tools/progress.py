@@ -176,7 +176,7 @@ def svg(cfg, m, areas):
 
 
 def markdown(cfg, m, areas, overall):
-    out = [f'# {cfg["title"]}: {overall * 100:.2f}%', '', '![progress](progress.svg)', '',
+    out = [f'# {cfg["title"]}: {overall * 100:.2f}%', '', '![progress](progress.png)', '',
            f'_{cfg["subtitle"]} Updated {time.strftime("%Y-%m-%d")}; regenerate with `py server/tools/progress.py`._', '']
     mark = {'done': '[x]', 'partial': '[~]', 'blocked': '[!]', 'open': '[ ]', 'bar': '[~]'}
     for name, rows in areas:
@@ -199,6 +199,11 @@ def main():
     areas = rows_of(cfg, m)
     s, overall = svg(cfg, m, areas)
     open(os.path.join(DOCS, 'progress.svg'), 'w', encoding='utf-8').write(s)
+    try:  # GitHub's file viewer can refuse inline SVG; the README shows the PNG
+        import cairosvg
+        cairosvg.svg2png(bytestring=s.encode('utf-8'), write_to=os.path.join(DOCS, 'progress.png'))
+    except Exception as e:
+        print('progress.png not updated (pip install cairosvg):', e.__class__.__name__)
     open(os.path.join(DOCS, 'PROGRESS.md'), 'w', encoding='utf-8').write(markdown(cfg, m, areas, overall))
     print(f'overall {overall * 100:.2f}% -> docs/progress.svg, docs/PROGRESS.md')
 

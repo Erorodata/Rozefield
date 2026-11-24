@@ -2,7 +2,7 @@
 
 **Rozefield progress:** see [docs/PROGRESS.md](docs/PROGRESS.md) (checklist) — regenerate with `py server/tools/progress.py`.
 
-![Rozefield progress](docs/progress.svg)
+![Rozefield progress](docs/progress.png)
 
 Archived 2026-11-23 (shutdown period). Source: `H:\Backup\OverField` (a copy of the Steam install at `H:\SteamLibrary\steamapps\common\OverField`).
 
