@@ -180,14 +180,30 @@ def register(H, pack, scene_player):
             b['status'] = 'MPBeaconStatus_PLACED'
             t['called'] = set()
         ctx.reply({'status': OK, 'beacon': beacon(t, ready=False if act != 'MPBeaconAction_CALL_IN' else None), 'team_id': t['id']})
-        ctx.push('SceneMPBeaconNotice', {'status': OK, 'beacons': {str(t['id']): {k: v for k, v in beacon(t).items()
+        ctx.server.broadcast(ctx, 'SceneMPBeaconNotice', {'status': OK, 'beacons': {str(t['id']): {k: v for k, v in beacon(t).items()
                                                                                    if k not in ('channel_label', 'scene_id')}}})
         if act == 'MPBeaconAction_CALL_IN':
             b2 = dict(beacon(t), can_start=True)
             push_all(ctx, t, 'MPTeamBeaconNotice', {'status': OK, 'beacon': b2, 'team_id': t['id']})
             push_all(ctx, t, 'MPBeaconCanStartNotice', {'status': OK, 'team_id': t['id'], 'can_start': True})
     H['MPBeaconActionReq'] = beacon_action
-    H['MPBeaconPlayerReadyReq'] = lambda ctx, req: ctx.reply({'status': OK})
+    def walk_in(ctx, req):
+        """Another player steps into a calling-in beacon: they join that team and are marked ready."""
+        t = teams.get(req.get('team_id'))
+        pid = ctx.p.s['player_id']
+        if not t:
+            return ctx.reply({'status': FAIL})
+        if req.get('is_ready', True):
+            if pid not in t['members'] and len(t['members']) < 16:
+                t['members'].append(pid)
+            t['called'].add(pid)
+            ctx.p.s['mp_team'] = t['id']
+        else:
+            t['called'].discard(pid)
+        ctx.reply({'status': OK})
+        push_all(ctx, t, 'MPTeamBeaconNotice', {'status': OK, 'beacon': dict(beacon(t), can_start=True), 'team_id': t['id']})
+        push_all(ctx, t, 'MPTeamMemberNotice', {'status': OK, 'team_id': t['id'], 'members': detail(ctx, t)['members']})
+    H['MPBeaconPlayerReadyReq'] = walk_in
 
     # ---------------- the round
     def start(ctx, req):
@@ -300,6 +316,8 @@ def register(H, pack, scene_player):
                 s.push('MPPlayRoomSettlementNotice', {'status': OK, 'rank': rank, 'gameplayId': room['gameplay'], 'rewards': got,
                                                       'total_consume_time': str(took)})
                 s.push('PackNotice', {'status': OK, 'items': changed})
+                from game.events import moon_reward
+                moon_reward(s, 1121, 25)
             except Exception:
                 pass
         t['room'] = None

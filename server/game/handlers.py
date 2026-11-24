@@ -84,8 +84,17 @@ def ping(ctx, req):
 @handler('PlayerSceneRecordReq')
 def scene_record(ctx, req):
     pos = req.get('pos') or req.get('Pos')
+    data = req.get('data') or {}
+    if not pos:
+        for c in data.get('charRecorderDataLst', []):
+            for x in c.get('dataLst', []):
+                if x.get('pos'):
+                    pos = x['pos']
     if pos:
         ctx.p.s['last_pos'] = pos
+    if data and len(ctx.server.channels.get(getattr(ctx, 'chan', None), ())) > 1:   # movement seen by the others here
+        ctx.server.broadcast(ctx, 'PlayerSceneSyncDataNotice', {'status': OK, 'data': [{'player_id': ctx.p.s['player_id'], 'data': [data]}]},
+                             include_self=False)
     return None  # no answer
 
 
@@ -209,8 +218,10 @@ def garden_info(ctx, req):
 
 @handler('SceneSitChairReq')
 def sit(ctx, req):
-    ctx.reply({'status': OK, 'playerId': ctx.p.s['player_id'], 'chairId': req.get('chairId', 0),
-               'seatId': req.get('seatId', 0), 'isSit': req.get('isSit', False)})
+    r = {'status': OK, 'playerId': ctx.p.s['player_id'], 'chairId': req.get('chairId', 0),
+         'seatId': req.get('seatId', 0), 'isSit': req.get('isSit', False)}
+    ctx.reply(r)
+    ctx.server.broadcast(ctx, 'SceneSitChairRsp', r, include_self=False)   # official: others get the same answer
 
 
 # ============================================================ chat (+ GM commands)
@@ -228,8 +239,29 @@ def chat(ctx, req):
            'expression': req.get('expression', 0), 'sendTime': str(now_ms()),
            'avatarFrame': s.get('appearance', {}).get('avatar_frame', 0)}
     # the sender's client already shows its own line from SendChatMsgRsp (official server never echoes it back)
-    ctx.server.broadcast(ctx, 'ChatMsgNotice', {'status': OK, 'type': req.get('type', 'ChatChannelType_None'), 'msg': msg},
-                         include_self=False)
+    kind = req.get('type', 'ChatChannel_Default')
+    note = {'status': OK, 'type': kind, 'msg': msg}
+    if kind == 'ChatChannel_ChatRoom':            # world chat: everyone online
+        for o in list(ctx.server.sessions.values()):
+            if o is not ctx and o.p:
+                try:
+                    o.push('ChatMsgNotice', note)
+                except Exception:
+                    pass
+    elif kind == 'ChatChannel_Private':           # private chat: the target, kept in both players' history
+        tid = req.get('playerId')
+        for pl in (ctx.p, ctx.server.player_by_id(tid)):
+            if pl:
+                other = tid if pl is ctx.p else s['player_id']
+                h = pl.s.setdefault('misc', {}).setdefault('private_chat', {}).setdefault(str(other), [])
+                h.append(dict(msg, toPlayerId=tid) if False else msg)
+                del h[:-100]
+                pl.dirty = True
+        o = ctx.server.sessions.get(tid)
+        if o and o is not ctx:
+            o.push('ChatMsgNotice', note)
+    else:                                         # nearby: same scene channel
+        ctx.server.broadcast(ctx, 'ChatMsgNotice', note, include_self=False)
 
 
 def gm_command(ctx, text):
@@ -1035,6 +1067,13 @@ def set_archive(ctx, req):
 @handler('SendActionReq')
 def send_action(ctx, req):
     ctx.reply({'status': OK})
+    aid = req.get('actionId', 0)
+    if aid >= 10000:   # group action (high five, hug...): nearby players get an invite icon above this player
+        ctx.server.broadcast(ctx, 'SendMultipleActionNotice', {'status': OK, 'actionId': aid, 'fromPlayerId': ctx.p.s['player_id'],
+                                                               'endTime': str(int(time.time()) + 30)}, include_self=False)
+    else:
+        ctx.server.broadcast(ctx, 'SendActionNotice', {'status': OK, 'actionId': aid, 'fromPlayerId': ctx.p.s['player_id'],
+                                                       'fromPlayerName': ctx.p.s['name']}, include_self=False)
     Q.event(ctx.p, Q.C['Emotion'])
 
 
@@ -1137,6 +1176,9 @@ def outfit_dye_save(ctx, req):
 @handler('SceneInterActionPlayStatusReq')
 def interaction_status(ctx, req):
     ctx.reply({'status': OK})
+    ctx.server.broadcast(ctx, 'SceneInterActionPlayStatusNotice', {'status': OK, 'actionStatus': req.get('actionStatus', {}),
+                                                                   'pushType': req.get('pushType', 'Immediately'),
+                                                                   'playerId': ctx.p.s['player_id']}, include_self=False)
 
 
 # ============================================================ simple status replies built from state
@@ -1204,6 +1246,10 @@ _misc.register(H, pack)
 # Game Hall co-op games (balloons, floating platforms), playable solo or with others on this server
 from game import coop as _coop  # noqa: E402
 _coop.register(H, pack, scene_player)
+
+# online Gomoku, photo wall, rankings, restaurant mini-game
+from game import social2 as _social2  # noqa: E402
+_social2.register(H, pack)
 
 # events (pass, gashapon, wishing tree, sign-in), abyss, group emotes, dice, friend gifts, recruit extras
 from game import events as _events  # noqa: E402

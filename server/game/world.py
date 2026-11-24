@@ -89,12 +89,30 @@ def gear_pool(d):
     return _GEAR
 
 
-def roll_gear(d, n):
+QUALITY_WEIGHTS = (30, 30, 25, 12, 3)   # quality digit 1..5; 5 is the rare drop (3%)
+
+
+def _gear_key(i):
+    """(quality 1-5, tier 1-10) from the id: weapon 1TSSQTT (Q at [4], tier [5:]), armor 2SPQTTT (Q at [3], tier [4:])."""
+    s = str(i)
+    return (int(s[4]), int(s[5:])) if s[0] == '1' else (int(s[3]), int(s[4:]))
+
+
+def roll_gear(d, n, world_level=None):
+    """Field / chest gear. The gear tier follows the world level (official drops at world level 5 were tier 5);
+    quality is weighted, with the top quality as a rare 3% drop."""
     g = gear_pool(d)
     out = []
     for _ in range(n):
         pool = g['weapon'] if random.random() < 0.35 else g['armor']
-        if pool:
+        if not pool:
+            continue
+        if world_level:
+            tier = max(1, min(10, world_level + random.choice((-1, 0, 0, 1))))
+            q = random.choices((1, 2, 3, 4, 5), weights=QUALITY_WEIGHTS)[0]
+            pick = [i for i in pool if _gear_key(i) == (q, tier)] or [i for i in pool if _gear_key(i)[1] == tier] or pool
+            out.append((random.choice(pick), 1))
+        else:
             out.append((random.choice(pool), 1))
     return out
 
@@ -119,6 +137,25 @@ def dungeon_chest(p, cfg, ds):
         out = [(GOLD, 500), (190, random.randint(3, 6)), (191, 1)]
     out.append((1, 300 if cfg.get('NewMissionType') != 7 or gear else 200))
     return out
+
+
+def _moon(ctx, gid, n):
+    try:
+        from game.events import moon_reward
+        moon_reward(ctx, gid, n)
+    except Exception:
+        pass
+
+
+def _moon_update(ctx):
+    try:
+        from game import events
+        before = events._ev(ctx.p).get('daily_task', {}).get('left', 0)
+        dt = events._daily_task(ctx.p)
+        if dt['exchange_times_left'] != before:
+            ctx.push('DailyTaskUpdateNotice', dict(status=OK, **dt))
+    except Exception:
+        pass
 
 
 def register(H, pack, scene_player):
@@ -161,7 +198,7 @@ def register(H, pack, scene_player):
             dyn = ctx.__dict__.setdefault('dynamic_boxes', {}).pop(req.get('treasureBoxIndex', 0), None)
             if dyn is None:
                 return ctx.reply({'status': FAIL})
-            items, changed = give(ctx, [(GOLD, random.randint(60, 120))] + roll_gear(p.d, random.randint(2, 3)))
+            items, changed = give(ctx, [(GOLD, random.randint(60, 120))] + roll_gear(p.d, random.randint(2, 3), p.s.get('world_level', 1)))
             ctx.reply({'status': OK, 'items': items})
             pack(ctx, changed)
             Q.event(p, Q.C['OpenBox'])
@@ -187,7 +224,7 @@ def register(H, pack, scene_player):
         big = cfg.get('NewTreasureBoxRewardShowType', 1) >= 3
         items = [(GOLD, random.randint(300, 600) if big else random.randint(80, 200)), (190, random.randint(2, 4) if big else 1)]
         if big:
-            items += roll_gear(p.d, 1) + [(102, 10)]
+            items += roll_gear(p.d, 1, p.s.get('world_level', 1)) + [(102, 10)]
         items, changed = give(ctx, items)
         ctx.reply({'status': OK, 'items': items})
         pack(ctx, changed)
@@ -215,6 +252,7 @@ def register(H, pack, scene_player):
             w['encounters'][str(eid)] = int(time.time())
             p.dirty = True
             ctx.reply({'status': OK, 'encounter': {'battleId': eid, 'state': 'Finish'}, 'dynamicTreasureBoxBaseInfo': dyn_box(ctx)})
+            _moon(ctx, 1119, 5)
             Q.event(p, Q.C['FinishEncounter'])
             Q.event(p, Q.C['FinishTheEncounter'], eid)
             return
@@ -323,6 +361,7 @@ def register(H, pack, scene_player):
         got, changed = p.add_items([(MOON, 5)])
         ctx.reply({'status': OK, 'moonId': mid, 'rewards': got})
         pack(ctx, changed)
+        _moon_update(ctx)
     H['CollectMoonReq'] = moon
     H['GetCollectMoonInfoReq'] = lambda ctx, req: ctx.reply(
         {'status': OK, 'sceneId': req.get('sceneId', 0), 'collectedMoonIds': W(ctx.p, req.get('sceneId', 0))['moons']})
@@ -335,7 +374,7 @@ def register(H, pack, scene_player):
             kills = ctx.__dict__.pop('kills_since_drop', 0)
             if not kills:
                 return ctx.reply({'status': OK})
-            items = roll_gear(p.d, random.randint(3, 5))
+            items = roll_gear(p.d, random.randint(3, 5), p.s.get('world_level', 1))
             if random.random() < 0.3:
                 items.append((random.choice((1030, 1032, 1020, 1022, 1010, 1012, 1000, 1002)), random.randint(1, 4)))
         got, changed = p.add_items(items)

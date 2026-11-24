@@ -64,6 +64,49 @@ class HTTP:
                 "currentVersion": f"{c.client_version}_{c.res_version}",
                 "photo_share_cdn_url": f"http://{c.host_ip}:{c.http_port}/photo"}
 
+    def account_login(self, body, register):
+        import re
+        import secrets
+        try:
+            name, pw = body.decode('utf-8').split('\n', 1)
+        except Exception:
+            return 'ERR|Enter an account name and a password.'
+        name, pw = name.strip(), pw.strip('\r\n')
+        if not name or len(name) > 24 or not re.fullmatch(r"[\w .'-]+", name, re.UNICODE):
+            return 'ERR|Account names use letters, numbers, spaces, - and _ (24 at most).'
+        if len(pw) < 4:
+            return 'ERR|Passwords need at least 4 characters.'
+        reg_path = os.path.join(HERE, 'save', 'accounts', '_registry.json')
+        reg = json.load(open(reg_path, encoding='utf-8')) if os.path.exists(reg_path) else {'by_uid': {}}
+        uid = None
+        for u, pid in reg.get('by_uid', {}).items():   # match the account name or the character name
+            f = os.path.join(HERE, 'save', 'accounts', f'{pid}.json')
+            nm = ''
+            if os.path.exists(f):
+                try:
+                    nm = json.load(open(f, encoding='utf-8')).get('name', '')
+                except Exception:
+                    pass
+            if u.lower() == 'rz_' + name.lower() or nm.lower() == name.lower():
+                uid = u
+                break
+        if not uid and has_password('rz_' + name.lower()):   # registered but not played yet
+            uid = 'rz_' + name.lower()
+        if register:
+            if uid or has_password('rz_' + name.lower()):
+                return 'ERR|That name is already taken. Try another.'
+            uid = 'rz_' + name.lower()
+            set_password(uid, pw)
+        else:
+            if not uid:
+                return 'ERR|No account with that name. Create one first.'
+            if not check_password(uid, pw):
+                return 'ERR|Wrong password. If you forgot it, ask the server owner to reset it.'
+        key = secrets.token_hex(12)
+        if self.game:
+            self.game.login_keys[uid] = (key, time.time() + 600)
+        return f'OK|{uid}|{name}|{key}'
+
     def import_backup(self, data):
         from tools.import_player import import_bytes, ImportFailed
         os.makedirs(os.path.join(HERE, 'save', 'imports'), exist_ok=True)
@@ -161,6 +204,9 @@ class HTTP:
                 log.warning('account list: %s', e)
             lines.sort(key=lambda x: -int(x.rsplit('|', 1)[1]))
             out = '\n'.join(l.rsplit('|', 1)[0] for l in lines).encode('utf-8'); ctype = 'text/plain; charset=utf-8'
+        elif p in ('/rozefield/login', '/rozefield/register') and method == 'POST':
+            # login window: body "name\npassword" -> "OK|uid|name|key" or "ERR|reason"
+            out = self.account_login(body, p.endswith('register')).encode('utf-8'); ctype = 'text/plain; charset=utf-8'
         elif p == '/rozefield/import' and method == 'POST':  # login window "Import backup": body = .rzsave
             out = (await asyncio.get_running_loop().run_in_executor(None, self.import_backup, body)).encode('utf-8')
             ctype = 'text/plain; charset=utf-8'
@@ -188,11 +234,51 @@ from game import quests as Q
 
 
 def decode_token(tok):
-    """The Rozefield SDK stub puts the typed username in the token as @NNN@NNN@ bytes."""
+    """The Rozefield SDK stub puts the typed username in the token as @NNN@NNN@ bytes (then #<session key>)."""
     try:
-        return bytes(int(x) for x in tok.strip('@').split('@') if x).decode('utf-8')
+        return bytes(int(x) for x in tok.split('#')[0].strip('@').split('@') if x).decode('utf-8')
     except Exception:
         return None
+
+
+# ------------------------------------------------------------------ account passwords
+PW_FILE = os.path.join(HERE, 'save', 'accounts', '_passwords.json')
+
+
+def _pw_load():
+    try:
+        return json.load(open(PW_FILE, encoding='utf-8'))
+    except Exception:
+        return {}
+
+
+def _pw_hash(pw, salt=None):
+    import hashlib
+    import secrets
+    salt = salt or secrets.token_hex(16)
+    return salt, hashlib.pbkdf2_hmac('sha256', pw.encode('utf-8'), bytes.fromhex(salt), 200000).hex()
+
+
+def set_password(uid, pw):
+    d = _pw_load()
+    salt, h = _pw_hash(pw)
+    d[uid] = {'salt': salt, 'hash': h}
+    os.makedirs(os.path.dirname(PW_FILE), exist_ok=True)
+    json.dump(d, open(PW_FILE, 'w', encoding='utf-8'))
+
+
+def check_password(uid, pw):
+    """True if right. An account made before passwords existed takes the first password used as its own."""
+    import hmac
+    rec = _pw_load().get(uid)
+    if not rec:
+        set_password(uid, pw)
+        return True
+    return hmac.compare_digest(_pw_hash(pw, rec['salt'])[1], rec['hash'])
+
+
+def has_password(uid):
+    return uid in _pw_load()
 
 
 class Server:
@@ -202,6 +288,7 @@ class Server:
         self.sessions = {}            # player_id -> Session
         self.channels = {}            # (scene, channel) -> set(Session)
         self.pending_names = {}
+        self.login_keys = {}   # uid -> (one-time key from the login window, expiry)
         self.templates = {}
         tp = os.path.join(HERE, 'data', 'scene_templates.json')
         if os.path.exists(tp):
@@ -245,23 +332,59 @@ class Server:
 
     # channels
     def join_channel(self, sess, scene, channel):
+        """Everyone in the same scene channel sees each other (official: ServerSceneSyncDataNotice ENTER / LEAVE)."""
         self.leave_channel(sess)
         sess.chan = (scene, channel)
+        others = [o for o in self.channels.get(sess.chan, set()) if o is not sess and o.p]
         self.channels.setdefault(sess.chan, set()).add(sess)
+        if not sess.p:
+            return
+        sp = self._scene_player(sess.p)
+        for o in others:
+            try:
+                o.push('ServerSceneSyncDataNotice', {'status': 'StatusCode_OK', 'data': [
+                    {'player_id': sess.p.s['player_id'], 'serverData': [{'action_type': 'SceneActionType_ENTER', 'player': sp}]}]})
+            except Exception:
+                pass
+        if others:
+            sess.push('ServerSceneSyncDataNotice', {'status': 'StatusCode_OK', 'data': [
+                {'player_id': o.p.s['player_id'], 'serverData': [{'action_type': 'SceneActionType_ENTER', 'player': self._scene_player(o.p)}]}
+                for o in others]})
 
     def leave_channel(self, sess):
-        if getattr(sess, 'chan', None) in self.channels:
-            self.channels[sess.chan].discard(sess)
+        chan = getattr(sess, 'chan', None)
+        if chan in self.channels:
+            self.channels[chan].discard(sess)
+            if sess.p:
+                for o in list(self.channels[chan]):
+                    try:
+                        o.push('ServerSceneSyncDataNotice', {'status': 'StatusCode_OK', 'data': [
+                            {'player_id': sess.p.s['player_id'], 'serverData': [{'action_type': 'SceneActionType_LEAVE'}]}]})
+                    except Exception:
+                        pass
         sess.chan = None
+
+    @staticmethod
+    def _scene_player(p):
+        from game.handlers import scene_player
+        return scene_player(p)
 
     def broadcast(self, sess, name, body, include_self=True):
         for o in list(self.channels.get(getattr(sess, 'chan', None), {sess})):
             if o is sess and not include_self:
                 continue
-            o.push(name, body)
+            try:
+                o.push(name, body)
+            except Exception:
+                pass
 
-    def broadcast_scene_player(self, sess):
-        pass  # multiplayer (phase 2)
+    def broadcast_scene_player(self, sess, action='SceneActionType_UPDATE_TEAM'):
+        """Outfit / gear / team changes are shown to the other players in the channel."""
+        if not getattr(sess, 'p', None):
+            return
+        sp = self._scene_player(sess.p)
+        self.broadcast(sess, 'ServerSceneSyncDataNotice', {'status': 'StatusCode_OK', 'data': [
+            {'player_id': sess.p.s['player_id'], 'serverData': [{'action_type': action, 'player': {'team': sp['team']}}]}]}, include_self=False)
 
     # ---- server console: type GM commands in the server window, e.g.  roze /all outfits
     def console(self, line):
@@ -361,9 +484,17 @@ class Session:
         if name not in ('PlayerPingReq', 'PlayerSceneRecordReq'):
             log.info('<- %s %s', name, json.dumps(rd, ensure_ascii=False)[:160])
         if name == 'VerifyLoginTokenReq':
-            nm = decode_token(rd.get('login_token', ''))
+            uid, tok = rd.get('sdkUid', ''), rd.get('login_token', '')
+            if has_password(uid):   # accounts with a password need the one-time key from the login window
+                want = self.server.login_keys.get(uid)
+                if not want or '#' not in tok or tok.split('#', 1)[1] != want[0] or want[1] < time.time():
+                    log.warning('login refused for %s (no valid key)', uid)
+                    self._send('VerifyLoginTokenRsp', {'status': 'StatusCode_FAIL'}, h.packet_id)
+                    return
+                self.server.login_keys.pop(uid, None)   # one use only
+            nm = decode_token(tok)
             if nm:
-                self.server.pending_names[rd.get('sdkUid', '')] = nm
+                self.server.pending_names[uid] = nm
         elif self.p is None:
             log.warning('request before login: %s', name); return
         self.cur = (name, h.packet_id or None)

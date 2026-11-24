@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <tlhelp32.h>
 
 #define DISPATCH_HOST "dsp-global-of.inutan.com"
 #define DISPATCH_PORT 18881
@@ -48,8 +49,13 @@ static volatile int g_running, g_cfg_patched, g_sdk_swapped;
 static HANDLE g_game_proc;
 
 /* ------------------------------------------------------------------ UI helpers */
+static char g_logpath[MAX_PATH];
 static void ui_log(const char *fmt, ...) {
     char b[1024]; va_list ap; va_start(ap, fmt); vsnprintf(b, sizeof b, fmt, ap); va_end(ap);
+    if (g_logpath[0]) {   /* RozefieldBackup.log next to the exe: send it when something goes wrong */
+        FILE *lf = fopen(g_logpath, "ab");
+        if (lf) { SYSTEMTIME t; GetLocalTime(&t); fprintf(lf, "%02d:%02d:%02d  %s\r\n", t.wHour, t.wMinute, t.wSecond, b); fclose(lf); }
+    }
     wchar_t *w = (wchar_t *)malloc(2048 * sizeof(wchar_t));
     MultiByteToWideChar(CP_UTF8, 0, b, -1, w, 2048);
     PostMessageW(g_win, WM_LOG, 0, (LPARAM)w);
@@ -461,8 +467,30 @@ static DWORD WINAPI gate_server(LPVOID arg) {
     return 0;
 }
 
+static DWORD find_launcher(void) {
+    DWORD pid = 0;
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (snap == INVALID_HANDLE_VALUE) return 0;
+    PROCESSENTRY32 e; e.dwSize = sizeof e;
+    if (Process32First(snap, &e)) do { if (_stricmp(e.szExeFile, "launcher.exe") == 0) { pid = e.th32ProcessID; break; } } while (Process32Next(snap, &e));
+    CloseHandle(snap);
+    return pid;
+}
+
 static DWORD WINAPI watch_game(LPVOID a) {
+    DWORD t0 = GetTickCount();
     WaitForSingleObject(g_game_proc, INFINITE);
+    /* Steam may close the copy we started and start the game again through Steam: follow that copy */
+    for (int round = 0; round < 3; round++) {
+        DWORD pid = 0;
+        for (int i = 0; i < 60 && !pid; i++) { Sleep(500); pid = find_launcher(); }
+        if (!pid) break;
+        HANDLE h = OpenProcess(SYNCHRONIZE, FALSE, pid);
+        if (!h) break;
+        ui_log("The game was restarted by Steam - still recording (process %lu).", (unsigned long)pid);
+        WaitForSingleObject(h, INFINITE); CloseHandle(h);
+    }
+    (void)t0;
     Sleep(1500);
     PostMessageW(g_win, WM_GAMEEXIT, 0, 0);
     return 0;
@@ -497,19 +525,28 @@ static int save_backup(char *out, int outsz) {
 }
 
 /* ------------------------------------------------------------------ actions */
-static void start_backup(void) {
+static void start_backup_work(void);
+static DWORD WINAPI start_thread(LPVOID a) { start_backup_work(); return 0; }
+static volatile LONG g_starting = 0;
+static void start_backup(void) {   /* runs in the background so the window never freezes */
+    if (InterlockedExchange(&g_starting, 1)) { ui_log("Already starting - please wait..."); return; }
+    ui_log("Starting... (button 1 pressed)");
+    CloseHandle(CreateThread(NULL, 0, start_thread, NULL, 0, NULL));
+}
+
+static void start_backup_work(void) {
     wchar_t wg[MAX_PATH]; GetWindowTextW(g_edit, wg, MAX_PATH);
     WideCharToMultiByte(CP_ACP, 0, wg, -1, g_game, MAX_PATH, NULL, NULL);
-    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"Rozefield Backup", MB_OK | MB_ICONWARNING); return; }
+    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"Rozefield Backup", MB_OK | MB_ICONWARNING); InterlockedExchange(&g_starting, 0); return; }
     char ini[MAX_PATH]; ini_path(ini); WritePrivateProfileStringA("game", "folder", g_game, ini);
     if (!g_running) {
         ui_log("Finding the official server...");
-        if (!resolve_dispatch()) { ui_log("Could not find the official server. Check your internet connection."); return; }
+        if (!resolve_dispatch()) { ui_log("Could not find the official server. Check your internet connection."); InterlockedExchange(&g_starting, 0); return; }
         SOCKET h = tcp_listen(DISPATCH_PORT), g = tcp_listen(GATE_PORT);
         if (h == INVALID_SOCKET || g == INVALID_SOCKET) {
             ui_log("Ports %d/%d are busy - close the Rozefield server or another copy of this window first.", DISPATCH_PORT, GATE_PORT);
             if (h != INVALID_SOCKET) closesocket(h); if (g != INVALID_SOCKET) closesocket(g);
-            return;
+            InterlockedExchange(&g_starting, 0); return;
         }
         CloseHandle(CreateThread(NULL, 0, http_server, (LPVOID)(uintptr_t)h, 0, NULL));
         CloseHandle(CreateThread(NULL, 0, gate_server, (LPVOID)(uintptr_t)g, 0, NULL));
@@ -517,15 +554,16 @@ static void start_backup(void) {
         g_tmp = fopen(g_tmppath, "wb+");
         g_running = 1;
     }
-    if (!patch_config()) { ui_log("Could not change Config.txt in the game folder (is it read-only?)."); return; }
+    if (!patch_config()) { ui_log("Could not change Config.txt in the game folder (is it read-only?)."); InterlockedExchange(&g_starting, 0); return; }
     sdk_official(1);
     char exe[MAX_PATH]; snprintf(exe, sizeof exe, "%s\\launcher.exe", g_game);
     STARTUPINFOA si = {sizeof si}; PROCESS_INFORMATION pi;
-    if (!CreateProcessA(exe, NULL, NULL, NULL, FALSE, 0, NULL, g_game, &si, &pi)) { ui_log("Could not start the game."); restore_all(); return; }
+    if (!CreateProcessA(exe, NULL, NULL, NULL, FALSE, 0, NULL, g_game, &si, &pi)) { ui_log("Could not start the game."); restore_all(); InterlockedExchange(&g_starting, 0); return; }
     CloseHandle(pi.hThread); g_game_proc = pi.hProcess;
     CloseHandle(CreateThread(NULL, 0, watch_game, NULL, 0, NULL));
     EnableWindow(g_open, FALSE);
-    ui_log("OverField started. Log in with your official account as usual.");
+    ui_log("OverField started (%s). Log in with your official account as usual.", exe);
+    InterlockedExchange(&g_starting, 0);
 }
 
 static void do_save(int quiet) {
@@ -580,11 +618,13 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
 int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     GetModuleFileNameA(NULL, g_exedir, MAX_PATH);
     char *sl = strrchr(g_exedir, '\\'); if (sl) sl[1] = 0;
+    snprintf(g_logpath, sizeof g_logpath, "%sRozefieldBackup.log", g_exedir);
     InitializeCriticalSection(&g_cs);
     WSADATA wd; WSAStartup(MAKEWORD(2, 2), &wd);
     CoInitialize(NULL);
     find_game();
     if (g_game[0]) restore_all();   /* undo an earlier run that was killed */
+    ui_log("RozefieldBackup started. Game folder: %s", g_game[0] ? g_game : "(not found - use Browse)");
 
     WNDCLASSW wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = hi; wc.lpszClassName = L"RozefieldBackup";
     wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.hCursor = LoadCursor(NULL, IDC_ARROW);

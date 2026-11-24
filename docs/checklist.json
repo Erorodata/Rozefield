@@ -2,8 +2,8 @@
   "title": "Rozefield progress",
   "subtitle": "OverField preservation: run the game on your own server after the official one closes.",
   "story_autorun": {
-    "reached": 108,
-    "note": "new account, automated run (no story-reward claims, no combat exp): stops at the level-11 story gate"
+    "reached": 648,
+    "note": "new account, automated run with the level raised by GM when a story needs it: all 648 main-story quests finish"
   },
   "areas": [
     {
@@ -265,6 +265,46 @@
           "Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear",
           "partial",
           "needs in-game check"
+        ],
+        [
+          "Multiplayer: other players in the same scene, movement, emotes, group emotes, chat (nearby, world, private), sitting",
+          "partial",
+          "tested with 2 local clients; needs in-game check"
+        ],
+        [
+          "Part-time tasks, Moon Points to Wish Stones (official step prices), co-op ticket refill (6 a day)",
+          "partial",
+          "Moon Points per activity: 5 / 25 as seen"
+        ],
+        [
+          "Online Gomoku (2 players)",
+          "partial",
+          "reward amounts estimated"
+        ],
+        [
+          "Photo wall (upload, browse, like, favourite, delete)",
+          "partial",
+          "pictures are stored; whether the client can download them back is untested"
+        ],
+        [
+          "Rankings: Abyss, Boss Rush (everyone on this server)",
+          "partial",
+          ""
+        ],
+        [
+          "Restaurant mini-game (buy, merge, sell, serve, quests)",
+          "partial",
+          "built from the game tables; no official capture"
+        ],
+        [
+          "Field gear drops follow world level, 3% rare top quality",
+          "partial",
+          "estimate"
+        ],
+        [
+          "RozefieldBackup: background start, follows a Steam restart, log file",
+          "partial",
+          "needs a live run"
         ]
       ]
     }
