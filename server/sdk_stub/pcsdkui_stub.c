@@ -1,6 +1,6 @@
 /* Rozefield SDK stub — drop-in replacement for OverField's PCSDKUI.exe (QuickSDK PC login window).
  * The game starts PCSDKUI.exe with "gameName||qgpc&action||callLogin&url||..." and listens on
- * \\.\pipe\quickpc. The real SDK opens a web login and then writes one JSON message per pipe
+ * \\.\pipe\quickpc<gameName>. The real SDK opens a web login and then writes one JSON message per pipe
  * connection. This stub skips the web page and immediately reports a successful login with the
  * uid/username from rozefield_sdk.ini (next to the exe). The token is ignored by the Rozefield server. */
 #include <windows.h>
@@ -10,6 +10,7 @@
 
 static char g_dir[MAX_PATH];
 static FILE *g_log;
+static char g_pipe[256] = "\\\\.\\pipe\\quickpc";
 
 static void logf_(const char *fmt, const char *a) {
     if (!g_log) return;
@@ -20,7 +21,7 @@ static void logf_(const char *fmt, const char *a) {
 
 static int send_msg(const char *json) {
     for (int i = 0; i < 100; i++) {
-        HANDLE h = CreateFileA("\\\\.\\pipe\\quickpc", GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+        HANDLE h = CreateFileA(g_pipe, GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
         if (h != INVALID_HANDLE_VALUE) {
             DWORD w = 0;
             BOOL ok = WriteFile(h, json, (DWORD)strlen(json), &w, NULL);
@@ -29,7 +30,9 @@ static int send_msg(const char *json) {
             logf_(ok ? "sent %s" : "write failed %s", json);
             return ok;
         }
-        if (GetLastError() == ERROR_PIPE_BUSY) WaitNamedPipeA("\\\\.\\pipe\\quickpc", 2000);
+        DWORD err = GetLastError();
+        if (i == 0 || i == 99) { char b[64]; snprintf(b, sizeof b, "%lu", err); logf_("open pipe error %s", b); }
+        if (err == ERROR_PIPE_BUSY) WaitNamedPipeA(g_pipe, 2000);
         else Sleep(100);
     }
     logf_("could not open pipe for %s", json);
@@ -56,6 +59,14 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     GetPrivateProfileStringA("account", "uid", "10000001", uid, sizeof uid, path);
     GetPrivateProfileStringA("account", "username", "rozefield", user, sizeof user, path);
 
+    /* real PCSDKUI uses "\\.\pipe\quickpc" + gameName (game passes gameName||qgpc) */
+    const char *gn = strstr(cmd, "gameName||");
+    if (gn) {
+        gn += 10; size_t n = strcspn(gn, "& \"");
+        size_t L = strlen(g_pipe); if (n > sizeof g_pipe - L - 1) n = sizeof g_pipe - L - 1;
+        memcpy(g_pipe + L, gn, n); g_pipe[L + n] = 0;
+    }
+    logf_("pipe %s", g_pipe);
     if (strstr(cmd, "action||callLogin")) {
         char msg[1024];
         send_msg("{\"action\":\"init\",\"params\":{}}");
