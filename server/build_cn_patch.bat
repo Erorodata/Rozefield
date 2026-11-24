@@ -7,5 +7,6 @@ if exist game_path.txt set /p GAME=<game_path.txt
 set CN=H:\OverField\OverField Game
 if exist cn_game_path.txt set /p CN=<cn_game_path.txt
 where py >nul 2>nul && (set PY=py -3) || (set PY=python)
+%PY% -c "import UnityPy, google.protobuf" 2>nul || %PY% -m pip install -r requirements.txt
 %PY% tools\build_cn_patch.py --global "%GAME%\launcher_Data\yoo" --cn "%CN%\launcher_Data\yoo" --config patch_src\pbstaticconfigure.bundle
 pause

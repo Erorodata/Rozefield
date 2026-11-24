@@ -3,6 +3,7 @@
  * \\.\pipe\quickpc<gameName>. The real SDK opens a web login and then writes one JSON message per pipe
  * connection. This stub skips the web page and immediately reports a successful login with the
  * name the player types in a small window; the name travels in the token, uid = "rz_<lower-case name>". */
+#include <winsock2.h>
 #include <windows.h>
 #include <tlhelp32.h>
 #include <stdio.h>
@@ -40,36 +41,94 @@ static int send_msg(const char *json) {
 }
 
 
-/* ---- tiny "enter your name" window (no resource file needed) ---- */
-static char g_name[64];
-static HWND g_edit;
-static int g_done;
+/* ---- account picker window: lists accounts from the Rozefield server, or creates a new one ---- */
+#include <winsock2.h>
+static char g_name[128], g_uid[160];
+static char g_list_uid[64][160], g_list_name[64][128];
+static int g_n, g_done;
+static HWND g_lb, g_edit;
+
+static void fetch_accounts(const char *host) {
+    WSADATA w; WSAStartup(MAKEWORD(2, 2), &w);
+    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in a = {0}; a.sin_family = AF_INET; a.sin_port = htons(18881); a.sin_addr.s_addr = inet_addr(host);
+    DWORD to = 2000; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
+    if (connect(s, (struct sockaddr *)&a, sizeof a) != 0) { closesocket(s); return; }
+    const char *req = "GET /rozefield/accounts HTTP/1.0\r\nHost: rozefield\r\n\r\n";
+    send(s, req, (int)strlen(req), 0);
+    static char buf[65536]; int len = 0, r;
+    while (len < (int)sizeof buf - 1 && (r = recv(s, buf + len, sizeof buf - 1 - len, 0)) > 0) len += r;
+    buf[len] = 0; closesocket(s);
+    char *body = strstr(buf, "\r\n\r\n"); if (!body) return; body += 4;
+    for (char *line = strtok(body, "\n"); line && g_n < 64; line = strtok(NULL, "\n")) {
+        char *bar = strchr(line, '|'); if (!bar) continue; *bar = 0;
+        char *bar2 = strchr(bar + 1, '|'); char lv[16] = "";
+        if (bar2) { *bar2 = 0; snprintf(lv, sizeof lv, "%s", bar2 + 1); }
+        snprintf(g_list_uid[g_n], 160, "%s", line);
+        snprintf(g_list_name[g_n], 128, "%s", bar + 1);
+        g_n++;
+        (void)lv;
+    }
+}
+static void add_row(int i, const char *lv) {
+    wchar_t wn[128], row[200]; MultiByteToWideChar(CP_UTF8, 0, g_list_name[i], -1, wn, 128);
+    swprintf(row, 200, L"%ls", wn);
+    SendMessageW(g_lb, LB_ADDSTRING, 0, (LPARAM)row);
+}
+static void finish(HWND h, int i) {
+    snprintf(g_uid, sizeof g_uid, "%s", g_list_uid[i]); snprintf(g_name, sizeof g_name, "%s", g_list_name[i]);
+    g_done = 1; DestroyWindow(h);
+}
 static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
-    if (m == WM_COMMAND && (LOWORD(w) == 1 || LOWORD(w) == IDOK)) {
-        GetWindowTextA(g_edit, g_name, sizeof g_name);
-        if (g_name[0]) { g_done = 1; DestroyWindow(h); }
-        return 0;
+    if (m == WM_COMMAND) {
+        int id = LOWORD(w);
+        if (id == 1 || (id == 10 && HIWORD(w) == LBN_DBLCLK)) {          /* Play selected */
+            int i = (int)SendMessageW(g_lb, LB_GETCURSEL, 0, 0);
+            if (i >= 0) finish(h, i);
+            return 0;
+        }
+        if (id == 2) {                                                   /* Create new */
+            wchar_t wn[64]; GetWindowTextW(g_edit, wn, 64);
+            if (!wn[0]) { MessageBoxW(h, L"Type a name for the new account.", L"Rozefield", MB_OK); return 0; }
+            WideCharToMultiByte(CP_UTF8, 0, wn, -1, g_name, sizeof g_name, NULL, NULL);
+            for (int i = 0; i < g_n; i++)
+                if (_stricmp(g_list_name[i], g_name) == 0) { MessageBoxW(h, L"That name already exists - select it in the list.", L"Rozefield", MB_OK); return 0; }
+            char low[128]; snprintf(low, sizeof low, "%s", g_name);
+            for (char *c = low; *c; c++) { if (*c >= 'A' && *c <= 'Z') *c += 32; if (*c == '"' || *c == '\\' || *c == '|') *c = '_'; }
+            snprintf(g_uid, sizeof g_uid, "rz_%s", low);
+            g_done = 1; DestroyWindow(h); return 0;
+        }
     }
     if (m == WM_CLOSE) { g_done = -1; DestroyWindow(h); return 0; }
     if (m == WM_DESTROY) { PostQuitMessage(0); return 0; }
-    return DefWindowProcA(h, m, w, l);
+    return DefWindowProcW(h, m, w, l);
 }
-static int ask_name(const char *def) {
-    WNDCLASSA wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = GetModuleHandleA(NULL);
-    wc.lpszClassName = "RozefieldLogin"; wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    RegisterClassA(&wc);
-    int W = 360, Hh = 170, x = (GetSystemMetrics(SM_CXSCREEN) - W) / 2, y = (GetSystemMetrics(SM_CYSCREEN) - Hh) / 2;
-    HWND h = CreateWindowExA(WS_EX_TOPMOST, "RozefieldLogin", "Rozefield - OverField login", WS_CAPTION | WS_SYSMENU | WS_VISIBLE,
+static int pick_account(const char *host, const char *last) {
+    fetch_accounts(host);
+    WNDCLASSW wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = GetModuleHandleW(NULL);
+    wc.lpszClassName = L"RozefieldLogin"; wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    RegisterClassW(&wc);
+    int W = 380, Hh = 400, x = (GetSystemMetrics(SM_CXSCREEN) - W) / 2, y = (GetSystemMetrics(SM_CYSCREEN) - Hh) / 2;
+    HWND h = CreateWindowExW(WS_EX_TOPMOST, L"RozefieldLogin", L"Rozefield - choose your account", WS_CAPTION | WS_SYSMENU | WS_VISIBLE,
                              x, y, W, Hh, NULL, NULL, wc.hInstance, NULL);
-    CreateWindowA("STATIC", "Player name (a new name creates a new account):", WS_CHILD | WS_VISIBLE, 16, 14, 320, 20, h, NULL, NULL, NULL);
-    g_edit = CreateWindowExA(WS_EX_CLIENTEDGE, "EDIT", def, WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 16, 40, 312, 26, h, NULL, NULL, NULL);
-    SendMessageA(g_edit, EM_LIMITTEXT, 20, 0);
-    CreateWindowA("BUTTON", "Log in", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 228, 80, 100, 30, h, (HMENU)1, NULL, NULL);
-    SetForegroundWindow(h); SetFocus(g_edit); SendMessageA(g_edit, EM_SETSEL, 0, -1);
+    HFONT f = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+    HWND t1 = CreateWindowW(L"STATIC", g_n ? L"Accounts on this server:" : L"No accounts yet - create one below.", WS_CHILD | WS_VISIBLE, 16, 12, 340, 18, h, NULL, NULL, NULL);
+    g_lb = CreateWindowExW(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_NOTIFY | WS_TABSTOP, 16, 34, 240, 220, h, (HMENU)10, NULL, NULL);
+    HWND b1 = CreateWindowW(L"BUTTON", L"Play", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 266, 34, 90, 32, h, (HMENU)1, NULL, NULL);
+    HWND t2 = CreateWindowW(L"STATIC", L"New account name:", WS_CHILD | WS_VISIBLE, 16, 270, 340, 18, h, NULL, NULL, NULL);
+    g_edit = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 16, 292, 240, 26, h, NULL, NULL, NULL);
+    HWND b2 = CreateWindowW(L"BUTTON", L"Create", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 266, 290, 90, 30, h, (HMENU)2, NULL, NULL);
+    HWND ctl[] = {t1, g_lb, b1, t2, g_edit, b2};
+    for (int i = 0; i < 6; i++) SendMessageW(ctl[i], WM_SETFONT, (WPARAM)f, TRUE);
+    SendMessageW(g_edit, EM_LIMITTEXT, 20, 0);
+    int sel = 0;
+    for (int i = 0; i < g_n; i++) { add_row(i, ""); if (last && strcmp(g_list_uid[i], last) == 0) sel = i; }
+    if (g_n) SendMessageW(g_lb, LB_SETCURSEL, sel, 0);
+    SetForegroundWindow(h); SetFocus(g_n ? g_lb : g_edit);
     MSG msg;
-    while (GetMessageA(&msg, NULL, 0, 0) > 0) {
-        if (msg.message == WM_KEYDOWN && msg.wParam == VK_RETURN) { SendMessageA(h, WM_COMMAND, 1, 0); continue; }
-        TranslateMessage(&msg); DispatchMessageA(&msg);
+    while (GetMessageW(&msg, NULL, 0, 0) > 0) {
+        if (msg.message == WM_KEYDOWN && msg.wParam == VK_RETURN) { SendMessageW(h, WM_COMMAND, GetFocus() == g_edit ? 2 : 1, 0); continue; }
+        if (!IsDialogMessageW(h, &msg)) { TranslateMessage(&msg); DispatchMessageW(&msg); }
     }
     return g_done == 1;
 }
@@ -117,17 +176,16 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     }
     logf_("pipe %s", g_pipe);
     if (strstr(cmd, "action||callLogin")) {
-        char msg[1024], tok[512] = "@", uidbuf[96];
-        GetPrivateProfileStringA("account", "last_name", user, g_name, sizeof g_name, path);
-        if (!ask_name(g_name)) {
+        char msg[1024], tok[512] = "@", host[64], last[160];
+        GetPrivateProfileStringA("server", "ip", "127.0.0.1", host, sizeof host, path);
+        GetPrivateProfileStringA("account", "last_uid", "", last, sizeof last, path);
+        if (!pick_account(host, last)) {
             send_msg("{\"action\":\"init\",\"params\":{}}");
             send_msg("{\"action\":\"loginCancel\",\"params\":{}}");
             return 0;
         }
-        WritePrivateProfileStringA("account", "last_name", g_name, path);
-        /* the account key is the lower-cased name; the name itself travels in the token */
-        snprintf(uidbuf, sizeof uidbuf, "rz_%s", g_name);
-        for (char *c = uidbuf; *c; c++) { if (*c >= 'A' && *c <= 'Z') *c += 32; if (*c == '"' || *c == '\\') *c = '_'; }
+        WritePrivateProfileStringA("account", "last_uid", g_uid, path);
+        /* the account key is the uid; the display name travels in the token as @byte@byte@ */
         for (unsigned char *c = (unsigned char *)g_name; *c && strlen(tok) < sizeof tok - 6; c++) {
             char b[8]; snprintf(b, sizeof b, "%u@", *c); strcat(tok, b);
         }
@@ -135,7 +193,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
         Sleep(300);
         snprintf(msg, sizeof msg,
                  "{\"action\":\"loginSuccess\",\"params\":{\"authToken\":\"%s\",\"timeleft\":\"-1\","
-                 "\"uid\":\"%s\",\"userToken\":\"%s\",\"username\":\"%s\"}}", tok, uidbuf, tok, uidbuf);
+                 "\"uid\":\"%s\",\"userToken\":\"%s\",\"username\":\"%s\"}}", tok, g_uid, tok, g_uid);
         send_msg(msg);
     } else if (strstr(cmd, "action||callPay")) {
         send_msg("{\"action\":\"payCancel\",\"params\":{}}");

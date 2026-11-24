@@ -123,6 +123,19 @@ class HTTP:
             out = json.dumps({"status": True, "message": "success", "data": []}).encode()
         elif p == '/dispatch/get_notice_url_list':
             out = json.dumps({"data": []}).encode()
+        elif p == '/rozefield/accounts':  # used by the login window: uid|name|level per line
+            lines = []
+            try:
+                reg = json.load(open(os.path.join(HERE, 'save', 'accounts', '_registry.json'), encoding='utf-8'))
+                for uid, pid in reg['by_uid'].items():
+                    f = os.path.join(HERE, 'save', 'accounts', f'{pid}.json')
+                    if os.path.exists(f):
+                        st = json.load(open(f, encoding='utf-8'))
+                        lines.append(f"{uid}|{st['name']}|{st['level']}|{st.get('last_login', 0)}")
+            except Exception as e:
+                log.warning('account list: %s', e)
+            lines.sort(key=lambda x: -int(x.rsplit('|', 1)[1]))
+            out = '\n'.join(l.rsplit('|', 1)[0] for l in lines).encode('utf-8'); ctype = 'text/plain; charset=utf-8'
         elif p.startswith('/Resources/'):
             f = self.find_resource(p)
             if f:
