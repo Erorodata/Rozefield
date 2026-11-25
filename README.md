@@ -23,7 +23,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Official traffic captures (redacted copies in repo) | done |
 | 🟩 | Archived account (Player) imported and playable | done |
 | 🟩 | Public snapshot of 490 other players | done |
-| 🟨 | Player backup tool RozefieldBackup.exe | in progress — built; first live run waits for the official server to come back |
+| 🟨 | Player backup tool OverField Backup Data.exe | in progress — built; first live run waits for the official server to come back |
 | 🟩 | Import backup from the login window | done |
 
 ## Server & connection — 83.3%
@@ -34,7 +34,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Login window with account picker | done |
 | 🟩 | Patch delivery through the game's own updater | done |
 | 🟩 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 303/303 |
-| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 136/136 |
+| 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 140/140 |
 | ⬛ | Multiplayer (other players in scenes, co-op) | not yet — phase 2 |
 
 ## Content (Global + CN) — 87.5%
@@ -93,7 +93,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Rankings: Abyss, Boss Rush (everyone on this server) | in progress |
 | 🟨 | Restaurant mini-game (buy, merge, sell, serve, quests) | in progress — built from the game tables; no official capture |
 | 🟨 | Field gear drops follow world level, 3% rare top quality | in progress — estimate |
-| 🟨 | RozefieldBackup: background start, follows a Steam restart, log file | in progress — needs a live run |
+| 🟨 | OverField Backup Data: background start, follows a Steam restart, log file | in progress — needs a live run |
 
 **Quest steps with a rule:** 1,236 / 1,265 (`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 97.7%)
 

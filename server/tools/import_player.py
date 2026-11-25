@@ -1,4 +1,4 @@
-"""Import a player's backup (.rzsave, made with RozefieldBackup.exe or export_my_data.bat while the official server
+"""Import a player's backup (.rzsave, made with OverField Backup Data.exe or export_my_data.bat while the official server
 was online) as their own Rozefield account. Everything they had done carries over; logging in with a name that was
 never imported starts a fresh account as usual. Players can also import from the Rozefield login window.
 
@@ -25,7 +25,7 @@ def _msg(t, direction, conn, mid, pid, body):
 
 
 def read_rzsave_bytes(data):
-    """-> (meta, [decoded messages]). Supports the zip format (export_my_data.bat) and RZSAVE2 (RozefieldBackup.exe)."""
+    """-> (meta, [decoded messages]). Supports the zip format (export_my_data.bat) and RZSAVE2 (OverField Backup Data.exe)."""
     msgs = []
     if data.startswith(MAGIC2):
         import cramjam

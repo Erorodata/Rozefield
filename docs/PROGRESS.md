@@ -12,7 +12,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] Official traffic captures (redacted copies in repo)
 - [x] Archived account (Player) imported and playable
 - [x] Public snapshot of 490 other players
-- [~] Player backup tool RozefieldBackup.exe: built; first live run waits for the official server to come back
+- [~] Player backup tool OverField Backup Data.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
 ## Server & connection (83.3%)
@@ -21,7 +21,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
 - [x] Client requests with a server handler (100.00% 303/303)
-- [x] Requests seen in real play that are handled (100.00% 136/136)
+- [x] Requests seen in real play that are handled (100.00% 140/140)
 - [ ] Multiplayer (other players in scenes, co-op): phase 2
 
 ## Content (Global + CN) (87.5%)
@@ -76,6 +76,6 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Rankings: Abyss, Boss Rush (everyone on this server)
 - [~] Restaurant mini-game (buy, merge, sell, serve, quests): built from the game tables; no official capture
 - [~] Field gear drops follow world level, 3% rare top quality: estimate
-- [~] RozefieldBackup: background start, follows a Steam restart, log file: needs a live run
+- [~] OverField Backup Data: background start, follows a Steam restart, log file: needs a live run
 
 Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.
