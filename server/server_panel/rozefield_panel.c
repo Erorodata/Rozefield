@@ -22,15 +22,17 @@
 
 #define WW 1180
 #define WH 720
-#define C_INK RGB(17, 18, 27)
-#define C_PANEL RGB(12, 13, 20)
-#define C_ACC RGB(242, 127, 163)
-#define C_OK RGB(95, 212, 135)
-#define C_BAD RGB(240, 108, 108)
-#define C_TXT RGB(244, 245, 250)
-#define C_MUTE RGB(176, 180, 196)
-#define C_WARN RGB(255, 208, 138)
-#define C_FIELD RGB(30, 32, 44)
+#define C_INK RGB(244, 246, 248)   /* OverField UI theme */
+#define C_PANEL RGB(255, 255, 255)
+#define C_LINE RGB(214, 218, 226)
+#define C_TILE RGB(236, 237, 241)
+#define C_ACC RGB(19, 181, 197)
+#define C_OK RGB(60, 194, 122)
+#define C_BAD RGB(220, 60, 70)
+#define C_TXT RGB(42, 44, 54)
+#define C_MUTE RGB(122, 126, 142)
+#define C_WARN RGB(232, 140, 20)
+#define C_FIELD RGB(236, 237, 241)
 #define WM_DATA (WM_APP + 1)
 #ifndef EM_SETCUEBANNER
 #define EM_SETCUEBANNER 0x1501
@@ -418,26 +420,26 @@ static void dot(HDC dc, int cx, int cy, int r, COLORREF c) {
 }
 static void pill(HDC dc, RECT r, int kind, int hover, int enabled, const wchar_t *label) {   /* kind 1 = primary, 2 = danger */
     int rad = 14;
-    if (kind == 1) fill(dc, r, !enabled ? RGB(110, 86, 98) : hover ? RGB(248, 150, 182) : C_ACC, rad);
-    else { fill(dc, r, hover && enabled ? RGB(44, 47, 62) : RGB(30, 32, 44), rad); outline(dc, r, kind == 2 && enabled ? RGB(150, 70, 70) : RGB(70, 74, 92), rad); }
-    txt(dc, kind == 1 ? f_btn : f_small, kind == 1 ? RGB(42, 10, 22) : !enabled ? RGB(110, 114, 130) : kind == 2 ? RGB(255, 160, 160) : C_TXT, r, label, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    if (kind == 1) fill(dc, r, !enabled ? RGB(166, 216, 222) : hover ? RGB(14, 160, 176) : C_ACC, rad);
+    else { fill(dc, r, hover && enabled ? RGB(232, 246, 248) : C_PANEL, rad); outline(dc, r, kind == 2 && enabled ? RGB(230, 150, 156) : C_LINE, rad); }
+    txt(dc, kind == 1 ? f_btn : f_small, kind == 1 ? RGB(255, 255, 255) : !enabled ? RGB(170, 174, 186) : kind == 2 ? C_BAD : C_TXT, r, label, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 static void paint(HWND h) {
     PAINTSTRUCT ps; HDC wdc = BeginPaint(h, &ps);
     HDC dc = CreateCompatibleDC(wdc); HBITMAP bb = CreateCompatibleBitmap(wdc, WW, WH); HGDIOBJ ob = SelectObject(dc, bb);
     RECT all = {0, 0, WW, WH}; fill(dc, all, C_INK, 0);
-    RECT rail = {0, 0, 72, WH}; fill(dc, rail, RGB(8, 9, 14), 0);
-    dot(dc, 36, 40, 18, C_ACC); RECT rl = {18, 22, 54, 58}; txt(dc, f_h, RGB(42, 10, 22), rl, L"R", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-    if (g_hover == B_SAVEDIR) fill(dc, r_savedir, RGB(40, 42, 56), 10);
-    if (g_hover == B_LOGFILE) fill(dc, r_logfile, RGB(40, 42, 56), 10);
+    RECT rail = {0, 0, 72, WH}; fill(dc, rail, C_PANEL, 0); { RECT ln = {71, 0, 72, WH}; fill(dc, ln, C_LINE, 0); }
+    dot(dc, 36, 40, 18, C_ACC); RECT rl = {18, 22, 54, 58}; txt(dc, f_h, RGB(255, 255, 255), rl, L"R", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    if (g_hover == B_SAVEDIR) fill(dc, r_savedir, C_TILE, 10);
+    if (g_hover == B_LOGFILE) fill(dc, r_logfile, C_TILE, 10);
     { HPEN p = CreatePen(PS_SOLID, 2, C_MUTE); HGDIOBJ o = SelectObject(dc, p), b0 = SelectObject(dc, GetStockObject(NULL_BRUSH));
       int x = r_savedir.left + 12, y = r_savedir.top + 13; RoundRect(dc, x, y + 3, x + 21, y + 18, 4, 4); MoveToEx(dc, x, y + 3, NULL); LineTo(dc, x, y); LineTo(dc, x + 8, y); LineTo(dc, x + 10, y + 3);
       int lx = r_logfile.left + 13, ly = r_logfile.top + 12; Rectangle(dc, lx, ly, lx + 18, ly + 21);
       for (int i = 0; i < 3; i++) { MoveToEx(dc, lx + 4, ly + 6 + i * 5, NULL); LineTo(dc, lx + 14, ly + 6 + i * 5); }
       SelectObject(dc, o); SelectObject(dc, b0); DeleteObject(p); }
     if (g_hover == B_CLOSE) fill(dc, r_close, RGB(200, 64, 76), 8);
-    if (g_hover == B_MIN) fill(dc, r_min, RGB(44, 47, 62), 8);
+    if (g_hover == B_MIN) fill(dc, r_min, C_TILE, 8);
     { HPEN p = CreatePen(PS_SOLID, 2, C_TXT); HGDIOBJ o = SelectObject(dc, p);
       int cx = (r_close.left + r_close.right) / 2, cy = (r_close.top + r_close.bottom) / 2;
       MoveToEx(dc, cx - 6, cy - 6, NULL); LineTo(dc, cx + 7, cy + 7); MoveToEx(dc, cx + 6, cy - 6, NULL); LineTo(dc, cx - 7, cy + 7);
@@ -449,10 +451,10 @@ static void paint(HWND h) {
     if (g_up) swprintf(st, 160, L"Running  \x00B7  %d online  \x00B7  %d accounts%ls", online, g_npl, g_proc ? L"" : L"  \x00B7  started outside this window");
     else wcscpy(st, g_starting ? L"Starting\x2026" : L"Stopped");
     dot(dc, 104, 79, 5, g_up ? C_OK : g_starting ? C_WARN : C_BAD);
-    RECT rs = {116, 68, 900, 92}; txt(dc, f_small, g_up ? RGB(159, 227, 180) : C_MUTE, rs, st, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    RECT rs = {116, 68, 900, 92}; txt(dc, f_small, g_up ? C_OK : C_MUTE, rs, st, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
     /* players panel */
-    RECT pp = {96, 106, 446, WH - 92}; fill(dc, pp, C_PANEL, 18);
+    RECT pp = {96, 106, 446, WH - 92}; fill(dc, pp, C_PANEL, 18); outline(dc, pp, C_LINE, 18);
     RECT ph = {116, 116, 430, 140}; txt(dc, f_h, C_TXT, ph, L"Players", DT_LEFT | DT_SINGLELINE);
     struct pl *p = sel();
     RECT sh = {116, 378, 430, 398};
@@ -468,15 +470,15 @@ static void paint(HWND h) {
         pill(dc, r_act[i], kind, g_hover == A_FIRST + i, en && g_up, lb);
     }
     /* log panel */
-    RECT lp = {462, 106, WW - 24, WH - 92}; fill(dc, lp, C_PANEL, 18);
+    RECT lp = {462, 106, WW - 24, WH - 92}; fill(dc, lp, C_PANEL, 18); outline(dc, lp, C_LINE, 18);
     RECT lh = {482, 116, 700, 140}; txt(dc, f_h, C_TXT, lh, L"Live log", DT_LEFT | DT_SINGLELINE);
     for (int i = 0; i < NFILT; i++) {
         RECT r = r_filt[i];
-        if (i == g_filter) fill(dc, r, C_ACC, 12); else { fill(dc, r, g_hover == F_FIRST + i ? RGB(44, 47, 62) : RGB(30, 32, 44), 12); }
-        txt(dc, f_small, i == g_filter ? RGB(42, 10, 22) : C_TXT, r, FILTERS[i], DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        if (i == g_filter) fill(dc, r, C_ACC, 12); else { fill(dc, r, g_hover == F_FIRST + i ? RGB(220, 240, 243) : C_TILE, 12); }
+        txt(dc, f_small, i == g_filter ? RGB(255, 255, 255) : C_TXT, r, FILTERS[i], DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     }
     /* bottom bar */
-    RECT bar = {72, WH - 84, WW, WH}; fill(dc, bar, RGB(8, 9, 14), 0);
+    RECT bar = {72, WH - 84, WW, WH}; fill(dc, bar, C_PANEL, 0); { RECT ln = {72, WH - 84, WW, WH - 83}; fill(dc, ln, C_LINE, 0); }
     pill(dc, r_import, 0, g_hover == B_IMPORT, g_up, L"Import backup");
     pill(dc, r_mailall, 0, g_hover == B_MAILALL, g_up, L"Mail everyone");
     pill(dc, r_start, 1, g_hover == B_START, !g_up && !g_starting, L"Start");
@@ -550,7 +552,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     case WM_PAINT: paint(h); return 0;
     case WM_ERASEBKGND: return 1;
     case WM_CTLCOLOREDIT: case WM_CTLCOLORSTATIC:
-        SetTextColor((HDC)w, (HWND)l == g_logv ? RGB(206, 209, 222) : C_TXT); SetBkColor((HDC)w, (HWND)l == g_logv ? C_PANEL : C_FIELD);
+        SetTextColor((HDC)w, (HWND)l == g_logv ? RGB(60, 64, 78) : C_TXT); SetBkColor((HDC)w, (HWND)l == g_logv ? C_PANEL : C_FIELD);
         return (LRESULT)((HWND)l == g_logv ? br_panel : br_field);
     case WM_CTLCOLORLISTBOX: SetBkColor((HDC)w, C_PANEL); return (LRESULT)br_panel;
     case WM_MEASUREITEM: ((MEASUREITEMSTRUCT *)l)->itemHeight = 40; return TRUE;
@@ -560,9 +562,9 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         int i = (int)SendMessageW(g_list, LB_GETITEMDATA, d->itemID, 0); if (i < 0 || i >= g_npl) return TRUE;
         struct pl *p = &g_pl[i]; RECT r = d->rcItem;
         fill(d->hDC, r, C_PANEL, 0);
-        if (d->itemState & ODS_SELECTED) { RECT s = {r.left + 2, r.top + 2, r.right - 2, r.bottom - 2}; fill(d->hDC, s, RGB(52, 40, 54), 12); }
-        dot(d->hDC, r.left + 18, (r.top + r.bottom) / 2, 5, p->banned ? C_BAD : p->online ? C_OK : RGB(80, 84, 100));
-        RECT rn = {r.left + 34, r.top + 3, r.right - 110, r.top + 22}; txt(d->hDC, f_body, p->banned ? RGB(200, 150, 150) : C_TXT, rn, p->name, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+        if (d->itemState & ODS_SELECTED) { RECT s = {r.left + 2, r.top + 2, r.right - 2, r.bottom - 2}; fill(d->hDC, s, RGB(214, 242, 246), 12); }
+        dot(d->hDC, r.left + 18, (r.top + r.bottom) / 2, 5, p->banned ? C_BAD : p->online ? C_OK : RGB(190, 194, 206));
+        RECT rn = {r.left + 34, r.top + 3, r.right - 110, r.top + 22}; txt(d->hDC, f_body, p->banned ? C_BAD : C_TXT, rn, p->name, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
         wchar_t sub[120]; swprintf(sub, 120, L"Lv %d  \x00B7  UID %d%ls", p->level, p->label, p->official ? L"  \x00B7  imported" : L"");
         RECT rsub = {r.left + 34, r.top + 21, r.right - 110, r.bottom - 2}; txt(d->hDC, f_small, C_MUTE, rsub, sub, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
         wchar_t tags[60] = L"";

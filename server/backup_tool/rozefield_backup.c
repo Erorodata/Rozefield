@@ -1351,12 +1351,17 @@ static void start_reconnect(void) {
 /* ------------------------------------------------------------------ painted launcher-style window */
 #define WW 1100
 #define WH 800
-#define C_INK RGB(17, 18, 27)
-#define C_ACC RGB(242, 127, 163)
-#define C_OK RGB(95, 212, 135)
-#define C_TXT RGB(244, 245, 250)
-#define C_MUTE RGB(176, 180, 196)
-#define C_WARN RGB(255, 208, 138)
+#define C_INK RGB(244, 246, 248)   /* OverField UI theme: soft white */
+#define C_ACC RGB(19, 181, 197)    /* cyan (the game's Confirm) */
+#define C_BLUE RGB(45, 156, 219)   /* Over Field blue */
+#define C_PINK RGB(230, 0, 110)    /* badge pink */
+#define C_CARD RGB(255, 255, 255)
+#define C_TILE RGB(236, 237, 241)
+#define C_LINE RGB(214, 218, 226)
+#define C_OK RGB(60, 194, 122)
+#define C_TXT RGB(42, 44, 54)
+#define C_MUTE RGB(122, 126, 142)
+#define C_WARN RGB(232, 140, 20)
 enum { B_NONE, B_CLOSE, B_MIN, B_MAIN, B_RUNNING, B_SAVE, B_FOLDER, B_LOG, B_OPENDIR };
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
 static RECT r_main = {WW - 252, WH - 92, WW - 36, WH - 32}, r_run = {WW - 618, WH - 86, WW - 444, WH - 38}, r_save = {WW - 432, WH - 86, WW - 268, WH - 38};
@@ -1464,9 +1469,9 @@ static void tick(HDC dc, int cx, int cy, COLORREF c) {
 }
 static void pill(HDC dc, RECT r, int primary, int hover, int enabled, const wchar_t *label) {
     int rad = r.bottom - r.top;
-    if (primary) fill_round(dc, r, !enabled ? RGB(120, 92, 104) : hover ? RGB(248, 150, 182) : C_ACC, rad);
-    else { fill_alpha(dc, r, RGB(255, 255, 255), hover && enabled ? 46 : 22, rad); outline_round(dc, r, RGB(120, 124, 140), rad); }
-    txt(dc, primary ? f_btn : f_body, primary ? RGB(42, 10, 22) : (enabled ? C_TXT : C_MUTE), r, label, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    if (primary) fill_round(dc, r, !enabled ? RGB(166, 216, 222) : hover ? RGB(14, 160, 176) : C_ACC, rad);
+    else { fill_round(dc, r, hover && enabled ? RGB(232, 246, 248) : C_CARD, rad); outline_round(dc, r, C_LINE, rad); }
+    txt(dc, primary ? f_btn : f_body, primary ? RGB(255, 255, 255) : (enabled ? C_TXT : C_MUTE), r, label, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 static int target_pct(void) {
@@ -1496,25 +1501,25 @@ static void paint(HWND h) {
         SelectObject(m, o); DeleteDC(m);
     } else {
         HRGN rg = CreateEllipticRgn(560, -220, 1380, 600);
-        SelectClipRgn(dc, rg); fill_alpha(dc, all, C_ACC, 30, 0); SelectClipRgn(dc, NULL); DeleteObject(rg);
+        SelectClipRgn(dc, rg); fill_alpha(dc, all, C_ACC, 22, 0); SelectClipRgn(dc, NULL); DeleteObject(rg);
         HRGN rg2 = CreateEllipticRgn(720, 260, 1240, 780);
-        SelectClipRgn(dc, rg2); fill_alpha(dc, all, RGB(111, 176, 207), 26, 0); SelectClipRgn(dc, NULL); DeleteObject(rg2);
+        SelectClipRgn(dc, rg2); fill_alpha(dc, all, C_BLUE, 18, 0); SelectClipRgn(dc, NULL); DeleteObject(rg2);
     }
     /* left rail */
-    RECT rail = {0, 0, 72, WH}; fill_alpha(dc, rail, RGB(8, 9, 14), 200, 0);
+    RECT rail = {0, 0, 72, WH}; fill_alpha(dc, rail, C_CARD, 235, 0); { RECT ln = {71, 0, 72, WH}; fill_alpha(dc, ln, C_LINE, 255, 0); }
     circle(dc, 36, 40, 18, C_ACC);
-    RECT rl = {18, 22, 54, 58}; txt(dc, f_h, RGB(42, 10, 22), rl, L"R", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    RECT rl = {18, 22, 54, 58}; txt(dc, f_h, RGB(255, 255, 255), rl, L"R", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     /* folder + log icons */
-    RECT rf = r_folder; if (g_hover == B_FOLDER) fill_alpha(dc, rf, RGB(255, 255, 255), 30, 12);
+    RECT rf = r_folder; if (g_hover == B_FOLDER) fill_alpha(dc, rf, C_ACC, 40, 12);
     { HPEN p = CreatePen(PS_SOLID, 2, C_MUTE); HGDIOBJ o = SelectObject(dc, p), b0 = SelectObject(dc, GetStockObject(NULL_BRUSH));
       int x = rf.left + 12, y = rf.top + 13; RoundRect(dc, x, y + 3, x + 21, y + 18, 4, 4); MoveToEx(dc, x, y + 3, NULL); LineTo(dc, x, y); LineTo(dc, x + 8, y); LineTo(dc, x + 10, y + 3);
       RECT rg = r_logb; int lx = rg.left + 13, ly = rg.top + 12; Rectangle(dc, lx, ly, lx + 18, ly + 21);
       for (int i = 0; i < 3; i++) { MoveToEx(dc, lx + 4, ly + 6 + i * 5, NULL); LineTo(dc, lx + 14, ly + 6 + i * 5); }
       SelectObject(dc, o); SelectObject(dc, b0); DeleteObject(p); }
-    if (g_hover == B_LOG) fill_alpha(dc, r_logb, RGB(255, 255, 255), 30, 12);
+    if (g_hover == B_LOG) fill_alpha(dc, r_logb, C_ACC, 40, 12);
     /* window buttons */
     if (g_hover == B_CLOSE) fill_alpha(dc, r_close, RGB(232, 72, 85), 200, 8);
-    if (g_hover == B_MIN) fill_alpha(dc, r_min, RGB(255, 255, 255), 40, 8);
+    if (g_hover == B_MIN) fill_alpha(dc, r_min, C_TILE, 255, 8);
     { HPEN p = CreatePen(PS_SOLID, 2, C_TXT); HGDIOBJ o = SelectObject(dc, p);
       int cx = (r_close.left + r_close.right) / 2, cy = (r_close.top + r_close.bottom) / 2;
       MoveToEx(dc, cx - 6, cy - 6, NULL); LineTo(dc, cx + 7, cy + 7); MoveToEx(dc, cx + 6, cy - 6, NULL); LineTo(dc, cx - 7, cy + 7);
@@ -1522,10 +1527,10 @@ static void paint(HWND h) {
       SelectObject(dc, o); DeleteObject(p); }
     /* title (asymmetric, top-left) */
     RECT rt = {104, 34, 700, 84}; txt(dc, f_title, C_TXT, rt, L"OverField Backup Data", DT_LEFT | DT_SINGLELINE);
-    RECT rs = {106, 84, 700, 108}; txt(dc, f_small, RGB(220, 222, 232), rs, L"Keep your OverField account. The official servers close on 8 Feb 2027.", DT_LEFT | DT_SINGLELINE);
+    RECT rs = {106, 84, 700, 108}; txt(dc, f_small, C_MUTE, rs, L"Keep your OverField account. The official servers close on 8 Feb 2027.", DT_LEFT | DT_SINGLELINE);
 
     /* status card */
-    RECT card = {104, 132, 560, 408}; fill_alpha(dc, card, RGB(12, 13, 20), 205, 22);
+    RECT card = {104, 132, 560, 408}; fill_round(dc, card, C_CARD, 22); outline_round(dc, card, C_LINE, 22);
     const wchar_t *st; COLORREF sc;
     switch (g_mode) {
     case M_STARTING: st = L"Starting the game"; sc = C_WARN; break;
@@ -1551,7 +1556,7 @@ static void paint(HWND h) {
     else if (g_mode == M_LOGIN) wcscpy(sub, L"Log in with your official account");
     else wcscpy(sub, L"Press Open game to begin");
     RECT rsub = {300, 262, 540, 298}; txt(dc, f_small, C_MUTE, rsub, sub, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
-    RECT track = {128, 312, 536, 322}; fill_alpha(dc, track, RGB(255, 255, 255), 36, 10);
+    RECT track = {128, 312, 536, 322}; fill_round(dc, track, C_TILE, 10);
     int fw = (int)((track.right - track.left) * g_pct_shown / 100.0);
     if (fw > 0) {
         RECT fill = {track.left, track.top, track.left + fw, track.bottom}; fill_round(dc, fill, g_mode == M_DONE ? C_OK : C_ACC, 10);
@@ -1568,7 +1573,7 @@ static void paint(HWND h) {
 
     load_images();
     /* checklist (right): the in-game phone menu - icon tiles, ticked when saved */
-    RECT cl = {WW - 392, 84, WW - 36, 520}; fill_round(dc, cl, RGB(234, 235, 240), 22);
+    RECT cl = {WW - 392, 84, WW - 36, 520}; fill_round(dc, cl, C_CARD, 22); outline_round(dc, cl, C_LINE, 22);
     int done = 0; for (int i = 0; i < NCHECK; i++) done += CHECKS[i].done;
     RECT rch = {cl.left + 20, cl.top + 14, cl.right - 20, cl.top + 40}; txt(dc, f_h, RGB(40, 42, 54), rch, L"Checklist", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     wchar_t cnt[40]; swprintf(cnt, 40, L"%d of %d saved", done, NCHECK); txt(dc, f_small, RGB(110, 112, 126), rch, cnt, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
@@ -1576,14 +1581,14 @@ static void paint(HWND h) {
         int c = i % 4, r = i / 4, tw = 77, th = 120;
         RECT t = {cl.left + 14 + c * (tw + 5), cl.top + 50 + r * (th + 6), cl.left + 14 + c * (tw + 5) + tw, cl.top + 50 + r * (th + 6) + th};
         DWORD age = CHECKS[i].done ? now - g_flash[i] : 99999;
-        fill_round(dc, t, CHECKS[i].done && age < 700 ? RGB(214, 244, 222) : RGB(246, 246, 249), 14);
+        fill_round(dc, t, CHECKS[i].done && age < 700 ? RGB(214, 244, 236) : C_TILE, 14);
         int cx = (t.left + t.right) / 2, cy = t.top + 40;
         RECT ic = {cx - 30, cy - 30, cx + 30, cy + 30};
         if (g_icon[i]) {
             if (!strncmp(CHECKS[i].icon, "g_", 2)) { circle(dc, cx, cy, 29, CHECKS[i].tint); RECT gi = {cx - 16, cy - 16, cx + 16, cy + 16}; img_fit(dc, g_icon[i], gi); }   /* white glyph on colour */
             else img_fit(dc, g_icon[i], ic);
         } else circle(dc, cx, cy, 29, CHECKS[i].tint);
-        if (!CHECKS[i].done) fill_alpha(dc, ic, RGB(246, 246, 249), 120, 60);   /* not saved yet: faded */
+        if (!CHECKS[i].done) fill_alpha(dc, ic, C_TILE, 120, 60);   /* not saved yet: faded */
         wchar_t lb[80]; MultiByteToWideChar(CP_UTF8, 0, CHECKS[i].label, -1, lb, 80);
         RECT rl = {t.left + 2, t.top + 76, t.right - 2, t.top + 96}; txt(dc, f_small, RGB(40, 42, 54), rl, lb, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
         const wchar_t *tag; COLORREF tc = RGB(130, 132, 146);
@@ -1596,7 +1601,7 @@ static void paint(HWND h) {
     }
 
     /* world maps (map tour): World Selection pictures */
-    RECT mc = {104, 532, WW - 36, WH - 122}; fill_alpha(dc, mc, RGB(12, 13, 20), 205, 18);
+    RECT mc = {104, 532, WW - 36, WH - 122}; fill_round(dc, mc, C_CARD, 18); outline_round(dc, mc, C_LINE, 18);
     RECT mh = {124, 538, WW - 56, 560}; txt(dc, f_small, C_TXT, mh, L"World maps", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     wchar_t mcnt[60]; swprintf(mcnt, 60, L"%ld of %d saved", (long)g_tour_done_n, NTOUR_REAL); txt(dc, f_small, C_MUTE, mh, mcnt, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
     int cw = (mc.right - mc.left - 20 - (NTOUR - 1) * 6) / NTOUR;
@@ -1608,7 +1613,7 @@ static void paint(HWND h) {
         if (stt == 4 || stt == 3) fill_alpha(dc, card, RGB(10, 10, 14), 170, 0);
         else if (stt == 0) fill_alpha(dc, card, RGB(10, 10, 14), 90, 0);
         SelectClipRgn(dc, NULL); DeleteObject(clip);
-        if (stt == 1) { int a = (int)(150 + 100 * sin(now / 180.0)); outline_round(dc, card, RGB(255, 208, 138), 12); (void)a; RECT in2 = {card.left + 1, card.top + 1, card.right - 1, card.bottom - 1}; outline_round(dc, in2, RGB(255, 208, 138), 12); }
+        if (stt == 1) { int a = (int)(150 + 100 * sin(now / 180.0)); outline_round(dc, card, C_ACC, 12); (void)a; RECT in2 = {card.left + 1, card.top + 1, card.right - 1, card.bottom - 1}; outline_round(dc, in2, C_ACC, 12); }
         if (stt == 2) { circle(dc, card.right - 13, card.top + 13, 10, C_OK); tick(dc, card.right - 13, card.top + 13, RGB(255, 255, 255)); }
         if (stt == 4 || stt == 3) { RECT rn2 = card; txt(dc, f_small, RGB(220, 222, 232), rn2, stt == 4 ? L"Not on\nGlobal" : L"Not open", DT_CENTER | DT_VCENTER | DT_WORDBREAK); }
         RECT rl = {card.left - 2, card.bottom + 2, card.right + 2, card.bottom + 22};
@@ -1616,7 +1621,7 @@ static void paint(HWND h) {
     }
 
     /* bottom bar */
-    RECT bar = {72, WH - 112, WW, WH}; fill_alpha(dc, bar, RGB(8, 9, 14), 190, 0);
+    RECT bar = {72, WH - 112, WW, WH}; fill_alpha(dc, bar, C_CARD, 240, 0); { RECT ln = {72, WH - 112, WW, WH - 111}; fill_alpha(dc, ln, C_LINE, 255, 0); }
     RECT rlog = {104, WH - 92, WW - 640, WH - 64}; txt(dc, f_body, C_TXT, rlog, g_lastlog, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
     wchar_t gf[MAX_PATH + 32]; wchar_t wg[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_game, -1, wg, MAX_PATH);
     swprintf(gf, MAX_PATH + 32, L"Game folder: %ls", g_game[0] ? wg : L"not found - use the folder button");
