@@ -47,6 +47,20 @@ def apply(st, msgs):
                 w['gatherLimits'] = sd['gatherLimits']
             for dd in sd.get('dungeons', []):
                 st.setdefault('dungeons', {})[str(dd['dungeonId'])] = dd
+    seen = {}
+    for m in msgs:
+        if m.get('dir') == 'S2C' and m.get('name') == 'SceneDataNotice':
+            sd = (m.get('body') or {}).get('data') or {}
+            if sd.get('sceneId') not in (None, 9999):
+                v = seen.setdefault(sd['sceneId'], {'flagIds': set(), 'dungeonIds': set()})
+                v['flagIds'] |= set(sd.get('flagIds', []))
+                v['dungeonIds'] |= {d['dungeonId'] for d in sd.get('dungeons', []) if d.get('dungeonId')}
+    if seen:
+        try:
+            from game.world import learn_world
+            learn_world(seen)
+        except Exception:
+            pass
     from tools.import_events import apply as apply_events
     apply_events(msgs, st)
     st['extras_imported'] = 1

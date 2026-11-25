@@ -52,6 +52,47 @@ def W(p, sid):
     return w
 
 
+_BASE = None
+LEARNED = os.path.join(HERE, 'data', 'world_base_learned.json')
+
+
+def world_base():
+    """Main game data, the same for every player: per map, the map entrances (Sequence/Aberrant Fields, landmarks...)
+    and dungeons that exist. game/world_base.json comes from the official captures; maps seen in players' backups
+    are added to data/world_base_learned.json when imported. What each player has done comes from their own save."""
+    global _BASE
+    if _BASE is None:
+        _BASE = {}
+        for f in (os.path.join(HERE, 'game', 'world_base.json'), LEARNED):
+            try:
+                for sid, v in json.load(open(f, encoding='utf-8')).items():
+                    b = _BASE.setdefault(sid, {'flagIds': [], 'dungeonIds': []})
+                    for k in ('flagIds', 'dungeonIds'):
+                        b[k] = sorted(set(b[k]) | set(v.get(k, [])))
+            except (OSError, ValueError):
+                pass
+    return _BASE
+
+
+def learn_world(seen):
+    """Add map entrances / dungeons seen in an imported backup ({sceneId: {'flagIds', 'dungeonIds'}}) to the shared
+    main game data, so every player gets them."""
+    global _BASE
+    try:
+        cur = json.load(open(LEARNED, encoding='utf-8'))
+    except (OSError, ValueError):
+        cur = {}
+    for sid, v in seen.items():
+        if str(sid) == '9999':
+            continue
+        b = cur.setdefault(str(sid), {'flagIds': [], 'dungeonIds': []})
+        for k in ('flagIds', 'dungeonIds'):
+            b[k] = sorted(set(b[k]) | set(v.get(k, [])))
+    os.makedirs(os.path.dirname(LEARNED), exist_ok=True)
+    json.dump(cur, open(LEARNED, 'w', encoding='utf-8'))
+    _BASE = None
+
+
 def scene_fields(p, sid):
     """Extra SceneData fields for a field scene: layout chests + this player's progress."""
     lay = layout().get(str(sid), {})
@@ -72,14 +113,22 @@ def scene_fields(p, sid):
     for k in ('riddles', 'flags', 'challenges', 'areas', 'collections', 'flagIds'):
         if w[k]:
             out[k] = w[k]
+    base = world_base().get(str(sid), {})
+    ids = sorted(set(base.get('flagIds', [])) | set(w['flagIds']))   # every entrance of the map, for every player
+    if ids:
+        out['flagIds'] = ids
     for k in ('gatherLimits', 'chairInfoList', 'vehicleInfoList', 'campFires'):
         if lay.get(k):
             out[k] = lay[k]
     if w.get('gatherLimits'):          # the player's own official gather counts (from their backup)
         out['gatherLimits'] = w['gatherLimits']
     dt = p.d.table('dungeon', 'Dungeon')   # official sends each map only its own dungeons (by WorldID)
-    ds = [dict(v, monsters=v.get('monsters', [0])) for v in p.s.get('dungeons', {}).values()
+    mine = {int(k): v for k, v in p.s.get('dungeons', {}).items()}
+    ds = [dict(v, monsters=v.get('monsters', [0])) for v in mine.values()
           if (dt.get(int(v.get('dungeonId', 0))) or {}).get('WorldID') == int(sid)]
+    for did in base.get('dungeonIds', []):   # dungeons of this map the player hasn't played yet
+        if did not in mine and did in dt:
+            ds.append({'dungeonId': did, 'monsters': [0]})
     if ds and str(sid) != '9999':
         out['dungeons'] = ds
     return out
