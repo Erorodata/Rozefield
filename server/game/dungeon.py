@@ -134,7 +134,8 @@ def register(H, pack, enter_scene, scene_player):
             dstate(p, did)['exitTimes'] += 1
         ret = ctx.__dict__.pop('dungeon_return', None) or (p.s['scene_id'], p.s.get('channel_label'), None, None)
         if ret[2]:
-            p.s['last_pos'] = ret[2]
+            from game.handlers import set_pos, PUBLIC_SCENE
+            set_pos(p.s, ret[2], ret[0], p.s['player_id'] if ret[0] == PUBLIC_SCENE else None)
         ctx.__dict__['temp_storage'] = []
         ctx.reply({'status': OK, 'scene_id': ret[0]})
         r = enter_scene(ctx, ret[0], label=ret[1])

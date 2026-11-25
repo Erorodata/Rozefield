@@ -129,7 +129,7 @@ def scene_record(ctx, req):
                 if x.get('pos'):
                     pos = x['pos']
     if pos:
-        ctx.p.s['last_pos'] = pos
+        set_pos(ctx.p.s, pos)
     if data and len(ctx.server.channels.get(getattr(ctx, 'chan', None), ())) > 1:   # movement seen by the others here
         ctx.server.broadcast(ctx, 'PlayerSceneSyncDataNotice', {'status': OK, 'data': [{'player_id': ctx.p.s['player_id'], 'data': [data]}]},
                              include_self=False)
@@ -158,6 +158,18 @@ def rename(ctx, req):
 PUBLIC_SCENE = 9999
 
 
+def pos_key(s, scene_id=None, channel_id=None):
+    """Where a position belongs: each map, and each garden (scene 9999 is every garden, told apart by channel)"""
+    sid = s['scene_id'] if scene_id is None else scene_id
+    ch = s.get('channel_id') if channel_id is None else channel_id
+    return f'{sid}:{ch}' if sid == PUBLIC_SCENE else str(sid)
+
+
+def set_pos(s, pos, scene_id=None, channel_id=None):
+    s['last_pos'] = pos
+    s.setdefault('pos_by_scene', {})[pos_key(s, scene_id, channel_id)] = pos
+
+
 def scene_player(p):
     s = p.s
     team = {}
@@ -173,8 +185,9 @@ def scene_player(p):
               'characterAppearance': ch.get('characterAppearance', {}),
               'outfitPreset': {k: v for k, v in op.items() if k in ('hat', 'hair', 'clothes', 'ornament') or k.startswith('pend') and not k.endswith('Index')},
               'weaponId': w.get('weaponId', 0), 'weaponStar': w.get('star', 1)}
-        if s.get('last_pos'):
-            sc['Pos'] = s['last_pos']
+        pos = s.get('pos_by_scene', {}).get(pos_key(s))   # only a position on this map (never another map's)
+        if pos:
+            sc['Pos'] = pos
         team[slot] = sc
     return {'player_id': s['player_id'], 'player_name': s['name'], 'team': team,
             'avatar_frame': s.get('appearance', {}).get('avatar_frame', 0), 'phone_case': s.get('phone_case', 0),
@@ -224,6 +237,14 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
             data[k] = tpl[k]
     if scene_id != PUBLIC_SCENE:
         data.update(_world_mod().scene_fields(p, scene_id))
+    else:   # gardens / plaza: gather spots need gatherLimits to spawn; your own garden also shows what you collected
+        W = _world_mod()
+        mine = W.W(p, PUBLIC_SCENE)
+        gl = mine.get('gatherLimits') or W.layout().get(str(PUBLIC_SCENE), {}).get('gatherLimits')
+        if gl:
+            data['gatherLimits'] = gl
+        if owner is p and mine.get('collections'):
+            data['collections'] = mine['collections']
     if owner is not None:
         data['sceneGardenData'] = garden_data(ctx, owner)
         data['placedCharacters'] = [{'characterId': c} for c in owner.s.get('placed_characters', [])][:0]
@@ -237,9 +258,9 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
 
 @handler('ChangeSceneChannelReq')
 def change_scene(ctx, req):
-    if req.get('pos'):
-        ctx.p.s['last_pos'] = req['pos']
     sid = req.get('scene_id') or PUBLIC_SCENE
+    if req.get('pos') and not req.get('target_player_label'):    # teleport target on the new map
+        ctx.p.s.setdefault('pos_by_scene', {})[pos_key(ctx.p.s, sid, ctx.p.s['player_id'] if sid == PUBLIC_SCENE else None)] = req['pos']
     r = enter_scene(ctx, sid, label=req.get('channel_label'), target_label=req.get('target_player_label'),
                     before_push=lambda c, l: ctx.reply({'status': OK, 'scene_id': ctx.p.s['scene_id'], 'channel_id': c, 'channel_label': l}))
     if r is None:
