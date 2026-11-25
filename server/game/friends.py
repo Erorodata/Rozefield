@@ -7,8 +7,8 @@ State per player (p.s['social']):
   profiles  {pid: PlayerBriefInfo}                  friends' official profiles from the player's backup
 Imported players get their official friend list (FriendRsp in the backup). Friends who have not imported yet show
 greyed out (offline) from those saved profiles and link up by themselves when they import, because imported accounts
-keep their official ids. Players met nearby this session are listed too, until the game closes (they live on the
-session, never in the save). No friend limit on Rozefield.
+keep their official ids. Players met nearby this session are listed in the requests list,
+below the real requests, until the game closes (they live on the session, never in the save). No friend limit on Rozefield.
 """
 import json
 import os
@@ -92,16 +92,16 @@ def register(H, pack):
         soc = S(ctx.p.s); out = []
         if t == 'FriendListType_APPLY':
             out = [x for x in (entry(ctx, int(pid)) for pid in soc['apply']) if x]
+            me = ctx.p.s['player_id']   # below the real requests: players met nearby, until the game closes
+            for pid in list(getattr(ctx, 'nearby', ())):
+                if str(pid) not in soc['friends'] and str(pid) not in soc['apply'] and pid != me and pid not in soc['black']:
+                    b = brief(ctx.server, pid)
+                    if b:
+                        out.append({'info': b, 'alias': '(nearby) ' + b['nickName']})
         elif t == 'FriendListType_BLACK':
             out = [x for x in (entry(ctx, int(pid)) for pid in soc['black']) if x]
         else:
             out = [x for x in (entry(ctx, int(pid), f) for pid, f in soc['friends'].items()) if x]
-            me = ctx.p.s['player_id']
-            for pid in list(getattr(ctx, 'nearby', ())):   # met this session, gone when the game closes
-                if str(pid) not in soc['friends'] and pid != me and pid not in soc['black']:
-                    b = brief(ctx.server, pid)
-                    if b:
-                        out.append({'info': b, 'alias': '(nearby) ' + b['nickName']})
         ctx.reply({'status': OK, 'info': out})
     H['FriendReq'] = friend_list
 
@@ -138,8 +138,9 @@ def register(H, pack):
         soc = S(ctx.p.s)
         if req.get('isAgree'):
             befriend(ctx, me, pid); notice(ctx, pid, 'FriendHandleType_ADD', me)
-        else:
+        else:   # decline: a request goes, a nearby player leaves the list
             soc['apply'].pop(str(pid), None); ctx.p.dirty = True
+            getattr(ctx, 'nearby', set()).discard(pid)
         ctx.reply({'status': OK})
     H['FriendHandleReq'] = handle
 
