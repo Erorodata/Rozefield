@@ -311,6 +311,10 @@ class Player:
             return None
         self.s['items'][str(item_id)] = have - n
         self.dirty = True
+        spent = {10: 80, 11: 81, 101: 85}.get(int(item_id))   # quest steps: vitality / energy / gold spent
+        if spent and n > 0:
+            from game import quests as Q
+            Q.event(self, spent, None, n)
         return [{'mainItem': self.item_info(item_id)}]
 
     def can_afford(self, costs):

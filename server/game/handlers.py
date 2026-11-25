@@ -7,6 +7,7 @@ ctx.d        -> Data tables
 """
 import random, time
 from game import quests as Q
+from game import chatlog
 
 H = {}
 
@@ -107,9 +108,8 @@ def main_data(ctx, req):
     ctx.push('PetWarehouseLimitNotice', {'status': OK, 'warehouse_limit': p.s.get('pet_warehouse_limit', 100)})
     ctx.push('ModuleCloseNotice', {'status': OK})
     ctx.push('GMRecommendChannelNotice', {'status': OK})
-    ctx.push('ChatMsgRecordInitNotice', {'status': OK, 'type': 'ChatChannel_ChatRoom', 'msg': list(WORLD_CHAT)})
-    enter_scene(ctx, p.s['scene_id'], label=p.s.get('channel_label'))
-    ctx.push('ChatMsgRecordInitNotice', {'status': OK, 'msg': []})
+    ctx.push('ChatMsgRecordInitNotice', {'status': OK, 'type': 'ChatChannel_ChatRoom', 'msg': chatlog.world()})
+    enter_scene(ctx, p.s['scene_id'], label=p.s.get('channel_label'))   # also sends the channel's chat history
     p.save()
 
 
@@ -306,6 +306,7 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
     if before_push:
         before_push(channel_id, chan_label)
     ctx.push('SceneDataNotice', {'status': OK, 'data': data})
+    ctx.push('ChatMsgRecordInitNotice', {'status': OK, 'msg': chatlog.channel(scene_id, channel_id)})   # official order
     ctx.server.join_channel(ctx, scene_id, channel_id)
     Q.on_scene(p, scene_id)
     return channel_id, chan_label
@@ -375,7 +376,7 @@ def chat(ctx, req):
     kind = req.get('type', 'ChatChannel_Default')
     note = {'status': OK, 'type': kind, 'msg': msg}
     if kind == 'ChatChannel_ChatRoom':            # world chat: everyone online
-        WORLD_CHAT.append(msg)
+        chatlog.add_world(msg)
         for o in list(ctx.server.sessions.values()):
             if o is not ctx and o.p:
                 try:
@@ -394,7 +395,8 @@ def chat(ctx, req):
         o = ctx.server.sessions.get(tid)
         if o and o is not ctx:
             o.push('ChatMsgNotice', note)
-    else:                                         # nearby: same scene channel
+    else:                                         # nearby: same scene channel, kept for whoever comes later
+        chatlog.add_channel(s['scene_id'], s['channel_id'], msg)
         ctx.server.broadcast(ctx, 'ChatMsgNotice', note, include_self=False)
 
 
@@ -705,14 +707,61 @@ def shop_grids(ctx, shop_id):
     return (grid or {}).get('Items', [])
 
 
+def shop_period(g):
+    """Refresh period of a grid: buy counts and the item picked from a multi-item pool reset with it."""
+    t = time.localtime()
+    kind = g.get('NewShopRefreshType')
+    if kind == 2:
+        return time.strftime('%Y-%m-%d', t)          # daily
+    if kind == 3:
+        return time.strftime('%Y-W%W', t)            # weekly
+    if kind == 4:
+        return time.strftime('%Y-%m', t)             # monthly
+    return ''                                        # never resets
+
+
+def shop_pool_entry(ctx, sid, g):
+    """The pool item a grid shows. Official: poolIndex is the pool item's own Index (not the grid's); a pool with
+    several items shows one of them, picked for the current refresh period, within the player's level and dates."""
+    pool = ctx.d.row('shop', 'Pool', g['ShopPoolID']) or {'Items': []}
+    lv, now = ctx.p.s.get('level', 1), time.strftime('%Y-%m-%d %H:%M:%S')
+    ok = [x for x in pool['Items'] if x.get('MinLevel', 1) <= lv <= x.get('MaxLevel', 999)
+          and x.get('OpeningTime', '') <= now and (not x.get('ClosingTime') or now <= x['ClosingTime'])] or pool['Items']
+    if not ok:
+        return None
+    if len(ok) == 1:
+        return ok[0]
+    picks = ctx.p.s['shop'].setdefault(str(sid), {}).setdefault('_pick', {})
+    per = shop_period(g)
+    cur = picks.get(str(g['GridID']))
+    if not cur or cur[0] != per or not any(x['Index'] == cur[1] for x in ok):
+        cur = [per, random.choice(ok)['Index']]
+        picks[str(g['GridID'])] = cur
+        ctx.p.dirty = True
+    return next(x for x in ok if x['Index'] == cur[1])
+
+
+def shop_bought(ctx, sid, g):
+    rec = ctx.p.s['shop'].setdefault(str(sid), {})
+    v = rec.get(str(g['GridID']), 0)
+    if isinstance(v, int):                           # old saves: plain count, never reset
+        v = [shop_period(g), v] if g.get('NewShopRefreshType') else ['', v]
+    if v[0] != shop_period(g):
+        v = [shop_period(g), 0]
+    rec[str(g['GridID'])] = v
+    return v
+
+
 @handler('ShopInfoReq')
 def shop_info(ctx, req):
     sid = req.get('shopId')
-    bought = ctx.p.s['shop'].get(str(sid), {})
     grids = []
     for g in shop_grids(ctx, sid):
-        grids.append({'id': sid, 'gridId': g['GridID'], 'poolId': g['ShopPoolID'], 'poolIndex': g.get('Index', g['GridID']),
-                      'buyTimes': bought.get(str(g['GridID']), 0)})
+        e = shop_pool_entry(ctx, sid, g)
+        if not e:
+            continue
+        grids.append({'id': sid, 'gridId': g['GridID'], 'poolId': g['ShopPoolID'], 'poolIndex': e['Index'],
+                      'buyTimes': shop_bought(ctx, sid, g)[1]})
     ctx.reply({'status': OK, 'shopId': sid, 'grids': grids})
 
 
@@ -723,12 +772,11 @@ def shop_buy(ctx, req):
     g = next((x for x in shop_grids(ctx, sid) if x['GridID'] == gid), None)
     if not g:
         return ctx.reply({'status': FAIL})
-    bought = p.s['shop'].setdefault(str(sid), {})
-    have = bought.get(str(gid), 0)
+    rec = shop_bought(ctx, sid, g)
+    have = rec[1]
     if g.get('BuyMaxCount', -1) > 0 and have + times > g['BuyMaxCount']:
         return ctx.reply({'status': FAIL})
-    pool = d.row('shop', 'Pool', g['ShopPoolID']) or {'Items': []}
-    entry = next((x for x in pool['Items'] if not req.get('itemId') or x.get('ItemID') == req['itemId']), None)
+    entry = shop_pool_entry(ctx, sid, g)
     if not entry:
         return ctx.reply({'status': FAIL})
     costs = []
@@ -748,10 +796,10 @@ def shop_buy(ctx, req):
     got, changed = p.add_item(entry['ItemID'], entry.get('ItemNum', 1) * times)
     if entry.get('AddItemID'):
         a, b = p.add_item(entry['AddItemID'], entry.get('AddItemNum', 1) * times); got += a; changed += b
-    bought[str(gid)] = have + times
+    rec[1] = have + times
     p.dirty = True
     ctx.reply({'status': OK, 'shopId': sid, 'grids': {'id': sid, 'gridId': gid, 'poolId': g['ShopPoolID'],
-                                                      'poolIndex': g.get('Index', gid), 'buyTimes': have + times}, 'items': got})
+                                                      'poolIndex': entry['Index'], 'buyTimes': have + times}, 'items': got})
     pack(ctx, paid + changed)
 
 
@@ -1238,6 +1286,8 @@ def send_action(ctx, req):
         ctx.server.broadcast(ctx, 'SendActionNotice', {'status': OK, 'actionId': aid, 'fromPlayerId': ctx.p.s['player_id'],
                                                        'fromPlayerName': ctx.p.s['name']}, include_self=False)
     Q.event(ctx.p, Q.C['Emotion'])
+    if (ctx.d.row('action', 'ActionInfo', aid) or {}).get('NewActionType') == 1:   # campfire: an interaction item
+        Q.event(ctx.p, Q.C['UseInteractiveItemNum'])
 
 
 @handler('ChangeMusicalItemReq')
@@ -1314,12 +1364,18 @@ def colorant_select(ctx, req):
 def outfit_dye(ctx, req):
     p = ctx.p
     oid = req.get('outfitId', 0)
+    # official: every dye uses 1 of the colorant picked for this outfit (OutfitColorantSelectReq), then a PackNotice
+    colorant = p.s.get('dye_colorant', {}).get(str(oid)) or 401
+    paid = p.remove_item(colorant, 1)
+    if paid is None:
+        return ctx.reply({'status': FAIL})
     col = req.get('specifyColor') or {'red': random.randint(0, 255), 'green': random.randint(0, 255), 'blue': random.randint(0, 255)}
     col = dict(col, pos=req.get('pos', 0))
     p.s.setdefault('dye_pending', {})[str(oid)] = {'schemeIndex': req.get('schemeIndex', 0), 'color': col}
     p.s['dye_total'] = p.s.get('dye_total', 0) + 1
     p.dirty = True
     ctx.reply({'status': OK, 'outfitId': oid, 'posColor': col, 'totalGuaranteeDyeNum': p.s['dye_total']})
+    pack(ctx, paid)
 
 
 @handler('OutFitDyeSaveReq')

@@ -117,6 +117,11 @@ def register(H, pack):
         now = int(time.time())
         edit(ctx.server, a, lambda st: (S(st)['friends'].setdefault(str(b), {'since': now, 'alias': ''}), S(st)['apply'].pop(str(b), None)))
         edit(ctx.server, b, lambda st: (S(st)['friends'].setdefault(str(a), {'since': now, 'alias': ''}), S(st)['apply'].pop(str(a), None)))
+        from game import quests as Q
+        for pid in (a, b):                       # quest step "make a new friend" (players online or in memory)
+            pl = ctx.server.player_by_id(pid)
+            if pl is not None:
+                Q.event(pl, Q.C['AddFriend'])
 
     def add(ctx, req):
         me, pid = ctx.p.s['player_id'], req.get('player_id', 0)

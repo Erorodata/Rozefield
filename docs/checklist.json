@@ -118,8 +118,9 @@
           "needs in-game check"
         ],
         [
-          "Shops (Rhombite shop gives the item)",
-          "done"
+          "Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset",
+          "partial",
+          "needs in-game check"
         ],
         [
           "Food buffs and item use",
@@ -130,7 +131,7 @@
           "done"
         ],
         [
-          "Chat and GM console (no double text)",
+          "Chat and GM console: world and channel history kept across logins and restarts",
           "partial",
           "needs in-game check"
         ],
@@ -177,7 +178,7 @@
         [
           "Dye",
           "partial",
-          "colorants not consumed yet"
+          "each dye uses 1 colorant as official; needs in-game check"
         ],
         [
           "Scrap (disassemble)",

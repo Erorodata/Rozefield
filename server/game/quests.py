@@ -33,10 +33,10 @@ C = {  # EAchieveCondition numbers used by quests
 EVENT_TYPES = {C[k] for k in ('KillMonest', 'GetItem', 'OpenBox', 'FinishMission', 'FinishEncounter', 'QuestTalk', 'Gacha',
                               'GoSomeScene', 'MechanismInteraction', 'AreaUlockNum', 'ItemNum', 'FinishTheEncounter', 'Emotion',
                               'EatFood', 'DailyQuestNum', 'KillMonsterNum', 'SideQuest12', 'OpenBox0', 'Decompose0',
-                              'WearingFashing0', 'PlacingFurniture0', 'PlayerLv')}
+                              'WearingFashing0', 'PlacingFurniture0', 'PlayerLv', 'DungeonPass', 'UseEnergy', 'UseVitality',
+                              'UseGoldNum', 'UseInteractiveItemNum', 'GardenLike', 'AddFriend')}
 # types that need a system not built yet (life skills, gathering, dungeons, currencies, social): no rule
-UNBUILT_TYPES = {C[k] for k in ('DungeonPass', 'UseEnergy', 'UseVitality', 'UseGoldNum', 'SceneExplore',
-                                'UseInteractiveItemNum', 'GardenLike', 'AddFriend')}
+UNBUILT_TYPES = {C[k] for k in ('SceneExplore',)}
 # life-skill types are tracked by game/life.py
 EVENT_TYPES_LIFE = {C[k] for k in ('CookingNum01', 'CookingSuccessNum0', 'FishingSuccess1', 'FishingSpecialTimesNum12',
                                    'HandicraftSuccess1', 'MakeSuccess1', 'SpinSuccess1', 'HandicraftProcess1', 'MakeProcess1',

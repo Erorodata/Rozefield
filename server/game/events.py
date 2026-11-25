@@ -394,6 +394,7 @@ def register(H, pack, scene_player):
         ctx.reply({'status': OK})
         if paid:
             pack(ctx, paid)
+            Q.event(p, Q.C['UseInteractiveItemNum'])   # dice: an interaction item
     H['ThrowDiceReq'] = dice
 
     def gift(ctx, req):

@@ -26,8 +26,10 @@ Status: **Fixed** = fixed and confirmed in game · **Fixed, retest** = fixed on 
 | 9 | Seasonal plaza stage (event lawn, Ferris wheel, balloons, Halloween stage) could appear | The game picks the stage by date from the `SceneTheme` table | Event rows have no dates in Rozefield's config, so the default stage always shows | Fixed, retest |
 | 10 | Furniture instrument: Play button missing | `ChangeMusicalItemRsp` returned item id 0 for a furniture instrument | Returns the furniture's item id | Fixed |
 | 11 | Changing channel keeps the same position; channel cannot be changed in some cases | — | Checked in game: channel change works and keeps the position | Fixed |
-| 12 | Chat messages are not kept | — | — | Open |
-| 20 | Building blocks (e.g. Black Blocks) cannot be bought: not in the shop | Not checked yet | — | Open |
+| 12 | Chat messages are not kept | World chat was only in memory, channel (nearby) chat not kept at all, and entering a channel sent an empty history | World and channel chat saved to `save/chat.json` (last 50 lines each); entering a channel sends its history, as official | Fixed, retest |
+| 20 | Building blocks (e.g. Black Blocks) cannot be bought: not in the shop | Shop slots told the game the slot number instead of the pool item's own index, so the game found no item (affected most shops); limits never reset | Official pool item index, multi-item slots pick one item per refresh, daily / weekly / monthly limits reset | Fixed, retest |
+| 21 | Dye does not use up colorants | Not built | Each dye uses 1 of the chosen colorant, with a bag update, as official | Fixed, retest |
+| 22 | Some quest steps never complete: spend gold / vitality / energy, pass a Sequence, like a garden, make a friend, use an interaction item | No rule for those step types | Counted from play (1,264 of 1,265 steps now have a rule) | Fixed, retest |
 
 ## Fields and life skills
 

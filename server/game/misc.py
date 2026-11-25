@@ -652,9 +652,14 @@ def register(H, pack):
         cap = d.config_int('HomeLikesNum', 10)
         if dd['likes'] >= cap:
             return ctx.reply({'status': FAIL, 'leftLikeNums': 0})
+        owner = ctx.server.player_by_id(p.s.get('channel_id')) if p.s.get('scene_id') == 9999 else None
+        if owner is None or owner is p:          # likes go to someone else's garden
+            return ctx.reply({'status': FAIL, 'leftLikeNums': cap - dd['likes']})
         dd['likes'] += 1
-        p.s['garden']['likes'] = p.s['garden'].get('likes', 0)
-        ctx.reply({'status': OK, 'leftLikeNums': cap - dd['likes'], 'likeNums': str(p.s['garden'].get('likes', 0))})
+        owner.s['garden']['likes'] = owner.s['garden'].get('likes', 0) + 1
+        owner.dirty = True
+        Q.event(p, Q.C['GardenLike'])
+        ctx.reply({'status': OK, 'leftLikeNums': cap - dd['likes'], 'likeNums': str(owner.s['garden']['likes'])})
     H['DoLikesReq'] = likes
     H['GardenLikeRecordReq'] = lambda ctx, req: ctx.reply({'status': OK, 'record': []})
     H['PrivateChatMsgRecordReq'] = lambda ctx, req: ctx.reply({'status': OK, 'msgRecord': _st(ctx.p, 'private_chat', {}).get(str(req.get('targetPlayerId')), [])})

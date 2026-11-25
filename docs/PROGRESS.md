@@ -1,4 +1,4 @@
-# Rozefield progress: 81.47%
+# Rozefield progress: 81.20%
 
 ![progress](progress.png)
 
@@ -31,26 +31,26 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (61.3%)
+## Gameplay (60.2%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
 - [~] Character level up, level break, star up, skill up: costs from the game tables; needs in-game check
 - [~] Profile, outfit / gear presets, pets, visit a friend's garden: needs in-game check
-- [x] Shops (Rhombite shop gives the item)
+- [~] Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset: needs in-game check
 - [x] Food buffs and item use
 - [x] Channels, scenes, fields, friends' gardens
-- [~] Chat and GM console (no double text): needs in-game check
+- [~] Chat and GM console: world and channel history kept across logins and restarts: needs in-game check
 - [~] Umbrella / badge / tool appearance: needs in-game check
 - [~] Garden plaza: lift, presets, 500,000 limit: needs in-game check
 - [x] Recruit banners and pulls
 - [~] Recruit result screen (animation, can't leave): results now carry the official bonus items + quality; needs in-game check
 - [~] Quest engine: main story, story rewards, daily, delegate
-- [~] Quest steps with an event rule (97.71% 1,236/1,265)
+- [x] Quest steps with an event rule (99.92% 1,264/1,265)
 - [x] Main story quests cleared by an automated new account (100.00% 648/648)
 - [~] Achievements: view archived progress
 - [~] Achievements: earn and claim: counted from play, claim + group rewards; needs in-game check
-- [~] Dye: colorants not consumed yet
+- [~] Dye: each dye uses 1 colorant as official; needs in-game check
 - [~] Scrap (disassemble)
 - [~] Life skills: cooking, sewing, making, handicraft, fishing: recipes, success chance, levels, skills, handbook rewards; needs in-game check
 - [~] Gathering tools (net, axe, hammer, gloves, bottle): gather rewards + tool progress; needs in-game check
