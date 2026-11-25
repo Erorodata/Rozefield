@@ -785,14 +785,24 @@ def _handing(p):
     return h
 
 
+def furniture_used(p):
+    """Official model: the bag keeps every piece owned; furnitureItemInfo = pieces in use. The decorate panel shows used/owned."""
+    return p.furniture_used()
+
+
+def furniture_free(p, item):
+    return p.count(item) - furniture_used(p).get(item, 0)
+
+
 def _furniture_notice(ctx, item):
-    ctx.push('FurnitureItemChangeNotice', {'status': OK, 'furnitureItemInfo': {'itemId': item, 'num': str(ctx.p.count(item))}})
+    n = furniture_used(ctx.p).get(item, 0)
+    ctx.push('FurnitureItemChangeNotice', {'status': OK, 'furnitureItemInfo': {'itemId': item, 'num': str(n)}})
 
 
 @handler('HandingFurnitureReq')
 def handing(ctx, req):
     p = ctx.p
-    if p.count(req.get('itemId')) <= 0:
+    if furniture_free(p, req.get('itemId')) <= 0:
         return ctx.reply({'status': FAIL})
     fid = new_furniture_id(p)
     _handing(p)[str(fid)] = {'itemId': req.get('itemId'), 'lifted': False}
@@ -804,8 +814,7 @@ def take_handing(ctx, req):
     """Put the held piece away: a piece lifted from the plaza goes back to the bag."""
     p = ctx.p
     h = _handing(p).pop(str(req.get('furnitureId')), None)
-    if h and h.get('lifted'):
-        p.add_item(h['itemId'], 1)
+    if h and h.get('lifted'):  # back to the bag: no longer in use
         _furniture_notice(ctx, h['itemId'])
     p.dirty = True
     ctx.reply({'status': OK, 'furnitureId': req.get('furnitureId')})
@@ -828,9 +837,8 @@ def place(ctx, req):
     item = req.get('furnitureItemId')
     held = _handing(p).get(fid) if fid else None
     consume = not (fid and fid in g) and not (held and held.get('lifted'))
-    if consume:  # a new piece from the bag
-        if p.remove_item(item, 1) is None:
-            return ctx.reply({'status': FAIL})
+    if consume and furniture_free(p, item) <= 0:  # a new piece from the bag
+        return ctx.reply({'status': FAIL})
     if fid:
         _handing(p).pop(fid, None)
     fid = fid or str(new_furniture_id(p))
@@ -861,20 +869,13 @@ def take_out(ctx, req):
         ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice', {'status': OK, 'furniture_id': fid, 'item_id': f['furnitureItemId']},
                              include_self=False)
         return
-    got, changed = p.add_item(f['furnitureItemId'], 1)
-    ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice', {'status': OK, 'furniture_id': fid, 'item_id': f['furnitureItemId'],
-                                                                   'updateItems': changed})
+    ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice', {'status': OK, 'furniture_id': fid, 'item_id': f['furnitureItemId']})
     _furniture_notice(ctx, f['furnitureItemId'])
 
 
 def _clear_garden(p):
-    fur = p.s['garden']['furniture']
-    for fid, f in list(fur.items()):
-        p.add_item(f['furnitureItemId'], 1)
-    fur.clear()
-    for h in _handing(p).values():
-        if h.get('lifted'):
-            p.add_item(h['itemId'], 1)
+    """Everything back to the bag (the bag already counts it, so only the in-use list empties)."""
+    p.s['garden']['furniture'].clear()
     p.s['handing'] = {}
 
 
@@ -928,10 +929,7 @@ def scheme_list(ctx, req):
     need = {}
     for f in sc.values():
         need[f['furnitureItemId']] = need.get(f['furnitureItemId'], 0) + 1
-    have = {}
-    for f in p.s['garden']['furniture'].values():
-        have[f['furnitureItemId']] = have.get(f['furnitureItemId'], 0) + 1
-    missing = [i for i, n in need.items() if p.count(i) + have.get(i, 0) < n]
+    missing = [i for i, n in need.items() if p.count(i) < n]
     ctx.reply({'status': OK, 'scheme_id': req.get('scheme_id', 0), 'furnitureItemId': missing})
 
 
@@ -941,8 +939,12 @@ def scheme_apply(ctx, req):
     sc = _schemes(p).get(str(req.get('scheme_id', 0)), {}).get('furniture', {})
     _clear_garden(p)
     fur = p.s['garden']['furniture']
+    left = {}
     for fid, f in sc.items():
-        if p.remove_item(f['furnitureItemId'], 1) is not None:
+        i = f['furnitureItemId']
+        left.setdefault(i, p.count(i))
+        if left[i] > 0:
+            left[i] -= 1
             fur[fid] = json_copy(f)
     p.dirty = True
     ctx.reply({'status': OK, 'scheme_id': req.get('scheme_id', 0)})

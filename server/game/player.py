@@ -136,12 +136,14 @@ class Player:
                 if p.s.get('official_player_id') and not p.s.get('extras_imported'):
                     changed |= bool(backfill_from_backup(p.s, log.info))
                 changed |= bool(merge_world_files(p.s, log.info))
+                changed |= p.migrate_furniture_bag()
                 if changed:
                     p.save()
             except Exception:
                 log.exception('backfill from backup')
             return p
         p = cls(data, cls.new_state(data, uid, pid, name), path)
+        p.s['furniture_bag_v2'] = True
         p.grant_initial()
         p.save()
         return p
@@ -194,6 +196,33 @@ class Player:
 
     def count(self, item_id):
         return int(self.s['items'].get(str(item_id), 0))
+
+    def furniture_used(self):
+        """Pieces in use (placed in the own plaza or lifted in the hand). The bag keeps the owned total, as official."""
+        used = {}
+        for f in self.s['garden']['furniture'].values():
+            used[f['furnitureItemId']] = used.get(f['furnitureItemId'], 0) + 1
+        for h in self.s.get('handing', {}).values():
+            if isinstance(h, dict) and h.get('lifted'):
+                used[h['itemId']] = used.get(h['itemId'], 0) + 1
+        return used
+
+    def migrate_furniture_bag(self):
+        """Older builds took a piece out of the bag when it was placed. Put pieces this server placed back into the
+        bag once, so the bag is the owned total again (imported pieces were never taken out)."""
+        s = self.s
+        if s.get('furniture_bag_v2'):
+            return False
+        g = s['garden']
+        base, top = s['player_id'] * 100000, s['player_id'] * 100000 + g.get('next_furniture_id', 1)
+        for fid, f in g['furniture'].items():
+            if str(fid).isdigit() and base <= int(fid) < top:
+                self.add_item(f['furnitureItemId'], 1)
+        for fid, h in s.get('handing', {}).items():
+            if isinstance(h, dict) and h.get('lifted') and str(fid).isdigit() and base <= int(fid) < top:
+                self.add_item(h['itemId'], 1)
+        s['furniture_bag_v2'] = True
+        return True
 
     def item_info(self, item_id, num=None):
         """ItemInfo dict for a stackable item showing its current total (or num)."""
@@ -376,8 +405,7 @@ class Player:
             'quest_detail': quests.quest_detail(self),
             'player_label': s['player_label'], 'channel_label': s['player_label'],
             'gardenLikesNum': s['garden']['likes'],
-            'furnitureItemInfo': [{'itemId': int(k), 'num': str(v)} for k, v in s['items'].items()
-                                  if v > 0 and self.d.item_tag(int(k)) == 'EBagItemTag_Furniture'],
+            'furnitureItemInfo': [{'itemId': int(k), 'num': str(v)} for k, v in self.furniture_used().items() if v > 0],
             'birthday': s['birthday'], 'accountType': 16666, 'appearance': s.get('appearance', {}),
             'placed_characters': s['placed_characters'], 'phone_case': s['phone_case'],
             'sex': s.get('sex') or 0, 'isHideBirthday': s.get('hide_birthday', False),
