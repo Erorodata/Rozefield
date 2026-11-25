@@ -52,6 +52,81 @@ def W(p, sid):
     return w
 
 
+_FLAGS = {}
+
+
+def map_flags(d):
+    """Main game data, from the game's own tables (the same for every player): per map, the entrances that show on
+    it - landmarks, Aberrant Fields, Sequence Fields. Returns {scene: [(flagId, questId or None)]}: an entrance whose
+    dungeon is a main-story quest step only shows once that quest is given to the player.
+    (Checked against the official captures: a fully explored account had exactly these.)"""
+    if id(d) in _FLAGS:
+        return _FLAGS[id(d)]
+    flags = d.table('flag', 'Flag')
+    global_flags = set()
+    try:   # entrances only exist in maps the Global client has (CN-only ones have no object in the map)
+        gp = os.path.join(HERE, 'data', 'flag.json')
+        global_flags = {r['ID'] for r in json.load(open(gp, encoding='utf-8'))['Flag']['datas']}
+    except (OSError, ValueError, KeyError):
+        global_flags = set(flags)
+    dungeons = d.table('dungeon', 'Dungeon')
+    from game import quests as Q
+    x = Q.idx(d)
+    quest_of_dungeon, quest_of_battle = {}, {}
+    for qid in x['quests']:
+        for c in Q.conditions_of(d, qid):
+            a = x['ach'].get(c) or {}
+            if a.get('NewAchieveCondition') == 6:      # "finish dungeon X" step of a quest
+                for prm in a.get('Param') or []:
+                    quest_of_dungeon.setdefault(prm, qid)
+            elif a.get('NewAchieveCondition') == 4:    # "finish mission X" (story battle, e.g. Eliminate Ashen Creatures)
+                for prm in a.get('Param') or []:
+                    quest_of_battle.setdefault(prm, qid)
+    out = {}
+    for f in flags.values():
+        g = (f.get('FlagGroupInfo') or [{}])[0]
+        t = g.get('NewMissionType')
+        if f['ID'] not in global_flags or not g.get('IsItemUnlock'):
+            continue
+        if t == 1:
+            out.setdefault(f.get('SceneID'), []).append((f['ID'], None))
+        elif t in (5, 7):
+            dg = dungeons.get(g.get('RelationID')) or {}
+            if dg.get('WorldID') == f.get('SceneID'):
+                out.setdefault(f.get('SceneID'), []).append((f['ID'], quest_of_dungeon.get(g.get('RelationID'))))
+        elif not t and g.get('RelationID') in quest_of_battle:
+            # story battle marker: shown only while its quest step is in progress (official removes it with
+            # FlagUnLockRemoveNotice when the battle is won)
+            out.setdefault(f.get('SceneID'), []).append((f['ID'], -quest_of_battle[g['RelationID']]))
+    _FLAGS[id(d)] = out
+    return out
+
+
+def flag_shown(p, q):
+    """q None: always; q > 0: once that quest was given; q < 0: only while quest -q is in progress."""
+    qs = p.s.get('quests', {})
+    if q is None:
+        return True
+    if q > 0:
+        return str(q) in qs
+    st = (qs.get(str(-q)) or {}).get('status')
+    return st == 'QuestStatus_InProgress'
+
+
+def story_flags_changed(ctx, changed_qids):
+    """A story battle step started or ended while the player is on that map: add / remove its marker live."""
+    p = ctx.p
+    sid = p.s.get('scene_id')
+    add, rem = [], []
+    for fid, q in map_flags(p.d).get(int(sid or 0), []):
+        if q is not None and q < 0 and str(-q) in changed_qids:
+            (add if flag_shown(p, q) else rem).append(fid)
+    if add:
+        ctx.push('FlagUnlockAddNotice', {'status': 'StatusCode_OK', 'flagIds': add})
+    if rem:
+        ctx.push('FlagUnLockRemoveNotice', {'status': 'StatusCode_OK', 'flagIds': rem})
+
+
 def scene_fields(p, sid):
     """Extra SceneData fields for a field scene: layout chests + this player's progress."""
     lay = layout().get(str(sid), {})
@@ -72,10 +147,19 @@ def scene_fields(p, sid):
     for k in ('riddles', 'flags', 'challenges', 'areas', 'collections', 'flagIds'):
         if w[k]:
             out[k] = w[k]
-    for k in ('gatherLimits', 'chairInfoList', 'vehicleInfoList', 'campFires'):
+    ids = {fid for fid, q in map_flags(p.d).get(int(sid), []) if flag_shown(p, q)}
+    ids |= set(w['flagIds'])          # anything the player's own save already has
+    if ids:
+        out['flagIds'] = sorted(ids)
+    for k in ('chairInfoList', 'vehicleInfoList', 'campFires'):
         if lay.get(k):
             out[k] = lay[k]
-    ds = [dict(v, monsters=v.get('monsters', [0])) for v in p.s.get('dungeons', {}).values()]
+    from game.life import scene_gather_limits   # the player's own counts (imported from their backup, then kept here)
+    out['gatherLimits'] = scene_gather_limits(p, sid)
+    dt = p.d.table('dungeon', 'Dungeon')   # official sends each map only its own dungeons (by WorldID)
+    mine = {int(k): v for k, v in p.s.get('dungeons', {}).items()}
+    ds = [dict(v, monsters=v.get('monsters', [0])) for v in mine.values()
+          if (dt.get(int(v.get('dungeonId', 0))) or {}).get('WorldID') == int(sid)]
     if ds and str(sid) != '9999':
         out['dungeons'] = ds
     return out
@@ -199,6 +283,8 @@ def register(H, pack, scene_player):
             if dyn is None:
                 return ctx.reply({'status': FAIL})
             items, changed = give(ctx, [(GOLD, random.randint(60, 120))] + roll_gear(p.d, random.randint(2, 3), p.s.get('world_level', 1)))
+            if random.random() < 0.5:     # field chest Moon Points (official id 1120)
+                _moon(ctx, 1120, 5)
             ctx.reply({'status': OK, 'items': items})
             pack(ctx, changed)
             Q.event(p, Q.C['OpenBox'])
@@ -226,6 +312,8 @@ def register(H, pack, scene_player):
         if big:
             items += roll_gear(p.d, 1, p.s.get('world_level', 1)) + [(102, 10)]
         items, changed = give(ctx, items)
+        if random.random() < 0.5:         # field chest Moon Points (official id 1120)
+            _moon(ctx, 1120, 5)
         ctx.reply({'status': OK, 'items': items})
         pack(ctx, changed)
         Q.event(p, Q.C['OpenBox'])

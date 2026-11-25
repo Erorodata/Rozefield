@@ -15,6 +15,39 @@ sys.path.insert(0, HERE)
 SKIP_FILES = {'exploration'}
 CONFIG_OVERRIDES = {k: '500000' for k in ('HomeItemPointMax', 'PublicHomeItemPointMax', 'PrivateHomeItemPointMax',
                                                'SpecialPublicHomeItemPointMax')}
+CONFIG_OVERRIDES.update({'Player_Friend_Count': '9999', 'Player_Friend_Apply_Count': '9999'})   # no friend limit on Rozefield
+# Rozefield: put the stories official Global never gave out back on the story screen (see game/quests.py OPTIONAL_STORIES)
+INVESTIGATOR = {'ID': 10009, 'Name': 10004, 'IconID': 10004, 'PreChapterUnlock': 10005, 'MapCompletionUnlock': [1002, 3],
+                'StoryList': list(range(1000401, 1000415))}
+SIDE_STORIES = (1000508, [1000509, 1000510])   # chapter 4 side stories, placed after this story in its chapter
+CHAPTER_NAME = {'english': 'Extra Chapter: Investigator', 'japanese': 'Extra Chapter: Investigator',
+                'korea': 'Extra Chapter: Investigator', 'simplified': '番外章：调查员', 'traditional': '番外章：調查員'}
+
+
+def add_story_chapters(g):
+    rows = g.setdefault('StoryChapter', {'datas': []}).setdefault('datas', [])
+    n = 0
+    if not any(r.get('ID') == INVESTIGATOR['ID'] for r in rows):
+        rows.append(json.loads(json.dumps(INVESTIGATOR)))
+        n += 1
+    after, extra = SIDE_STORIES
+    for r in rows:
+        sl = r.get('StoryList', [])
+        if after in sl and not any(e in sl for e in extra):
+            i = sl.index(after) + 1
+            r['StoryList'] = sl[:i] + extra + sl[i:]
+            n += 1
+    return n
+
+
+def add_chapter_name(g, lang):
+    rows = g.setdefault('StringStory', {'datas': []}).setdefault('datas', [])
+    if lang in CHAPTER_NAME and not any(r.get('ID') == INVESTIGATOR['Name'] for r in rows):
+        rows.append({'ID': INVESTIGATOR['Name'], 'Text': [CHAPTER_NAME[lang], '']})
+        return 1
+    return 0
+
+
 LANG_FALLBACK = {'english': 'en', 'japanese': 'en', 'korea': 'en', 'traditional': 'tc', 'simplified': 'sc'}
 
 
@@ -117,6 +150,13 @@ def main():
             n = merge_sheets(g, json.load(open(os.path.join(cdir, base + '.json'), encoding='utf-8')))
         else:
             n = 0
+        if base == 'story':
+            n += add_story_chapters(g)
+        if base == 'scene':   # Rozefield: plaza always on the default stage (no seasonal event decoration)
+            from tools.default_stage import clear_event_themes
+            n += clear_event_themes(g)
+        if base.startswith('string_'):
+            n += add_chapter_name(g, base.split('_', 1)[1])
         if base == 'globalconfig':  # Rozefield: raise the plaza ornament point caps
             for r in g.get('Config', {}).get('datas', []):
                 if r.get('Key') in CONFIG_OVERRIDES:

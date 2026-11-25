@@ -34,7 +34,7 @@
           "done"
         ],
         [
-          "Player backup tool RozefieldBackup.exe",
+          "Player backup tool OverField Backup Data.exe",
           "partial",
           "built; first live run waits for the official server to come back"
         ],
@@ -302,7 +302,7 @@
           "estimate"
         ],
         [
-          "RozefieldBackup: background start, follows a Steam restart, log file",
+          "OverField Backup Data: background start, follows a Steam restart, log file",
           "partial",
           "needs a live run"
         ]

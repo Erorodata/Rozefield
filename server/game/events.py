@@ -122,10 +122,7 @@ def _tt_items(d, p, act):
 
 
 def register(H, pack, scene_player):
-    orig_main = H.get('PlayerMainDataReq')
-
-    def main_data(ctx, req):
-        orig_main(ctx, req)
+    def main_data(ctx):
         p, d = ctx.p, ctx.d
         try:
             ctx.push('ActivityBattlePassInfoNotice', {'status': OK, 'info': [_bp_info(d, p, a) for a in _activities(d, 3)]})
@@ -141,7 +138,8 @@ def register(H, pack, scene_player):
         except Exception:
             import logging
             logging.exception('event login notices')
-    H['PlayerMainDataReq'] = main_data
+    from game.handlers import LOGIN_HOOKS
+    LOGIN_HOOKS.append(main_data)
 
     # ---------------- pass
     def act_of(ctx, aid):
@@ -412,11 +410,9 @@ def register(H, pack, scene_player):
         gd = _ev(p).setdefault('gift_day', {})
         gd = {_day(): gd.get(_day(), 0) + 1}
         _ev(p)['gift_day'] = gd
-        other = ctx.server.player_by_id(fid) if hasattr(ctx.server, 'player_by_id') else None
-        if other:   # intimacy is shared by both friends
-            oim = _ev(other).setdefault('intimacy', {})
-            oim[str(p.s['player_id'])] = im[str(fid)]
-            other.dirty = True
+        from game.friends import edit   # intimacy is shared by both friends (saved even if they're offline)
+        me, val = str(p.s['player_id']), im[str(fid)]
+        edit(ctx.server, fid, lambda st: st.setdefault('events', {}).setdefault('intimacy', {}).__setitem__(me, val))
         p.dirty = True
         ctx.reply({'status': OK, 'friend_id': fid, 'intimacy': im[str(fid)]})
         pack(ctx, paid)

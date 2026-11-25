@@ -442,13 +442,40 @@ def register(H, pack):
         pack(ctx, changed)
     H['AreaLevelUpReq'] = area_up
     H['AreaCloseReq'] = lambda ctx, req: ctx.reply({'status': OK, 'area': area_entry(ctx.p, req.get('areaId'))})
-    H['AreaAchieveListReq'] = lambda ctx, req: ctx.reply({'status': OK, 'areaId': req.get('areaId'), 'achieves': []})
+    def area_achieves(ctx, req):
+        """Exploration of one area (Global Search "Exploration n/4"): the official answer from the backup"""
+        k = json.dumps({'areaId': req.get('areaId')}, sort_keys=True, ensure_ascii=False)
+        off = (ctx.p.s.get('official_answers', {}).get('AreaAchieveListReq') or {}).get(k)
+        if off and off.get('status') == OK:
+            return ctx.reply(off)
+        ctx.reply({'status': OK, 'areaId': req.get('areaId'), 'achieves': []})
+    H['AreaAchieveListReq'] = area_achieves
+
+    _ctype = {}
 
     def collecting(ctx, req):
+        """Field collectibles (crystals, files, tapes...). Remembered per scene so the pickup stays collected,
+        and added to the handbook list (GetCollectItemIds)."""
+        from game.world import W
         p = ctx.p
         iid = req.get('itemId')
-        got, changed = give(ctx, [(iid, 1)]) if ctx.d.item(iid) else ([], [])
-        ctx.reply({'status': OK, 'collections': [], 'items': got})
+        if not _ctype:
+            for r in ctx.d.table('collectionitem', 'CollectionItem').values():
+                _ctype[r['ID']] = r.get('NewCollectionType', 0)
+        ctype = _ctype.get(iid, 0)
+        w = W(p, p.s.get('scene_id', 0))
+        entry = next((c for c in w['collections'] if c.get('type', 0) == ctype), None)
+        if entry is None:
+            entry = {'type': ctype, 'itemMap': {}} if ctype else {'itemMap': {}}
+            w['collections'].append(entry)
+        first = str(iid) not in entry['itemMap'] and iid not in entry['itemMap']
+        entry['itemMap'][str(iid)] = {'itemId': iid}
+        ids = rec(p, 'GetCollectItemIdsReq').setdefault('itemIds', [])
+        if iid not in ids:
+            ids.append(iid)
+        got, changed = give(ctx, [(iid, 1)]) if first and ctx.d.item(iid) else ([], [])
+        p.dirty = True
+        ctx.reply({'status': OK, 'collections': [{'type': ctype, 'itemMap': {iid: {'itemId': iid}}}], 'items': got})
         pack(ctx, changed)
     H['CollectingReq'] = collecting
 
@@ -800,7 +827,9 @@ def register(H, pack):
                     ('MPTeamDismissReq', ()), ('MPTeamInviteReq', ()), ('UploadExpressAddressReq', ('items',))):
         ack(n, echo)
     H['AccountNameBindingCancelReq'] = lambda ctx, req: ctx.reply({'status': OK, 'playerId': ctx.p.s['player_id']})
-    H['PlayerOfflineReq'] = lambda ctx, req: ctx.reply({'status': OK})
+    # Settings -> "Exit game?" -> Yes: the client asks to go offline and uses the reply's reason as its close reason.
+    # LOGOUT (6) makes it return to the login screen (no reason = "Reconnect to the server?" and the same account).
+    H['PlayerOfflineReq'] = lambda ctx, req: ctx.reply({'status': OK, 'reason': 'PlayerOfflineReason_LOGOUT'})
     H['SPOperateReq'] = lambda ctx, req: ctx.reply({'status': OK, 'operateType': req.get('operateType'), 'sp_open_status': False, 'sp_check_status': False})
     H['GetExpressAddressReq'] = lambda ctx, req: ctx.reply({'status': OK})
     H['PhotoShareSearchReq'] = lambda ctx, req: ctx.reply({'status': OK, 'photos': [], 'totalNum': 0, 'todayUploadLimit': 0, 'uploadMaxNum': 0})

@@ -22,3 +22,11 @@ server/backup_tool/backups/
 server/backup_tool/recording.tmp
 server/backup_tool/RozefieldBackup.ini
 *.pdb
+
+# dev-only knowledge graph (graphify), never shipped
+graphify-out/
+.graphifyignore
+server/save/admin_token.txt
+
+# backup window pictures, extracted from your own game install (tools/extract_backup_assets.py)
+server/backup_tool/assets/

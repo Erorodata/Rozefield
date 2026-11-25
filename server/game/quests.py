@@ -46,6 +46,10 @@ EVENT_TYPES_LIFE = {C[k] for k in ('CookingNum01', 'CookingSuccessNum0', 'Fishin
 EVENT_TYPES |= EVENT_TYPES_LIFE
 IN_PROGRESS, COMPLETED, FINISH, LOCKED = 'QuestStatus_InProgress', 'QuestStatus_Completed', 'QuestStatus_Finish', 'QuestStatus_Locked'
 MAIN, DAILY = 1, 4
+# Stories official Global never gave out (cut "Investigator" chapter + two chapter-4 side stories). Rozefield adds them
+# back as a chapter (tools/merge_cn_config.py). New Rozefield players get them in the main story; players imported
+# from official start them from the story screen themselves and are never pushed into them.
+OPTIONAL_STORIES = set(range(1000401, 1000415)) | {1000509, 1000510}
 _IDX = {}
 
 
@@ -61,13 +65,21 @@ def idx(d):
     by_group = {}
     for q in quests.values():
         by_group.setdefault(q.get('QuestGroup', q['ID']), []).append(q['ID'])
-    main_order, story_of = [], {}
+    main_order, story_of, extra_qids = [], {}, set()
     for st in stories:
+        if st['ID'] in OPTIONAL_STORIES:
+            extra_qids.update(by_group.get(st.get('QuestID'), []))
         for qid in sorted(by_group.get(st.get('QuestID'), [])):
             main_order.append(qid)
             story_of[qid] = st
-    x = {'quests': quests, 'groups': groups, 'ach': ach, 'stories': {s['ID']: s for s in stories}, 'story_list': stories,
-         'chapter_of': chapter_of, 'by_group': by_group, 'main_order': main_order, 'story_of': story_of,
+    res_of = {}   # conditionId -> the scene resource (talk point / mechanism) the client reports for that step
+    for g in groups.values():
+        for cs in g.get('QuestConditionSet', []):
+            for cid, rid in zip(cs.get('AchieveConditionID', []), cs.get('ResourceID', [])):
+                if rid:
+                    res_of.setdefault(cid, set()).add(rid)
+    x = {'res_of': res_of, 'quests': quests, 'groups': groups, 'ach': ach, 'stories': {s['ID']: s for s in stories}, 'story_list': stories,
+         'chapter_of': chapter_of, 'by_group': by_group, 'main_order': main_order, 'story_of': story_of, 'extra_qids': extra_qids,
          'daily_pool': sorted(q['ID'] for q in quests.values() if q.get('NewType') == DAILY)}
     _IDX[id(d)] = x
     return x
@@ -203,12 +215,27 @@ def story_done(p, st):
     return bool(qs) and all((p.s['quests'].get(str(q)) or {}).get('status') == FINISH for q in qs)
 
 
+def is_imported(p):
+    """Account came from an official backup (tools/import_archive.py)."""
+    return bool(p.s.get('official_player_id') or p.s.get('official_answers') or p.s.get('records'))
+
+
 def advance_main(p):
     """Keep one main-story quest active: the first unfinished quest of the first story that is open
     (stories open by level, release time and their previous story). Runs after a main quest finishes,
     at login and on level up."""
     x = idx(p.d)
     qs = p.s['quests']
+    for k in [k for k in qs if k.isdigit() and int(k) in x['stories'] and int(k) not in x['quests']]:
+        del qs[k]    # a story id taken for a quest id by an older build (story screen "Accept Quest")
+    imported = is_imported(p)
+    if imported and not p.s.get('extra_story_cleanup'):
+        # older builds pushed the optional stories on imported players as the main quest; drop unfinished ones once
+        for qid in x['extra_qids']:
+            q = qs.get(str(qid))
+            if q and q.get('status') in (IN_PROGRESS, COMPLETED):
+                del qs[str(qid)]
+        p.s['extra_story_cleanup'] = 1
     for qid in x['main_order']:
         if (qs.get(str(qid)) or {}).get('status') in (IN_PROGRESS, COMPLETED):
             return qs[str(qid)]
@@ -217,6 +244,9 @@ def advance_main(p):
         st = x['story_of'][qid]
         if (qs.get(str(qid)) or {}).get('status') == FINISH or st['ID'] in blocked:
             continue
+        if imported and st['ID'] in OPTIONAL_STORIES and not any(
+                str(q) in qs for q in x['by_group'].get(st.get('QuestID'), [])):
+            continue    # not started from the story screen: leave it alone (a started one carries on to its end)
         if not story_open(p, st):
             blocked.add(st['ID'])
             continue
@@ -287,7 +317,7 @@ def reported(p, key):
             if c.get('status') != IN_PROGRESS:
                 continue
             par = (idx(p.d)['ach'].get(c['conditionId']) or {}).get('Param') or []
-            if key in par:
+            if key in par or key == c['conditionId'] or key in idx(p.d)['res_of'].get(c['conditionId'], ()):
                 _set_progress(p, q, c, _need(p, c['conditionId']))
                 hit = True
         if hit:
@@ -342,12 +372,20 @@ def flush(ctx):
         ctx.push('AchieveNotice', {'status': 'StatusCode_OK', 'achieves': ach})
     if ch:
         ctx.push('QuestNotice', {'status': 'StatusCode_OK', 'quests': list(ch.values())})
+        try:
+            from game.world import story_flags_changed
+            story_flags_changed(ctx, {str(q.get('questId')) for q in ch.values()})
+        except Exception:
+            pass
 
 
 def quest_detail(p):
     s = p.s
     out = {'quests': list(s['quests'].values()),
            'chapters': [{'chapterId': int(k), 'rewardedStoryIds': v} for k, v in s.get('chapters', {}).items()]}
-    if s.get('daily_bonus'):
-        out['dailyQuestBonusDayLeft'] = s['daily_bonus']
+    # official always sends these sub-messages (empty when unused); a missing one is null to the client
+    # (UIMainSystem.UpdateRandomQuest throws on a null randomQuestBonusLeft)
+    out['dailyQuestBonusDayLeft'] = s.get('daily_bonus') or {}
+    out['dailyQuestBonusWeekLeft'] = s.get('weekly_bonus') or s.get('daily_bonus') or {}
+    out['randomQuestBonusLeft'] = s.get('random_bonus') or {}
     return out

@@ -134,7 +134,8 @@ def register(H, pack, enter_scene, scene_player):
             dstate(p, did)['exitTimes'] += 1
         ret = ctx.__dict__.pop('dungeon_return', None) or (p.s['scene_id'], p.s.get('channel_label'), None, None)
         if ret[2]:
-            p.s['last_pos'] = ret[2]
+            from game.handlers import set_pos, PUBLIC_SCENE
+            set_pos(p.s, ret[2], ret[0], p.s['player_id'] if ret[0] == PUBLIC_SCENE else None)
         ctx.__dict__['temp_storage'] = []
         ctx.reply({'status': OK, 'scene_id': ret[0]})
         r = enter_scene(ctx, ret[0], label=ret[1])
@@ -190,6 +191,12 @@ def register(H, pack, enter_scene, scene_player):
                 rsp['dropItem'] = {'index': idx, 'items': [{'mainItem': p.item_info(i, n)} for i, n in items]}
                 ctx.__dict__['kills_since_drop'] = 0
         ctx.reply(rsp)
+        if not ctx.__dict__.get('dungeon_id') and random.random() < 0.25:   # field kill Moon Points (official id 1101)
+            try:
+                from game.events import moon_reward
+                moon_reward(ctx, 1101, 5)
+            except Exception:
+                pass
         ctx.__dict__['dungeon_kills'] = ctx.__dict__.get('dungeon_kills', 0) + 1
         Q.event(p, Q.C['KillMonest'], mid)
         Q.event(p, Q.C['KillMonsterNum'])

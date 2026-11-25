@@ -10,6 +10,13 @@ import sys
 def main(dec, save):
     d = json.load(open(dec, encoding='utf-8'))
     s = json.load(open(save, encoding='utf-8'))
+    ev = apply(d, s)
+    json.dump(s, open(save, 'w', encoding='utf-8'), ensure_ascii=False)
+    print('events imported:', {k: len(v) for k, v in ev.items() if isinstance(v, dict)})
+
+
+def apply(d, s):
+    """Copy event progress from decoded messages d ([{'name','body'}]) into save state s. Returns s['events']."""
     ev = s.setdefault('events', {})
     for p in d:
         n, b = p.get('name'), p.get('body') or {}
@@ -59,8 +66,7 @@ def main(dec, save):
         elif n == 'GetActivityBattlePassQuestRewardRsp':
             for bp in ev.get('battlepass', {}).values():
                 bp['totalExp'], bp['weekExp'] = int(b['currentTotalExp']), b['currentWeekExp']
-    json.dump(s, open(save, 'w', encoding='utf-8'), ensure_ascii=False)
-    print('events imported:', {k: len(v) for k, v in ev.items() if isinstance(v, dict)})
+    return ev
 
 
 if __name__ == '__main__':

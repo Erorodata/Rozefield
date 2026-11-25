@@ -49,7 +49,7 @@ Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsy
 
 ## Saving player accounts before the official shutdown (backup / import)
 
-**Easiest:** give players `backup_tool\RozefieldBackup.exe` (single file, nothing to install). They press
+**Easiest:** give players `backup_tool\OverField Backup Data.exe` (single file, nothing to install). They press
 **1. Open OverField (Official)**, log in as usual, open the menus in the checklist, and close the game: the backup
 (`backups\<name>_<date>.rzsave`) is saved automatically (or press **2. Save backup**). Later, in the Rozefield login
 window, **Import backup (.rzsave)...** uploads it and the account appears under their in-game name. Re-importing the

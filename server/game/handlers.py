@@ -54,15 +54,28 @@ def verify(ctx, req):
 @handler('PlayerLoginReq')
 def login(ctx, req):
     s = ctx.p.s
+    if s['scene_id'] != TUTORIAL_SCENE and not req.get('is_reconnect'):
+        # every login starts in your own Rota Garden Plaza (official), not on the map where you logged out
+        s['scene_id'], s['channel_id'], s['channel_label'] = PUBLIC_SCENE, s['player_id'], s['player_label']
+        set_pos(s, dict(PLAZA_SPAWN))   # official: every fresh login starts at the Rota Plaza spawn point
     ctx.reply({'status': OK, 'server_time_ms': str(now_ms()), 'region_name': 'rozefield_local',
                'register_time': s['create_time'], 'analysis_account_id': str(s['player_id']),
                'server_time_zone': 28800, 'player_name': s['name'], 'scene_id': s['scene_id'],
-               'channel_id': s['channel_id'] or s['player_id']})
+               'channel_id': s['channel_id'] or s['player_id'],
+               **({'is_reconnect': True, 'reconnect_success': _can_resume(ctx)} if req.get('is_reconnect') else {})})
+
+
+def _can_resume(ctx):
+    """A game reconnecting after a network blip resumes; after a server restart (nothing kept in memory) it is told
+    the session is gone, so it goes back to the login screen instead of hanging."""
+    seen = ctx.server.__dict__.setdefault('seen_players', set())
+    return ctx.p.s['player_id'] in seen
 
 
 @handler('PlayerMainDataReq')
 def main_data(ctx, req):
     p = ctx.p
+    ctx.server.__dict__.setdefault('seen_players', set()).add(p.s['player_id'])
     Q.login(p)
     _life_mod().daily_energy(p)
     ctx.reply(p.main_data())
@@ -72,8 +85,37 @@ def main_data(ctx, req):
     buffs = buff_list(p)
     if buffs:
         ctx.push('PlayerBuffNotice', {'status': OK, 'player_buffs': buffs})
+    # the official login notices, in the official order. The client finishes its login set-up (achievement
+    # groups, exploration, handbook, collected items, ...) only after receiving these.
+    un = p.s.get('unlocks', {})
+    ev = p.s.get('events', {})
+    ctx.push('ChatUnLockExpressionNotice', {'status': OK, 'expressionId': un.get('expressions', [])})
+    ctx.push('PrivateChatOfflineNotice', {'status': OK})
+    ctx.push('AchieveActionUnLockNotice', {'status': OK, 'actionIdLst': un.get('actions', []),
+                                           'studyAction': un.get('study_actions', {})})
+    for f in LOGIN_HOOKS:          # events: sign-in, pass, gashapon, wishing tree, daily tasks, gifts
+        try:
+            f(ctx)
+        except Exception:
+            import logging
+            logging.getLogger('rozefield').exception('login notices')
+    for n in ('ActivityRecallNotice', 'ActivitySandbagNotice', 'ActivityKoiNotice'):
+        ctx.push(n, {'status': OK})
+    ctx.push('ActivityQuestDataNotice', {'status': OK, 'info': ev.get('activity_quest', [])})
+    ctx.push('ActivityRegularDataNotice', {'status': OK, 'info': ev.get('activity_regular', [])})
+    ctx.push('AbyssServerRankNotice', {'status': OK})
+    ctx.push('PetWarehouseLimitNotice', {'status': OK, 'warehouse_limit': p.s.get('pet_warehouse_limit', 100)})
+    ctx.push('ModuleCloseNotice', {'status': OK})
+    ctx.push('GMRecommendChannelNotice', {'status': OK})
+    ctx.push('ChatMsgRecordInitNotice', {'status': OK, 'type': 'ChatChannel_ChatRoom', 'msg': list(WORLD_CHAT)})
     enter_scene(ctx, p.s['scene_id'], label=p.s.get('channel_label'))
+    ctx.push('ChatMsgRecordInitNotice', {'status': OK, 'msg': []})
     p.save()
+
+
+LOGIN_HOOKS = []          # f(ctx) run during PlayerMainDataReq, before the scene (game/events.py adds its notices)
+import collections as _collections
+WORLD_CHAT = _collections.deque(maxlen=50)   # recent world chat, sent to players as they log in
 
 
 @handler('PlayerPingReq')
@@ -91,7 +133,7 @@ def scene_record(ctx, req):
                 if x.get('pos'):
                     pos = x['pos']
     if pos:
-        ctx.p.s['last_pos'] = pos
+        set_pos(ctx.p.s, pos)
     if data and len(ctx.server.channels.get(getattr(ctx, 'chan', None), ())) > 1:   # movement seen by the others here
         ctx.server.broadcast(ctx, 'PlayerSceneSyncDataNotice', {'status': OK, 'data': [{'player_id': ctx.p.s['player_id'], 'data': [data]}]},
                              include_self=False)
@@ -118,6 +160,24 @@ def rename(ctx, req):
 
 # ============================================================ scenes / channels
 PUBLIC_SCENE = 9999
+# official entry point of each map when travelling there from the world map (no teleport target); same every time
+MAP_ENTRY = {1: {'x': 638, 'y': 98, 'z': 4821}, 2: {'x': -1275, 'y': 16708, 'z': 6381}, 3: {'x': -676, 'y': 5815, 'z': -64},
+             5: {'x': -3110, 'y': 20844, 'z': 700}, 1001: {'x': 3334, 'y': 1457, 'z': 3402},
+             1002: {'x': 709, 'y': 2620, 'z': 502}, 1003: {'x': 2942, 'y': 140, 'z': -4363}}
+PLAZA_SPAWN = {'x': 2415, 'y': -1, 'z': 959}   # Rota Plaza spawn point (official login position, all captures)
+TUTORIAL_SCENE = 100   # Path in a Bottle: new players stay there until the prologue is done
+
+
+def pos_key(s, scene_id=None, channel_id=None):
+    """Where a position belongs: each map, and each garden (scene 9999 is every garden, told apart by channel)"""
+    sid = s['scene_id'] if scene_id is None else scene_id
+    ch = s.get('channel_id') if channel_id is None else channel_id
+    return f'{sid}:{ch}' if sid == PUBLIC_SCENE else str(sid)
+
+
+def set_pos(s, pos, scene_id=None, channel_id=None):
+    s['last_pos'] = pos
+    s.setdefault('pos_by_scene', {})[pos_key(s, scene_id, channel_id)] = pos
 
 
 def scene_player(p):
@@ -133,14 +193,56 @@ def scene_player(p):
         w = s['weapons'].get(str(ep.get('weapon', 0)), {})
         sc = {'char_id': cid, 'charLv': ch.get('level', 1), 'charStar': ch.get('star', 1), 'charBreakLv': ch.get('maxLevel', 20),
               'characterAppearance': ch.get('characterAppearance', {}),
-              'outfitPreset': {k: v for k, v in op.items() if k in ('hat', 'hair', 'clothes', 'ornament') or k.startswith('pend') and not k.endswith('Index')},
+              'outfitPreset': scene_outfit(op),
               'weaponId': w.get('weaponId', 0), 'weaponStar': w.get('star', 1)}
-        if s.get('last_pos'):
-            sc['Pos'] = s['last_pos']
+        pos = s.get('pos_by_scene', {}).get(pos_key(s))   # only a position on this map (never another map's)
+        if pos:
+            sc['Pos'] = pos
         team[slot] = sc
     return {'player_id': s['player_id'], 'player_name': s['name'], 'team': team,
             'avatar_frame': s.get('appearance', {}).get('avatar_frame', 0), 'phone_case': s.get('phone_case', 0),
             'foodBuffIds': [int(b) for b, e in s.get('buffs', {}).items() if e > time.time()]}
+
+
+DYE_OF = {'hat': 'hatDyeScheme', 'hair': 'hairDyeScheme', 'clothes': 'clothDyeScheme', 'ornament': 'ornDyeScheme'}
+DYE_IDX = {'hat': 'hatDyeSchemeIndex', 'hair': 'hairDyeSchemeIndex', 'clothes': 'clothesDyeSchemeIndex', 'ornament': 'ornamentDyeSchemeIndex'}
+
+
+def scene_outfit(op):
+    """SceneCharacterOutfitPreset as official sends it: every worn piece with its dye scheme, plus hideInfo
+    (the plaza's HomeCharacterOutfit.ParseFrom throws on a preset without them)."""
+    out = {'hideInfo': op.get('outfitHideInfo') or op.get('hideInfo') or {}}
+    for k, v in op.items():
+        if k in DYE_OF and v:
+            out[k] = v
+            sc = {'isUnLock': True}
+            if op.get(DYE_IDX[k]):
+                sc['schemeIndex'] = op[DYE_IDX[k]]
+            out[DYE_OF[k]] = sc
+        elif k.startswith('pend') and not k.endswith('Index') and not k.endswith('Scheme') and v:
+            out[k] = v
+            sc = {'isUnLock': True}
+            if op.get(k + 'DyeSchemeIndex'):
+                sc['schemeIndex'] = op[k + 'DyeSchemeIndex']
+            out[k + 'DyeScheme'] = sc
+    return out
+
+
+def placed_characters(owner):
+    """Characters sitting on the owner's furniture (official: character_id, outfitPreset, furniture_id)."""
+    s, out = owner.s, []
+    for cid in s.get('placed_characters', []):
+        where = s.get('placed_where', {}).get(str(cid))
+        if not where or not where.get('furniture_id'):
+            continue
+        ch = s['characters'].get(str(cid)) or {}
+        op = ch['outfitPresets'][ch.get('inUseOutfitPresetIndex', 0)] if ch.get('outfitPresets') else {}
+        e = {'character_id': cid, 'furniture_id': str(where['furniture_id']),
+             'outfitPreset': where.get('outfit') or scene_outfit(op)}
+        if where.get('seat_id'):
+            e['seat_id'] = where['seat_id']
+        out.append(e)
+    return out
 
 
 def garden_data(ctx, owner):
@@ -186,9 +288,21 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
             data[k] = tpl[k]
     if scene_id != PUBLIC_SCENE:
         data.update(_world_mod().scene_fields(p, scene_id))
+    else:   # gardens / plaza: gather spots need gatherLimits to spawn; your own garden also shows what you collected
+        W = _world_mod()
+        mine = W.W(p, PUBLIC_SCENE)
+        from game.life import scene_gather_limits, temp_store
+        data['gatherLimits'] = scene_gather_limits(p, PUBLIC_SCENE)
+        stored = temp_store(p)          # back in the plaza: the field haul goes into the bag (official)
+        if stored:
+            ctx.push('PackNotice', {'status': OK, 'items': stored})
+        if owner is p and mine.get('collections'):
+            data['collections'] = mine['collections']
     if owner is not None:
         data['sceneGardenData'] = garden_data(ctx, owner)
-        data['placedCharacters'] = [{'characterId': c} for c in owner.s.get('placed_characters', [])][:0]
+        data['placedCharacters'] = placed_characters(owner)
+    elif scene_id == PUBLIC_SCENE:
+        data['sceneGardenData'] = {}    # official: a public channel sends an empty garden, which clears the last plaza's decorations
     if before_push:
         before_push(channel_id, chan_label)
     ctx.push('SceneDataNotice', {'status': OK, 'data': data})
@@ -199,9 +313,16 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
 
 @handler('ChangeSceneChannelReq')
 def change_scene(ctx, req):
-    if req.get('pos'):
-        ctx.p.s['last_pos'] = req['pos']
     sid = req.get('scene_id') or PUBLIC_SCENE
+    key = pos_key(ctx.p.s, sid, ctx.p.s['player_id'] if sid == PUBLIC_SCENE else None)
+    if req.get('pos') and not req.get('target_player_label'):    # teleport target on the new map
+        ctx.p.s.setdefault('pos_by_scene', {})[key] = req['pos']
+    elif sid != PUBLIC_SCENE and not req.get('target_player_label'):
+        # map travel without a target: official always puts you at the map's entry point, never where you left
+        if MAP_ENTRY.get(sid):
+            ctx.p.s.setdefault('pos_by_scene', {})[key] = dict(MAP_ENTRY[sid])
+        else:
+            ctx.p.s.setdefault('pos_by_scene', {}).pop(key, None)
     r = enter_scene(ctx, sid, label=req.get('channel_label'), target_label=req.get('target_player_label'),
                     before_push=lambda c, l: ctx.reply({'status': OK, 'scene_id': ctx.p.s['scene_id'], 'channel_id': c, 'channel_label': l}))
     if r is None:
@@ -235,6 +356,12 @@ def chat(ctx, req):
                                    'msg': {'playerId': 0, 'name': 'Rozefield', 'text': out, 'sendTime': str(now_ms())}})
         return
     s = ctx.p.s
+    from game import admin
+    admin.CHAT.append((time.time(), s['player_id'], s['name'], req.get('type', ''), text))
+    import logging
+    logging.getLogger('rozefield').info('[chat] %s%s: %s', s['name'], ' (muted)' if s.get('muted') else '', text)
+    if s.get('muted'):   # muted by the owner: only they see their own line
+        return
     msg = {'playerId': s['player_id'], 'head': s['head'], 'name': s['name'], 'text': text,
            'expression': req.get('expression', 0), 'sendTime': str(now_ms()),
            'avatarFrame': s.get('appearance', {}).get('avatar_frame', 0)}
@@ -242,6 +369,7 @@ def chat(ctx, req):
     kind = req.get('type', 'ChatChannel_Default')
     note = {'status': OK, 'type': kind, 'msg': msg}
     if kind == 'ChatChannel_ChatRoom':            # world chat: everyone online
+        WORLD_CHAT.append(msg)
         for o in list(ctx.server.sessions.values()):
             if o is not ctx and o.p:
                 try:
@@ -410,15 +538,27 @@ def gather_weapon(ctx, req):
 
 @handler('GardenPlaceCharacterReq')
 def place_char(ctx, req):
-    pc = ctx.p.s['placed_characters']
+    """Official: GardenPlaceCharacterNotice (to everyone in the garden) spawns / removes the character, then the Rsp."""
+    s = ctx.p.s
+    pc, where = s['placed_characters'], s.setdefault('placed_where', {})
     cid = req.get('character_id')
+    echo = {k: req[k] for k in ('character_id', 'furniture_id', 'seat_id', 'is_remove') if k in req}
     if req.get('is_remove'):
-        if cid in pc:
-            pc.remove(cid)
-    elif cid not in pc:
+        if cid not in pc:
+            return ctx.reply({'status': 'StatusCode_BAD_REQ', **echo})
+        pc.remove(cid)
+        where.pop(str(cid), None)
+        ctx.p.dirty = True
+        ctx.server.broadcast(ctx, 'GardenPlaceCharacterNotice', {'status': OK, 'remove_character_id': cid})
+        return ctx.reply({'status': OK, **echo})
+    if cid not in pc:
         pc.append(cid)
+    where[str(cid)] = {k: req[k] for k in ('furniture_id', 'seat_id') if k in req}   # wears the current outfit
     ctx.p.dirty = True
-    ctx.reply({'status': OK, **{k: req[k] for k in ('character_id', 'furniture_id', 'seat_id', 'is_remove') if k in req}})
+    entry = next((e for e in placed_characters(ctx.p) if e['character_id'] == cid), None)
+    if entry:
+        ctx.server.broadcast(ctx, 'GardenPlaceCharacterNotice', {'status': OK, 'character': entry})
+    ctx.reply({'status': OK, **echo})
 
 
 def _list(ctx, req, kind, field, filt=None):
@@ -715,14 +855,25 @@ def _handing(p):
     return h
 
 
-def _furniture_notice(ctx, item):
-    ctx.push('FurnitureItemChangeNotice', {'status': OK, 'furnitureItemInfo': {'itemId': item, 'num': str(ctx.p.count(item))}})
+def furniture_used(p):
+    """Official model: the bag keeps every piece owned; furnitureItemInfo = pieces in use. The decorate panel shows used/owned."""
+    return p.furniture_used()
+
+
+def furniture_free(p, item):
+    return p.count(item) - furniture_used(p).get(item, 0)
+
+
+def _furniture_notice(ctx, item, used_delta):
+    """The client does used[item] -= num (BagsSystem.OnFurnitureItemChangeNotice): num is the change of the pieces
+    left in the bag, -1 when one is placed and +1 when one goes back."""
+    ctx.push('FurnitureItemChangeNotice', {'status': OK, 'furnitureItemInfo': {'itemId': item, 'num': str(-used_delta)}})
 
 
 @handler('HandingFurnitureReq')
 def handing(ctx, req):
     p = ctx.p
-    if p.count(req.get('itemId')) <= 0:
+    if furniture_free(p, req.get('itemId')) <= 0:
         return ctx.reply({'status': FAIL})
     fid = new_furniture_id(p)
     _handing(p)[str(fid)] = {'itemId': req.get('itemId'), 'lifted': False}
@@ -734,10 +885,10 @@ def take_handing(ctx, req):
     """Put the held piece away: a piece lifted from the plaza goes back to the bag."""
     p = ctx.p
     h = _handing(p).pop(str(req.get('furnitureId')), None)
-    if h and h.get('lifted'):
-        p.add_item(h['itemId'], 1)
-        _furniture_notice(ctx, h['itemId'])
     p.dirty = True
+    if h and h.get('lifted'):   # official: the lifted piece is removed from the plaza, then the Rsp
+        ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice',
+                             {'status': OK, 'furniture_id': str(req.get('furnitureId')), 'item_id': h['itemId']})
     ctx.reply({'status': OK, 'furnitureId': req.get('furnitureId')})
 
 
@@ -758,9 +909,8 @@ def place(ctx, req):
     item = req.get('furnitureItemId')
     held = _handing(p).get(fid) if fid else None
     consume = not (fid and fid in g) and not (held and held.get('lifted'))
-    if consume:  # a new piece from the bag
-        if p.remove_item(item, 1) is None:
-            return ctx.reply({'status': FAIL})
+    if consume and furniture_free(p, item) <= 0:  # a new piece from the bag
+        return ctx.reply({'status': FAIL})
     if fid:
         _handing(p).pop(fid, None)
     fid = fid or str(new_furniture_id(p))
@@ -769,11 +919,11 @@ def place(ctx, req):
         info['layerNum'] = req['layerNum']
     g[fid] = info
     p.dirty = True
+    # official: UpdateNotice (to everyone, you included) then the Rsp; no FurnitureItemChangeNotice, the client
+    # counts the pieces itself when one is taken in hand / put away (sending one too counted every piece twice)
+    ctx.server.broadcast(ctx, 'SceneGardenFurnitureUpdateNotice', {'status': OK, 'furniture_info': info})
     ctx.reply({'status': OK, 'furnitureDetailsInfo': info})
     Q.event(p, Q.C['PlacingFurniture0'])
-    ctx.server.broadcast(ctx, 'SceneGardenFurnitureUpdateNotice', {'status': OK, 'furniture_info': info}, include_self=False)
-    if consume:
-        _furniture_notice(ctx, item)
 
 
 @handler('TakeOutFurnitureReq')
@@ -791,20 +941,12 @@ def take_out(ctx, req):
         ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice', {'status': OK, 'furniture_id': fid, 'item_id': f['furnitureItemId']},
                              include_self=False)
         return
-    got, changed = p.add_item(f['furnitureItemId'], 1)
-    ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice', {'status': OK, 'furniture_id': fid, 'item_id': f['furnitureItemId'],
-                                                                   'updateItems': changed})
-    _furniture_notice(ctx, f['furnitureItemId'])
+    ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice', {'status': OK, 'furniture_id': fid, 'item_id': f['furnitureItemId']})
 
 
 def _clear_garden(p):
-    fur = p.s['garden']['furniture']
-    for fid, f in list(fur.items()):
-        p.add_item(f['furnitureItemId'], 1)
-    fur.clear()
-    for h in _handing(p).values():
-        if h.get('lifted'):
-            p.add_item(h['itemId'], 1)
+    """Everything back to the bag (the bag already counts it, so only the in-use list empties)."""
+    p.s['garden']['furniture'].clear()
     p.s['handing'] = {}
 
 
@@ -858,10 +1000,7 @@ def scheme_list(ctx, req):
     need = {}
     for f in sc.values():
         need[f['furnitureItemId']] = need.get(f['furnitureItemId'], 0) + 1
-    have = {}
-    for f in p.s['garden']['furniture'].values():
-        have[f['furnitureItemId']] = have.get(f['furnitureItemId'], 0) + 1
-    missing = [i for i, n in need.items() if p.count(i) + have.get(i, 0) < n]
+    missing = [i for i, n in need.items() if p.count(i) < n]
     ctx.reply({'status': OK, 'scheme_id': req.get('scheme_id', 0), 'furnitureItemId': missing})
 
 
@@ -871,8 +1010,12 @@ def scheme_apply(ctx, req):
     sc = _schemes(p).get(str(req.get('scheme_id', 0)), {}).get('furniture', {})
     _clear_garden(p)
     fur = p.s['garden']['furniture']
+    left = {}
     for fid, f in sc.items():
-        if p.remove_item(f['furnitureItemId'], 1) is not None:
+        i = f['furnitureItemId']
+        left.setdefault(i, p.count(i))
+        if left[i] > 0:
+            left[i] -= 1
             fur[fid] = json_copy(f)
     p.dirty = True
     ctx.reply({'status': OK, 'scheme_id': req.get('scheme_id', 0)})
@@ -921,7 +1064,17 @@ def player_appearance(ctx, req):
 # ============================================================ quests / story
 @handler('AcceptQuestReq')
 def accept_quest(ctx, req):
-    q = Q.accept(ctx.p, req.get('questId', 0))
+    qid = req.get('questId', 0)
+    x = Q.idx(ctx.p.d)
+    st = x['stories'].get(qid)
+    if st and qid not in x['quests']:    # story screen "Accept Quest" sends the story id: start that story's next quest
+        group = x['by_group'].get(st.get('QuestID'), [])
+        qs = ctx.p.s['quests']
+        nxt = next((g for g in group if (qs.get(str(g)) or {}).get('status') != Q.FINISH), None)
+        if nxt is None or not Q.story_open(ctx.p, st):
+            return ctx.reply({'status': 'StatusCode_FAIL'})
+        qid = nxt
+    q = Q.accept(ctx.p, qid)
     ctx.reply({'status': OK, 'quest': q})
     ctx.p.__dict__.get('_qchanged', {}).pop(str(q['questId']), None)   # already in the reply
 
@@ -940,7 +1093,11 @@ def _claim_story(ctx, sid):
         got, changed = p.add_items(items) if items else ([], [])
         pack(ctx, changed)
     p.dirty = True
-    ctx.reply({'status': OK, 'quest': {'questId': sid, 'status': 'QuestStatus_Finish', 'completeCount': 1}, 'items': got})
+    # the client looks quest.questId up in its quest table (a story id there throws "QuestConfigure ... 1000001"
+    # and the reward popup never opens): answer with the story's last quest, finished
+    qids = sorted(Q.idx(p.d)['by_group'].get(st.get('QuestID'), [])) or [st.get('QuestID')]
+    last = p.s['quests'].get(str(qids[-1])) or {'questId': qids[-1], 'status': 'QuestStatus_Finish', 'completeCount': 1}
+    ctx.reply({'status': OK, 'quest': last, 'items': got})
 
 
 @handler('ClaimQuestRewardReq')
@@ -1082,6 +1239,12 @@ def musical_item(ctx, req):
     iid = req.get('musical_item_instance_id', '0')
     p = ctx.p
     item_id = int(iid) if p.count(int(iid or 0)) > 0 else 0
+    if req.get('source') == 'MusicalItemSource_Furniture':
+        # an instrument placed in a plaza: the instance is the furniture piece, the item is its furniture item
+        # (sending 0 here hides the client's Play button)
+        owner = p if p.s.get('channel_id') == p.s['player_id'] else ctx.server.player_by_id(p.s.get('channel_id'))
+        f = (owner.s['garden']['furniture'] if owner else {}).get(str(iid)) or {}
+        item_id = f.get('furnitureItemId', 0)
     p.s['musical_item'] = {'source': req.get('source', 'MusicalItemSource_Self'), 'id': item_id}
     ctx.reply({'status': OK, 'source': req.get('source', 'MusicalItemSource_Self'), 'musical_item_instance_id': iid,
                'musical_item_id': item_id})
@@ -1250,6 +1413,9 @@ _coop.register(H, pack, scene_player)
 # online Gomoku, photo wall, rankings, restaurant mini-game
 from game import social2 as _social2  # noqa: E402
 _social2.register(H, pack)
+from game import friends as _friends  # noqa: E402
+_friends.register(H, pack)
+
 
 # events (pass, gashapon, wishing tree, sign-in), abyss, group emotes, dice, friend gifts, recruit extras
 from game import events as _events  # noqa: E402
