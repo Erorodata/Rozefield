@@ -39,6 +39,7 @@
 #include "backup_queries.h"
 #include "msgids_known.h"
 #include "windivert.h"
+#include "windivert_embed.h"
 
 #define DISPATCH_HOST "dsp-global-of.inutan.com"
 #define DISPATCH_PORT 18881
@@ -62,6 +63,8 @@ static volatile int g_up_bound;
 static SOCKET tcp_connect_up(const char *ip, int port);
 static int wd_load(void);
 static DWORD WINAPI watch_wd_thread(LPVOID a);
+static void start_reconnect(void);
+static volatile int g_game_running;
 static char g_exedir[MAX_PATH], g_game[MAX_PATH], g_cfg[MAX_PATH], g_cfgbak[MAX_PATH];
 static char g_upstream_ip[64];
 static char g_gate_ip[64]; static int g_gate_port;
@@ -751,6 +754,7 @@ static void start_backup_work(void);
 static DWORD WINAPI start_thread(LPVOID a) { start_backup_work(); return 0; }
 static volatile LONG g_starting = 0;
 static void start_backup(void) {   /* runs in the background so the window never freezes */
+    if (find_launcher()) { start_reconnect(); return; }   /* already running: no second copy */
     if (InterlockedExchange(&g_starting, 1)) { ui_log("Already starting - please wait..."); return; }
     InterlockedExchange(&g_mode, M_STARTING);
     ui_log("Starting... (button 1 pressed)");
@@ -1068,9 +1072,22 @@ static HANDLE g_wd_redirect = INVALID_HANDLE_VALUE;
 #define UP_PORT0 41110
 #define UP_PORT1 41125
 
+static int write_if_changed(const char *path, const unsigned char *d, DWORD n) {
+    HANDLE f = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+    if (f != INVALID_HANDLE_VALUE) { DWORD sz = GetFileSize(f, NULL); CloseHandle(f); if (sz == n) return 1; }
+    f = CreateFileA(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
+    if (f == INVALID_HANDLE_VALUE) return 0;
+    DWORD w = 0; WriteFile(f, d, n, &w, NULL); CloseHandle(f);
+    return w == n;
+}
 static int wd_load(void) {
     if (pWDOpen) return 1;
-    char p[MAX_PATH]; snprintf(p, sizeof p, "%sWinDivert.dll", g_exedir);
+    /* the driver ships inside this exe: unpack it to %LOCALAPPDATA%\RozefieldBackup once */
+    char dir[MAX_PATH], p[MAX_PATH], sy[MAX_PATH];
+    if (!GetEnvironmentVariableA("LOCALAPPDATA", dir, MAX_PATH)) snprintf(dir, sizeof dir, "%s", g_exedir);
+    strncat(dir, "\\RozefieldBackup", sizeof dir - strlen(dir) - 1); CreateDirectoryA(dir, NULL);
+    snprintf(p, sizeof p, "%s\\WinDivert.dll", dir); snprintf(sy, sizeof sy, "%s\\WinDivert64.sys", dir);
+    if (!write_if_changed(p, WD_DLL, sizeof WD_DLL) || !write_if_changed(sy, WD_SYS, sizeof WD_SYS)) return 0;
     HMODULE m = LoadLibraryA(p);
     if (!m) return 0;
     pWDOpen = (tWDOpen)GetProcAddress(m, "WinDivertOpen"); pWDRecv = (tWDRecv)GetProcAddress(m, "WinDivertRecv");
@@ -1152,7 +1169,7 @@ static void start_reconnect(void) {
         ui_log("This needs administrator rights (the prompt was closed).");
         return;
     }
-    if (!wd_load()) { ui_log("WinDivert.dll / WinDivert64.sys are missing next to this program - only watching is possible."); start_watch(); return; }
+    if (!wd_load()) { ui_log("Could not unpack the network helper (WinDivert) - only watching is possible."); start_watch(); return; }
     MIB_TCPROW row;
     if (!find_game_conn(&row)) { ui_log("OverField isn't connected to its server yet. Log in first, then press Use running game."); return; }
     struct in_addr ga; ga.s_addr = row.dwRemoteAddr; inet_ntop(AF_INET, &ga, g_gate_ip, sizeof g_gate_ip); g_gate_port = 11001;
@@ -1390,7 +1407,7 @@ static void paint(HWND h) {
     case M_FETCH: swprintf(mlb, 40, L"Collecting %d%%", (int)(g_pct_shown + 0.5)); ml = mlb; break;
     case M_DONE: ml = L"Save backup"; break;
     case M_WATCH: ml = L"Save backup"; break;
-    default: ml = g_player[0] ? L"Save backup" : L"Open game";
+    default: ml = g_player[0] ? L"Save backup" : (g_game_running ? L"Back up now" : L"Open game");
     }
     pill(dc, r_main, 1, g_hover == B_MAIN, !(g_mode == M_STARTING || g_mode == M_LOGIN || g_mode == M_FETCH) || (g_mode == M_WATCH), ml);
 
@@ -1416,7 +1433,7 @@ static void on_click(int b) {
     case B_CLOSE: PostMessageW(g_win, WM_CLOSE, 0, 0); break;
     case B_MIN: ShowWindow(g_win, SW_MINIMIZE); break;
     case B_MAIN:
-        if (g_mode == M_IDLE && !g_player[0]) start_backup();
+        if (g_mode == M_IDLE && !g_player[0]) { if (find_launcher()) start_reconnect(); else start_backup(); }
         else if (g_mode == M_DONE || g_mode == M_WATCH || (g_mode == M_IDLE && g_player[0])) do_save(0);
         break;
     case B_RUNNING: start_reconnect(); break;
@@ -1432,6 +1449,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     case WM_PAINT: paint(h); return 0;
     case WM_ERASEBKGND: return 1;
     case WM_TIMER: {
+        static int tk; if (tk++ % 33 == 0) g_game_running = find_launcher() != 0;
         double t = target_pct();
         g_pct_shown += (t - g_pct_shown) * 0.10; if (fabs(t - g_pct_shown) < 0.05) g_pct_shown = t;
         InvalidateRect(h, NULL, FALSE); return 0; }
