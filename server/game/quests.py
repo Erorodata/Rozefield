@@ -220,6 +220,8 @@ def advance_main(p):
     at login and on level up."""
     x = idx(p.d)
     qs = p.s['quests']
+    for k in [k for k in qs if k.isdigit() and int(k) in x['stories'] and int(k) not in x['quests']]:
+        del qs[k]    # a story id taken for a quest id by an older build (story screen "Accept Quest")
     imported = is_imported(p)
     if imported and not p.s.get('extra_story_cleanup'):
         # older builds pushed the optional stories on imported players as the main quest; drop unfinished ones once

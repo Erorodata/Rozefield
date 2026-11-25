@@ -194,7 +194,12 @@ def register(H, pack):
     H['HandicraftReq'] = craft(HANDI, 'handicraft_id')
 
     def fishing(ctx, req):
+        """Official flow: FishingRsp at once with the fishing time and the events the minigame plays, then after
+        costTime seconds FishingResultNotice with the new bait box / energy / fish totals."""
         p = ctx.p
+        pending = ctx.__dict__.pop('fishing', None)
+        if pending:
+            pending.cancel()
         if req.get('is_cancel'):
             ctx.reply({'status': OK, 'isCancel': True})
             life_event(p, FISH, 27)
@@ -202,27 +207,56 @@ def register(H, pack):
         st = L(p, FISH)
         lv = level_row(p, FISH)
         cost = [(lv['NeedItemID'], lv.get('NeedItemCount', 1))] if lv.get('NeedItemID') else []
-        paid = p.pay(cost) if cost else []
-        if paid is None:
+        box = req.get('fishing_box_id', 0)
+        if box and p.count(box) > 0:
+            cost.append((box, 1))
+        if cost and any(p.count(i) < n for i, n in cost):
             return ctx.reply({'status': FAIL})
         fish = [f for f in p.d.table('fishing', 'FishingInfo').values() if f.get('NeedLevel', 1) <= st['level']]
         pond = p.d.row('fishpond', 'FishPond', req.get('fishing_pond_id', 0)) or {}
         pool = [i for i, _ in p.d.reward_items(int(pond.get('FishPondPool', 0) or 0))] if pond else []
         cand = [f for f in fish if f['ItemID'] in pool] or fish
-        f = random.choice(cand) if cand else None
-        changed = list(paid)
-        res = {'costEndurance': 0, 'fishInfos': []}
-        if f:
-            length = round(random.uniform(f.get('MinSize', 10), f.get('MaxSize', f.get('MinSize', 10) + 10)), 1)
-            got, ch = p.add_items([(f['ItemID'], 1)])
-            changed += ch
-            res['fishInfos'].append({'ID': f['ItemID'], 'length': length})
-            book_add(p, FISH, f['ItemID'], f.get('FishAchieveRewards'))
-            life_event(p, FISH, 26)
-            life_event(p, FISH, 28, f['ItemID'])
-            Q.event(p, Q.C['CatchTheSea'])
+        catch = random.sample(cand, min(len(cand), 2 if random.random() < 0.15 else 1)) if cand else []
+        infos = [{'ID': f['ItemID'], 'length': round(random.uniform(f.get('MinSize', 10), f.get('MaxSize', f.get('MinSize', 10) + 10)), 2)}
+                 for f in catch]
+        evs = []
+        table = list(p.d.table('fishing', 'FishingEvent').values())
+        for _ in range(random.choice((0, 1, 1, 2, 3))):
+            e = random.choice(table) if table else None
+            if e and e.get('FishingEventItems'):
+                evs.append({'ID': e['ID'], 'index': random.choice(e['FishingEventItems'])['Index']})
+        secs = random.randint(5, 17)
+        res = {'costEndurance': random.choice((1, 2, 5, 50)), 'costTime': secs, 'fishInfos': infos}
+        if evs:
+            res['fishingEventList'] = evs
         ctx.reply({'status': OK, 'fishingEventResult': res})
-        pack(ctx, changed)
+
+        def done():
+            ctx.__dict__.pop('fishing', None)
+            paid = p.pay(cost) if cost else []
+            if paid is None:
+                return
+            changed = list(paid)
+            for f in catch:
+                got, ch = p.add_items([(f['ItemID'], 1)])
+                changed += ch
+                book_add(p, FISH, f['ItemID'], f.get('FishAchieveRewards'))
+                life_event(p, FISH, 26)
+                life_event(p, FISH, 28, f['ItemID'])
+                Q.event(p, Q.C['CatchTheSea'])
+            try:
+                ctx.push('FishingResultNotice', {'status': OK, 'items': changed})
+                flush = getattr(ctx, 'flush', None)
+                if flush:
+                    flush()
+            except Exception:
+                pass
+            p.dirty = True
+        try:
+            import asyncio
+            ctx.__dict__['fishing'] = asyncio.get_running_loop().call_later(secs, done)
+        except RuntimeError:
+            done()
     H['FishingReq'] = fishing
 
     gather_tool = {}

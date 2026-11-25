@@ -122,10 +122,7 @@ def _tt_items(d, p, act):
 
 
 def register(H, pack, scene_player):
-    orig_main = H.get('PlayerMainDataReq')
-
-    def main_data(ctx, req):
-        orig_main(ctx, req)
+    def main_data(ctx):
         p, d = ctx.p, ctx.d
         try:
             ctx.push('ActivityBattlePassInfoNotice', {'status': OK, 'info': [_bp_info(d, p, a) for a in _activities(d, 3)]})
@@ -141,7 +138,8 @@ def register(H, pack, scene_player):
         except Exception:
             import logging
             logging.exception('event login notices')
-    H['PlayerMainDataReq'] = main_data
+    from game.handlers import LOGIN_HOOKS
+    LOGIN_HOOKS.append(main_data)
 
     # ---------------- pass
     def act_of(ctx, aid):

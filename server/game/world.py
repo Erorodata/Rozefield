@@ -75,6 +75,8 @@ def scene_fields(p, sid):
     for k in ('gatherLimits', 'chairInfoList', 'vehicleInfoList', 'campFires'):
         if lay.get(k):
             out[k] = lay[k]
+    if w.get('gatherLimits'):          # the player's own official gather counts (from their backup)
+        out['gatherLimits'] = w['gatherLimits']
     ds = [dict(v, monsters=v.get('monsters', [0])) for v in p.s.get('dungeons', {}).values()]
     if ds and str(sid) != '9999':
         out['dungeons'] = ds

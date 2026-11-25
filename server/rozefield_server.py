@@ -108,6 +108,7 @@ class HTTP:
         key = str(secrets.randbelow(10 ** 18)).zfill(18)
         if self.game:
             self.game.login_keys[uid] = (key, time.time() + 600)
+            self.game.save_login_keys()
         return f'OK|{uid}|{name}|{key}'
 
     def import_backup(self, data, name=None):
@@ -320,11 +321,25 @@ class Server:
         self.sessions = {}            # player_id -> Session
         self.channels = {}            # (scene, channel) -> set(Session)
         self.pending_names = {}
-        self.login_keys = {}   # uid -> (one-time key from the login window, expiry)
+        # uid -> (key from the login window, expiry). 10 minutes to log in with it; once used it stays valid for a day
+        # so the game can reconnect by itself (e.g. after the server restarts). Kept on disk across restarts.
+        self.login_keys = {}
+        self.keys_path = os.path.join(HERE, 'save', 'login_keys.json')
+        try:
+            self.login_keys = {k: tuple(v) for k, v in json.load(open(self.keys_path, encoding='utf-8')).items()
+                               if v[1] > time.time()}
+        except Exception:
+            pass
         self.templates = {}
         tp = os.path.join(HERE, 'data', 'scene_templates.json')
         if os.path.exists(tp):
             self.templates = json.load(open(tp, encoding='utf-8'))
+
+    def save_login_keys(self):
+        try:
+            json.dump(self.login_keys, open(self.keys_path, 'w', encoding='utf-8'))
+        except Exception:
+            log.exception('saving login keys')
 
     def scene_template(self, scene_id):
         return self.templates.get(str(scene_id), {})
@@ -477,9 +492,13 @@ class Session:
             self.seq += 1
         self.w.write(frame(NAME2ID[name], m.SerializeToString(), packet_id=packet_id, seq_id=self.seq if push else None))
         if name != 'PlayerPingRsp':
-            log.info('  -> %s%s', name, ' push' if push else '')
+            log.info('%s  -> %s%s', self.tag(), name, ' push' if push else '')
         if self.cfg.traffic:
             self.cfg.traffic.write(json.dumps({'t': time.time(), 'dir': 'S2C', 'name': name, 'body': d}, ensure_ascii=False) + '\n')
+
+    def tag(self):
+        """[Name] prefix on this player's log lines (the panel's Player filter uses it)"""
+        return f'[{self.p.s["name"]}] ' if self.p else ''
 
     def reply(self, d):
         name, pid = self.cur
@@ -524,7 +543,7 @@ class Session:
         if self.cfg.traffic:
             self.cfg.traffic.write(json.dumps({'t': time.time(), 'dir': 'C2S', 'name': name, 'body': rd}, ensure_ascii=False) + '\n')
         if name not in ('PlayerPingReq', 'PlayerSceneRecordReq'):
-            log.info('<- %s %s', name, json.dumps(rd, ensure_ascii=False)[:160])
+            log.info('%s<- %s %s', self.tag(), name, json.dumps(rd, ensure_ascii=False)[:160])
         if name == 'VerifyLoginTokenReq':
             uid, tok = rd.get('sdkUid', ''), rd.get('login_token', '')
             if has_password(uid):   # accounts with a password need the one-time key from the login window
@@ -533,7 +552,8 @@ class Session:
                     log.warning('login refused for %s (no valid key)', uid)
                     self._send('VerifyLoginTokenRsp', {'status': 'StatusCode_FAIL'}, h.packet_id)
                     return
-                self.server.login_keys.pop(uid, None)   # one use only
+                self.server.login_keys[uid] = (want[0], max(want[1], time.time() + 86400))   # reconnects for a day
+                self.server.save_login_keys()
             from game.player import _registry
             bpid = _registry()['by_uid'].get(uid)
             bf = os.path.join(HERE, 'save', 'accounts', f'{bpid}.json')

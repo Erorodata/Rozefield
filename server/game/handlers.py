@@ -57,12 +57,21 @@ def login(ctx, req):
     ctx.reply({'status': OK, 'server_time_ms': str(now_ms()), 'region_name': 'rozefield_local',
                'register_time': s['create_time'], 'analysis_account_id': str(s['player_id']),
                'server_time_zone': 28800, 'player_name': s['name'], 'scene_id': s['scene_id'],
-               'channel_id': s['channel_id'] or s['player_id']})
+               'channel_id': s['channel_id'] or s['player_id'],
+               **({'is_reconnect': True, 'reconnect_success': _can_resume(ctx)} if req.get('is_reconnect') else {})})
+
+
+def _can_resume(ctx):
+    """A game reconnecting after a network blip resumes; after a server restart (nothing kept in memory) it is told
+    the session is gone, so it goes back to the login screen instead of hanging."""
+    seen = ctx.server.__dict__.setdefault('seen_players', set())
+    return ctx.p.s['player_id'] in seen
 
 
 @handler('PlayerMainDataReq')
 def main_data(ctx, req):
     p = ctx.p
+    ctx.server.__dict__.setdefault('seen_players', set()).add(p.s['player_id'])
     Q.login(p)
     _life_mod().daily_energy(p)
     ctx.reply(p.main_data())
@@ -72,8 +81,37 @@ def main_data(ctx, req):
     buffs = buff_list(p)
     if buffs:
         ctx.push('PlayerBuffNotice', {'status': OK, 'player_buffs': buffs})
+    # the official login notices, in the official order. The client finishes its login set-up (achievement
+    # groups, exploration, handbook, collected items, ...) only after receiving these.
+    un = p.s.get('unlocks', {})
+    ev = p.s.get('events', {})
+    ctx.push('ChatUnLockExpressionNotice', {'status': OK, 'expressionId': un.get('expressions', [])})
+    ctx.push('PrivateChatOfflineNotice', {'status': OK})
+    ctx.push('AchieveActionUnLockNotice', {'status': OK, 'actionIdLst': un.get('actions', []),
+                                           'studyAction': un.get('study_actions', {})})
+    for f in LOGIN_HOOKS:          # events: sign-in, pass, gashapon, wishing tree, daily tasks, gifts
+        try:
+            f(ctx)
+        except Exception:
+            import logging
+            logging.getLogger('rozefield').exception('login notices')
+    for n in ('ActivityRecallNotice', 'ActivitySandbagNotice', 'ActivityKoiNotice'):
+        ctx.push(n, {'status': OK})
+    ctx.push('ActivityQuestDataNotice', {'status': OK, 'info': ev.get('activity_quest', [])})
+    ctx.push('ActivityRegularDataNotice', {'status': OK, 'info': ev.get('activity_regular', [])})
+    ctx.push('AbyssServerRankNotice', {'status': OK})
+    ctx.push('PetWarehouseLimitNotice', {'status': OK, 'warehouse_limit': p.s.get('pet_warehouse_limit', 100)})
+    ctx.push('ModuleCloseNotice', {'status': OK})
+    ctx.push('GMRecommendChannelNotice', {'status': OK})
+    ctx.push('ChatMsgRecordInitNotice', {'status': OK, 'type': 'ChatChannel_ChatRoom', 'msg': list(WORLD_CHAT)})
     enter_scene(ctx, p.s['scene_id'], label=p.s.get('channel_label'))
+    ctx.push('ChatMsgRecordInitNotice', {'status': OK, 'msg': []})
     p.save()
+
+
+LOGIN_HOOKS = []          # f(ctx) run during PlayerMainDataReq, before the scene (game/events.py adds its notices)
+import collections as _collections
+WORLD_CHAT = _collections.deque(maxlen=50)   # recent world chat, sent to players as they log in
 
 
 @handler('PlayerPingReq')
@@ -248,6 +286,7 @@ def chat(ctx, req):
     kind = req.get('type', 'ChatChannel_Default')
     note = {'status': OK, 'type': kind, 'msg': msg}
     if kind == 'ChatChannel_ChatRoom':            # world chat: everyone online
+        WORLD_CHAT.append(msg)
         for o in list(ctx.server.sessions.values()):
             if o is not ctx and o.p:
                 try:
@@ -927,7 +966,17 @@ def player_appearance(ctx, req):
 # ============================================================ quests / story
 @handler('AcceptQuestReq')
 def accept_quest(ctx, req):
-    q = Q.accept(ctx.p, req.get('questId', 0))
+    qid = req.get('questId', 0)
+    x = Q.idx(ctx.p.d)
+    st = x['stories'].get(qid)
+    if st and qid not in x['quests']:    # story screen "Accept Quest" sends the story id: start that story's next quest
+        group = x['by_group'].get(st.get('QuestID'), [])
+        qs = ctx.p.s['quests']
+        nxt = next((g for g in group if (qs.get(str(g)) or {}).get('status') != Q.FINISH), None)
+        if nxt is None or not Q.story_open(ctx.p, st):
+            return ctx.reply({'status': 'StatusCode_FAIL'})
+        qid = nxt
+    q = Q.accept(ctx.p, qid)
     ctx.reply({'status': OK, 'quest': q})
     ctx.p.__dict__.get('_qchanged', {}).pop(str(q['questId']), None)   # already in the reply
 

@@ -101,6 +101,8 @@ def _do(server, act, kv):
     uid = _uid_of(pid) if pid else None
     sess = server.sessions.get(pid)
 
+    if act in ('resetpw', 'clearpw', 'ban') and uid and server.login_keys.pop(uid, None):
+        server.save_login_keys()      # the game's saved login stops working; they log in again with the new password
     if act == 'resetpw':
         if not uid or len(kv.get('password', '')) < 4:
             return 'ERR|Passwords need at least 4 characters.'
@@ -173,7 +175,14 @@ def _do(server, act, kv):
     if act == 'stop':
         log.info('[admin] server stopping')
         import asyncio
-        asyncio.get_event_loop().call_later(0.3, os._exit, 0)
+        for sess in list(server.sessions.values()):   # save everyone and close their connection cleanly
+            try:
+                if sess.p:
+                    sess.p.save()
+                sess.w.close()
+            except Exception:
+                pass
+        asyncio.get_event_loop().call_later(0.5, os._exit, 0)
         return 'OK|Stopping.'
     return 'ERR|unknown action ' + act
 

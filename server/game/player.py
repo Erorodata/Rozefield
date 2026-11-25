@@ -3,6 +3,8 @@
 State is a plain JSON dict (save/accounts/<uid>.json) so it can be inspected or edited by hand.
 """
 import copy, json, os, random, threading, time
+import logging
+log = logging.getLogger("rozefield")
 
 INSTANCE_TAGS = {  # item tags that are unique instances, stored per instance id
     'EBagItemTag_Weapon': 'weapons', 'EBagItemTag_Armor': 'armors', 'EBagItemTag_Poster': 'posters',
@@ -127,7 +129,15 @@ class Player:
                 reg['by_uid'][str(uid)] = pid; _save_registry(reg)
         path = os.path.join(SAVE_DIR, f'{pid}.json')
         if os.path.exists(path):
-            return cls(data, json.load(open(path, encoding='utf-8')), path)
+            p = cls(data, json.load(open(path, encoding='utf-8')), path)
+            if p.s.get('official_player_id') and not p.s.get('extras_imported'):
+                try:
+                    from tools.import_extras import backfill_from_backup
+                    if backfill_from_backup(p.s, log.info):
+                        p.save()
+                except Exception:
+                    log.exception('backfill from backup')
+            return p
         p = cls(data, cls.new_state(data, uid, pid, name), path)
         p.grant_initial()
         p.save()

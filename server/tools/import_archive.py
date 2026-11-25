@@ -136,6 +136,8 @@ def build(login_name, msgs, keep_player_id=True):
     st['official_answers'] = pairs(msgs, every=True)
     from game.friends import import_friends
     import_friends(st, st['official_answers'].get('FriendReq'))
+    from tools.import_extras import apply as apply_extras   # stickers, actions, events, wishing tree, world progress
+    apply_extras(st, msgs)
     os.makedirs(SAVE_DIR, exist_ok=True)
     _save_registry(reg)
     path = os.path.join(SAVE_DIR, f'{pid}.json')

@@ -45,6 +45,7 @@ static HANDLE g_proc;                 /* the server we started (NULL if attached
 static volatile int g_up, g_starting;
 static int g_hover, g_filter, g_sel = -1;
 static long g_lognext;
+static int g_follow = 1;   /* next log rebuild jumps to the newest line (filter change, start) */
 
 /* ---------------------------------------------------------------- players */
 struct pl { int pid; char uid[64]; wchar_t name[64]; int level, online, banned, muted, pw, official, label; };
@@ -267,8 +268,8 @@ enum { B_NONE, B_CLOSE, B_MIN, B_START, B_STOP, B_RESTART, B_SAVEDIR, B_LOGFILE,
        F_FIRST = 50 };
 static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Rename", L"GM commands", L"Send mail", L"Chat log",
                                      L"Kick", L"Ban", L"Mute", L"Reclaim old ID"};
-static const wchar_t *FILTERS[] = {L"All", L"Logins", L"Errors", L"Chat", L"Admin", L"HTTP"};
-#define NFILT 6
+static const wchar_t *FILTERS[] = {L"All", L"Logins", L"Errors", L"Chat", L"Admin", L"HTTP", L"Player"};
+#define NFILT 7
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
 static RECT r_start = {WW - 470, WH - 70, WW - 340, WH - 26}, r_stop = {WW - 330, WH - 70, WW - 200, WH - 26}, r_restart = {WW - 190, WH - 70, WW - 36, WH - 26};
 static RECT r_savedir = {14, WH - 128, 58, WH - 84}, r_logfile = {14, WH - 74, 58, WH - 30};
@@ -364,6 +365,12 @@ static int line_matches(const wchar_t *l) {
     case 3: return wcsstr(l, L"[chat]") != NULL;
     case 4: return wcsstr(l, L"[admin]") || wcsstr(l, L"[panel]");
     case 5: return wcsstr(l, L"HTTP ") != NULL;
+    case 6: {   /* the selected player's own lines: the server tags them [Name] */
+        struct pl *p = (g_sel >= 0 && g_sel < g_npl) ? &g_pl[g_sel] : NULL;
+        if (!p) return 0;
+        wchar_t tag[80]; swprintf(tag, 80, L"[%ls]", p->name);
+        wchar_t num[24]; swprintf(num, 24, L"%d", p->pid);
+        return wcsstr(l, tag) || wcsstr(l, num) || (wcsstr(l, L"[chat]") && wcsstr(l, p->name)); }
     }
     return 1;
 }
@@ -379,10 +386,17 @@ static void rebuild_log(void) {
     }
     g_lines_dirty = 0;
     LeaveCriticalSection(&g_cs);
+    SCROLLINFO si = {sizeof si, SIF_ALL}; GetScrollInfo(g_logv, SB_VERT, &si);
+    int at_end = g_follow || si.nMax <= 0 || si.nPos + (int)si.nPage >= si.nMax - 2;
+    int first = (int)SendMessageW(g_logv, EM_GETFIRSTVISIBLELINE, 0, 0);
     SendMessageW(g_logv, WM_SETREDRAW, FALSE, 0);
     SetWindowTextW(g_logv, t);
-    SendMessageW(g_logv, EM_SETSEL, (WPARAM)len, (LPARAM)len); SendMessageW(g_logv, EM_SCROLLCARET, 0, 0);
-    SendMessageW(g_logv, WM_SETREDRAW, TRUE, 0); InvalidateRect(g_logv, NULL, TRUE);
+    if (at_end) { SendMessageW(g_logv, EM_SETSEL, (WPARAM)len, (LPARAM)len); SendMessageW(g_logv, EM_SCROLLCARET, 0, 0); }
+    else SendMessageW(g_logv, EM_LINESCROLL, 0, first);   /* the reader scrolled up: stay where they are */
+    SendMessageW(g_logv, WM_SETREDRAW, TRUE, 0);
+    if (at_end) SendMessageW(g_logv, WM_VSCROLL, SB_BOTTOM, 0);
+    g_follow = 0;
+    InvalidateRect(g_logv, NULL, TRUE);
     free(t);
 }
 
@@ -500,7 +514,7 @@ static void click(int b) {
     case B_SAVEDIR: snprintf(p, sizeof p, "%ssave\\accounts", g_dir); ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break;
     case B_LOGFILE: snprintf(p, sizeof p, "%sserver.log", g_dir); ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break;
     default:
-        if (b >= F_FIRST && b < F_FIRST + NFILT) { g_filter = b - F_FIRST; rebuild_log(); }
+        if (b >= F_FIRST && b < F_FIRST + NFILT) { g_filter = b - F_FIRST; g_follow = 1; rebuild_log(); }
         else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL) { if (g_up) do_action(b); }
     }
     InvalidateRect(g_win, NULL, FALSE);
@@ -559,6 +573,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         if ((HWND)l == g_list && HIWORD(w) == LBN_SELCHANGE) {
             int idx = (int)SendMessageW(g_list, LB_GETCURSEL, 0, 0);
             g_sel = idx >= 0 ? (int)SendMessageW(g_list, LB_GETITEMDATA, idx, 0) : -1; InvalidateRect(h, NULL, FALSE);
+            if (g_filter == 6) { g_follow = 1; rebuild_log(); }
         } else if ((HWND)l == g_find && HIWORD(w) == EN_CHANGE) fill_list();
         else if ((HWND)l == g_search && HIWORD(w) == EN_CHANGE) rebuild_log();
         return 0;
@@ -590,6 +605,13 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
 }
 
 int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
+    /* one panel only: a second start brings the open one to the front */
+    CreateMutexW(NULL, TRUE, L"Local\\RozefieldServerPanel");
+    if (GetLastError() == ERROR_ALREADY_EXISTS) {
+        HWND w = FindWindowW(L"RozefieldServerPanel", NULL);
+        if (w) { ShowWindow(w, SW_RESTORE); SetForegroundWindow(w); }
+        return 0;
+    }
     GetModuleFileNameA(NULL, g_dir, MAX_PATH); char *sl = strrchr(g_dir, '\\'); if (sl) sl[1] = 0;
     InitializeCriticalSection(&g_cs);
     WSADATA wd; WSAStartup(MAKEWORD(2, 2), &wd);
@@ -601,7 +623,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     f_mono = CreateFontW(-13, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, FIXED_PITCH, L"Cascadia Mono");
     br_panel = CreateSolidBrush(C_PANEL); br_field = CreateSolidBrush(C_FIELD);
     for (int i = 0; i < 10; i++) { int c = i % 2, r = i / 2; r_act[i] = (RECT){116 + c * 160, 408 + r * 44, 266 + c * 160, 444 + r * 44}; }
-    for (int i = 0; i < NFILT; i++) r_filt[i] = (RECT){482 + i * 74, 148, 550 + i * 74, 174};
+    for (int i = 0; i < NFILT; i++) r_filt[i] = (RECT){482 + i * 70, 148, 546 + i * 70, 174};
 
     WNDCLASSW wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = hi; wc.lpszClassName = L"RozefieldServerPanel";
     wc.hCursor = LoadCursor(NULL, IDC_ARROW); wc.hIcon = LoadIcon(NULL, IDI_APPLICATION); RegisterClassW(&wc);
@@ -613,7 +635,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     SendMessageW(g_find, EM_SETCUEBANNER, TRUE, (LPARAM)L"Find name or UID");
     g_list = CreateWindowExW(0, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_OWNERDRAWFIXED | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
                              108, 150, 326, 222, g_win, NULL, hi, NULL);
-    g_search = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, WW - 260, 147, 216, 28, g_win, NULL, hi, NULL);
+    g_search = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, WW - 196, 147, 152, 28, g_win, NULL, hi, NULL);
     SendMessageW(g_search, EM_SETCUEBANNER, TRUE, (LPARAM)L"Search the log");
     g_logv = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL,
                              482, 186, WW - 526, WH - 290, g_win, NULL, hi, NULL);
