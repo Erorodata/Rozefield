@@ -1,6 +1,6 @@
 # OverField Farewell Rewards (official mail, kept as a memento)
 
-Received by Player on 24 November 2026 at 20:18 (UTC+8). In Rozefield this letter never expires and
+Received by the archived account on 24 November 2026 at 20:18 (UTC+8). In Rozefield this letter never expires and
 "Delete Read" leaves it in the mailbox.
 
 **From:** The OverField Team

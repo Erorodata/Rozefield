@@ -2,7 +2,7 @@
 
 ![progress](progress.png)
 
-_OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-25; regenerate with `py server/tools/progress.py`._
+_OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-26; regenerate with `py server/tools/progress.py`._
 
 ## Preservation & archive (93.8%)
 
@@ -10,7 +10,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN 1.1.12 client copy (source of CN content)
 - [x] Protocol recovered: 154 proto files, 2,308 messages, 733 message ids
 - [x] Official traffic captures (redacted copies in repo)
-- [x] Archived account (Player) imported and playable
+- [x] Archived account imported and playable
 - [x] Public snapshot of 490 other players
 - [~] Player backup tool OverField Backup Data.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window

@@ -21,7 +21,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN 1.1.12 client copy (source of CN content) | done |
 | 🟩 | Protocol recovered: 154 proto files, 2,308 messages, 733 message ids | done |
 | 🟩 | Official traffic captures (redacted copies in repo) | done |
-| 🟩 | Archived account (Player) imported and playable | done |
+| 🟩 | Archived account imported and playable | done |
 | 🟩 | Public snapshot of 490 other players | done |
 | 🟨 | Player backup tool OverField Backup Data.exe | in progress — built; first live run waits for the official server to come back |
 | 🟩 | Import backup from the login window | done |
@@ -99,7 +99,7 @@ OverField preservation: run the game on your own server after the official one c
 
 ![Rozefield progress chart](docs/progress.png)
 
-_Updated 2026-11-25 by `py server/tools/progress.py` from [docs/checklist.json](docs/checklist.json)._
+_Updated 2026-11-26 by `py server/tools/progress.py` from [docs/checklist.json](docs/checklist.json)._
 
 ## About
 
@@ -108,3 +108,5 @@ Rozefield preserves OverField: the archived client and a private server that run
 - [Archive notes: client build, endpoints, protocol, captures](docs/ARCHIVE.md)
 - [Server: setup, login window, backup / import, GM commands](server/README.md)
 - [Checklist (plain)](docs/PROGRESS.md)
+- [Play-test issues](docs/TEST_ISSUES.md)
+- [Story check](docs/STORY_CHECKLIST.md)

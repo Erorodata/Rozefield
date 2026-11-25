@@ -1,6 +1,6 @@
 """Turn an archived account (from your own packet captures) into a playable Rozefield account.
 
-    py tools\\import_archive.py --name Player capture1.pcapng [capture2.pcapng ...]
+    py tools\\import_archive.py --name <name> capture1.pcapng [capture2.pcapng ...]
 
 Then log in with that name in the Rozefield login box. Without this step every name starts as a new player.
 """
