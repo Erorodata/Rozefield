@@ -827,7 +827,9 @@ def register(H, pack):
                     ('MPTeamDismissReq', ()), ('MPTeamInviteReq', ()), ('UploadExpressAddressReq', ('items',))):
         ack(n, echo)
     H['AccountNameBindingCancelReq'] = lambda ctx, req: ctx.reply({'status': OK, 'playerId': ctx.p.s['player_id']})
-    H['PlayerOfflineReq'] = lambda ctx, req: ctx.reply({'status': OK})
+    # Settings -> "Exit game?" -> Yes: the client asks to go offline and uses the reply's reason as its close reason.
+    # LOGOUT (6) makes it return to the login screen (no reason = "Reconnect to the server?" and the same account).
+    H['PlayerOfflineReq'] = lambda ctx, req: ctx.reply({'status': OK, 'reason': 'PlayerOfflineReason_LOGOUT'})
     H['SPOperateReq'] = lambda ctx, req: ctx.reply({'status': OK, 'operateType': req.get('operateType'), 'sp_open_status': False, 'sp_check_status': False})
     H['GetExpressAddressReq'] = lambda ctx, req: ctx.reply({'status': OK})
     H['PhotoShareSearchReq'] = lambda ctx, req: ctx.reply({'status': OK, 'photos': [], 'totalNum': 0, 'todayUploadLimit': 0, 'uploadMaxNum': 0})
