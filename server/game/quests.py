@@ -61,13 +61,16 @@ def idx(d):
     by_group = {}
     for q in quests.values():
         by_group.setdefault(q.get('QuestGroup', q['ID']), []).append(q['ID'])
-    main_order, story_of = [], {}
+    main_order, story_of, extra_qids = [], {}, set()
     for st in stories:
+        if st['ID'] not in chapter_of:      # story not listed in any chapter: optional, never pushed as the main quest
+            extra_qids.update(by_group.get(st.get('QuestID'), []))
+            continue
         for qid in sorted(by_group.get(st.get('QuestID'), [])):
             main_order.append(qid)
             story_of[qid] = st
     x = {'quests': quests, 'groups': groups, 'ach': ach, 'stories': {s['ID']: s for s in stories}, 'story_list': stories,
-         'chapter_of': chapter_of, 'by_group': by_group, 'main_order': main_order, 'story_of': story_of,
+         'chapter_of': chapter_of, 'by_group': by_group, 'main_order': main_order, 'story_of': story_of, 'extra_qids': extra_qids,
          'daily_pool': sorted(q['ID'] for q in quests.values() if q.get('NewType') == DAILY)}
     _IDX[id(d)] = x
     return x
@@ -209,6 +212,13 @@ def advance_main(p):
     at login and on level up."""
     x = idx(p.d)
     qs = p.s['quests']
+    if not p.s.get('extra_story_cleanup'):
+        # older builds auto-accepted the extra (chapterless) stories as the main quest; drop unfinished ones once
+        for qid in x['extra_qids']:
+            q = qs.get(str(qid))
+            if q and q.get('status') in (IN_PROGRESS, COMPLETED):
+                del qs[str(qid)]
+        p.s['extra_story_cleanup'] = 1
     for qid in x['main_order']:
         if (qs.get(str(qid)) or {}).get('status') in (IN_PROGRESS, COMPLETED):
             return qs[str(qid)]
