@@ -442,7 +442,14 @@ def register(H, pack):
         pack(ctx, changed)
     H['AreaLevelUpReq'] = area_up
     H['AreaCloseReq'] = lambda ctx, req: ctx.reply({'status': OK, 'area': area_entry(ctx.p, req.get('areaId'))})
-    H['AreaAchieveListReq'] = lambda ctx, req: ctx.reply({'status': OK, 'areaId': req.get('areaId'), 'achieves': []})
+    def area_achieves(ctx, req):
+        """Exploration of one area (Global Search "Exploration n/4"): the official answer from the backup"""
+        k = json.dumps({'areaId': req.get('areaId')}, sort_keys=True, ensure_ascii=False)
+        off = (ctx.p.s.get('official_answers', {}).get('AreaAchieveListReq') or {}).get(k)
+        if off and off.get('status') == OK:
+            return ctx.reply(off)
+        ctx.reply({'status': OK, 'areaId': req.get('areaId'), 'achieves': []})
+    H['AreaAchieveListReq'] = area_achieves
 
     _ctype = {}
 

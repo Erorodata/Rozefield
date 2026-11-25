@@ -47,7 +47,8 @@ def build():
     for r in rows('character.json', 'Character'):
         add('GetCharacterAchievementListReq', {'characterId': r['ID']})
     areas = [r['ID'] for r in rows('area.json', 'AreaData')]
-    for a in areas:
+    area_ids = sorted({g['AreaID'] for r in rows('area.json', 'AreaData') for g in r.get('AreaDataGroup', []) if g.get('AreaID')})
+    for a in area_ids:   # the exploration areas inside each map (Global Search "Exploration n/4")
         add('AreaAchieveListReq', {'areaId': a})
     for sid in sorted(set(areas) | {9999, 1000}):
         add('GetCollectMoonInfoReq', {'sceneId': sid})

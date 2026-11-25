@@ -516,6 +516,7 @@ struct gconn {
     volatile LONG touring;        /* map tour running: the official server's pushes are recorded, not shown to the game */
     volatile LONG seen_scene;     /* sceneId of the last SceneDataNotice */
     uint32_t home_scene, home_label;   /* where the game is (from its own last SceneDataNotice) */
+    uint32_t game_scene;          /* map the game itself has loaded (last SceneDataNotice passed to it) */
 };
 
 static size_t put_varint(unsigned char *o, uint64_t v) { size_t n = 0; do { unsigned char b = v & 0x7f; v >>= 7; o[n++] = b | (v ? 0x80 : 0); } while (v); return n; }
@@ -602,8 +603,14 @@ static void scene_of(const unsigned char *body, size_t n, int compressed, uint32
 /* Official only sends a map's progress (crystals, collectibles, landmarks, terminals, chests, puzzles) when the
  * character enters that map. The tour moves the character through every map on the official server and back
  * home; the game keeps showing where it is (the server's map pushes during the tour are recorded, not shown). */
-static const uint32_t TOUR[] = {1, 2, 3, 4, 5, 6, 100, 1000, 1001, 1002, 1003};
+static const uint32_t TOUR[] = {1, 2, 3, 4, 5, 6, 1001, 1002, 1003};
+static const wchar_t *TOUR_NAME[] = {L"Garden Day", L"Behaim", L"Garden Night", L"Behaim Rev.", L"Cake Day", L"Cake Night",
+                                     L"Crystal Ball", L"Hot Pot", L"School"};
 #define NTOUR (int)(sizeof TOUR / sizeof TOUR[0])
+static volatile LONG g_tour_state[NTOUR];   /* 0 waiting, 1 visiting, 2 saved, 3 not open on this account */
+static volatile LONG g_tour_active, g_tour_done_n;
+static volatile LONG g_tour_dirty;          /* a tour moved the character and hasn't brought it back yet */
+static uint32_t g_home_scene, g_home_label; /* where the character was before any tour */
 static int change_scene(struct gconn *g, uint32_t sid, uint32_t label) {
     unsigned char b[16]; size_t n = 0;
     b[n++] = (1 << 3); n += put_varint(b + n, sid);
@@ -618,26 +625,38 @@ static int wait_scene(struct gconn *g, uint32_t sid, int ms) {
     return 0;
 }
 static void map_tour(struct gconn *g) {
-    if (!g->home_scene) { ui_log("Map tour skipped: the game's map is not known yet."); return; }
-    ui_log("Visiting every map on official to save crystals, collectibles, landmarks and terminals...");
+    if (!g_home_scene) { ui_log("Map tour skipped: the game's map is not known yet."); return; }
+    InterlockedExchange(&g_tour_active, 1);
+    InterlockedExchange(&g_tour_dirty, 1);
+    ui_log("Visiting every map on official (crystals, collectibles, landmarks, terminals, areas)...");
     InterlockedExchange(&g->touring, 1);
-    int got = 0;
     for (int i = 0; i < NTOUR && !g->done; i++) {
-        if (TOUR[i] == g->home_scene) continue;
+        if (g_tour_state[i] == 2) continue;            /* already saved by an earlier connection */
+        if (TOUR[i] == g_home_scene && g->home_scene == g_home_scene) {   /* the map you're on was sent at login */
+            InterlockedExchange(&g_tour_state[i], 2); InterlockedIncrement(&g_tour_done_n); continue;
+        }
+        InterlockedExchange(&g_tour_state[i], 1); PostMessageW(g_win, WM_CHECK, 0, 0);
         InterlockedExchange(&g->seen_scene, 0);
-        if (!change_scene(g, TOUR[i], 0)) break;
-        if (wait_scene(g, TOUR[i], 5000)) got++;
-        Sleep(400);
+        if (!change_scene(g, TOUR[i], 0)) { InterlockedExchange(&g_tour_state[i], 0); break; }
+        char nm[64]; WideCharToMultiByte(CP_UTF8, 0, TOUR_NAME[i], -1, nm, sizeof nm, NULL, NULL);
+        if (wait_scene(g, TOUR[i], 6000)) { InterlockedExchange(&g_tour_state[i], 2); InterlockedIncrement(&g_tour_done_n); ui_log("Map saved: %s", nm); }
+        else if (!g->done) { InterlockedExchange(&g_tour_state[i], 3); ui_log("Map not open on this account (skipped): %s", nm); }
+        else InterlockedExchange(&g_tour_state[i], 0);
+        PostMessageW(g_win, WM_CHECK, 0, 0);
+        Sleep(800);
     }
     InterlockedExchange(&g->seen_scene, 0);
     if (!g->done) {
-        change_scene(g, g->home_scene, g->home_label);
-        if (!wait_scene(g, g->home_scene, 6000))
-            ui_log("Could not bring the character back on official - it may be on another map next time you log in there.");
+        /* back home. If the game itself isn't there (it reconnected onto a tour map), let it see the move. */
+        if (g->game_scene != g_home_scene) InterlockedExchange(&g->touring, 0);
+        change_scene(g, g_home_scene, g_home_label);
+        if (wait_scene(g, g_home_scene, 8000)) { InterlockedExchange(&g_tour_dirty, 0); ui_log("Map tour finished: %ld of %d maps saved, character back home.", (long)g_tour_done_n, NTOUR); }
+        else ui_log("Could not bring the character back on official - it may be on another map next time you log in there.");
         Sleep(1500);
-    }
+    } else ui_log("The connection dropped during the map tour - press the game's Reconnect button and it continues.");
     InterlockedExchange(&g->touring, 0);
-    ui_log("Map tour: %d maps saved, back home.", got);
+    InterlockedExchange(&g_tour_active, 0);
+    PostMessageW(g_win, WM_CHECK, 0, 0);
 }
 
 static DWORD WINAPI fetch_rest(LPVOID a) {
@@ -715,7 +734,10 @@ static DWORD WINAPI server_to_game(LPVOID a) {
             }
             if (h.msg_id == 1016) {   /* SceneDataNotice */
                 uint32_t sid, lab; scene_of(frame + 2 + hl, h.body_len, h.flag == 1, &sid, &lab);
-                if (!g->touring && sid) { g->home_scene = sid; g->home_label = lab; }
+                if (!g->touring && sid) {
+                    g->home_scene = sid; g->home_label = lab; g->game_scene = sid;
+                    if (!g_tour_dirty) { g_home_scene = sid; g_home_label = lab; }   /* never a tour map */
+                }
                 InterlockedExchange(&g->seen_scene, (LONG)sid);
             }
             int drop = ours || (g->touring && !h.packet_id);   /* the tour's map pushes stay out of the game */
@@ -1394,7 +1416,7 @@ static int target_pct(void) {
     switch (g_mode) {
     case M_STARTING: return 2;
     case M_LOGIN: return g_player[0] ? 10 : 5;
-    case M_FETCH: { int v = 10 + (int)(88.0 * g_fetch_got / NQUERY); return v > 98 ? 98 : v; }
+    case M_FETCH: { int v = 10 + (int)(78.0 * (g_fetch_got > NQUERY ? NQUERY : g_fetch_got) / NQUERY) + (int)(10.0 * g_tour_done_n / NTOUR); return v > 98 ? 98 : v; }
     case M_DONE: return 100;
     case M_WATCH: return (int)(100.0 * done / NCHECK);
     default: return g_player[0] ? 100 : 0;
@@ -1450,7 +1472,7 @@ static void paint(HWND h) {
     switch (g_mode) {
     case M_STARTING: st = L"Starting the game"; sc = C_WARN; break;
     case M_LOGIN: st = g_up_bound ? L"Reconnecting the game through this window" : (g_player[0] ? L"Logged in" : L"Waiting for you to log in"); sc = C_WARN; break;
-    case M_FETCH: st = L"Collecting your account"; sc = C_OK; break;
+    case M_FETCH: st = g_tour_active ? L"Visiting every map on official" : L"Collecting your account"; sc = C_OK; break;
     case M_DONE: st = L"Everything collected"; sc = C_OK; break;
     case M_WATCH: st = L"Watching your running game"; sc = C_OK; break;
     default: st = g_player[0] ? L"Ready to save" : L"Not started"; sc = C_MUTE;
@@ -1464,7 +1486,8 @@ static void paint(HWND h) {
     wchar_t pc[16]; swprintf(pc, 16, L"%d%%", (int)(g_pct_shown + 0.5));
     RECT rp = {128, 238, 400, 306}; txt(dc, f_pct, g_mode == M_IDLE && !g_player[0] ? C_MUTE : C_TXT, rp, pc, DT_LEFT | DT_SINGLELINE);
     wchar_t sub[160];
-    if (g_mode == M_FETCH) swprintf(sub, 160, L"%ld of %d look-ups answered", (long)(g_fetch_got > NQUERY ? NQUERY : g_fetch_got), NQUERY);
+    if (g_mode == M_FETCH && g_tour_active) swprintf(sub, 160, L"%ld of %d maps saved", (long)g_tour_done_n, NTOUR);
+    else if (g_mode == M_FETCH) swprintf(sub, 160, L"%ld of %d look-ups answered", (long)(g_fetch_got > NQUERY ? NQUERY : g_fetch_got), NQUERY);
     else if (g_mode == M_WATCH) { int d = 0; for (int i = 0; i < NCHECK; i++) d += CHECKS[i].done; swprintf(sub, 160, L"%d of %d parts seen", d, NCHECK); }
     else if (g_mode == M_DONE) wcscpy(sub, g_saved_once ? L"Saved. Back up again any time your account changes." : L"Press Save backup, or close the game.");
     else if (g_mode == M_LOGIN) wcscpy(sub, L"Log in with your official account");
@@ -1483,7 +1506,20 @@ static void paint(HWND h) {
         }
     }
     RECT rnote = {128, 340, 540, 396};
-    txt(dc, f_small, C_MUTE, rnote, L"Only read-only look-ups are sent, so nothing in your account changes. Your login token is not saved, and game files go back to normal afterwards.", DT_LEFT | DT_WORDBREAK);
+    txt(dc, f_small, C_MUTE, rnote, L"Look-ups are read-only. The map tour moves your character through each map on official and back home; nothing else in your account changes. Your login token is not saved.", DT_LEFT | DT_WORDBREAK);
+
+    /* world maps (map tour) */
+    RECT mc = {104, 418, 560, 518}; fill_alpha(dc, mc, RGB(12, 13, 20), 205, 18);
+    RECT mh = {124, 424, 540, 446}; txt(dc, f_small, C_TXT, mh, L"World maps", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    wchar_t mcnt[40]; swprintf(mcnt, 40, L"%ld of %d saved", (long)g_tour_done_n, NTOUR); txt(dc, f_small, C_MUTE, mh, mcnt, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    for (int i = 0; i < NTOUR; i++) {
+        int c = i % 5, r = i / 5;
+        RECT chip = {124 + c * 84, 450 + r * 30, 124 + c * 84 + 80, 450 + r * 30 + 26};
+        LONG stt = g_tour_state[i];
+        COLORREF bg = stt == 2 ? C_OK : stt == 1 ? C_WARN : RGB(40, 42, 54);
+        fill_alpha(dc, chip, bg, (BYTE)(stt == 2 ? 70 : stt == 1 ? (int)(70 + 40 * sin(now / 200.0)) : 200), 12);
+        txt(dc, f_small, stt == 3 ? RGB(110, 112, 126) : C_TXT, chip, TOUR_NAME[i], DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+    }
 
     /* checklist (right) */
     RECT cl = {WW - 392, 84, WW - 36, 84 + 60 + NCHECK * 34}; fill_alpha(dc, cl, RGB(12, 13, 20), 205, 22);
@@ -1541,7 +1577,7 @@ static void rebackup(void) {
     if (g && !g->done) {
         for (int i = 0; i < NCHECK; i++) { CHECKS[i].done = 0; g_flash[i] = 0; }
         g_saved_once = 0; g_pct_shown = 10;
-        InterlockedExchange(&g_rebackup, 1);
+        InterlockedExchange(&g_rebackup, 1); for (int i = 0; i < NTOUR; i++) g_tour_state[i] = 0; g_tour_done_n = 0;
         ui_log("Backing up again - collecting your latest data from official...");
         CloseHandle(CreateThread(NULL, 0, fetch_rest, g, 0, NULL));
         return;
