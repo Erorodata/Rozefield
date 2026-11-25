@@ -9,6 +9,8 @@
        (4) with -AddHosts, adds hosts-file lines sending the game's dispatch domains to 127.0.0.1.            #>
 param([string]$Game = 'H:\Backup\OverField', [string]$ServerIP = '127.0.0.1', [switch]$Revert, [switch]$AddHosts)
 $ErrorActionPreference = 'Stop'
+$admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $admin) { Write-Host 'Run this in an Administrator window: right-click Start > Terminal (Admin), then run it again.' -ForegroundColor Red; exit 1 }
 $here  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sdk   = Join-Path $Game 'launcher_Data\Plugins\Win\PCSDK_release'
 $cfg   = Join-Path $Game 'launcher_Data\StreamingAssets\Config.txt'
@@ -49,6 +51,7 @@ netsh advfirewall firewall delete rule name="$fwName" | Out-Null
 if ($ServerIP -eq '127.0.0.1') {   # server on this PC: the game needs no internet at all
   netsh advfirewall firewall add rule name="$fwName" dir=out action=block program="$exe" enable=yes `
     remoteip=1.0.0.0-126.255.255.255,128.0.0.0-255.255.255.255,2000::/3 | Out-Null
-  Write-Host "Firewall: $exe can no longer reach the official servers."
+  if ($LASTEXITCODE -eq 0) { Write-Host "Firewall: $exe can no longer reach the official servers." }
+  else { Write-Warning "Firewall rule was NOT added (netsh error $LASTEXITCODE)." }
 }
 Write-Host "$Game now points at $ServerIP (other game copies untouched). Start start_server.bat, then run $Game\launcher.exe"
