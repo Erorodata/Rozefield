@@ -57,6 +57,7 @@ def login(ctx, req):
     if s['scene_id'] != TUTORIAL_SCENE and not req.get('is_reconnect'):
         # every login starts in your own Rota Garden Plaza (official), not on the map where you logged out
         s['scene_id'], s['channel_id'], s['channel_label'] = PUBLIC_SCENE, s['player_id'], s['player_label']
+        set_pos(s, dict(PLAZA_SPAWN))   # official: every fresh login starts at the Rota Plaza spawn point
     ctx.reply({'status': OK, 'server_time_ms': str(now_ms()), 'region_name': 'rozefield_local',
                'register_time': s['create_time'], 'analysis_account_id': str(s['player_id']),
                'server_time_zone': 28800, 'player_name': s['name'], 'scene_id': s['scene_id'],
@@ -159,6 +160,7 @@ def rename(ctx, req):
 
 # ============================================================ scenes / channels
 PUBLIC_SCENE = 9999
+PLAZA_SPAWN = {'x': 2415, 'y': -1, 'z': 959}   # Rota Plaza spawn point (official login position, all captures)
 TUTORIAL_SCENE = 100   # Path in a Bottle: new players stay there until the prologue is done
 
 
