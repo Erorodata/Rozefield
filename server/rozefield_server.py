@@ -239,6 +239,9 @@ def split_token(tok):
     if '@0@' in tok:
         name, key = tok.split('@0@', 1)
         return name + '@', key.strip('@')
+    if '#' in tok:   # older login card
+        name, key = tok.split('#', 1)
+        return name, key.strip('@')
     return tok, ''
 
 
