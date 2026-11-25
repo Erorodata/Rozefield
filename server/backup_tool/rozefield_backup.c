@@ -91,19 +91,21 @@ static void ui_log(const char *fmt, ...) {
     PostMessageW(g_win, WM_LOG, 0, (LPARAM)w);
 }
 
-struct check { const char *label; const char *how; int msg_id; int done; };
+struct check { const char *label; const char *how; int msg_id; int done; const char *icon; COLORREF tint; };
+#define MSG_FIELDS -2   /* not a message: a map's SceneDataNotice with its Sequence / Aberrant Field progress */
 static struct check CHECKS[] = {
-    {"Account, characters, bag, quests, story", "log in", 1006, 0},
-    {"Achievements", "automatic", 1762, 0},
-    {"Life skills", "automatic", 1370, 0},
-    {"Life collection book", "automatic", 1366, 0},
-    {"Exploration manual", "automatic", 1862, 0},
-    {"Poster album", "automatic", 1424, 0},
-    {"Friends", "automatic", 1740, 0},
-    {"Mail", "automatic", 1122, 0},
-    {"Garden Plaza layout", "automatic (be in your own Plaza)", 1016, 0},
-    {"Plaza presets", "automatic", 2624, 0},
-    {"Character achievements", "automatic", 1480, 0},
+    {"Account & bag", "log in", 1006, 0, "account", RGB(163, 204, 74)},
+    {"Achievements", "automatic", 1762, 0, "achieve", RGB(255, 112, 32)},
+    {"Life skills", "automatic", 1370, 0, "life", RGB(240, 70, 90)},
+    {"Collection book", "automatic", 1366, 0, "lifebook", RGB(80, 170, 240)},
+    {"Exploration", "automatic", 1862, 0, "explore", RGB(60, 140, 240)},
+    {"Poster album", "automatic", 1424, 0, "poster", RGB(250, 196, 40)},
+    {"Friends", "automatic", 1740, 0, "friend", RGB(240, 90, 150)},
+    {"Mail", "automatic", 1122, 0, "g_mail", RGB(255, 140, 60)},
+    {"Plaza layout", "automatic (be in your own Plaza)", 1016, 0, "g_plaza", RGB(70, 190, 160)},
+    {"Plaza presets", "automatic", 2624, 0, "preset", RGB(150, 110, 230)},
+    {"Salvager records", "automatic", 1480, 0, "charach", RGB(20, 110, 220)},
+    {"Field stages", "map tour", MSG_FIELDS, 0, "g_fields", RGB(220, 60, 70)},
 };
 #define NCHECK (int)(sizeof CHECKS / sizeof CHECKS[0])
 
@@ -603,11 +605,15 @@ static void scene_of(const unsigned char *body, size_t n, int compressed, uint32
 /* Official only sends a map's progress (crystals, collectibles, landmarks, terminals, chests, puzzles) when the
  * character enters that map. The tour moves the character through every map on the official server and back
  * home; the game keeps showing where it is (the server's map pushes during the tour are recorded, not shown). */
-static const uint32_t TOUR[] = {1, 2, 3, 4, 5, 6, 1001, 1002, 1003};
-static const wchar_t *TOUR_NAME[] = {L"Garden Day", L"Behaim", L"Garden Night", L"Behaim Rev.", L"Cake Day", L"Cake Night",
-                                     L"Crystal Ball", L"Hot Pot", L"School"};
+static const uint32_t TOUR[] = {9999, 1, 2, 3, 4, 5, 6, 1001, 1002, 1003};
+static const wchar_t *TOUR_NAME[] = {L"Rota Plaza", L"Garden Day", L"Behaim", L"Garden Night", L"Behaim Reverse", L"Cake Day",
+                                     L"Cake Night", L"Crystal Ball", L"Hot Pot", L"Orison School"};
+/* in the game files but never opened on Global (World Selection doesn't list them; official refuses the move):
+ * Behaim Reverse (F-07X) and Cake Night (its picture still says "temporary, image under construction") */
+static const int TOUR_UNRELEASED[] = {0, 0, 0, 0, 1, 0, 1, 0, 0, 0};
 #define NTOUR (int)(sizeof TOUR / sizeof TOUR[0])
 static volatile LONG g_tour_state[NTOUR];   /* 0 waiting, 1 visiting, 2 saved, 3 not open on this account */
+#define NTOUR_REAL 8   /* maps that exist on Global */
 static volatile LONG g_tour_active, g_tour_done_n;
 static volatile LONG g_tour_dirty;          /* a tour moved the character and hasn't brought it back yet */
 static uint32_t g_home_scene, g_home_label; /* where the character was before any tour */
@@ -631,7 +637,11 @@ static void map_tour(struct gconn *g) {
     ui_log("Visiting every map on official (crystals, collectibles, landmarks, terminals, areas)...");
     InterlockedExchange(&g->touring, 1);
     for (int i = 0; i < NTOUR && !g->done; i++) {
-        if (g_tour_state[i] == 2) continue;            /* already saved by an earlier connection */
+        if (g_tour_state[i] == 2 || TOUR_UNRELEASED[i]) continue;   /* saved earlier / not on Global */
+        if (TOUR[i] == 9999) {   /* your Plaza (home) is always sent at login */
+            if (g->home_scene == 9999 || g_home_scene == 9999) { InterlockedExchange(&g_tour_state[i], 2); InterlockedIncrement(&g_tour_done_n); }
+            continue;
+        }
         if (TOUR[i] == g_home_scene && g->home_scene == g_home_scene) {   /* the map you're on was sent at login */
             InterlockedExchange(&g_tour_state[i], 2); InterlockedIncrement(&g_tour_done_n); continue;
         }
@@ -650,7 +660,7 @@ static void map_tour(struct gconn *g) {
         /* back home. If the game itself isn't there (it reconnected onto a tour map), let it see the move. */
         if (g->game_scene != g_home_scene) InterlockedExchange(&g->touring, 0);
         change_scene(g, g_home_scene, g_home_label);
-        if (wait_scene(g, g_home_scene, 8000)) { InterlockedExchange(&g_tour_dirty, 0); ui_log("Map tour finished: %ld of %d maps saved, character back home.", (long)g_tour_done_n, NTOUR); }
+        if (wait_scene(g, g_home_scene, 8000)) { InterlockedExchange(&g_tour_dirty, 0); ui_log("Map tour finished: %ld of %d maps saved, character back home.", (long)g_tour_done_n, NTOUR_REAL); }
         else ui_log("Could not bring the character back on official - it may be on another map next time you log in there.");
         Sleep(1500);
     } else ui_log("The connection dropped during the map tour - press the game's Reconnect button and it continues.");
@@ -734,6 +744,7 @@ static DWORD WINAPI server_to_game(LPVOID a) {
             }
             if (h.msg_id == 1016) {   /* SceneDataNotice */
                 uint32_t sid, lab; scene_of(frame + 2 + hl, h.body_len, h.flag == 1, &sid, &lab);
+                if (sid && sid != 9999) mark_check(MSG_FIELDS);   /* a map: its Sequence / Aberrant Field stars, chests, progress */
                 if (!g->touring && sid) {
                     g->home_scene = sid; g->home_label = lab; g->game_scene = sid;
                     if (!g_tour_dirty) { g_home_scene = sid; g_home_label = lab; }   /* never a tour map */
@@ -1339,7 +1350,7 @@ static void start_reconnect(void) {
 
 /* ------------------------------------------------------------------ painted launcher-style window */
 #define WW 1100
-#define WH 640
+#define WH 800
 #define C_INK RGB(17, 18, 27)
 #define C_ACC RGB(242, 127, 163)
 #define C_OK RGB(95, 212, 135)
@@ -1358,6 +1369,53 @@ int WINAPI GdiplusStartup(ULONG_PTR *, const GpInput *, void *);
 int WINAPI GdipCreateBitmapFromFile(const WCHAR *, void **);
 int WINAPI GdipCreateHBITMAPFromBitmap(void *, HBITMAP *, DWORD);
 int WINAPI GdipDisposeImage(void *);
+int WINAPI GdipCreateFromHDC(HDC, void **);
+int WINAPI GdipDeleteGraphics(void *);
+int WINAPI GdipSetInterpolationMode(void *, int);
+int WINAPI GdipGetImageWidth(void *, UINT *);
+int WINAPI GdipGetImageHeight(void *, UINT *);
+int WINAPI GdipDrawImageRectRectI(void *, void *, int, int, int, int, int, int, int, int, int, void *, void *, void *);
+static int g_gdip;
+static void *img_load(const char *name) {   /* assets\<name>.png next to the exe (tools/extract_backup_assets.py) */
+    if (!g_gdip) { ULONG_PTR tok; GpInput in = {1, NULL, FALSE, FALSE}; g_gdip = GdiplusStartup(&tok, &in, NULL) == 0 ? 1 : -1; }
+    if (g_gdip < 0) return NULL;
+    char p[MAX_PATH]; snprintf(p, sizeof p, "%sassets\\%s.png", g_exedir, name);
+    wchar_t w[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, p, -1, w, MAX_PATH);
+    void *bmp = NULL;
+    return GdipCreateBitmapFromFile(w, &bmp) == 0 ? bmp : NULL;
+}
+/* draw img into r, cropped to fill it (cover); top-aligned when 'top' */
+static void img_draw(HDC dc, void *img, RECT r, int top) {
+    if (!img) return;
+    UINT iw = 0, ih = 0; GdipGetImageWidth(img, &iw); GdipGetImageHeight(img, &ih);
+    if (!iw || !ih) return;
+    int rw = r.right - r.left, rh = r.bottom - r.top;
+    double sc = (double)rw / iw > (double)rh / ih ? (double)rw / iw : (double)rh / ih;
+    int sw = (int)(rw / sc), sh = (int)(rh / sc), sx = ((int)iw - sw) / 2, sy = top ? 0 : ((int)ih - sh) / 2;
+    void *g = NULL; if (GdipCreateFromHDC(dc, &g) != 0) return;
+    GdipSetInterpolationMode(g, 7);
+    GdipDrawImageRectRectI(g, img, r.left, r.top, rw, rh, sx, sy, sw, sh, 2, NULL, NULL, NULL);
+    GdipDeleteGraphics(g);
+}
+/* draw img inside r keeping its shape (contain) */
+static void img_fit(HDC dc, void *img, RECT r) {
+    if (!img) return;
+    UINT iw = 0, ih = 0; GdipGetImageWidth(img, &iw); GdipGetImageHeight(img, &ih);
+    if (!iw || !ih) return;
+    int rw = r.right - r.left, rh = r.bottom - r.top;
+    double sc = (double)rw / iw < (double)rh / ih ? (double)rw / iw : (double)rh / ih;
+    int dw = (int)(iw * sc), dh = (int)(ih * sc);
+    void *g = NULL; if (GdipCreateFromHDC(dc, &g) != 0) return;
+    GdipSetInterpolationMode(g, 7);
+    GdipDrawImageRectRectI(g, img, r.left + (rw - dw) / 2, r.top + (rh - dh) / 2, dw, dh, 0, 0, iw, ih, 2, NULL, NULL, NULL);
+    GdipDeleteGraphics(g);
+}
+static void *g_icon[16], *g_map[16]; static int g_imgs_loaded;
+static void load_images(void) {
+    if (g_imgs_loaded) return; g_imgs_loaded = 1;
+    for (int i = 0; i < (int)(sizeof CHECKS / sizeof CHECKS[0]) && i < 16; i++) { char n[64]; snprintf(n, 64, "icon_%s", CHECKS[i].icon); g_icon[i] = img_load(n); }
+    for (int i = 0; i < NTOUR && i < 16; i++) { char n[64]; snprintf(n, 64, "map_%u", TOUR[i]); g_map[i] = img_load(n); }
+}
 static void load_background(void) {   /* background.jpg / .png next to the exe: a screenshot of your own Plaza */
     static const char *names[] = {"background.jpg", "background.png", "background.jpeg"};
     ULONG_PTR tok; GpInput in = {1, NULL, FALSE, FALSE};
@@ -1416,7 +1474,7 @@ static int target_pct(void) {
     switch (g_mode) {
     case M_STARTING: return 2;
     case M_LOGIN: return g_player[0] ? 10 : 5;
-    case M_FETCH: { int v = 10 + (int)(78.0 * (g_fetch_got > NQUERY ? NQUERY : g_fetch_got) / NQUERY) + (int)(10.0 * g_tour_done_n / NTOUR); return v > 98 ? 98 : v; }
+    case M_FETCH: { int v = 10 + (int)(78.0 * (g_fetch_got > NQUERY ? NQUERY : g_fetch_got) / NQUERY) + (int)(10.0 * g_tour_done_n / NTOUR_REAL); return v > 98 ? 98 : v; }
     case M_DONE: return 100;
     case M_WATCH: return (int)(100.0 * done / NCHECK);
     default: return g_player[0] ? 100 : 0;
@@ -1486,7 +1544,7 @@ static void paint(HWND h) {
     wchar_t pc[16]; swprintf(pc, 16, L"%d%%", (int)(g_pct_shown + 0.5));
     RECT rp = {128, 238, 400, 306}; txt(dc, f_pct, g_mode == M_IDLE && !g_player[0] ? C_MUTE : C_TXT, rp, pc, DT_LEFT | DT_SINGLELINE);
     wchar_t sub[160];
-    if (g_mode == M_FETCH && g_tour_active) swprintf(sub, 160, L"%ld of %d maps saved", (long)g_tour_done_n, NTOUR);
+    if (g_mode == M_FETCH && g_tour_active) swprintf(sub, 160, L"%ld of %d maps saved", (long)g_tour_done_n, NTOUR_REAL);
     else if (g_mode == M_FETCH) swprintf(sub, 160, L"%ld of %d look-ups answered", (long)(g_fetch_got > NQUERY ? NQUERY : g_fetch_got), NQUERY);
     else if (g_mode == M_WATCH) { int d = 0; for (int i = 0; i < NCHECK; i++) d += CHECKS[i].done; swprintf(sub, 160, L"%d of %d parts seen", d, NCHECK); }
     else if (g_mode == M_DONE) wcscpy(sub, g_saved_once ? L"Saved. Back up again any time your account changes." : L"Press Save backup, or close the game.");
@@ -1508,41 +1566,53 @@ static void paint(HWND h) {
     RECT rnote = {128, 340, 540, 396};
     txt(dc, f_small, C_MUTE, rnote, L"Look-ups are read-only. The map tour moves your character through each map on official and back home; nothing else in your account changes. Your login token is not saved.", DT_LEFT | DT_WORDBREAK);
 
-    /* world maps (map tour) */
-    RECT mc = {104, 418, 560, 518}; fill_alpha(dc, mc, RGB(12, 13, 20), 205, 18);
-    RECT mh = {124, 424, 540, 446}; txt(dc, f_small, C_TXT, mh, L"World maps", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-    wchar_t mcnt[40]; swprintf(mcnt, 40, L"%ld of %d saved", (long)g_tour_done_n, NTOUR); txt(dc, f_small, C_MUTE, mh, mcnt, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
-    for (int i = 0; i < NTOUR; i++) {
-        int c = i % 5, r = i / 5;
-        RECT chip = {124 + c * 84, 450 + r * 30, 124 + c * 84 + 80, 450 + r * 30 + 26};
-        LONG stt = g_tour_state[i];
-        COLORREF bg = stt == 2 ? C_OK : stt == 1 ? C_WARN : RGB(40, 42, 54);
-        fill_alpha(dc, chip, bg, (BYTE)(stt == 2 ? 70 : stt == 1 ? (int)(70 + 40 * sin(now / 200.0)) : 200), 12);
-        txt(dc, f_small, stt == 3 ? RGB(110, 112, 126) : C_TXT, chip, TOUR_NAME[i], DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+    load_images();
+    /* checklist (right): the in-game phone menu - icon tiles, ticked when saved */
+    RECT cl = {WW - 392, 84, WW - 36, 520}; fill_round(dc, cl, RGB(234, 235, 240), 22);
+    int done = 0; for (int i = 0; i < NCHECK; i++) done += CHECKS[i].done;
+    RECT rch = {cl.left + 20, cl.top + 14, cl.right - 20, cl.top + 40}; txt(dc, f_h, RGB(40, 42, 54), rch, L"Checklist", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    wchar_t cnt[40]; swprintf(cnt, 40, L"%d of %d saved", done, NCHECK); txt(dc, f_small, RGB(110, 112, 126), rch, cnt, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    for (int i = 0; i < NCHECK; i++) {
+        int c = i % 4, r = i / 4, tw = 77, th = 120;
+        RECT t = {cl.left + 14 + c * (tw + 5), cl.top + 50 + r * (th + 6), cl.left + 14 + c * (tw + 5) + tw, cl.top + 50 + r * (th + 6) + th};
+        DWORD age = CHECKS[i].done ? now - g_flash[i] : 99999;
+        fill_round(dc, t, CHECKS[i].done && age < 700 ? RGB(214, 244, 222) : RGB(246, 246, 249), 14);
+        int cx = (t.left + t.right) / 2, cy = t.top + 40;
+        RECT ic = {cx - 30, cy - 30, cx + 30, cy + 30};
+        if (g_icon[i]) {
+            if (!strncmp(CHECKS[i].icon, "g_", 2)) { circle(dc, cx, cy, 29, CHECKS[i].tint); RECT gi = {cx - 16, cy - 16, cx + 16, cy + 16}; img_fit(dc, g_icon[i], gi); }   /* white glyph on colour */
+            else img_fit(dc, g_icon[i], ic);
+        } else circle(dc, cx, cy, 29, CHECKS[i].tint);
+        if (!CHECKS[i].done) fill_alpha(dc, ic, RGB(246, 246, 249), 120, 60);   /* not saved yet: faded */
+        wchar_t lb[80]; MultiByteToWideChar(CP_UTF8, 0, CHECKS[i].label, -1, lb, 80);
+        RECT rl = {t.left + 2, t.top + 76, t.right - 2, t.top + 96}; txt(dc, f_small, RGB(40, 42, 54), rl, lb, DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+        const wchar_t *tag; COLORREF tc = RGB(130, 132, 146);
+        if (CHECKS[i].done) { tag = L"saved"; tc = RGB(40, 160, 80); }
+        else if (g_mode == M_FETCH) { tag = CHECKS[i].msg_id == MSG_FIELDS ? L"map tour" : L"collecting"; tc = RGB(220, 140, 20); }
+        else if (g_mode == M_WATCH) { tag = L"open in game"; tc = RGB(220, 140, 20); }
+        else tag = L"after login";
+        RECT rtg = {t.left + 2, t.top + 96, t.right - 2, t.top + 114}; txt(dc, f_small, tc, rtg, tag, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        if (CHECKS[i].done) { int r2 = age < 220 ? 4 + (int)(age / 40) : 10; circle(dc, t.right - 14, t.top + 14, r2, C_OK); if (age >= 160) tick(dc, t.right - 14, t.top + 14, RGB(255, 255, 255)); }
     }
 
-    /* checklist (right) */
-    RECT cl = {WW - 392, 84, WW - 36, 84 + 60 + NCHECK * 34}; fill_alpha(dc, cl, RGB(12, 13, 20), 205, 22);
-    int done = 0; for (int i = 0; i < NCHECK; i++) done += CHECKS[i].done;
-    RECT rch = {cl.left + 22, cl.top + 18, cl.right - 22, cl.top + 42}; txt(dc, f_h, C_TXT, rch, L"Checklist", DT_LEFT | DT_SINGLELINE);
-    wchar_t cnt[40]; swprintf(cnt, 40, L"%d of %d saved", done, NCHECK); txt(dc, f_small, C_MUTE, rch, cnt, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
-    for (int i = 0; i < NCHECK; i++) {
-        int y = cl.top + 50 + i * 34;
-        DWORD age = CHECKS[i].done ? now - g_flash[i] : 99999;
-        if (CHECKS[i].done) { RECT rb = {cl.left + 10, y, cl.right - 10, y + 30}; fill_alpha(dc, rb, age < 700 ? C_ACC : C_OK, (BYTE)(age < 700 ? 80 - age / 10 : 26), 12); }
-        int r = CHECKS[i].done ? (age < 220 ? 6 + (int)(age / 30) : 11) : 11;
-        circle(dc, cl.left + 30, y + 15, r, CHECKS[i].done ? C_OK : RGB(70, 73, 88));
-        if (CHECKS[i].done && age >= 160) tick(dc, cl.left + 30, y + 15, RGB(14, 26, 18));
-        wchar_t lb[120]; MultiByteToWideChar(CP_UTF8, 0, CHECKS[i].label, -1, lb, 120);
-        RECT rl2 = {cl.left + 52, y, cl.right - 120, y + 30}; txt(dc, f_body, CHECKS[i].done ? C_TXT : RGB(205, 208, 220), rl2, lb, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
-        const wchar_t *tag; COLORREF tc = C_MUTE;
-        int optional = strstr(CHECKS[i].label, "optional") != NULL;
-        if (CHECKS[i].done) { tag = L"saved"; tc = RGB(159, 227, 180); }
-        else if (optional) tag = L"optional";
-        else if (g_mode == M_FETCH) { tag = L"collecting"; tc = C_WARN; }
-        else if (g_mode == M_WATCH) { tag = L"open in game"; tc = C_WARN; }
-        else tag = L"after login";
-        RECT rtg = {cl.right - 130, y, cl.right - 22, y + 30}; txt(dc, f_small, tc, rtg, tag, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    /* world maps (map tour): World Selection pictures */
+    RECT mc = {104, 532, WW - 36, WH - 122}; fill_alpha(dc, mc, RGB(12, 13, 20), 205, 18);
+    RECT mh = {124, 538, WW - 56, 560}; txt(dc, f_small, C_TXT, mh, L"World maps", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    wchar_t mcnt[60]; swprintf(mcnt, 60, L"%ld of %d saved", (long)g_tour_done_n, NTOUR_REAL); txt(dc, f_small, C_MUTE, mh, mcnt, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    int cw = (mc.right - mc.left - 20 - (NTOUR - 1) * 6) / NTOUR;
+    for (int i = 0; i < NTOUR; i++) {
+        RECT card = {mc.left + 10 + i * (cw + 6), 564, mc.left + 10 + i * (cw + 6) + cw, mc.bottom - 26};
+        LONG stt = TOUR_UNRELEASED[i] ? 4 : g_tour_state[i];
+        HRGN clip = CreateRoundRectRgn(card.left, card.top, card.right + 1, card.bottom + 1, 12, 12); SelectClipRgn(dc, clip);
+        if (g_map[i]) img_draw(dc, g_map[i], card, 1); else fill_alpha(dc, card, RGB(40, 42, 54), 255, 0);
+        if (stt == 4 || stt == 3) fill_alpha(dc, card, RGB(10, 10, 14), 170, 0);
+        else if (stt == 0) fill_alpha(dc, card, RGB(10, 10, 14), 90, 0);
+        SelectClipRgn(dc, NULL); DeleteObject(clip);
+        if (stt == 1) { int a = (int)(150 + 100 * sin(now / 180.0)); outline_round(dc, card, RGB(255, 208, 138), 12); (void)a; RECT in2 = {card.left + 1, card.top + 1, card.right - 1, card.bottom - 1}; outline_round(dc, in2, RGB(255, 208, 138), 12); }
+        if (stt == 2) { circle(dc, card.right - 13, card.top + 13, 10, C_OK); tick(dc, card.right - 13, card.top + 13, RGB(255, 255, 255)); }
+        if (stt == 4 || stt == 3) { RECT rn2 = card; txt(dc, f_small, RGB(220, 222, 232), rn2, stt == 4 ? L"Not on\nGlobal" : L"Not open", DT_CENTER | DT_VCENTER | DT_WORDBREAK); }
+        RECT rl = {card.left - 2, card.bottom + 2, card.right + 2, card.bottom + 22};
+        txt(dc, f_small, stt >= 3 ? C_MUTE : C_TXT, rl, TOUR_NAME[i], DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
     }
 
     /* bottom bar */
