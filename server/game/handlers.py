@@ -235,6 +235,12 @@ def chat(ctx, req):
                                    'msg': {'playerId': 0, 'name': 'Rozefield', 'text': out, 'sendTime': str(now_ms())}})
         return
     s = ctx.p.s
+    from game import admin
+    admin.CHAT.append((time.time(), s['player_id'], s['name'], req.get('type', ''), text))
+    import logging
+    logging.getLogger('rozefield').info('[chat] %s%s: %s', s['name'], ' (muted)' if s.get('muted') else '', text)
+    if s.get('muted'):   # muted by the owner: only they see their own line
+        return
     msg = {'playerId': s['player_id'], 'head': s['head'], 'name': s['name'], 'text': text,
            'expression': req.get('expression', 0), 'sendTime': str(now_ms()),
            'avatarFrame': s.get('appearance', {}).get('avatar_frame', 0)}

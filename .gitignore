@@ -26,3 +26,4 @@ server/backup_tool/RozefieldBackup.ini
 # dev-only knowledge graph (graphify), never shipped
 graphify-out/
 .graphifyignore
+server/save/admin_token.txt

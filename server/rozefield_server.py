@@ -102,12 +102,15 @@ class HTTP:
                 return 'ERR|No account with that name. Create one first.'
             if not check_password(uid, pw):
                 return 'ERR|Wrong password. If you forgot it, ask the server owner to reset it.'
+        bf = os.path.join(HERE, 'save', 'accounts', f"{reg.get('by_uid', {}).get(uid)}.json")
+        if os.path.exists(bf) and json.load(open(bf, encoding='utf-8')).get('banned'):
+            return 'ERR|This account is banned on this server.'
         key = str(secrets.randbelow(10 ** 18)).zfill(18)
         if self.game:
             self.game.login_keys[uid] = (key, time.time() + 600)
         return f'OK|{uid}|{name}|{key}'
 
-    def import_backup(self, data):
+    def import_backup(self, data, name=None):
         from tools.import_player import import_bytes, ImportFailed
         os.makedirs(os.path.join(HERE, 'save', 'imports'), exist_ok=True)
         open(os.path.join(HERE, 'save', 'imports', time.strftime('%Y%m%d_%H%M%S') + '.rzsave'), 'wb').write(data)
@@ -118,10 +121,10 @@ class HTTP:
             except Exception:
                 return 'ERR|this is not a Rozefield backup file (.rzsave)'
             md = next((m['body'] for m in msgs if m['name'] == 'PlayerMainDataRsp'), {}) or {}
-            uid = 'rz_' + (md.get('player_name') or meta.get('player_name') or '').lower()
+            uid = 'rz_' + (name or md.get('player_name') or meta.get('player_name') or '').lower()
             if self.game and any(s.p and s.p.s.get('uid') == uid for s in self.game.sessions.values()):
                 return 'ERR|that account is online right now - log out first'
-            path, uid, name = import_bytes(data)
+            path, uid, name = import_bytes(data, name)
         except ImportFailed as e:
             log.warning('import failed: %s', e)
             return f'ERR|{e}'
@@ -174,6 +177,22 @@ class HTTP:
         if 'content-length' in hdr:
             body = await reader.readexactly(int(hdr['content-length']))
         u = urllib.parse.urlparse(path)
+        if u.path.startswith('/admin/'):   # owner control panel: this PC + token only, never logged
+            from game import admin
+            peer = (writer.get_extra_info('peername') or ('',))[0]
+            if peer not in ('127.0.0.1', '::1') or hdr.get('x-admin-token') != getattr(self, 'admin_token', None):
+                out, code = b'forbidden', 403
+            elif u.path == '/admin/players':
+                out, code = admin.players(self.game).encode('utf-8'), 200
+            elif u.path == '/admin/log':
+                n, lines = admin.RING.since(int((urllib.parse.parse_qs(u.query).get('since') or ['0'])[0]))
+                out, code = (f'{n}\n' + '\n'.join(lines)).encode('utf-8'), 200
+            elif u.path == '/admin/do' and method == 'POST':
+                out, code = admin.do(self.game, body).encode('utf-8'), 200
+            else:
+                out, code = b'not found', 404
+            writer.write(f'HTTP/1.1 {code} OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: {len(out)}\r\nConnection: close\r\n\r\n'.encode() + out)
+            await writer.drain(); writer.close(); return
         shown = b'(hidden)' if u.path in ('/rozefield/login', '/rozefield/register', '/rozefield/import') else body[:200]
         log.info('HTTP %s %s host=%s body=%s', method, u.path, hdr.get('host'), shown)
         ctype, out, code = 'application/json', b'', 200
@@ -209,7 +228,8 @@ class HTTP:
             # login window: body "name\npassword" -> "OK|uid|name|key" or "ERR|reason"
             out = self.account_login(body, p.endswith('register')).encode('utf-8'); ctype = 'text/plain; charset=utf-8'
         elif p == '/rozefield/import' and method == 'POST':  # login window "Import backup": body = .rzsave
-            out = (await asyncio.get_running_loop().run_in_executor(None, self.import_backup, body)).encode('utf-8')
+            nm = (urllib.parse.parse_qs(u.query).get('name') or [None])[0]   # the control panel can choose the log-in name
+            out = (await asyncio.get_running_loop().run_in_executor(None, self.import_backup, body, nm)).encode('utf-8')
             ctype = 'text/plain; charset=utf-8'
         elif p.startswith('/Resources/'):
             f = self.find_resource(p)
@@ -514,6 +534,13 @@ class Session:
                     self._send('VerifyLoginTokenRsp', {'status': 'StatusCode_FAIL'}, h.packet_id)
                     return
                 self.server.login_keys.pop(uid, None)   # one use only
+            from game.player import _registry
+            bpid = _registry()['by_uid'].get(uid)
+            bf = os.path.join(HERE, 'save', 'accounts', f'{bpid}.json')
+            if bpid and os.path.exists(bf) and json.load(open(bf, encoding='utf-8')).get('banned'):
+                log.warning('login refused for %s (banned)', uid)
+                self._send('VerifyLoginTokenRsp', {'status': 'StatusCode_FAIL'}, h.packet_id)
+                return
             nm = decode_token(tok)
             if nm:
                 self.server.pending_names[uid] = nm
@@ -559,10 +586,14 @@ async def main():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S',
                         handlers=[logging.StreamHandler(sys.stdout),
                                   logging.FileHandler(os.path.join(HERE, 'server.log'), encoding='utf-8')])
+    from game import admin
+    admin.RING.setFormatter(logging.Formatter('%(asctime)s %(message)s', '%H:%M:%S'))
+    logging.getLogger().addHandler(admin.RING)
     cfg = Config(a)
     http = HTTP(cfg)
     game = Server(cfg, a)
     http.game = game
+    http.admin_token = admin.token()   # for Rozefield Server.exe (control panel)
     servers = [await asyncio.start_server(http.handle, a.bind, a.http_port),
                await asyncio.start_server(lambda r, w: Session(game, r, w).run(), a.bind, a.gate_port)]
     if a.dns_port:
