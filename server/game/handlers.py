@@ -198,6 +198,24 @@ def scene_player(p):
             'foodBuffIds': [int(b) for b, e in s.get('buffs', {}).items() if e > time.time()]}
 
 
+def placed_characters(owner):
+    """Characters sitting on the owner's furniture (official: character_id, outfitPreset, furniture_id)."""
+    s, out = owner.s, []
+    for cid in s.get('placed_characters', []):
+        where = s.get('placed_where', {}).get(str(cid))
+        if not where or not where.get('furniture_id'):
+            continue
+        ch = s['characters'].get(str(cid)) or {}
+        op = ch['outfitPresets'][ch.get('inUseOutfitPresetIndex', 0)] if ch.get('outfitPresets') else {}
+        e = {'character_id': cid, 'furniture_id': str(where['furniture_id']),
+             'outfitPreset': {k: v for k, v in op.items() if k in ('hat', 'hair', 'clothes', 'ornament')
+                              or k.startswith('pend') and not k.endswith('Index')}}
+        if where.get('seat_id'):
+            e['seat_id'] = where['seat_id']
+        out.append(e)
+    return out
+
+
 def garden_data(ctx, owner):
     g = owner.s['garden']
     return {'gardenFurnitureInfoMap': {str(k): v for k, v in g['furniture'].items()},
@@ -253,7 +271,7 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
             data['collections'] = mine['collections']
     if owner is not None:
         data['sceneGardenData'] = garden_data(ctx, owner)
-        data['placedCharacters'] = [{'characterId': c} for c in owner.s.get('placed_characters', [])][:0]
+        data['placedCharacters'] = placed_characters(owner)
     if before_push:
         before_push(channel_id, chan_label)
     ctx.push('SceneDataNotice', {'status': OK, 'data': data})
@@ -487,8 +505,11 @@ def place_char(ctx, req):
     if req.get('is_remove'):
         if cid in pc:
             pc.remove(cid)
-    elif cid not in pc:
-        pc.append(cid)
+            ctx.p.s.setdefault('placed_where', {}).pop(str(cid), None)
+    else:
+        if cid not in pc:
+            pc.append(cid)
+        ctx.p.s.setdefault('placed_where', {})[str(cid)] = {k: req[k] for k in ('furniture_id', 'seat_id') if k in req}
     ctx.p.dirty = True
     ctx.reply({'status': OK, **{k: req[k] for k in ('character_id', 'furniture_id', 'seat_id', 'is_remove') if k in req}})
 

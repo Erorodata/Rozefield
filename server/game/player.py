@@ -131,12 +131,13 @@ class Player:
         if os.path.exists(path):
             p = cls(data, json.load(open(path, encoding='utf-8')), path)
             try:
-                from tools.import_extras import backfill_from_backup, merge_world_files
+                from tools.import_extras import backfill_from_backup, merge_world_files, backfill_placed
                 changed = False
                 if p.s.get('official_player_id') and not p.s.get('extras_imported'):
                     changed |= bool(backfill_from_backup(p.s, log.info))
                 changed |= bool(merge_world_files(p.s, log.info))
                 changed |= p.migrate_furniture_bag()
+                changed |= bool(backfill_placed(p.s, log.info))
                 if changed:
                     p.save()
             except Exception:

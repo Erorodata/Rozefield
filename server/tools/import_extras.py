@@ -45,12 +45,46 @@ def apply(st, msgs):
                     w[k] = sd[k]
             if sd.get('gatherLimits'):
                 w['gatherLimits'] = sd['gatherLimits']
+            if sid == 9999 and sd.get('placedCharacters') and sd.get('channelId') == st.get('official_player_id', sd.get('channelId')):
+                st['placed_where'] = {str(x['character_id']): {k: x[k] for k in ('furniture_id', 'seat_id') if k in x}
+                                      for x in sd['placedCharacters'] if x.get('character_id')}
             for dd in sd.get('dungeons', []):
                 st.setdefault('dungeons', {})[str(dd['dungeonId'])] = dd
     from tools.import_events import apply as apply_events
     apply_events(msgs, st)
     st['extras_imported'] = 1
     return st
+
+
+def _newest_backup(st):
+    from tools.import_player import read_rzsave_bytes
+    for f in sorted(glob.glob(os.path.join(HERE, 'save', 'imports', '*.rzsave')), reverse=True):
+        try:
+            _, msgs = read_rzsave_bytes(open(f, 'rb').read())
+        except Exception:
+            continue
+        md = next((m['body'] for m in msgs if m['name'] == 'PlayerMainDataRsp'), {}) or {}
+        if md.get('player_id') == st.get('official_player_id'):
+            return msgs
+    return None
+
+
+def backfill_placed(st, log=None):
+    """Once: where each placed character sits (older imports kept only the character ids)."""
+    if 'placed_where' in st or not st.get('official_player_id'):
+        return False
+    st['placed_where'] = {}
+    msgs = _newest_backup(st) or []
+    for m in msgs:
+        if m.get('name') != 'SceneDataNotice':
+            continue
+        sd = (m.get('body') or {}).get('data') or {}
+        if sd.get('sceneId') == 9999 and sd.get('channelId') == st['official_player_id'] and sd.get('placedCharacters'):
+            st['placed_where'] = {str(x['character_id']): {k: x[k] for k in ('furniture_id', 'seat_id') if k in x}
+                                  for x in sd['placedCharacters'] if x.get('character_id')}
+    if log:
+        log(f"placed characters restored from backup: {len(st['placed_where'])}")
+    return True
 
 
 def backfill_from_backup(st, log=None):
