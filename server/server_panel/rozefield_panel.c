@@ -604,6 +604,24 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     return DefWindowProcW(h, m, w, l);
 }
 
+/* The Rozefield copy keeps its Unity window settings under its own name (app.info = Rozefield), so it started with
+ * defaults: wrong monitor / fullscreen mode / refresh, which flickers on a second screen. Copy the window and quality
+ * settings from the official copy (HKCU\\Software\\Inutan\\OverField) every start, so both behave the same. */
+static int sync_screen_prefs(void) {
+    HKEY src, dst; int n = 0;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Inutan\\OverField", 0, KEY_READ, &src) != ERROR_SUCCESS) return 0;
+    if (RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\Rozefield\\Rozefield", 0, NULL, 0, KEY_WRITE, NULL, &dst, NULL) != ERROR_SUCCESS) { RegCloseKey(src); return 0; }
+    for (DWORD i = 0;; i++) {
+        wchar_t name[512]; DWORD nl = 512, type, dl = 0;
+        if (RegEnumValueW(src, i, name, &nl, NULL, &type, NULL, &dl) != ERROR_SUCCESS) break;
+        if (wcsncmp(name, L"Screenmanager", 13) && wcsncmp(name, L"UnitySelectMonitor", 18) && wcsncmp(name, L"UnityGraphicsQuality", 20)) continue;
+        BYTE *data = (BYTE *)malloc(dl + 2); DWORD dl2 = dl; nl = 512;
+        if (RegEnumValueW(src, i, name, &nl, NULL, &type, data, &dl2) == ERROR_SUCCESS && RegSetValueExW(dst, name, 0, type, data, dl2) == ERROR_SUCCESS) n++;
+        free(data);
+    }
+    RegCloseKey(src); RegCloseKey(dst);
+    return n;
+}
 int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     /* one panel only: a second start brings the open one to the front */
     CreateMutexW(NULL, TRUE, L"Local\\RozefieldServerPanel");
@@ -645,6 +663,8 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     SendMessageW(g_find, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(6, 6)); SendMessageW(g_search, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(6, 6));
     ShowWindow(g_win, show); UpdateWindow(g_win);
     note(L"Rozefield Server panel opened.");
+    { int n = sync_screen_prefs(); wchar_t m[160];
+      swprintf(m, 160, n ? L"Window settings copied from your official game (%d) - same screen, mode and refresh." : L"No official window settings found to copy.", n); note(m); }
     read_token();
     CloseHandle(CreateThread(NULL, 0, poller, NULL, 0, NULL));
     Sleep(900);
