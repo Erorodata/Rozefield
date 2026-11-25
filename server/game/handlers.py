@@ -315,9 +315,15 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
 def change_scene(ctx, req):
     sid = req.get('scene_id') or PUBLIC_SCENE
     key = pos_key(ctx.p.s, sid, ctx.p.s['player_id'] if sid == PUBLIC_SCENE else None)
-    if req.get('pos') and not req.get('target_player_label'):    # teleport target on the new map
+    if sid == PUBLIC_SCENE:
+        # plaza: switching channel / plaza keeps your position; coming from anywhere else is a fresh spawn
+        if ctx.p.s.get('scene_id') != PUBLIC_SCENE:
+            ctx.p.s.setdefault('pos_by_scene', {})[key] = dict(PLAZA_SPAWN)
+        elif req.get('pos'):
+            ctx.p.s.setdefault('pos_by_scene', {})[key] = req['pos']
+    elif req.get('pos') and not req.get('target_player_label'):    # teleport target on the new map
         ctx.p.s.setdefault('pos_by_scene', {})[key] = req['pos']
-    elif sid != PUBLIC_SCENE and not req.get('target_player_label'):
+    elif not req.get('target_player_label'):
         # map travel without a target: official always puts you at the map's entry point, never where you left
         if MAP_ENTRY.get(sid):
             ctx.p.s.setdefault('pos_by_scene', {})[key] = dict(MAP_ENTRY[sid])

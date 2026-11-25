@@ -47,6 +47,13 @@ and the server replays a full captured login (session 4) correctly in a local te
 
 Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsystem,windows -s -o PCSDKUI.exe pcsdkui_stub.c`
 
+## Rozefield features (differences from official, on purpose)
+
+| Feature | What it does | How |
+|---|---|---|
+| Default plaza look | The plaza never shows event decorations: no seasonal stage (event lawn, Ferris wheel, Halloween stage) and no event furniture (the scene's "活动家具" group: Halloween trees, ghosts, pumpkins, cake world, voxel buildings) | Patch: event `SceneTheme` rows have no dates (`tools/default_stage.py`); the home scene bundle has the event furniture group switched off (`tools/plaza_event_furniture.py`) |
+| Spawn rules | Login: plaza spawn. Entering the plaza from anywhere else: plaza spawn. Switching plaza channel / visiting another plaza from the plaza: you keep your position. Maps and fields: their start point (a teleport point you pick is used). Sequences: the Sequence's own start point. Leaving a Sequence: back at its entrance | `game/handlers.py` (`change_scene`), `game/dungeon.py`, `game/dungeon_starts.json` |
+
 ## Saving player accounts before the official shutdown (backup / import)
 
 **Easiest:** give players `backup_tool\OverField Backup Data.exe` (single file, nothing to install). They press

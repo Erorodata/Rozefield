@@ -57,6 +57,13 @@ def rewards_of(p, cfg):
     return out
 
 
+import json as _json, os as _os
+try:
+    DUNGEON_STARTS = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'dungeon_starts.json'), encoding='utf-8'))
+except OSError:
+    DUNGEON_STARTS = {}   # start points recorded from official DungeonEnterRsp (dungeon id -> char slot -> Pos/Rot)
+
+
 def register(H, pack, enter_scene, scene_player):
     def enter(ctx, req, repeat=False):
         p = ctx.p
@@ -75,12 +82,13 @@ def register(H, pack, enter_scene, scene_player):
             ctx.__dict__['dungeon_return'] = (p.s['scene_id'], p.s.get('channel_label'), req.get('Pos'), req.get('Rot'))
         ctx.__dict__.update(dungeon_id=did, dungeon_start=time.time(), dungeon_kills=0, dungeon_time=0, dungeon_box_open=False)
         team = {}
+        start = DUNGEON_STARTS.get(str(did), {})
         for slot, cid in chars.items():
             sc = {'char_id': cid}
-            if req.get('Pos'):
-                sc['Pos'] = req['Pos']
-            if req.get('Rot'):
-                sc['Rot'] = req['Rot']
+            # official: each member starts at the dungeon's own start point (never where you stood outside);
+            # without a recorded start point the game uses the dungeon's born point
+            if start.get(slot):
+                sc.update(start[slot])
             team[slot] = sc
             ds[slot] = cid
         if req.get('Pos'):
