@@ -37,6 +37,7 @@
 #include <mstcpip.h>
 #include <math.h>
 #include "backup_queries.h"
+#include "msgids_known.h"
 
 #define DISPATCH_HOST "dsp-global-of.inutan.com"
 #define DISPATCH_PORT 18881
@@ -818,21 +819,36 @@ static void browse(void) {
  * Windows lets an administrator read the PC's own network traffic (a raw socket with SIO_RCVALL). The game's
  * connection to its game server is picked out, put back in order, and recorded like a relayed one. */
 #define SEGMAX 64
-struct tcpdir { int used; uint32_t next; int have; unsigned char *buf; size_t len, cap; struct { uint32_t seq; int n; unsigned char *d; } seg[SEGMAX]; };
+struct tcpdir { int synced; uint32_t next; int have; unsigned char *buf; size_t len, cap; struct { uint32_t seq; int n; unsigned char *d; } seg[SEGMAX]; };
 struct tcpflow { uint16_t lport; struct tcpdir d[2]; };
 static struct tcpflow g_flows[16];
 static uint32_t g_watch_ip, g_watch_local; static uint16_t g_watch_port;
 static volatile LONG g_pk_all, g_pk_game, g_pk_frames;
 
-static int frame_ok(const unsigned char *p, size_t avail, size_t *tot, struct head *h) {
+static int known_id(uint64_t id) {
+    int lo = 0, hi = NKNOWN - 1;
+    while (lo <= hi) { int m = (lo + hi) / 2; if (KNOWN_IDS[m] == id) return 1; if (KNOWN_IDS[m] < id) lo = m + 1; else hi = m - 1; }
+    return 0;
+}
+/* 1 = a whole frame, 0 = need more bytes, -1 = not a frame start. When joining a connection mid-stream the
+ * first bytes are the middle of a frame: a frame start needs a known message id, a sane size, and (when the
+ * bytes are there) another frame right after it. */
+static int frame_ok(const unsigned char *p, size_t avail, size_t *tot, struct head *h, int synced) {
     if (avail < 2) return 0;
     size_t hl = (p[0] << 8) | p[1];
-    if (hl < 2 || hl > 64) return -1;
+    if (hl < 2 || hl > 48) return -1;
     if (avail < 2 + hl) return 0;
+    if (p[2] != 0x08 && p[2] != 0x10) return -1;   /* PacketHead starts with field 1 or 2 */
     parse_head(p + 2, p + 2 + hl, h);
-    if (!h->msg_id || h->msg_id > 20000 || h->body_len > (32u << 20) || h->flag > 1) return -1;
+    if (!known_id(h->msg_id) || h->body_len > (4u << 20) || h->flag > 1) return -1;
     *tot = 2 + hl + h->body_len;
-    return avail >= *tot ? 1 : 0;
+    if (avail < *tot) return 0;
+    if (!synced) {   /* confirm with the next frame's header */
+        if (avail < *tot + 3) return 0;
+        const unsigned char *q = p + *tot; size_t hl2 = (q[0] << 8) | q[1];
+        if (hl2 < 2 || hl2 > 48 || (q[2] != 0x08 && q[2] != 0x10)) return -1;
+    }
+    return 1;
 }
 
 static void watch_feed(struct tcpdir *t, int dir, int conn, const unsigned char *d, size_t n) {
@@ -841,9 +857,13 @@ static void watch_feed(struct tcpdir *t, int dir, int conn, const unsigned char 
     size_t off = 0;
     for (;;) {
         size_t tot; struct head h;
-        int r = frame_ok(t->buf + off, t->len - off, &tot, &h);
-        if (r < 0) { off++; continue; }          /* joined mid-frame: slide until a frame lines up */
-        if (r == 0) break;
+        int r = frame_ok(t->buf + off, t->len - off, &tot, &h, t->synced);
+        if (r < 0) { off++; t->synced = 0; continue; }   /* joined mid-frame: slide until a frame lines up */
+        if (r == 0) {
+            if (!t->synced && t->len - off > (1u << 20)) { off++; continue; }   /* a false start waiting forever */
+            break;
+        }
+        t->synced = 1;
         const unsigned char *f = t->buf + off;
         size_t hl = (f[0] << 8) | f[1];
         if (dir == 0 && h.msg_id == 1001) record(0, conn, f, (uint32_t)(2 + hl));
@@ -862,19 +882,8 @@ static void watch_feed(struct tcpdir *t, int dir, int conn, const unsigned char 
     memmove(t->buf, t->buf + off, t->len - off); t->len -= off;
 }
 
-static void watch_segment(struct tcpflow *fl, int dir, uint32_t seq, int syn, const unsigned char *d, int n) {
+static void watch_drain(struct tcpflow *fl, int dir) {
     struct tcpdir *t = &fl->d[dir];
-    if (syn) { t->next = seq + 1; t->have = 1; t->len = 0; return; }
-    if (!t->have) { t->next = seq; t->have = 1; }
-    if (n <= 0) return;
-    int32_t ahead = (int32_t)(seq - t->next);
-    if (ahead > 0) {                              /* early: keep it until the gap is filled */
-        for (int i = 0; i < SEGMAX; i++) if (!t->seg[i].d) { t->seg[i].seq = seq; t->seg[i].n = n; t->seg[i].d = (unsigned char *)malloc(n); memcpy(t->seg[i].d, d, n); break; }
-        return;
-    }
-    if (-ahead >= n) return;                      /* already have it */
-    d += -ahead; n -= -ahead;
-    watch_feed(t, dir, fl->lport, d, n); t->next += n;
     for (int again = 1; again;) {
         again = 0;
         for (int i = 0; i < SEGMAX; i++) {
@@ -886,6 +895,35 @@ static void watch_segment(struct tcpflow *fl, int dir, uint32_t seq, int syn, co
             }
         }
     }
+}
+
+static void watch_segment(struct tcpflow *fl, int dir, uint32_t seq, int syn, const unsigned char *d, int n) {
+    struct tcpdir *t = &fl->d[dir];
+    if (syn) { t->next = seq + 1; t->have = 1; t->len = 0; t->synced = 1; return; }
+    if (!t->have) { t->next = seq; t->have = 1; }
+    if (n <= 0) return;
+    int32_t ahead = (int32_t)(seq - t->next);
+    if (ahead > 0) {                              /* early: keep it until the gap is filled */
+        int slot = -1;
+        for (int i = 0; i < SEGMAX; i++) if (!t->seg[i].d) { slot = i; break; }
+        if (slot < 0) {   /* a packet was missed for good: skip the gap and find the next frame start */
+            uint32_t mn = seq;
+            for (int i = 0; i < SEGMAX; i++) if ((int32_t)(t->seg[i].seq - mn) < 0) mn = t->seg[i].seq;
+            t->next = mn; t->len = 0; t->synced = 0;
+            watch_drain(fl, dir);
+            ahead = (int32_t)(seq - t->next);
+            if (ahead > 0) {   /* still a gap after what was held: skip to this one */
+                t->next = seq; t->len = 0; t->synced = 0; ahead = 0;
+            }
+        } else {
+            t->seg[slot].seq = seq; t->seg[slot].n = n; t->seg[slot].d = (unsigned char *)malloc(n); memcpy(t->seg[slot].d, d, n);
+            return;
+        }
+    }
+    if (-ahead >= n) return;                      /* already have it */
+    d += -ahead; n -= -ahead;
+    watch_feed(t, dir, fl->lport, d, n); t->next += n;
+    watch_drain(fl, dir);
 }
 
 static DWORD WINAPI watch_thread(LPVOID a) {
