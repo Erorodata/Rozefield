@@ -317,7 +317,7 @@ def reported(p, key):
             if c.get('status') != IN_PROGRESS:
                 continue
             par = (idx(p.d)['ach'].get(c['conditionId']) or {}).get('Param') or []
-            if key in par or key in idx(p.d)['res_of'].get(c['conditionId'], ()):
+            if key in par or key == c['conditionId'] or key in idx(p.d)['res_of'].get(c['conditionId'], ()):
                 _set_progress(p, q, c, _need(p, c['conditionId']))
                 hit = True
         if hit:
