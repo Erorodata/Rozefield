@@ -372,7 +372,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
         for (unsigned char *c = (unsigned char *)g_name; *c && strlen(tok) < sizeof tok - 6; c++) {
             char b[8]; snprintf(b, sizeof b, "%u@", *c); strcat(tok, b);
         }
-        if (g_key[0] && strlen(tok) + strlen(g_key) + 2 < sizeof tok) { strcat(tok, "#"); strcat(tok, g_key); }
+        if (g_key[0] && strlen(tok) + strlen(g_key) + 4 < sizeof tok) { strcat(tok, "0@"); strcat(tok, g_key); strcat(tok, "@"); }
         send_msg("{\"action\":\"init\",\"params\":{}}");
         Sleep(300);
         snprintf(msg, sizeof msg,

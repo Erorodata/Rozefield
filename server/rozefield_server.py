@@ -102,7 +102,7 @@ class HTTP:
                 return 'ERR|No account with that name. Create one first.'
             if not check_password(uid, pw):
                 return 'ERR|Wrong password. If you forgot it, ask the server owner to reset it.'
-        key = secrets.token_hex(12)
+        key = str(secrets.randbelow(10 ** 18)).zfill(18)
         if self.game:
             self.game.login_keys[uid] = (key, time.time() + 600)
         return f'OK|{uid}|{name}|{key}'
@@ -233,10 +233,18 @@ from game import handlers as G
 from game import quests as Q
 
 
+def split_token(tok):
+    """The Rozefield SDK stub puts the name in the token as @NNN@NNN@ bytes, then @0@<digit key>@.
+    Digits and @ only: the game refuses tokens with other characters."""
+    if '@0@' in tok:
+        name, key = tok.split('@0@', 1)
+        return name + '@', key.strip('@')
+    return tok, ''
+
+
 def decode_token(tok):
-    """The Rozefield SDK stub puts the typed username in the token as @NNN@NNN@ bytes (then #<session key>)."""
     try:
-        return bytes(int(x) for x in tok.split('#')[0].strip('@').split('@') if x).decode('utf-8')
+        return bytes(int(x) for x in split_token(tok)[0].strip('@').split('@') if x).decode('utf-8')
     except Exception:
         return None
 
@@ -487,7 +495,7 @@ class Session:
             uid, tok = rd.get('sdkUid', ''), rd.get('login_token', '')
             if has_password(uid):   # accounts with a password need the one-time key from the login window
                 want = self.server.login_keys.get(uid)
-                if not want or '#' not in tok or tok.split('#', 1)[1] != want[0] or want[1] < time.time():
+                if not want or split_token(tok)[1] != want[0] or want[1] < time.time():
                     log.warning('login refused for %s (no valid key)', uid)
                     self._send('VerifyLoginTokenRsp', {'status': 'StatusCode_FAIL'}, h.packet_id)
                     return
