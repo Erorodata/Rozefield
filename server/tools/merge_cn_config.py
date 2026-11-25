@@ -152,6 +152,9 @@ def main():
             n = 0
         if base == 'story':
             n += add_story_chapters(g)
+        if base == 'scene':   # Rozefield: plaza always on the default stage (no seasonal event decoration)
+            from tools.default_stage import clear_event_themes
+            n += clear_event_themes(g)
         if base.startswith('string_'):
             n += add_chapter_name(g, base.split('_', 1)[1])
         if base == 'globalconfig':  # Rozefield: raise the plaza ornament point caps
