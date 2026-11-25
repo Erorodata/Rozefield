@@ -39,6 +39,17 @@ if ($Revert) {
 if (-not (Test-Path "$sdk\PCSDKUI.exe.orig")) { Copy-Item "$sdk\PCSDKUI.exe" "$sdk\PCSDKUI.exe.orig" }
 Copy-Item (Join-Path $here 'sdk_stub\PCSDKUI.exe') "$sdk\PCSDKUI.exe" -Force
 if (-not (Test-Path "$sdk\rozefield_sdk.ini")) { Copy-Item (Join-Path $here 'sdk_stub\rozefield_sdk.ini') "$sdk\rozefield_sdk.ini" }
+# login window: which server to ask for accounts
+$ini = [IO.File]::ReadAllText("$sdk\rozefield_sdk.ini")
+if ($ini -match '(?m)^ip\s*=') { $ini = $ini -replace '(?m)^ip\s*=.*$', "ip=$ServerIP" }
+elseif ($ini -match '(?m)^\[server\]') { $ini = $ini -replace '(?m)^\[server\]\s*$', "[server]`r`nip=$ServerIP" }
+else { $ini += "`r`n[server]`r`nip=$ServerIP`r`n" }
+[IO.File]::WriteAllText("$sdk\rozefield_sdk.ini", $ini, (New-Object Text.ASCIIEncoding))
+# the game's own server lookup (HTTPDNS): point it at the server too (needs Python on this PC)
+$py = Get-Command py -ErrorAction SilentlyContinue
+if ($py -and (Test-Path (Join-Path $here 'tools\patch_client_dns.py'))) {
+  & py (Join-Path $here 'tools\patch_client_dns.py') $Game $ServerIP
+} else { Write-Warning 'Python not found: the game lookup was not patched. Install Python and run tools\patch_client_dns.py.' }
 if (-not (Test-Path "$cfg.orig")) { Copy-Item $cfg "$cfg.orig" }
 $t = [IO.File]::ReadAllText($cfg)
 $t = $t -replace 'UseCustomConfig\s*=\s*\w+', 'UseCustomConfig = TRUE' -replace 'RemoteServerIP\s*=\s*[^\r\n]*', "RemoteServerIP = $ServerIP"

@@ -1482,3 +1482,12 @@ _friends.register(H, pack)
 # events (pass, gashapon, wishing tree, sign-in), abyss, group emotes, dice, friend gifts, recruit extras
 from game import events as _events  # noqa: E402
 _events.register(H, pack, scene_player)
+
+# field completion (SceneProcessListReq live + "map completion N%" quest steps)
+from game import scene_progress as _scene_progress  # noqa: E402
+_scene_progress.register(H)
+
+# info screens that follow new play (treasure / character achievements / world level / Boss Rush / challenge ranks)
+from game import live_records as _live_records  # noqa: E402
+_live_records.register(H, _friends.brief)
+_live_records.register_wishlist(H, pack)

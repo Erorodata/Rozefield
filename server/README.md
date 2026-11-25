@@ -54,6 +54,24 @@ Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsy
 | Default plaza look | The plaza never shows event decorations: no seasonal stage (event lawn, Ferris wheel, Halloween stage) and no event furniture (the scene's "活动家具" group: Halloween trees, ghosts, pumpkins, cake world, voxel buildings) | Patch: event `SceneTheme` rows have no dates (`tools/default_stage.py`); the home scene bundle has the event furniture group switched off (`tools/plaza_event_furniture.py`) |
 | Spawn rules | Login: plaza spawn. Entering the plaza from anywhere else: plaza spawn. Switching plaza channel / visiting another plaza from the plaza: you keep your position. Maps and fields: their start point (a teleport point you pick is used). Sequences: the Sequence's own start point. Leaving a Sequence: back at its entrance | `game/handlers.py` (`change_scene`), `game/dungeon.py`, `game/dungeon_starts.json` |
 
+## Play with friends (other PCs, LAN or internet)
+
+The server answers every player with the address they reached it on, so players on the host PC, the LAN and the
+internet can play at the same time. Nothing to set on the server.
+
+| Step | Where | What |
+|---|---|---|
+| 1 | Host PC | Run `start_server.bat` as usual |
+| 2 | Host PC / router | Allow TCP **80**, **18881** and **11001** in Windows Firewall; for internet play, forward the same ports on the router to the host PC |
+| 3 | Friend's PC | Copy the Rozefield game folder (the patched client, not the Steam copy) |
+| 4 | Friend's PC | In an Administrator PowerShell: `powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Game "<game folder>" -ServerIP <host address>` (LAN: the host's 192.168.x.x; internet: the host's public IP) |
+| 5 | Friend's PC | Start the game and create an account in the login window |
+
+`setup_client.ps1` points the login window (`rozefield_sdk.ini`), `Config.txt` and the game's own server lookup
+(`tools/patch_client_dns.py`, needs Python) at the host. The lookup address must fit in 12 characters; for a longer
+one, patch it with a short name (`py tools\patch_client_dns.py "<game folder>" rozefield`) and add
+`<host address> rozefield` to that PC's hosts file. The game update (patch) and photo wall pictures come from the host too.
+
 ## Saving player accounts before the official shutdown (backup / import)
 
 **Easiest:** give players `backup_tool\OverField Backup Data.exe` (single file, nothing to install). They press

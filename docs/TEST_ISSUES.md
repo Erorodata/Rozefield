@@ -30,6 +30,11 @@ Status: **Fixed** = fixed and confirmed in game · **Fixed, retest** = fixed on 
 | 20 | Building blocks (e.g. Black Blocks) cannot be bought: not in the shop | Shop slots told the game the slot number instead of the pool item's own index, so the game found no item (affected most shops); limits never reset | Official pool item index, multi-item slots pick one item per refresh, daily / weekly / monthly limits reset | Fixed, retest |
 | 21 | Dye does not use up colorants | Not built | Each dye uses 1 of the chosen colorant, with a bag update, as official | Fixed, retest |
 | 22 | Some quest steps never complete: spend gold / vitality / energy, pass a Sequence, like a garden, make a friend, use an interaction item | No rule for those step types | Counted from play (1,264 of 1,265 steps now have a rule) | Fixed, retest |
+| 23 | Photo wall pictures never load (only titles) | The game downloads pictures from `<photo address>/<code>` and `/thumb/<code>`; Rozefield had no such address | Pictures served from `save/photos` | Fixed, retest |
+| 24 | Field completion % ("Garden Realm completion reached 10%") never moves for new play | Field completion was only the archived official number | Counted from collectibles, battles, areas, challenges and riddles per map (matches official exactly on all 7 archived maps); the quest step follows it | Fixed, retest |
+| 25 | Handbook/achievement screens don't change after claiming: treasure handbook, character achievements, world levels, Boss Rush, challenge friend ranks | Only the archived official answer was shown | Archived answer plus what you did on Rozefield | Fixed, retest |
+| 26 | Wish list: friends can't gift items from it | Not built | Add/remove (30 max), friends see it per item, a friend buys it with in-game currency (3 a week) and you get it by mail | Fixed, retest |
+| 27 | Friends on other PCs can't join | Every address the server gave out was this PC's own (127.0.0.1) | Each player gets the address they reached the server on; `setup_client.ps1 -ServerIP` sets up a friend's game | Fixed, needs a second PC |
 
 ## Fields and life skills
 
@@ -49,3 +54,4 @@ Status: **Fixed** = fixed and confirmed in game · **Fixed, retest** = fixed on 
 | 19 | Story step "Eliminate Ashen Creatures": battle marker missing on the map, story does not continue | Story battle markers were never sent | Markers for story battles show while that step is in progress and update live | Fixed |
 
 All storylines still need a full pass; see [STORY_CHECKLIST.md](STORY_CHECKLIST.md).
+Values still estimated (no official answer recorded) are listed in [OFFICIAL_CAPTURE_CHECKLIST.md](OFFICIAL_CAPTURE_CHECKLIST.md).

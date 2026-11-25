@@ -68,9 +68,9 @@
           "bar"
         ],
         [
-          "Multiplayer (other players in scenes, co-op)",
-          "open",
-          "phase 2"
+          "Online play: friends on other PCs (LAN / internet), per-player server address, friend setup script",
+          "partial",
+          "needs a test with a second PC"
         ]
       ]
     },
@@ -285,7 +285,7 @@
         [
           "Photo wall (upload, browse, like, favourite, delete)",
           "partial",
-          "pictures are stored; whether the client can download them back is untested"
+          "pictures served back to the game (full and thumbnail); needs in-game check"
         ],
         [
           "Rankings: Abyss, Boss Rush (everyone on this server)",

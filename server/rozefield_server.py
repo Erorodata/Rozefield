@@ -46,23 +46,36 @@ class HTTP:
             cfg.res_version = self.patch['version']
             log.info('resource patch %s active (%d files)', self.patch['version'], len(self.patch_files))
 
-    def gm_config(self):
+    def ip_for(self, writer):
+        """Address the client should use: --public-ip if given, else the address this client reached us on
+        (so players on this PC, the LAN and the internet all get a working address at the same time)."""
+        if self.cfg.host_ip not in ('', 'auto'):
+            return self.cfg.host_ip
+        try:
+            ip = (writer.get_extra_info('sockname') or ('127.0.0.1',))[0]
+        except Exception:
+            ip = '127.0.0.1'
+        return '127.0.0.1' if ip in ('0.0.0.0', '::', '::1') else ip.replace('::ffff:', '')
+
+    def gm_config(self, ip=None):
         c = self.cfg
-        base = f'http://{c.host_ip}:{c.http_port}/Resources'
+        ip = ip or (c.host_ip if c.host_ip not in ('', 'auto') else '127.0.0.1')
+        base = f'http://{ip}:{c.http_port}/Resources'
         return {"status": True, "message": "success", "hotOssUrl": base,
                 "currentVersion": f"{c.client_version}_{c.res_version}", "server": "rozefield_local",
-                "ssAppId": "", "ssServerUrl": f"http://{c.host_ip}:{c.http_port}/ta",
+                "ssAppId": "", "ssServerUrl": f"http://{ip}:{c.http_port}/ta",
                 "open_gm": False, "open_error_log": False, "open_netConnecting_log": False,
-                "ipAddress": "127.0.0.1", "payUrl": f"http://{c.host_ip}:{c.http_port}/pay",
+                "ipAddress": "127.0.0.1", "payUrl": f"http://{ip}:{c.http_port}/pay",
                 "isTestServer": False, "error_log_level": 2, "server_id": "31000", "open_cs": False,
                 "serverTime": 0}
 
-    def region_info(self):
+    def region_info(self, ip=None):
         c = self.cfg
-        return {"status": True, "message": "success", "gate_tcp_ip": c.host_ip, "gate_tcp_port": c.gate_port,
-                "is_server_open": True, "text": "", "client_log_tcp_ip": c.host_ip, "client_log_tcp_port": 21001,
+        ip = ip or (c.host_ip if c.host_ip not in ('', 'auto') else '127.0.0.1')
+        return {"status": True, "message": "success", "gate_tcp_ip": ip, "gate_tcp_port": c.gate_port,
+                "is_server_open": True, "text": "", "client_log_tcp_ip": ip, "client_log_tcp_port": 21001,
                 "currentVersion": f"{c.client_version}_{c.res_version}",
-                "photo_share_cdn_url": f"http://{c.host_ip}:{c.http_port}/photo"}
+                "photo_share_cdn_url": f"http://{ip}:{c.http_port}/photo"}
 
     def account_login(self, body, register):
         import re
@@ -200,14 +213,14 @@ class HTTP:
         p = u.path
         if p.endswith('/resolve'):
             q = urllib.parse.parse_qs(u.query)
-            out = json.dumps({"host": q.get('domain', [''])[0], "ttl": 600, "ips": [self.cfg.host_ip],
+            out = json.dumps({"host": q.get('domain', [''])[0], "ttl": 600, "ips": [self.ip_for(writer)],
                               "cip": "127.0.0.1", "cl": [3]}).encode()
         elif p == '/dispatch/get_login_url_list':
             out = b''
         elif p == '/dispatch/client_hot_update':
-            out = json.dumps(self.gm_config(), separators=(',', ':')).encode()
+            out = json.dumps(self.gm_config(self.ip_for(writer)), separators=(',', ':')).encode()
         elif p == '/dispatch/region_info':
-            out = json.dumps(self.region_info(), separators=(',', ':')).encode()
+            out = json.dumps(self.region_info(self.ip_for(writer)), separators=(',', ':')).encode()
         elif p == '/dispatch/get_notice_list':
             out = json.dumps({"status": True, "message": "success", "data": []}).encode()
         elif p == '/dispatch/get_notice_url_list':
@@ -232,6 +245,15 @@ class HTTP:
             nm = (urllib.parse.parse_qs(u.query).get('name') or [None])[0]   # the control panel can choose the log-in name
             out = (await asyncio.get_running_loop().run_in_executor(None, self.import_backup, body, nm)).encode('utf-8')
             ctype = 'text/plain; charset=utf-8'
+        elif p.startswith('/photo/'):   # photo wall pictures: <cdn>/<code> and <cdn>/thumb/<code> (game builds both)
+            import base64, re
+            m = re.fullmatch(r'/photo/(?:thumb/)?(\d+)(?:\.\w+)?', p)
+            f = os.path.join(HERE, 'save', 'photos', f'{m.group(1)}.b64') if m else ''
+            if f and os.path.exists(f):
+                out = base64.b64decode(open(f).read() or '')
+                ctype = 'image/png' if out[:4] == b'\x89PNG' else 'image/jpeg'
+            else:
+                code = 404
         elif p.startswith('/Resources/'):
             f = self.find_resource(p)
             if f:
@@ -592,7 +614,8 @@ class Session:
 async def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--save', default=None, help='(unused, accounts live in save/accounts)')
-    ap.add_argument('--public-ip', default='127.0.0.1', help='IP the client should connect to')
+    ap.add_argument('--public-ip', default='auto',
+                    help='address clients are told to use; auto = the address each client reached this server on')
     ap.add_argument('--bind', default='0.0.0.0')
     ap.add_argument('--http-port', type=int, default=18881)
     ap.add_argument('--dns-port', type=int, default=80, help='HTTPDNS port (0 = off)')
@@ -634,7 +657,7 @@ async def main():
     log.info('Type GM commands here, e.g.  <name> /all outfits   or  list')
     from game.player import migrate_local_ids
     migrate_local_ids(log.info)   # Rozefield-made accounts never sit on an official player id
-    log.info('Rozefield up: dispatch http://%s:%s  gate %s:%s', a.public_ip, a.http_port, a.public_ip, a.gate_port)
+    log.info('Rozefield up: dispatch port %s, gate port %s, address %s', a.http_port, a.gate_port, a.public_ip)
     await asyncio.gather(*(s.serve_forever() for s in servers))
 
 

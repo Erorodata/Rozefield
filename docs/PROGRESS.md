@@ -1,4 +1,4 @@
-# Rozefield progress: 81.20%
+# Rozefield progress: 83.29%
 
 ![progress](progress.png)
 
@@ -15,14 +15,14 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Player backup tool OverField Backup Data.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
-## Server & connection (83.3%)
+## Server & connection (91.7%)
 
 - [x] Dispatch, HTTPDNS and region info
 - [x] Login window with account picker
 - [x] Patch delivery through the game's own updater
 - [x] Client requests with a server handler (100.00% 303/303)
 - [x] Requests seen in real play that are handled (100.00% 140/140)
-- [ ] Multiplayer (other players in scenes, co-op): phase 2
+- [~] Online play: friends on other PCs (LAN / internet), per-player server address, friend setup script: needs a test with a second PC
 
 ## Content (Global + CN) (87.5%)
 
@@ -46,7 +46,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] Recruit banners and pulls
 - [~] Recruit result screen (animation, can't leave): results now carry the official bonus items + quality; needs in-game check
 - [~] Quest engine: main story, story rewards, daily, delegate
-- [x] Quest steps with an event rule (99.92% 1,264/1,265)
+- [x] Quest steps with an event rule (100.00% 1,265/1,265)
 - [x] Main story quests cleared by an automated new account (100.00% 648/648)
 - [~] Achievements: view archived progress
 - [~] Achievements: earn and claim: counted from play, claim + group rewards; needs in-game check
@@ -72,7 +72,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Multiplayer: other players in the same scene, movement, emotes, group emotes, chat (nearby, world, private), sitting: tested with 2 local clients; needs in-game check
 - [~] Part-time tasks, Moon Points to Wish Stones (official step prices), co-op ticket refill (6 a day): Moon Points per activity: 5 / 25 as seen
 - [~] Online Gomoku (2 players): reward amounts estimated
-- [~] Photo wall (upload, browse, like, favourite, delete): pictures are stored; whether the client can download them back is untested
+- [~] Photo wall (upload, browse, like, favourite, delete): pictures served back to the game (full and thumbnail); needs in-game check
 - [~] Rankings: Abyss, Boss Rush (everyone on this server)
 - [~] Restaurant mini-game (buy, merge, sell, serve, quests): built from the game tables; no official capture
 - [~] Field gear drops follow world level, 3% rare top quality: estimate
