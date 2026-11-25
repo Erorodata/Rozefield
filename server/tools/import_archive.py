@@ -118,6 +118,9 @@ def build(login_name, msgs, keep_player_id=True):
     if schemes:
         st['garden']['schemes'] = {str(k): {'name': v, 'furniture': {}} for k, v in schemes.items()}
     st['records'] = pairs(msgs)
+    # every official answer in the backup (shops, recruit history, life skills, friends, mail, ...), kept as-is so
+    # nothing the backup window collected is lost, even where the server doesn't use it yet
+    st['official_answers'] = pairs(msgs, every=True)
     os.makedirs(SAVE_DIR, exist_ok=True)
     reg['next_player_id'] = max(reg['next_player_id'], pid + 1) if pid < 2000000 else reg['next_player_id']
     _save_registry(reg)

@@ -9,7 +9,8 @@ sys.path.insert(0, HERE)
 from game.handlers import RECORD_QUERIES, record_key
 
 
-def pairs(packets):
+def pairs(packets, every=False):
+    """Req -> Rsp answers. every=False: only the read-only queries the server replays (RECORD_QUERIES)."""
     pend, out = {}, {}
     for p in packets:
         n, h = p.get('name', ''), p.get('head', {})
@@ -17,7 +18,7 @@ def pairs(packets):
             pend[(p.get('port'), h.get('packet_id'))] = p
         elif n.endswith('Rsp'):
             q = pend.pop((p.get('port'), h.get('packet_id')), None)
-            if q and q['name'][:-3] == n[:-3] and q['name'] in RECORD_QUERIES:
+            if q and q['name'][:-3] == n[:-3] and (every or q['name'] in RECORD_QUERIES):
                 out.setdefault(q['name'], {})[record_key(q.get('body'))] = p.get('body') or {}
     return out
 

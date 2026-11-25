@@ -95,9 +95,9 @@ static struct check CHECKS[] = {
     {"Poster album", "automatic", 1424, 0},
     {"Friends", "automatic", 1740, 0},
     {"Mail", "automatic", 1122, 0},
-    {"Garden Plaza layout", "automatic if you start in your Plaza, otherwise go there once", 1016, 0},
-    {"Plaza presets (optional)", "in decorate mode open Preset Decor", 2624, 0},
-    {"Character achievements (optional)", "open a character's achievement page", 1480, 0},
+    {"Garden Plaza layout", "automatic (be in your own Plaza)", 1016, 0},
+    {"Plaza presets", "automatic", 2624, 0},
+    {"Character achievements", "automatic", 1480, 0},
 };
 #define NCHECK (int)(sizeof CHECKS / sizeof CHECKS[0])
 
@@ -576,7 +576,7 @@ static DWORD WINAPI fetch_rest(LPVOID a) {
         LeaveCriticalSection(&g->cs);
         if (!ok) break;
         sent++;
-        Sleep(120);
+        Sleep(60);
     }
     Sleep(3000);
     InterlockedExchange(&g_mode, M_DONE);
