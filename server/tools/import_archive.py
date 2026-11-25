@@ -134,6 +134,8 @@ def build(login_name, msgs, keep_player_id=True):
     # every official answer in the backup (shops, recruit history, life skills, friends, mail, ...), kept as-is so
     # nothing the backup window collected is lost, even where the server doesn't use it yet
     st['official_answers'] = pairs(msgs, every=True)
+    from game.friends import import_friends
+    import_friends(st, st['official_answers'].get('FriendReq'))
     os.makedirs(SAVE_DIR, exist_ok=True)
     _save_registry(reg)
     path = os.path.join(SAVE_DIR, f'{pid}.json')

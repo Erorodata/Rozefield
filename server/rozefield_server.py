@@ -349,6 +349,9 @@ class Server:
         sess.chan = (scene, channel)
         others = [o for o in self.channels.get(sess.chan, set()) if o is not sess and o.p]
         self.channels.setdefault(sess.chan, set()).add(sess)
+        if sess.p:   # players met nearby this session show in the friend list until the game closes
+            for o in others:
+                getattr(sess, 'nearby', set()).add(o.p.s['player_id']); getattr(o, 'nearby', set()).add(sess.p.s['player_id'])
         if not sess.p:
             return
         sp = self._scene_player(sess.p)
@@ -435,6 +438,7 @@ class Session:
         self.seq = 0
         self.p = None
         self.chan = None
+        self.nearby = set()
         self.cur = None
         self.peer = writer.get_extra_info('peername')
 

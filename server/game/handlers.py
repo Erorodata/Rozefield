@@ -1250,6 +1250,9 @@ _coop.register(H, pack, scene_player)
 # online Gomoku, photo wall, rankings, restaurant mini-game
 from game import social2 as _social2  # noqa: E402
 _social2.register(H, pack)
+from game import friends as _friends  # noqa: E402
+_friends.register(H, pack)
+
 
 # events (pass, gashapon, wishing tree, sign-in), abyss, group emotes, dice, friend gifts, recruit extras
 from game import events as _events  # noqa: E402
