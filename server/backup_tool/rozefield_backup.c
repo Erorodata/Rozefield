@@ -2,13 +2,18 @@
  *
  * Click "Open OverField (Official)": the game starts and logs in to the official server as usual, but its
  * connection passes through this window, which records what the server tells the game about your account.
- * Nothing is changed or sent on your behalf. Your login token is not saved. When you close the game (or press
- * "Save backup") you get  backups\<name>_<date>.rzsave  - import it into Rozefield from its login window.
+ * After you log in it also asks the server for the rest of your account (bag, gear, life skills, achievements,
+ * handbook, friends, mail list, ...) using only the read-only look-ups the game itself sends, so you don't have to
+ * open every screen. Nothing in your account is changed. Your login token is not saved. When you close the game
+ * (or press "Save backup") you get  backups\<name>_<date>.rzsave  - import it into Rozefield from its login window.
  *
- * How: Config.txt is switched to UseCustomConfig/RemoteServerIP=127.0.0.1 just long enough for the game to read it
- * (put back as soon as the game has asked for the server list). Dispatch HTTP (:18881) is forwarded to the official
- * dispatch server; the game server address in its answer is pointed at the local relay (:11001), which forwards
- * every byte to the official game server and keeps a copy.
+ * How: while the official servers are up the game finds them through a built-in lookup service (HTTPDNS
+ * 8.134.240.36), so for the session that one address in global-metadata.dat is pointed at this window (a copy of the
+ * original is kept and put back when the game closes, or the next time this window opens). Lookups are forwarded to
+ * the real service; only the dispatch server's address is answered with 127.0.0.1. Dispatch HTTP (:18881) is
+ * forwarded to the official dispatch server; the game server address in its answer is pointed at the local relay
+ * (:11001), which forwards the game's traffic to the official game server and keeps a copy. Config.txt is also
+ * switched to RemoteServerIP=127.0.0.1 until the game has asked for the server list.
  *
  * File format (RZSAVE2): "RZSAVE2\n" + JSON meta line + records {u8 dir(0=client,1=server), u16 conn, f64 time,
  * u32 len, frame bytes as on the wire}.
@@ -28,11 +33,13 @@
 #include <string.h>
 #include <stdint.h>
 #include <tlhelp32.h>
+#include "backup_queries.h"
 
 #define DISPATCH_HOST "dsp-global-of.inutan.com"
 #define DISPATCH_PORT 18881
 #define GATE_PORT 11001
 #define HTTPDNS_IP "8.134.240.36"
+#define HTTPDNS_PORT 80
 #define WM_LOG (WM_APP + 1)
 #define WM_CHECK (WM_APP + 2)
 #define WM_GAMEEXIT (WM_APP + 3)
@@ -64,16 +71,16 @@ static void ui_log(const char *fmt, ...) {
 struct check { const char *label; const char *how; int msg_id; int done; };
 static struct check CHECKS[] = {
     {"Account, characters, bag, quests, story", "log in", 1006, 0},
-    {"Garden Plaza layout", "go to your own Garden Plaza", 1016, 0},
-    {"Achievements", "Manual > Achievements: open every tab", 1762, 0},
-    {"Life skills", "Life: open each life skill", 1370, 0},
-    {"Life collection book", "Life: open each collection book", 1366, 0},
-    {"Exploration manual", "open the Manual", 1862, 0},
-    {"Poster album", "open the Poster album", 1424, 0},
-    {"Character achievements", "Characters: open each character's achievement page", 1480, 0},
-    {"Friends", "open the Friends list", 1740, 0},
-    {"Plaza presets", "in decorate mode open Preset Decor", 2624, 0},
-    {"Mail", "open the Mailbox", 1122, 0},
+    {"Achievements", "automatic", 1762, 0},
+    {"Life skills", "automatic", 1370, 0},
+    {"Life collection book", "automatic", 1366, 0},
+    {"Exploration manual", "automatic", 1862, 0},
+    {"Poster album", "automatic", 1424, 0},
+    {"Friends", "automatic", 1740, 0},
+    {"Mail", "automatic", 1122, 0},
+    {"Garden Plaza layout", "automatic if you start in your Plaza, otherwise go there once", 1016, 0},
+    {"Plaza presets (optional)", "in decorate mode open Preset Decor", 2624, 0},
+    {"Character achievements (optional)", "open a character's achievement page", 1480, 0},
 };
 #define NCHECK (int)(sizeof CHECKS / sizeof CHECKS[0])
 
@@ -179,11 +186,52 @@ static void sdk_official(int on) {
     }
 }
 
+/* global-metadata.dat: point the HTTPDNS string literal at 127.0.0.1 for the session (original kept beside it) */
+static void meta_paths(char *f, char *bak) {
+    snprintf(f, MAX_PATH, "%s\\launcher_Data\\il2cpp_data\\Metadata\\global-metadata.dat", g_game);
+    snprintf(bak, MAX_PATH, "%s.rzbackup", f);
+}
+static int restore_metadata(void) {   /* 1 = nothing to do or restored */
+    char f[MAX_PATH], bak[MAX_PATH]; meta_paths(f, bak);
+    if (GetFileAttributesA(bak) == INVALID_FILE_ATTRIBUTES) return 1;
+    if (CopyFileA(bak, f, FALSE)) { DeleteFileA(bak); return 1; }
+    return 0;   /* the game still has it open */
+}
+static int patch_metadata(void) {
+    char f[MAX_PATH], bak[MAX_PATH]; meta_paths(f, bak);
+    FILE *in = fopen(f, "rb"); if (!in) return 0;
+    fseek(in, 0, SEEK_END); long n = ftell(in); fseek(in, 0, SEEK_SET);
+    unsigned char *d = (unsigned char *)malloc(n); if (!d || fread(d, 1, n, in) != (size_t)n) { fclose(in); free(d); return 0; }
+    fclose(in);
+    const char *OLD = HTTPDNS_IP, *NEW = "127.0.0.1"; size_t ol = strlen(OLD), nl = strlen(NEW);
+    uint32_t lo, ls, ldo; memcpy(&lo, d + 8, 4); memcpy(&ls, d + 12, 4); memcpy(&ldo, d + 16, 4);
+    int ok = 0;
+    if (n > 24 && lo + ls <= (uint32_t)n && ldo < (uint32_t)n) {
+        for (long i = ldo; i + (long)ol <= n && !ok; i++) {
+            if (memcmp(d + i, OLD, ol) != 0) continue;
+            int32_t pos = (int32_t)(i - ldo);
+            for (uint32_t k = 0; k + 8 <= ls; k += 8) {
+                uint32_t len; int32_t idx; memcpy(&len, d + lo + k, 4); memcpy(&idx, d + lo + k + 4, 4);
+                if (idx == pos && len == ol) { memcpy(d + i, NEW, nl); len = (uint32_t)nl; memcpy(d + lo + k, &len, 4); ok = 1; break; }
+            }
+        }
+    }
+    if (ok) {
+        if (GetFileAttributesA(bak) == INVALID_FILE_ATTRIBUTES && !CopyFileA(f, bak, TRUE)) ok = 0;
+        FILE *o = ok ? fopen(f, "wb") : NULL;
+        if (o) { ok = fwrite(d, 1, n, o) == (size_t)n; fclose(o); } else ok = 0;
+        if (!ok) restore_metadata();
+    }
+    free(d);
+    return ok;
+}
+
 static void restore_all(void) {
     char cfg[MAX_PATH]; snprintf(cfg, sizeof cfg, "%s\\launcher_Data\\StreamingAssets\\Config.txt", g_game);
     snprintf(g_cfg, sizeof g_cfg, "%s", cfg); snprintf(g_cfgbak, sizeof g_cfgbak, "%s.rzbackup", cfg);
     restore_config();
     sdk_official(0);
+    for (int i = 0; i < 20 && !restore_metadata(); i++) Sleep(500);
 }
 
 /* ------------------------------------------------------------------ recording */
@@ -258,34 +306,6 @@ static void find_name(const unsigned char *body, size_t n, int compressed) {
         } else if (wt == 1) p += 8; else if (wt == 5) p += 4; else break;
     }
     free(buf);
-}
-
-/* splits a byte stream into frames, records them (login token stripped), updates the checklist */
-struct framer { unsigned char *buf; size_t len, cap; int dir, conn; };
-static void framer_feed(struct framer *fr, const char *data, int n) {
-    if (fr->len + n > fr->cap) { fr->cap = (fr->len + n) * 2; fr->buf = (unsigned char *)realloc(fr->buf, fr->cap); }
-    memcpy(fr->buf + fr->len, data, n); fr->len += n;
-    size_t off = 0;
-    while (fr->len - off >= 2) {
-        size_t hl = (fr->buf[off] << 8) | fr->buf[off + 1];
-        if (fr->len - off < 2 + hl) break;
-        struct head h; parse_head(fr->buf + off + 2, fr->buf + off + 2 + hl, &h);
-        size_t tot = 2 + hl + h.body_len;
-        if (fr->len - off < tot) break;
-        const unsigned char *frame = fr->buf + off;
-        if (fr->dir == 0 && h.msg_id == 1001) record(0, fr->conn, frame, (uint32_t)(2 + hl));  /* VerifyLoginTokenReq: header only */
-        else record(fr->dir, fr->conn, frame, (uint32_t)tot);
-        if (fr->dir == 1) {
-            if (h.msg_id == 1006 && !g_player[0]) {
-                find_name(frame + 2 + hl, h.body_len, h.flag == 1);
-                if (g_player[0]) ui_log("Logged in as %s. Now open the menus in the list so they are saved too.", g_player);
-            }
-            for (int i = 0; i < NCHECK; i++)
-                if (!CHECKS[i].done && CHECKS[i].msg_id == (int)h.msg_id) { CHECKS[i].done = 1; PostMessageW(g_win, WM_CHECK, 0, 0); }
-        }
-        off += tot;
-    }
-    memmove(fr->buf, fr->buf + off, fr->len - off); fr->len -= off;
 }
 
 /* ------------------------------------------------------------------ networking */
@@ -364,6 +384,39 @@ static int dechunk(char *b, int n) {
     return (int)(out - b);
 }
 
+/* "ips":[...] -> "ips":["127.0.0.1"] */
+static char *set_ips_local(const char *body) {
+    const char *p = strstr(body, "\"ips\""); if (!p) return NULL;
+    const char *a = strchr(p, '['), *e = a ? strchr(a, ']') : NULL; if (!a || !e) return NULL;
+    size_t n = strlen(body) + 32; char *o = (char *)malloc(n);
+    snprintf(o, n, "%.*s[\"127.0.0.1\"]%s", (int)(a - body), body, e + 1);
+    return o;
+}
+
+/* the game's lookup service (pointed here for the session): forward to the real one */
+static void httpdns_answer(SOCKET c, const char *path) {
+    char out[4096] = "{}"; int ol = 2;
+    SOCKET u = tcp_connect(HTTPDNS_IP, HTTPDNS_PORT);
+    if (u != INVALID_SOCKET) {
+        char rq[2400]; int rl = snprintf(rq, sizeof rq, "GET %s HTTP/1.0\r\nHost: %s\r\nConnection: close\r\n\r\n", path, HTTPDNS_IP);
+        send(u, rq, rl, 0);
+        int n; char *b = read_all(u, &n); closesocket(u);
+        char *body = strstr(b, "\r\n\r\n");
+        if (body) {
+            body += 4;
+            if (strstr(b, "chunked") && strstr(b, "chunked") < body) { int bl = dechunk(body, n - (int)(body - b)); body[bl] = 0; }
+            char *rw = strstr(path, "domain=" DISPATCH_HOST) ? set_ips_local(body) : NULL;
+            ol = snprintf(out, sizeof out, "%s", rw ? rw : body);
+            if (rw) ui_log("Game is looking for its server - pointing it at this window.");
+            free(rw);
+        }
+        free(b);
+    }
+    char hdr[160]; int hl = snprintf(hdr, sizeof hdr, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: %d\r\nConnection: close\r\n\r\n", ol);
+    send(c, hdr, hl, 0); send(c, out, ol, 0);
+    shutdown(c, SD_SEND); closesocket(c);
+}
+
 static DWORD WINAPI http_client(LPVOID arg) {
     SOCKET c = (SOCKET)(uintptr_t)arg;
     char req[65536]; int len = 0, r; char *hend = NULL;
@@ -378,6 +431,7 @@ static DWORD WINAPI http_client(LPVOID arg) {
     while (len < hlen + clen && len < (int)sizeof req - 1 && (r = recv(c, req + len, sizeof req - 1 - len, 0)) > 0) len += r;
     char method[16] = "", path[2048] = "";
     sscanf(req, "%15s %2047s", method, path);
+    if (strncmp(path, "/resolve", 8) == 0 || strstr(path, "/resolve?")) { httpdns_answer(c, path); return 0; }
     /* forward: same request line and body, Host = official dispatch, HTTP/1.0 so the reply ends with close */
     char fwd[70000]; int fl = 0;
     fl += snprintf(fwd + fl, sizeof fwd - fl, "%s %s HTTP/1.0\r\nHost: %s:%d\r\n", method, path, DISPATCH_HOST, DISPATCH_PORT);
@@ -429,19 +483,170 @@ static DWORD WINAPI http_server(LPVOID arg) {
     return 0;
 }
 
-struct pipe_arg { SOCKET from, to; int dir, conn; };
-static DWORD WINAPI pump(LPVOID a) {
-    struct pipe_arg *pa = (struct pipe_arg *)a;
-    struct framer fr = {0}; fr.dir = pa->dir; fr.conn = pa->conn;
-    char buf[65536]; int r;
-    while ((r = recv(pa->from, buf, sizeof buf, 0)) > 0) {
-        int off = 0;
-        while (off < r) { int w = send(pa->to, buf + off, r - off, 0); if (w <= 0) { r = -1; break; } off += w; }
-        if (r < 0) break;
-        framer_feed(&fr, buf, r);
+/* One relayed game connection. The game's own frames go through unchanged except that their packet_id / seq_id are
+ * shifted past the look-ups this window adds, so the server sees one continuous sequence; answers to the look-ups
+ * are recorded but not passed to the game. */
+#define PIDMAP 8192
+struct gconn {
+    SOCKET game, server; int conn;
+    CRITICAL_SECTION cs;          /* order of frames sent to the server */
+    uint64_t last_pid, last_seq;  /* last ids sent to the server */
+    uint64_t pid_off, seq_off;    /* how many look-ups were added so far */
+    uint64_t map_srv[PIDMAP], map_game[PIDMAP];   /* server packet_id -> game packet_id */
+    unsigned char inj[PIDMAP];    /* server packet_id was one of ours */
+    volatile LONG logged_in, done;
+};
+
+static size_t put_varint(unsigned char *o, uint64_t v) { size_t n = 0; do { unsigned char b = v & 0x7f; v >>= 7; o[n++] = b | (v ? 0x80 : 0); } while (v); return n; }
+
+/* rebuild a PacketHead with new packet_id (field 1) / seq_id (field 6); other fields copied as they are */
+static size_t rewrite_head(const unsigned char *p, const unsigned char *e, uint64_t pid, uint64_t seq, unsigned char *o) {
+    size_t n = 0; int had_pid = 0, had_seq = 0;
+    while (p < e) {
+        const unsigned char *st = p;
+        uint64_t k = rd_varint(&p, e); int f = (int)(k >> 3), wt = (int)(k & 7);
+        if (wt == 0) {
+            uint64_t v = rd_varint(&p, e);
+            if (f == 1) { had_pid = 1; if (pid) { n += put_varint(o + n, (1 << 3)); n += put_varint(o + n, pid); } continue; }
+            if (f == 6) { had_seq = 1; if (seq) { n += put_varint(o + n, (6 << 3)); n += put_varint(o + n, seq); } continue; }
+            (void)v;
+        } else if (wt == 2) { uint64_t l = rd_varint(&p, e); p += l; }
+        else if (wt == 1) p += 8; else if (wt == 5) p += 4; else break;
+        memcpy(o + n, st, p - st); n += p - st;
     }
-    shutdown(pa->to, SD_BOTH); shutdown(pa->from, SD_BOTH);
-    free(fr.buf); free(pa);
+    if (!had_pid && pid) { n += put_varint(o + n, (1 << 3)); n += put_varint(o + n, pid); }
+    if (!had_seq && seq) { n += put_varint(o + n, (6 << 3)); n += put_varint(o + n, seq); }
+    return n;
+}
+
+static int send_all(SOCKET s, const unsigned char *b, size_t n) {
+    size_t off = 0; while (off < n) { int w = send(s, (const char *)b + off, (int)(n - off), 0); if (w <= 0) return 0; off += w; } return 1;
+}
+
+/* send one frame to the server (caller holds g->cs); game_pid = 0 for our own look-ups */
+static int to_server(struct gconn *g, uint64_t msg_id, const unsigned char *head, size_t hl, const unsigned char *body, size_t bl,
+                     uint64_t game_pid, uint64_t game_seq, int ours) {
+    uint64_t pid, seq;
+    if (ours) { pid = g->last_pid + 1; seq = g->last_seq + 1; g->pid_off++; g->seq_off++; }
+    else { pid = game_pid ? game_pid + g->pid_off : 0; seq = game_seq ? game_seq + g->seq_off : 0; }
+    if (pid) { g->last_pid = pid; g->map_srv[pid % PIDMAP] = pid; g->map_game[pid % PIDMAP] = ours ? 0 : game_pid; g->inj[pid % PIDMAP] = (unsigned char)ours; }
+    if (seq) g->last_seq = seq;
+    unsigned char nh[256]; size_t nhl;
+    if (ours) {
+        nhl = 0;
+        nhl += put_varint(nh + nhl, (1 << 3)); nhl += put_varint(nh + nhl, pid);
+        nhl += put_varint(nh + nhl, (2 << 3)); nhl += put_varint(nh + nhl, msg_id);
+        if (bl) { nhl += put_varint(nh + nhl, (4 << 3)); nhl += put_varint(nh + nhl, bl); }
+        nhl += put_varint(nh + nhl, (6 << 3)); nhl += put_varint(nh + nhl, seq);
+    } else {
+        if (hl > 200) return 0;
+        nhl = rewrite_head(head, head + hl, pid, seq, nh);
+    }
+    size_t tot = 2 + nhl + bl;
+    unsigned char *f = (unsigned char *)malloc(tot);
+    f[0] = (unsigned char)(nhl >> 8); f[1] = (unsigned char)nhl; memcpy(f + 2, nh, nhl); if (bl) memcpy(f + 2 + nhl, body, bl);
+    int ok = send_all(g->server, f, tot);
+    if (msg_id == 1001) record(0, g->conn, f, (uint32_t)(2 + nhl));   /* VerifyLoginTokenReq: header only, no token */
+    else record(0, g->conn, f, (uint32_t)tot);
+    free(f);
+    return ok;
+}
+
+static DWORD WINAPI fetch_rest(LPVOID a) {
+    struct gconn *g = (struct gconn *)a;
+    Sleep(8000);   /* let the game finish its own login requests first */
+    ui_log("Collecting the rest of your account (bag, gear, life skills, achievements, handbook, friends, mail)...");
+    int sent = 0;
+    for (int i = 0; i < NQUERY && !g->done; i++) {
+        EnterCriticalSection(&g->cs);
+        int ok = to_server(g, (uint64_t)QUERIES[i].msg_id, NULL, 0, QUERIES[i].body, (size_t)QUERIES[i].len, 0, 0, 1);
+        LeaveCriticalSection(&g->cs);
+        if (!ok) break;
+        sent++;
+        Sleep(120);
+    }
+    Sleep(3000);
+    if (!g->done) ui_log("Done: %d look-ups saved. You can keep playing or close the game - the backup saves itself.", sent);
+    PostMessageW(g_win, WM_CHECK, 1, 0);
+    return 0;
+}
+
+static DWORD WINAPI game_to_server(LPVOID a) {
+    struct gconn *g = (struct gconn *)a;
+    unsigned char *buf = NULL; size_t len = 0, cap = 0; char tmp[65536]; int r;
+    while ((r = recv(g->game, tmp, sizeof tmp, 0)) > 0) {
+        if (len + r > cap) { cap = (len + r) * 2; buf = (unsigned char *)realloc(buf, cap); }
+        memcpy(buf + len, tmp, r); len += r;
+        size_t off = 0;
+        while (len - off >= 2) {
+            size_t hl = (buf[off] << 8) | buf[off + 1];
+            if (len - off < 2 + hl) break;
+            struct head h; parse_head(buf + off + 2, buf + off + 2 + hl, &h);
+            size_t tot = 2 + hl + h.body_len;
+            if (len - off < tot) break;
+            EnterCriticalSection(&g->cs);
+            int ok = to_server(g, h.msg_id, buf + off + 2, hl, buf + off + 2 + hl, h.body_len, h.packet_id, h.seq, 0);
+            LeaveCriticalSection(&g->cs);
+            if (!ok) { r = -1; break; }
+            off += tot;
+        }
+        if (r < 0) break;
+        memmove(buf, buf + off, len - off); len -= off;
+    }
+    free(buf);
+    g->done = 1;
+    shutdown(g->server, SD_BOTH); shutdown(g->game, SD_BOTH);
+    return 0;
+}
+
+static DWORD WINAPI server_to_game(LPVOID a) {
+    struct gconn *g = (struct gconn *)a;
+    unsigned char *buf = NULL; size_t len = 0, cap = 0; char tmp[65536]; int r;
+    while ((r = recv(g->server, tmp, sizeof tmp, 0)) > 0) {
+        if (len + r > cap) { cap = (len + r) * 2; buf = (unsigned char *)realloc(buf, cap); }
+        memcpy(buf + len, tmp, r); len += r;
+        size_t off = 0;
+        while (len - off >= 2) {
+            size_t hl = (buf[off] << 8) | buf[off + 1];
+            if (len - off < 2 + hl) break;
+            struct head h; parse_head(buf + off + 2, buf + off + 2 + hl, &h);
+            size_t tot = 2 + hl + h.body_len;
+            if (len - off < tot) break;
+            unsigned char *frame = buf + off;
+            record(1, g->conn, frame, (uint32_t)tot);
+            int ours = 0; uint64_t gpid = h.packet_id;
+            if (h.packet_id) {
+                EnterCriticalSection(&g->cs);
+                size_t k = h.packet_id % PIDMAP;
+                if (g->map_srv[k] == h.packet_id) { ours = g->inj[k]; gpid = g->map_game[k]; }
+                LeaveCriticalSection(&g->cs);
+            }
+            if (!ours) {
+                int ok;
+                if (gpid != h.packet_id && hl <= 200) {
+                    unsigned char nh[256]; size_t nhl = rewrite_head(frame + 2, frame + 2 + hl, gpid, h.seq, nh);
+                    unsigned char *f = (unsigned char *)malloc(2 + nhl + h.body_len);
+                    f[0] = (unsigned char)(nhl >> 8); f[1] = (unsigned char)nhl; memcpy(f + 2, nh, nhl); memcpy(f + 2 + nhl, frame + 2 + hl, h.body_len);
+                    ok = send_all(g->game, f, 2 + nhl + h.body_len); free(f);
+                } else ok = send_all(g->game, frame, tot);
+                if (!ok) { r = -1; break; }
+            }
+            if (h.msg_id == 1006 && !g_player[0]) {
+                find_name(frame + 2 + hl, h.body_len, h.flag == 1);
+                if (g_player[0]) ui_log("Logged in as %s. Nothing else to do - the rest is collected for you.", g_player);
+            }
+            if (h.msg_id == 1006 && !InterlockedExchange(&g->logged_in, 1))
+                CloseHandle(CreateThread(NULL, 0, fetch_rest, g, 0, NULL));
+            for (int i = 0; i < NCHECK; i++)
+                if (!CHECKS[i].done && CHECKS[i].msg_id == (int)h.msg_id) { CHECKS[i].done = 1; PostMessageW(g_win, WM_CHECK, 0, 0); }
+            off += tot;
+        }
+        if (r < 0) break;
+        memmove(buf, buf + off, len - off); len -= off;
+    }
+    free(buf);
+    g->done = 1;
+    shutdown(g->server, SD_BOTH); shutdown(g->game, SD_BOTH);
     return 0;
 }
 
@@ -450,14 +655,15 @@ static DWORD WINAPI gate_client(LPVOID arg) {
     if (!g_gate_ip[0]) { closesocket(c); return 0; }
     SOCKET u = tcp_connect(g_gate_ip, g_gate_port);
     if (u == INVALID_SOCKET) { ui_log("Could not reach the official game server."); closesocket(c); return 0; }
-    int conn = InterlockedIncrement((LONG *)&g_conns);
-    struct pipe_arg *a = (struct pipe_arg *)malloc(sizeof *a), *b = (struct pipe_arg *)malloc(sizeof *b);
-    a->from = c; a->to = u; a->dir = 0; a->conn = conn;
-    b->from = u; b->to = c; b->dir = 1; b->conn = conn;
-    HANDLE t[2] = {CreateThread(NULL, 0, pump, a, 0, NULL), CreateThread(NULL, 0, pump, b, 0, NULL)};
+    struct gconn *g = (struct gconn *)calloc(1, sizeof *g);
+    g->game = c; g->server = u; g->conn = InterlockedIncrement((LONG *)&g_conns);
+    InitializeCriticalSection(&g->cs);
+    HANDLE t[2] = {CreateThread(NULL, 0, game_to_server, g, 0, NULL), CreateThread(NULL, 0, server_to_game, g, 0, NULL)};
     WaitForMultipleObjects(2, t, TRUE, INFINITE);
     CloseHandle(t[0]); CloseHandle(t[1]);
     closesocket(c); closesocket(u);
+    Sleep(20000);   /* a late fetch_rest may still hold g */
+    DeleteCriticalSection(&g->cs); free(g);
     return 0;
 }
 
@@ -542,19 +748,21 @@ static void start_backup_work(void) {
     if (!g_running) {
         ui_log("Finding the official server...");
         if (!resolve_dispatch()) { ui_log("Could not find the official server. Check your internet connection."); InterlockedExchange(&g_starting, 0); return; }
-        SOCKET h = tcp_listen(DISPATCH_PORT), g = tcp_listen(GATE_PORT);
-        if (h == INVALID_SOCKET || g == INVALID_SOCKET) {
-            ui_log("Ports %d/%d are busy - close the Rozefield server or another copy of this window first.", DISPATCH_PORT, GATE_PORT);
-            if (h != INVALID_SOCKET) closesocket(h); if (g != INVALID_SOCKET) closesocket(g);
+        SOCKET h = tcp_listen(DISPATCH_PORT), g = tcp_listen(GATE_PORT), dns = tcp_listen(HTTPDNS_PORT);
+        if (h == INVALID_SOCKET || g == INVALID_SOCKET || dns == INVALID_SOCKET) {
+            ui_log("Ports %d/%d/%d are busy - close the Rozefield server or another copy of this window first.", HTTPDNS_PORT, DISPATCH_PORT, GATE_PORT);
+            if (h != INVALID_SOCKET) closesocket(h); if (g != INVALID_SOCKET) closesocket(g); if (dns != INVALID_SOCKET) closesocket(dns);
             InterlockedExchange(&g_starting, 0); return;
         }
         CloseHandle(CreateThread(NULL, 0, http_server, (LPVOID)(uintptr_t)h, 0, NULL));
+        CloseHandle(CreateThread(NULL, 0, http_server, (LPVOID)(uintptr_t)dns, 0, NULL));
         CloseHandle(CreateThread(NULL, 0, gate_server, (LPVOID)(uintptr_t)g, 0, NULL));
         snprintf(g_tmppath, sizeof g_tmppath, "%srecording.tmp", g_exedir);
         g_tmp = fopen(g_tmppath, "wb+");
         g_running = 1;
     }
     if (!patch_config()) { ui_log("Could not change Config.txt in the game folder (is it read-only?)."); InterlockedExchange(&g_starting, 0); return; }
+    if (!patch_metadata()) ui_log("Note: could not point the game's server lookup at this window (game running, or this copy is already changed). Trying anyway.");
     sdk_official(1);
     char exe[MAX_PATH]; snprintf(exe, sizeof exe, "%s\\launcher.exe", g_game);
     STARTUPINFOA si = {sizeof si}; PROCESS_INFORMATION pi;
@@ -641,7 +849,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     c[n++] = CreateWindowW(L"BUTTON", L"Browse...", WS_CHILD | WS_VISIBLE, 524, 33, 92, 28, g_win, (HMENU)3, hi, NULL);
     g_open = c[n++] = CreateWindowW(L"BUTTON", L"1.  Open OverField (Official)", WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 16, 72, 296, 44, g_win, (HMENU)1, hi, NULL);
     g_save = c[n++] = CreateWindowW(L"BUTTON", L"2.  Save backup", WS_CHILD | WS_VISIBLE, 320, 72, 296, 44, g_win, (HMENU)2, hi, NULL);
-    c[n++] = CreateWindowW(L"STATIC", L"Open these in the game so they are saved too:", WS_CHILD | WS_VISIBLE, 16, 128, 600, 20, g_win, NULL, hi, NULL);
+    c[n++] = CreateWindowW(L"STATIC", L"Saved for you after you log in:", WS_CHILD | WS_VISIBLE, 16, 128, 600, 20, g_win, NULL, hi, NULL);
     g_check = c[n++] = CreateWindowExW(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_NOSEL, 16, 150, 600, 200, g_win, NULL, hi, NULL);
     c[n++] = CreateWindowW(L"STATIC", L"Log:", WS_CHILD | WS_VISIBLE, 16, 358, 600, 20, g_win, NULL, hi, NULL);
     g_log = c[n++] = CreateWindowExW(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | LBS_NOSEL, 16, 380, 600, 104, g_win, NULL, hi, NULL);
@@ -653,7 +861,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     refresh_checks();
     ShowWindow(g_win, show); UpdateWindow(g_win);
     ui_log(g_game[0] ? "Ready. Press 1 to start the game, then log in." : "Choose your OverField folder with Browse..., then press 1.");
-    ui_log("Nothing is sent on your behalf and your login token is not saved. Your settings are restored automatically.");
+    ui_log("Only read-only look-ups are sent: nothing in your account changes. Your login token is not saved. Game files and settings are put back automatically.");
     MSG msg;
     while (GetMessageW(&msg, NULL, 0, 0) > 0) { if (!IsDialogMessageW(g_win, &msg)) { TranslateMessage(&msg); DispatchMessageW(&msg); } }
     return 0;
