@@ -77,7 +77,9 @@ def scene_fields(p, sid):
             out[k] = lay[k]
     if w.get('gatherLimits'):          # the player's own official gather counts (from their backup)
         out['gatherLimits'] = w['gatherLimits']
-    ds = [dict(v, monsters=v.get('monsters', [0])) for v in p.s.get('dungeons', {}).values()]
+    dt = p.d.table('dungeon', 'Dungeon')   # official sends each map only its own dungeons (by WorldID)
+    ds = [dict(v, monsters=v.get('monsters', [0])) for v in p.s.get('dungeons', {}).values()
+          if (dt.get(int(v.get('dungeonId', 0))) or {}).get('WorldID') == int(sid)]
     if ds and str(sid) != '9999':
         out['dungeons'] = ds
     return out

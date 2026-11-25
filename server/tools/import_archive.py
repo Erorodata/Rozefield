@@ -74,8 +74,9 @@ def build(login_name, msgs, keep_player_id=True):
     uid = 'rz_' + login_name.lower()
     reg = _registry()
     old = reg['by_uid'].get(uid)
+    prev_state = None
     if old and os.path.exists(os.path.join(SAVE_DIR, f'{old}.json')):
-        prev = json.load(open(os.path.join(SAVE_DIR, f'{old}.json'), encoding='utf-8'))
+        prev = prev_state = json.load(open(os.path.join(SAVE_DIR, f'{old}.json'), encoding='utf-8'))
         if prev.get('official_player_id', old) != md.get('player_id'):
             raise ImportFailed(f'the name "{login_name}" is already used by another account on this server')
     # one official account = one Rozefield account, under its official id. Ids below LOCAL_ID_START are official
@@ -136,8 +137,11 @@ def build(login_name, msgs, keep_player_id=True):
     st['official_answers'] = pairs(msgs, every=True)
     from game.friends import import_friends
     import_friends(st, st['official_answers'].get('FriendReq'))
-    from tools.import_extras import apply as apply_extras   # stickers, actions, events, wishing tree, world progress
+    from tools.import_extras import apply as apply_extras, merge_world   # stickers, actions, events, wishing tree, world
     apply_extras(st, msgs)
+    if prev_state:   # importing again: world progress already on this server (older backups, captures) is kept
+        merge_world(st, {'world': prev_state.get('world', {}), 'dungeons': prev_state.get('dungeons', {})})
+        st['world_files_merged'] = prev_state.get('world_files_merged', [])
     os.makedirs(SAVE_DIR, exist_ok=True)
     _save_registry(reg)
     path = os.path.join(SAVE_DIR, f'{pid}.json')

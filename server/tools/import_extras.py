@@ -88,14 +88,36 @@ def backfill_from_backup(st, log=None):
             for aid, x in v.items():          # the official progress wins unless Rozefield's is already further
                 if int((ev[k].get(aid) or {}).get(num, 0) or 0) < int(x.get(num, 0) or 0):
                     ev[k][aid] = x
+    merge_world(st, fresh)
+    if fresh.get('pet_warehouse_limit'):
+        st.setdefault('pet_warehouse_limit', fresh['pet_warehouse_limit'])
+    st['extras_imported'] = 1
+    if log:
+        log('filled stickers, actions, events and world progress for %s from their backup' % st.get('name'))
+    return True
+
+
+def merge_world(st, fresh):
+    """Add fresh['world'] / fresh['dungeons'] to st without losing anything st already has (world never goes back)."""
     for sid, fw in fresh.get('world', {}).items():
         w = st.setdefault('world', {}).setdefault(sid, {})
         for k, v in fw.items():
             if k in ('boxes',):
                 w[k] = {**v, **w.get(k, {})}
+            elif k == 'collections':      # one entry per collection type: union of the items
+                have = w.setdefault(k, [])
+                for x in v:
+                    e = next((c for c in have if c.get('type', 0) == x.get('type', 0)), None)
+                    if e is None:
+                        have.append(json.loads(json.dumps(x)))
+                    else:
+                        e['itemMap'] = {**x.get('itemMap', {}), **e.get('itemMap', {})}
+                        for kk in ('level', 'exp'):
+                            if (x.get(kk) or 0) > (e.get(kk) or 0):
+                                e[kk] = x[kk]
             elif isinstance(v, list) and k != 'gatherLimits':
-                key = {'flagIds': None, 'areas': 'areaId', 'collections': 'itemId', 'riddles': 'riddleId',
-                       'flags': 'flagId', 'challenges': 'challengeId'}.get(k)
+                key = {'flagIds': None, 'areas': 'areaId', 'riddles': 'riddleId',
+                       'flags': 'battleId', 'challenges': 'challengeId'}.get(k)
                 have = w.get(k, [])
                 seen = {json.dumps(x, sort_keys=True) if key is None or not isinstance(x, dict) else x.get(key) for x in have}
                 for x in v:
@@ -107,9 +129,27 @@ def backfill_from_backup(st, log=None):
                 w.setdefault(k, v)
     for k, v in fresh.get('dungeons', {}).items():
         st.setdefault('dungeons', {}).setdefault(k, v)
-    if fresh.get('pet_warehouse_limit'):
-        st.setdefault('pet_warehouse_limit', fresh['pet_warehouse_limit'])
-    st['extras_imported'] = 1
-    if log:
-        log('filled stickers, actions, events and world progress for %s from their backup' % st.get('name'))
-    return True
+
+
+def world_from_msgs(msgs):
+    """{'world':..., 'dungeons':...} from decoded messages (every SceneDataNotice in them)"""
+    out = {'events': {}, 'world': {}}
+    apply(out, [m for m in msgs if m.get('name') == 'SceneDataNotice'])
+    return {'world': out.get('world', {}), 'dungeons': out.get('dungeons', {})}
+
+
+def merge_world_files(st, log=None):
+    """save/imports/<official id>_world*.json: world progress taken from older captures; merged once per file."""
+    done = st.setdefault('world_files_merged', [])
+    pid = st.get('official_player_id') or st.get('player_id')
+    n = 0
+    for f in sorted(glob.glob(os.path.join(HERE, 'save', 'imports', f'{pid}_world*.json'))):
+        b = os.path.basename(f)
+        if b in done:
+            continue
+        merge_world(st, json.load(open(f, encoding='utf-8')))
+        done.append(b)
+        n += 1
+        if log:
+            log('merged world progress from %s into %s' % (b, st.get('name')))
+    return n

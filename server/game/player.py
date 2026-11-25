@@ -130,13 +130,16 @@ class Player:
         path = os.path.join(SAVE_DIR, f'{pid}.json')
         if os.path.exists(path):
             p = cls(data, json.load(open(path, encoding='utf-8')), path)
-            if p.s.get('official_player_id') and not p.s.get('extras_imported'):
-                try:
-                    from tools.import_extras import backfill_from_backup
-                    if backfill_from_backup(p.s, log.info):
-                        p.save()
-                except Exception:
-                    log.exception('backfill from backup')
+            try:
+                from tools.import_extras import backfill_from_backup, merge_world_files
+                changed = False
+                if p.s.get('official_player_id') and not p.s.get('extras_imported'):
+                    changed |= bool(backfill_from_backup(p.s, log.info))
+                changed |= bool(merge_world_files(p.s, log.info))
+                if changed:
+                    p.save()
+            except Exception:
+                log.exception('backfill from backup')
             return p
         p = cls(data, cls.new_state(data, uid, pid, name), path)
         p.grant_initial()
