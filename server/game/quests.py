@@ -72,7 +72,13 @@ def idx(d):
         for qid in sorted(by_group.get(st.get('QuestID'), [])):
             main_order.append(qid)
             story_of[qid] = st
-    x = {'quests': quests, 'groups': groups, 'ach': ach, 'stories': {s['ID']: s for s in stories}, 'story_list': stories,
+    res_of = {}   # conditionId -> the scene resource (talk point / mechanism) the client reports for that step
+    for g in groups.values():
+        for cs in g.get('QuestConditionSet', []):
+            for cid, rid in zip(cs.get('AchieveConditionID', []), cs.get('ResourceID', [])):
+                if rid:
+                    res_of.setdefault(cid, set()).add(rid)
+    x = {'res_of': res_of, 'quests': quests, 'groups': groups, 'ach': ach, 'stories': {s['ID']: s for s in stories}, 'story_list': stories,
          'chapter_of': chapter_of, 'by_group': by_group, 'main_order': main_order, 'story_of': story_of, 'extra_qids': extra_qids,
          'daily_pool': sorted(q['ID'] for q in quests.values() if q.get('NewType') == DAILY)}
     _IDX[id(d)] = x
@@ -311,7 +317,7 @@ def reported(p, key):
             if c.get('status') != IN_PROGRESS:
                 continue
             par = (idx(p.d)['ach'].get(c['conditionId']) or {}).get('Param') or []
-            if key in par:
+            if key in par or key in idx(p.d)['res_of'].get(c['conditionId'], ()):
                 _set_progress(p, q, c, _need(p, c['conditionId']))
                 hit = True
         if hit:
