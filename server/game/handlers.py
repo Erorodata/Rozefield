@@ -536,18 +536,27 @@ def gather_weapon(ctx, req):
 
 @handler('GardenPlaceCharacterReq')
 def place_char(ctx, req):
-    pc = ctx.p.s['placed_characters']
+    """Official: GardenPlaceCharacterNotice (to everyone in the garden) spawns / removes the character, then the Rsp."""
+    s = ctx.p.s
+    pc, where = s['placed_characters'], s.setdefault('placed_where', {})
     cid = req.get('character_id')
+    echo = {k: req[k] for k in ('character_id', 'furniture_id', 'seat_id', 'is_remove') if k in req}
     if req.get('is_remove'):
-        if cid in pc:
-            pc.remove(cid)
-            ctx.p.s.setdefault('placed_where', {}).pop(str(cid), None)
-    else:
         if cid not in pc:
-            pc.append(cid)
-        ctx.p.s.setdefault('placed_where', {})[str(cid)] = {k: req[k] for k in ('furniture_id', 'seat_id') if k in req}  # current outfit
+            return ctx.reply({'status': 'StatusCode_BAD_REQ', **echo})
+        pc.remove(cid)
+        where.pop(str(cid), None)
+        ctx.p.dirty = True
+        ctx.server.broadcast(ctx, 'GardenPlaceCharacterNotice', {'status': OK, 'remove_character_id': cid})
+        return ctx.reply({'status': OK, **echo})
+    if cid not in pc:
+        pc.append(cid)
+    where[str(cid)] = {k: req[k] for k in ('furniture_id', 'seat_id') if k in req}   # wears the current outfit
     ctx.p.dirty = True
-    ctx.reply({'status': OK, **{k: req[k] for k in ('character_id', 'furniture_id', 'seat_id', 'is_remove') if k in req}})
+    entry = next((e for e in placed_characters(ctx.p) if e['character_id'] == cid), None)
+    if entry:
+        ctx.server.broadcast(ctx, 'GardenPlaceCharacterNotice', {'status': OK, 'character': entry})
+    ctx.reply({'status': OK, **echo})
 
 
 def _list(ctx, req, kind, field, filt=None):
