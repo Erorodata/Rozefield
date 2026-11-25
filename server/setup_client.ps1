@@ -4,7 +4,9 @@
       powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Revert    # restore the original files
     It (1) swaps PCSDKUI.exe for the offline login stub (original kept as PCSDKUI.exe.orig),
        (2) sets UseCustomConfig/RemoteServerIP in StreamingAssets\Config.txt (original kept as Config.txt.orig),
-       (3) adds hosts-file lines sending the game's dispatch domains to 127.0.0.1.            #>
+       (3) adds a Windows Firewall rule that stops THIS copy's launcher.exe reaching the internet, so it can't fall
+           back to the official servers while they are still up (local 127.0.0.1 traffic is unaffected),
+       (4) with -AddHosts, adds hosts-file lines sending the game's dispatch domains to 127.0.0.1.            #>
 param([string]$Game = 'H:\Backup\OverField', [string]$ServerIP = '127.0.0.1', [switch]$Revert, [switch]$AddHosts)
 $ErrorActionPreference = 'Stop'
 $here  = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -22,7 +24,10 @@ function Write-Hosts($lines) {
 }
 $domains = 'dsp-global-of.inutan.com','cdn-of-global.inutan.com','sdkapi-of-global.inutan.com','d2b0sg4npngm2p.cloudfront.net','te-receiver-aws.thinkingdata.jp'
 
+$fwName = 'Rozefield - keep backup copy offline'
+$exe = Join-Path $Game 'launcher.exe'
 if ($Revert) {
+  netsh advfirewall firewall delete rule name="$fwName" | Out-Null
   if (Test-Path "$sdk\PCSDKUI.exe.orig") { Copy-Item "$sdk\PCSDKUI.exe.orig" "$sdk\PCSDKUI.exe" -Force }
   if (Test-Path "$cfg.orig") { Copy-Item "$cfg.orig" $cfg -Force }
   $null = Write-Hosts (@([IO.File]::ReadAllLines($hosts)) | Where-Object { $_ -notmatch [regex]::Escape($tag) })
@@ -40,4 +45,10 @@ $lines = @([IO.File]::ReadAllLines($hosts)) | Where-Object { $_ -notmatch [regex
 if ($AddHosts) { $lines += $domains | ForEach-Object { "$ServerIP $_ $tag" } }  # off by default: hosts entries would redirect every copy of the game
 $null = Write-Hosts $lines
 ipconfig /flushdns | Out-Null
+netsh advfirewall firewall delete rule name="$fwName" | Out-Null
+if ($ServerIP -eq '127.0.0.1') {   # server on this PC: the game needs no internet at all
+  netsh advfirewall firewall add rule name="$fwName" dir=out action=block program="$exe" enable=yes `
+    remoteip=1.0.0.0-126.255.255.255,128.0.0.0-255.255.255.255,2000::/3 | Out-Null
+  Write-Host "Firewall: $exe can no longer reach the official servers."
+}
 Write-Host "$Game now points at $ServerIP (other game copies untouched). Start start_server.bat, then run $Game\launcher.exe"
