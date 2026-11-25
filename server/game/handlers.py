@@ -885,9 +885,10 @@ def take_handing(ctx, req):
     """Put the held piece away: a piece lifted from the plaza goes back to the bag."""
     p = ctx.p
     h = _handing(p).pop(str(req.get('furnitureId')), None)
-    if h and h.get('lifted'):  # back to the bag: no longer in use
-        _furniture_notice(ctx, h['itemId'], -1)
     p.dirty = True
+    if h and h.get('lifted'):   # official: the lifted piece is removed from the plaza, then the Rsp
+        ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice',
+                             {'status': OK, 'furniture_id': str(req.get('furnitureId')), 'item_id': h['itemId']})
     ctx.reply({'status': OK, 'furnitureId': req.get('furnitureId')})
 
 
@@ -918,11 +919,11 @@ def place(ctx, req):
         info['layerNum'] = req['layerNum']
     g[fid] = info
     p.dirty = True
+    # official: UpdateNotice (to everyone, you included) then the Rsp; no FurnitureItemChangeNotice, the client
+    # counts the pieces itself when one is taken in hand / put away (sending one too counted every piece twice)
+    ctx.server.broadcast(ctx, 'SceneGardenFurnitureUpdateNotice', {'status': OK, 'furniture_info': info})
     ctx.reply({'status': OK, 'furnitureDetailsInfo': info})
     Q.event(p, Q.C['PlacingFurniture0'])
-    ctx.server.broadcast(ctx, 'SceneGardenFurnitureUpdateNotice', {'status': OK, 'furniture_info': info}, include_self=False)
-    if consume:
-        _furniture_notice(ctx, item, +1)
 
 
 @handler('TakeOutFurnitureReq')
@@ -941,7 +942,6 @@ def take_out(ctx, req):
                              include_self=False)
         return
     ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice', {'status': OK, 'furniture_id': fid, 'item_id': f['furnitureItemId']})
-    _furniture_notice(ctx, f['furnitureItemId'], -1)
 
 
 def _clear_garden(p):
