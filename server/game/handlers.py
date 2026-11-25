@@ -189,7 +189,7 @@ def scene_player(p):
         w = s['weapons'].get(str(ep.get('weapon', 0)), {})
         sc = {'char_id': cid, 'charLv': ch.get('level', 1), 'charStar': ch.get('star', 1), 'charBreakLv': ch.get('maxLevel', 20),
               'characterAppearance': ch.get('characterAppearance', {}),
-              'outfitPreset': {k: v for k, v in op.items() if k in ('hat', 'hair', 'clothes', 'ornament') or k.startswith('pend') and not k.endswith('Index')},
+              'outfitPreset': scene_outfit(op),
               'weaponId': w.get('weaponId', 0), 'weaponStar': w.get('star', 1)}
         pos = s.get('pos_by_scene', {}).get(pos_key(s))   # only a position on this map (never another map's)
         if pos:
@@ -198,6 +198,30 @@ def scene_player(p):
     return {'player_id': s['player_id'], 'player_name': s['name'], 'team': team,
             'avatar_frame': s.get('appearance', {}).get('avatar_frame', 0), 'phone_case': s.get('phone_case', 0),
             'foodBuffIds': [int(b) for b, e in s.get('buffs', {}).items() if e > time.time()]}
+
+
+DYE_OF = {'hat': 'hatDyeScheme', 'hair': 'hairDyeScheme', 'clothes': 'clothDyeScheme', 'ornament': 'ornDyeScheme'}
+DYE_IDX = {'hat': 'hatDyeSchemeIndex', 'hair': 'hairDyeSchemeIndex', 'clothes': 'clothesDyeSchemeIndex', 'ornament': 'ornamentDyeSchemeIndex'}
+
+
+def scene_outfit(op):
+    """SceneCharacterOutfitPreset as official sends it: every worn piece with its dye scheme, plus hideInfo
+    (the plaza's HomeCharacterOutfit.ParseFrom throws on a preset without them)."""
+    out = {'hideInfo': op.get('outfitHideInfo') or op.get('hideInfo') or {}}
+    for k, v in op.items():
+        if k in DYE_OF and v:
+            out[k] = v
+            sc = {'isUnLock': True}
+            if op.get(DYE_IDX[k]):
+                sc['schemeIndex'] = op[DYE_IDX[k]]
+            out[DYE_OF[k]] = sc
+        elif k.startswith('pend') and not k.endswith('Index') and not k.endswith('Scheme') and v:
+            out[k] = v
+            sc = {'isUnLock': True}
+            if op.get(k + 'DyeSchemeIndex'):
+                sc['schemeIndex'] = op[k + 'DyeSchemeIndex']
+            out[k + 'DyeScheme'] = sc
+    return out
 
 
 def placed_characters(owner):
@@ -210,8 +234,7 @@ def placed_characters(owner):
         ch = s['characters'].get(str(cid)) or {}
         op = ch['outfitPresets'][ch.get('inUseOutfitPresetIndex', 0)] if ch.get('outfitPresets') else {}
         e = {'character_id': cid, 'furniture_id': str(where['furniture_id']),
-             'outfitPreset': {k: v for k, v in op.items() if k in ('hat', 'hair', 'clothes', 'ornament')
-                              or k.startswith('pend') and not k.endswith('Index')}}
+             'outfitPreset': where.get('outfit') or scene_outfit(op)}
         if where.get('seat_id'):
             e['seat_id'] = where['seat_id']
         out.append(e)
@@ -511,7 +534,7 @@ def place_char(ctx, req):
     else:
         if cid not in pc:
             pc.append(cid)
-        ctx.p.s.setdefault('placed_where', {})[str(cid)] = {k: req[k] for k in ('furniture_id', 'seat_id') if k in req}
+        ctx.p.s.setdefault('placed_where', {})[str(cid)] = {k: req[k] for k in ('furniture_id', 'seat_id') if k in req}  # current outfit
     ctx.p.dirty = True
     ctx.reply({'status': OK, **{k: req[k] for k in ('character_id', 'furniture_id', 'seat_id', 'is_remove') if k in req}})
 

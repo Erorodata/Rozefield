@@ -378,6 +378,9 @@ def quest_detail(p):
     s = p.s
     out = {'quests': list(s['quests'].values()),
            'chapters': [{'chapterId': int(k), 'rewardedStoryIds': v} for k, v in s.get('chapters', {}).items()]}
-    if s.get('daily_bonus'):
-        out['dailyQuestBonusDayLeft'] = s['daily_bonus']
+    # official always sends these sub-messages (empty when unused); a missing one is null to the client
+    # (UIMainSystem.UpdateRandomQuest throws on a null randomQuestBonusLeft)
+    out['dailyQuestBonusDayLeft'] = s.get('daily_bonus') or {}
+    out['dailyQuestBonusWeekLeft'] = s.get('weekly_bonus') or s.get('daily_bonus') or {}
+    out['randomQuestBonusLeft'] = s.get('random_bonus') or {}
     return out

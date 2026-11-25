@@ -46,7 +46,7 @@ def apply(st, msgs):
             if sd.get('gatherLimits'):
                 w['gatherLimits'] = sd['gatherLimits']
             if sid == 9999 and sd.get('placedCharacters') and sd.get('channelId') == st.get('official_player_id', sd.get('channelId')):
-                st['placed_where'] = {str(x['character_id']): {k: x[k] for k in ('furniture_id', 'seat_id') if k in x}
+                st['placed_where'] = {str(x['character_id']): {**{k: x[k] for k in ('furniture_id', 'seat_id') if k in x}, 'outfit': x.get('outfitPreset') or {}}
                                       for x in sd['placedCharacters'] if x.get('character_id')}
             for dd in sd.get('dungeons', []):
                 st.setdefault('dungeons', {})[str(dd['dungeonId'])] = dd
@@ -71,17 +71,22 @@ def _newest_backup(st):
 
 def backfill_placed(st, log=None):
     """Once: where each placed character sits (older imports kept only the character ids)."""
-    if 'placed_where' in st or not st.get('official_player_id'):
+    if st.get('placed_where_v2') or not st.get('official_player_id'):
         return False
-    st['placed_where'] = {}
+    st['placed_where_v2'] = True
+    old, st['placed_where'] = st.get('placed_where', {}), {}
     msgs = _newest_backup(st) or []
     for m in msgs:
         if m.get('name') != 'SceneDataNotice':
             continue
         sd = (m.get('body') or {}).get('data') or {}
         if sd.get('sceneId') == 9999 and sd.get('channelId') == st['official_player_id'] and sd.get('placedCharacters'):
-            st['placed_where'] = {str(x['character_id']): {k: x[k] for k in ('furniture_id', 'seat_id') if k in x}
+            st['placed_where'] = {str(x['character_id']): {**{k: x[k] for k in ('furniture_id', 'seat_id') if k in x},
+                                                           'outfit': x.get('outfitPreset') or {}}
                                   for x in sd['placedCharacters'] if x.get('character_id')}
+    for cid, w in old.items():          # placed on Rozefield after the backup: keep (current outfit)
+        if cid not in st['placed_where'] and cid in [str(c) for c in st.get('placed_characters', [])]:
+            st['placed_where'][cid] = {k: v for k, v in w.items() if k != 'outfit'}
     if log:
         log(f"placed characters restored from backup: {len(st['placed_where'])}")
     return True

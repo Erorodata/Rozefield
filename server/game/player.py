@@ -198,6 +198,22 @@ class Player:
     def count(self, item_id):
         return int(self.s['items'].get(str(item_id), 0))
 
+    def _daily_task(self):
+        try:
+            from game.events import _daily_task
+            return _daily_task(self)
+        except Exception:
+            return {}
+
+    def _player_buffs(self):
+        import time as _t
+        now = _t.time()
+        lst = [{'buffId': int(b), 'endTime': str(int(e))} for b, e in self.s.get('buffs', {}).items() if e > now]
+        life = {'systemType': 'BuffSystemType_LIFE'}
+        if lst:
+            life['buffLst'] = lst          # same list as the in-game buff notice (handlers.buff_list)
+        return [life, {'systemType': 'BuffSystemType_GLOBAL'}]
+
     def furniture_used(self):
         """Pieces in use (placed in the own plaza or lifted in the hand). The bag keeps the owned total, as official."""
         used = {}
@@ -412,4 +428,7 @@ class Player:
             'sex': s.get('sex') or 0, 'isHideBirthday': s.get('hide_birthday', False),
             'pet_instance_id': s.get('pet_instance_id', 0), 'reward_levels': s.get('level_rewards', []),
             'playerDropRateInfo': {'killDropRate': 100, 'treasureDropRate': 100},
+            # sub-messages official always sends (null on the client if absent; its login setup stops on them)
+            'daily_task': self._daily_task(), 'questionnaire_info': {},
+            'player_buffs': self._player_buffs(),
         }
