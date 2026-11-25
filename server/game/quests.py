@@ -46,6 +46,10 @@ EVENT_TYPES_LIFE = {C[k] for k in ('CookingNum01', 'CookingSuccessNum0', 'Fishin
 EVENT_TYPES |= EVENT_TYPES_LIFE
 IN_PROGRESS, COMPLETED, FINISH, LOCKED = 'QuestStatus_InProgress', 'QuestStatus_Completed', 'QuestStatus_Finish', 'QuestStatus_Locked'
 MAIN, DAILY = 1, 4
+# Stories official Global never gave out (cut "Investigator" chapter + two chapter-4 side stories). Rozefield adds them
+# back as a chapter (tools/merge_cn_config.py). New Rozefield players get them in the main story; players imported
+# from official start them from the story screen themselves and are never pushed into them.
+OPTIONAL_STORIES = set(range(1000401, 1000415)) | {1000509, 1000510}
 _IDX = {}
 
 
@@ -63,9 +67,8 @@ def idx(d):
         by_group.setdefault(q.get('QuestGroup', q['ID']), []).append(q['ID'])
     main_order, story_of, extra_qids = [], {}, set()
     for st in stories:
-        if st['ID'] not in chapter_of:      # story not listed in any chapter: optional, never pushed as the main quest
+        if st['ID'] in OPTIONAL_STORIES:
             extra_qids.update(by_group.get(st.get('QuestID'), []))
-            continue
         for qid in sorted(by_group.get(st.get('QuestID'), [])):
             main_order.append(qid)
             story_of[qid] = st
@@ -206,14 +209,20 @@ def story_done(p, st):
     return bool(qs) and all((p.s['quests'].get(str(q)) or {}).get('status') == FINISH for q in qs)
 
 
+def is_imported(p):
+    """Account came from an official backup (tools/import_archive.py)."""
+    return bool(p.s.get('official_player_id') or p.s.get('official_answers') or p.s.get('records'))
+
+
 def advance_main(p):
     """Keep one main-story quest active: the first unfinished quest of the first story that is open
     (stories open by level, release time and their previous story). Runs after a main quest finishes,
     at login and on level up."""
     x = idx(p.d)
     qs = p.s['quests']
-    if not p.s.get('extra_story_cleanup'):
-        # older builds auto-accepted the extra (chapterless) stories as the main quest; drop unfinished ones once
+    imported = is_imported(p)
+    if imported and not p.s.get('extra_story_cleanup'):
+        # older builds pushed the optional stories on imported players as the main quest; drop unfinished ones once
         for qid in x['extra_qids']:
             q = qs.get(str(qid))
             if q and q.get('status') in (IN_PROGRESS, COMPLETED):
@@ -227,6 +236,9 @@ def advance_main(p):
         st = x['story_of'][qid]
         if (qs.get(str(qid)) or {}).get('status') == FINISH or st['ID'] in blocked:
             continue
+        if imported and st['ID'] in OPTIONAL_STORIES and not any(
+                str(q) in qs for q in x['by_group'].get(st.get('QuestID'), [])):
+            continue    # not started from the story screen: leave it alone (a started one carries on to its end)
         if not story_open(p, st):
             blocked.add(st['ID'])
             continue
