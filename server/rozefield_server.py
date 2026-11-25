@@ -174,7 +174,8 @@ class HTTP:
         if 'content-length' in hdr:
             body = await reader.readexactly(int(hdr['content-length']))
         u = urllib.parse.urlparse(path)
-        log.info('HTTP %s %s host=%s body=%s', method, u.path, hdr.get('host'), body[:200])
+        shown = b'(hidden)' if u.path in ('/rozefield/login', '/rozefield/register', '/rozefield/import') else body[:200]
+        log.info('HTTP %s %s host=%s body=%s', method, u.path, hdr.get('host'), shown)
         ctype, out, code = 'application/json', b'', 200
         p = u.path
         if p.endswith('/resolve'):
@@ -407,8 +408,14 @@ class Server:
                 o = self.player_by_id(pid)
                 print(f'  {pid}  {o.s["name"]:<20} lv{o.s["level"]}  {"ONLINE" if pid in self.sessions else ""}')
             return
+        if parts[0] in ('resetpw', 'resetpass', 'password'):   # owner: resetpw <name> <new password>  |  resetpw <name> clear
+            a = (parts[1] if len(parts) > 1 else '').rsplit(None, 1)
+            if len(a) < 2:
+                print('usage: resetpw <account or character name> <new password>   (or "clear")'); return
+            from tools.reset_password import main as _reset
+            _reset([a[0], '--clear' if a[1].lower() == 'clear' else a[1]]); return
         if len(parts) < 2 or not parts[1].startswith('/'):
-            print('usage: <player name> /command ...   (e.g.  roze /all outfits)   |  list'); return
+            print('usage: <player name> /command ...   (e.g.  roze /all outfits)   |  list   |  resetpw <name> <new password>'); return
         name, cmd = parts
         sess = next((x for x in self.sessions.values() if x.p.s['name'].lower() == name.lower()), None)
         if sess is None:

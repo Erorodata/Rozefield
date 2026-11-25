@@ -444,11 +444,31 @@ def register(H, pack):
     H['AreaCloseReq'] = lambda ctx, req: ctx.reply({'status': OK, 'area': area_entry(ctx.p, req.get('areaId'))})
     H['AreaAchieveListReq'] = lambda ctx, req: ctx.reply({'status': OK, 'areaId': req.get('areaId'), 'achieves': []})
 
+    _ctype = {}
+
     def collecting(ctx, req):
+        """Field collectibles (crystals, files, tapes...). Remembered per scene so the pickup stays collected,
+        and added to the handbook list (GetCollectItemIds)."""
+        from game.world import W
         p = ctx.p
         iid = req.get('itemId')
-        got, changed = give(ctx, [(iid, 1)]) if ctx.d.item(iid) else ([], [])
-        ctx.reply({'status': OK, 'collections': [], 'items': got})
+        if not _ctype:
+            for r in ctx.d.table('collectionitem', 'CollectionItem').values():
+                _ctype[r['ID']] = r.get('NewCollectionType', 0)
+        ctype = _ctype.get(iid, 0)
+        w = W(p, p.s.get('scene_id', 0))
+        entry = next((c for c in w['collections'] if c.get('type', 0) == ctype), None)
+        if entry is None:
+            entry = {'type': ctype, 'itemMap': {}} if ctype else {'itemMap': {}}
+            w['collections'].append(entry)
+        first = str(iid) not in entry['itemMap'] and iid not in entry['itemMap']
+        entry['itemMap'][str(iid)] = {'itemId': iid}
+        ids = rec(p, 'GetCollectItemIdsReq').setdefault('itemIds', [])
+        if iid not in ids:
+            ids.append(iid)
+        got, changed = give(ctx, [(iid, 1)]) if first and ctx.d.item(iid) else ([], [])
+        p.dirty = True
+        ctx.reply({'status': OK, 'collections': [{'type': ctype, 'itemMap': {iid: {'itemId': iid}}}], 'items': got})
         pack(ctx, changed)
     H['CollectingReq'] = collecting
 
