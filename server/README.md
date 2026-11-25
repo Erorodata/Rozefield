@@ -57,20 +57,21 @@ Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsy
 ## Play with friends (other PCs, LAN or internet)
 
 The server answers every player with the address they reached it on, so players on the host PC, the LAN and the
-internet can play at the same time. Nothing to set on the server.
+internet can play together at the same time. Co-op (Pop Balloons, Aerial Adventure: all 10 layouts each, team
+invites), online Gomoku, chat, plazas, friends and the wish list work across PCs.
 
-| Step | Where | What |
+| Step | Who | What |
 |---|---|---|
-| 1 | Host PC | Run `start_server.bat` as usual |
-| 2 | Host PC / router | Allow TCP **80**, **18881** and **11001** in Windows Firewall; for internet play, forward the same ports on the router to the host PC |
-| 3 | Friend's PC | Copy the Rozefield game folder (the patched client, not the Steam copy) |
-| 4 | Friend's PC | In an Administrator PowerShell: `powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Game "<game folder>" -ServerIP <host address>` (LAN: the host's 192.168.x.x; internet: the host's public IP) |
-| 5 | Friend's PC | Start the game and create an account in the login window |
+| 1 | Host | `start_server.bat` as usual |
+| 2 | Host | `allow_friends.bat` (as Administrator) once: opens TCP 80, 18881, 11001 and shows your LAN and internet address |
+| 3 | Host | For internet play: forward TCP 80, 18881 and 11001 on the router to this PC |
+| 4 | Host | `make_friend_kit.bat`, then send `Rozefield_friend_kit.zip` and a copy of the game folder (without `_archive`) |
+| 5 | Friend | Unzip the kit; in an Administrator terminal: `powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Game "<game folder>" -ServerIP <host address>` |
+| 6 | Friend | Start `launcher.exe`; the first start downloads the Rozefield update from the host; create an account and play |
 
-`setup_client.ps1` points the login window (`rozefield_sdk.ini`), `Config.txt` and the game's own server lookup
-(`tools/patch_client_dns.py`, needs Python) at the host. The lookup address must fit in 12 characters; for a longer
-one, patch it with a short name (`py tools\patch_client_dns.py "<game folder>" rozefield`) and add
-`<host address> rozefield` to that PC's hosts file. The game update (patch) and photo wall pictures come from the host too.
+`setup_client.ps1` points the login window, `Config.txt` and the game's own server lookup at the host (no Python
+needed). The lookup address must fit in 12 characters; for a longer one add `-LookupName rozefield` (it also adds
+`<host address> rozefield` to the hosts file). Undo with `-Revert`.
 
 ## Saving player accounts before the official shutdown (backup / import)
 

@@ -23,9 +23,12 @@ import time
 OK, FAIL = 'StatusCode_OK', 'StatusCode_FAIL'
 TICKET, COIN = 117, 121
 MODES = {1001: 'EMultiplayerPlayMode_DestroyObject', 1002: 'EMultiplayerPlayMode_MagicPlatform'}
-# gameplay id -> number of platform rows (seen on official); balloon layout 10010108 has balloons 1..84
-PLATFORM_ROWS = {10020108: 17, 10020105: 10}
-BALLOON_LAYOUTS = {10010108: 84}
+# all 10 + 10 layouts of the game's own prefabs (FloatPlatform_*: rows of 浮空平台, AttackBalloon_*: balloons of
+# 破坏物组, read from the client bundles; 10020108 = 17, 10020105 = 10 and 10010108 = 84 match the official capture)
+PLATFORM_ROWS = {10020101: 8, 10020102: 8, 10020103: 15, 10020104: 9, 10020105: 10, 10020106: 14, 10020107: 8,
+                 10020108: 17, 10020109: 11, 10020110: 9}
+BALLOON_LAYOUTS = {10010101: 129, 10010102: 125, 10010103: 72, 10010104: 106, 10010105: 126, 10010106: 135,
+                   10010107: 82, 10010108: 84, 10010109: 96, 10010110: 63}
 BALLOON_SECONDS = 46
 REWARD = 150   # official: 150 x item 121 per round
 
@@ -157,7 +160,18 @@ def register(H, pack, scene_player):
             t['members'].remove(req['target_id'])
         ctx.reply({'status': OK, 'target_id': req.get('target_id')})
     H['MPTeamKickMemberReq'] = kick
-    H['MPTeamInviteReq'] = lambda ctx, req: ctx.reply({'status': OK})
+    def invite(ctx, req):
+        """Official: the invited player gets MPTeamInviteNotice (inviter + team) and joins with MPTeamJoinReq."""
+        t = team_of(ctx) or new_team(ctx)
+        o = ctx.server.sessions.get(req.get('target_id'))
+        if not o or not o.p or o is ctx:
+            return ctx.reply({'status': FAIL})
+        ctx.reply({'status': OK})
+        try:
+            o.push('MPTeamInviteNotice', {'status': OK, 'inviter': ctx.p.s['player_id'], 'team_base': detail(ctx, t)['base']})
+        except Exception:
+            pass
+    H['MPTeamInviteReq'] = invite
 
     def swap(ctx, req):
         ctx.reply({'status': OK, 'new_info': member_info(ctx, ctx.p.s['player_id'])})

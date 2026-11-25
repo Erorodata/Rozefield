@@ -34,7 +34,8 @@ Status: **Fixed** = fixed and confirmed in game · **Fixed, retest** = fixed on 
 | 24 | Field completion % ("Garden Realm completion reached 10%") never moves for new play | Field completion was only the archived official number | Counted from collectibles, battles, areas, challenges and riddles per map (matches official exactly on all 7 archived maps); the quest step follows it | Fixed, retest |
 | 25 | Handbook/achievement screens don't change after claiming: treasure handbook, character achievements, world levels, Boss Rush, challenge friend ranks | Only the archived official answer was shown | Archived answer plus what you did on Rozefield | Fixed, retest |
 | 26 | Wish list: friends can't gift items from it | Not built | Add/remove (30 max), friends see it per item, a friend buys it with in-game currency (3 a week) and you get it by mail | Fixed, retest |
-| 27 | Friends on other PCs can't join | Every address the server gave out was this PC's own (127.0.0.1) | Each player gets the address they reached the server on; `setup_client.ps1 -ServerIP` sets up a friend's game | Fixed, needs a second PC |
+| 28 | Co-op: invites do nothing; only 2 platform and 1 balloon layouts | Invite only answered OK; layout sizes known only from the capture | Invited player gets the official invite notice; all 10 + 10 layouts (sizes read from the game's own files, matching the capture) | Fixed, retest |
+| 27 | Friends on other PCs can't join | Every address the server gave out was this PC's own (127.0.0.1) | Each player gets the address they reached the server on; `allow_friends.bat` opens the ports, `make_friend_kit.bat` builds a kit, `setup_client.ps1 -ServerIP` sets up a friend's game (no Python) | Fixed, needs a second PC |
 
 ## Fields and life skills
 
