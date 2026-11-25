@@ -13,10 +13,55 @@ _REG = os.path.join(SAVE_DIR, '_registry.json')
 _lock = threading.Lock()
 
 
+# Player ids. Imported accounts keep their OFFICIAL id (official ids run from about 1,000,000 to 2,300,000 at
+# shutdown), so friends find each other again. Accounts made on Rozefield get ids from LOCAL_ID_START up, a range
+# the official game never reached, so a new player can never take an old player's id.
+LOCAL_ID_START = 9000001
+
+
 def _registry():
     if os.path.exists(_REG):
-        return json.load(open(_REG, encoding='utf-8'))
-    return {'next_player_id': 2000001, 'by_uid': {}}
+        r = json.load(open(_REG, encoding='utf-8'))
+    else:
+        r = {'next_player_id': LOCAL_ID_START, 'by_uid': {}}
+    r['next_player_id'] = max(r.get('next_player_id', 0), LOCAL_ID_START)
+    return r
+
+
+def new_local_id(reg):
+    """Next free Rozefield-made id (never an official one, never one already saved)."""
+    used = set(reg['by_uid'].values())
+    pid = max(reg['next_player_id'], LOCAL_ID_START)
+    while pid in used or os.path.exists(os.path.join(SAVE_DIR, f'{pid}.json')):
+        pid += 1
+    reg['next_player_id'] = pid + 1
+    return pid
+
+
+def migrate_local_ids(log=print):
+    """Accounts made on Rozefield before LOCAL_ID_START existed (ids 2,000,001+) could clash with official ids:
+    move them into the local range. Imported accounts (with official_player_id) keep their ids."""
+    with _lock:
+        reg = _registry(); moved = 0
+        for uid, pid in list(reg['by_uid'].items()):
+            if not (2000000 < pid < LOCAL_ID_START):
+                continue
+            path = os.path.join(SAVE_DIR, f'{pid}.json')
+            if not os.path.exists(path):
+                continue
+            st = json.load(open(path, encoding='utf-8'))
+            if st.get('official_player_id'):
+                continue
+            new = new_local_id(reg)
+            for k in ('player_id', 'player_label', 'channel_id'):
+                if st.get(k) == pid:
+                    st[k] = new
+            json.dump(st, open(os.path.join(SAVE_DIR, f'{new}.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+            os.replace(path, path + '.moved_to_%d' % new)
+            reg['by_uid'][uid] = new; moved += 1
+            log(f'account "{st.get("name")}" moved from id {pid} to {new} (Rozefield ids start at {LOCAL_ID_START})')
+        if moved:
+            _save_registry(reg)
 
 
 def _save_registry(r):
@@ -78,7 +123,7 @@ class Player:
             reg = _registry()
             pid = reg['by_uid'].get(str(uid))
             if pid is None:
-                pid = reg['next_player_id']; reg['next_player_id'] += 1
+                pid = new_local_id(reg)
                 reg['by_uid'][str(uid)] = pid; _save_registry(reg)
         path = os.path.join(SAVE_DIR, f'{pid}.json')
         if os.path.exists(path):

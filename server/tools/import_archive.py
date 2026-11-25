@@ -10,7 +10,7 @@ sys.path.insert(0, HERE)
 from tools.make_save import streams          # noqa: E402
 from ofproto import decode, to_dict          # noqa: E402
 from game.data import Data                   # noqa: E402
-from game.player import Player, INSTANCE_TAGS, SAVE_DIR, _registry, _save_registry  # noqa: E402
+from game.player import Player, INSTANCE_TAGS, SAVE_DIR, _registry, _save_registry, new_local_id  # noqa: E402
 
 
 class ImportFailed(Exception):
@@ -78,12 +78,25 @@ def build(login_name, msgs, keep_player_id=True):
         prev = json.load(open(os.path.join(SAVE_DIR, f'{old}.json'), encoding='utf-8'))
         if prev.get('official_player_id', old) != md.get('player_id'):
             raise ImportFailed(f'the name "{login_name}" is already used by another account on this server')
-    pid = reg['by_uid'].get(uid) or (md['player_id'] if keep_player_id else None)
-    if not pid or (str(pid) != str(reg['by_uid'].get(uid)) and os.path.exists(os.path.join(SAVE_DIR, f'{pid}.json'))):
-        pid = reg['next_player_id']; reg['next_player_id'] += 1
+    # one official account = one Rozefield account, under its official id. Ids below LOCAL_ID_START are official
+    # ones (older Rozefield-made accounts are moved out of that range first).
+    from game.player import migrate_local_ids, LOCAL_ID_START
+    migrate_local_ids()
+    reg = _registry()
+    off = md.get('player_id')
+    for u, p in reg['by_uid'].items():
+        f = os.path.join(SAVE_DIR, f'{p}.json')
+        if u == uid or not os.path.exists(f):
+            continue
+        other = json.load(open(f, encoding='utf-8'))
+        if off and other.get('official_player_id', p if p < LOCAL_ID_START else None) == off:
+            raise ImportFailed(f'this account is already on this server as "{other.get("name")}" - log in with that name')
+    pid = reg['by_uid'].get(uid) or (off if keep_player_id and off and off < LOCAL_ID_START else None)
+    if not pid:
+        pid = new_local_id(reg)
     reg['by_uid'][uid] = pid
     st = Player.new_state(d, uid, pid, md.get('player_name', login_name))
-    for k in ('level', 'exp', 'world_level', 'head', 'sign', 'phone_background', 'phone_case', 'birthday'):
+    for k in ('level', 'exp', 'world_level', 'head', 'sign', 'phone_background', 'phone_case', 'birthday', 'player_label'):
         if k in md:
             st[k] = md[k]
     st['create_time'] = md.get('create_time', st['create_time'])
@@ -122,7 +135,6 @@ def build(login_name, msgs, keep_player_id=True):
     # nothing the backup window collected is lost, even where the server doesn't use it yet
     st['official_answers'] = pairs(msgs, every=True)
     os.makedirs(SAVE_DIR, exist_ok=True)
-    reg['next_player_id'] = max(reg['next_player_id'], pid + 1) if pid < 2000000 else reg['next_player_id']
     _save_registry(reg)
     path = os.path.join(SAVE_DIR, f'{pid}.json')
     if os.path.exists(path):  # re-import over an existing account: keep the old save next to it

@@ -577,6 +577,8 @@ async def main():
     import threading
     threading.Thread(target=read_console, daemon=True).start()
     log.info('Type GM commands here, e.g.  <name> /all outfits   or  list')
+    from game.player import migrate_local_ids
+    migrate_local_ids(log.info)   # Rozefield-made accounts never sit on an official player id
     log.info('Rozefield up: dispatch http://%s:%s  gate %s:%s', a.public_ip, a.http_port, a.public_ip, a.gate_port)
     await asyncio.gather(*(s.serve_forever() for s in servers))
 

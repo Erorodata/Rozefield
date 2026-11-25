@@ -15,6 +15,7 @@ sys.path.insert(0, HERE)
 SKIP_FILES = {'exploration'}
 CONFIG_OVERRIDES = {k: '500000' for k in ('HomeItemPointMax', 'PublicHomeItemPointMax', 'PrivateHomeItemPointMax',
                                                'SpecialPublicHomeItemPointMax')}
+CONFIG_OVERRIDES.update({'Player_Friend_Count': '9999', 'Player_Friend_Apply_Count': '9999'})   # no friend limit on Rozefield
 LANG_FALLBACK = {'english': 'en', 'japanese': 'en', 'korea': 'en', 'traditional': 'tc', 'simplified': 'sc'}
 
 
