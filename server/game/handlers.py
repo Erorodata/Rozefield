@@ -160,6 +160,10 @@ def rename(ctx, req):
 
 # ============================================================ scenes / channels
 PUBLIC_SCENE = 9999
+# official entry point of each map when travelling there from the world map (no teleport target); same every time
+MAP_ENTRY = {1: {'x': 638, 'y': 98, 'z': 4821}, 2: {'x': -1275, 'y': 16708, 'z': 6381}, 3: {'x': -676, 'y': 5815, 'z': -64},
+             5: {'x': -3110, 'y': 20844, 'z': 700}, 1001: {'x': 3334, 'y': 1457, 'z': 3402},
+             1002: {'x': 709, 'y': 2620, 'z': 502}, 1003: {'x': 2942, 'y': 140, 'z': -4363}}
 PLAZA_SPAWN = {'x': 2415, 'y': -1, 'z': 959}   # Rota Plaza spawn point (official login position, all captures)
 TUTORIAL_SCENE = 100   # Path in a Bottle: new players stay there until the prologue is done
 
@@ -308,8 +312,15 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
 @handler('ChangeSceneChannelReq')
 def change_scene(ctx, req):
     sid = req.get('scene_id') or PUBLIC_SCENE
+    key = pos_key(ctx.p.s, sid, ctx.p.s['player_id'] if sid == PUBLIC_SCENE else None)
     if req.get('pos') and not req.get('target_player_label'):    # teleport target on the new map
-        ctx.p.s.setdefault('pos_by_scene', {})[pos_key(ctx.p.s, sid, ctx.p.s['player_id'] if sid == PUBLIC_SCENE else None)] = req['pos']
+        ctx.p.s.setdefault('pos_by_scene', {})[key] = req['pos']
+    elif sid != PUBLIC_SCENE and not req.get('target_player_label'):
+        # map travel without a target: official always puts you at the map's entry point, never where you left
+        if MAP_ENTRY.get(sid):
+            ctx.p.s.setdefault('pos_by_scene', {})[key] = dict(MAP_ENTRY[sid])
+        else:
+            ctx.p.s.setdefault('pos_by_scene', {}).pop(key, None)
     r = enter_scene(ctx, sid, label=req.get('channel_label'), target_label=req.get('target_player_label'),
                     before_push=lambda c, l: ctx.reply({'status': OK, 'scene_id': ctx.p.s['scene_id'], 'channel_id': c, 'channel_label': l}))
     if r is None:
@@ -842,9 +853,10 @@ def furniture_free(p, item):
     return p.count(item) - furniture_used(p).get(item, 0)
 
 
-def _furniture_notice(ctx, item):
-    n = furniture_used(ctx.p).get(item, 0)
-    ctx.push('FurnitureItemChangeNotice', {'status': OK, 'furnitureItemInfo': {'itemId': item, 'num': str(n)}})
+def _furniture_notice(ctx, item, used_delta):
+    """The client does used[item] -= num (BagsSystem.OnFurnitureItemChangeNotice): num is the change of the pieces
+    left in the bag, -1 when one is placed and +1 when one goes back."""
+    ctx.push('FurnitureItemChangeNotice', {'status': OK, 'furnitureItemInfo': {'itemId': item, 'num': str(-used_delta)}})
 
 
 @handler('HandingFurnitureReq')
@@ -863,7 +875,7 @@ def take_handing(ctx, req):
     p = ctx.p
     h = _handing(p).pop(str(req.get('furnitureId')), None)
     if h and h.get('lifted'):  # back to the bag: no longer in use
-        _furniture_notice(ctx, h['itemId'])
+        _furniture_notice(ctx, h['itemId'], -1)
     p.dirty = True
     ctx.reply({'status': OK, 'furnitureId': req.get('furnitureId')})
 
@@ -899,7 +911,7 @@ def place(ctx, req):
     Q.event(p, Q.C['PlacingFurniture0'])
     ctx.server.broadcast(ctx, 'SceneGardenFurnitureUpdateNotice', {'status': OK, 'furniture_info': info}, include_self=False)
     if consume:
-        _furniture_notice(ctx, item)
+        _furniture_notice(ctx, item, +1)
 
 
 @handler('TakeOutFurnitureReq')
@@ -918,7 +930,7 @@ def take_out(ctx, req):
                              include_self=False)
         return
     ctx.server.broadcast(ctx, 'SceneGardenFurnitureRemoveNotice', {'status': OK, 'furniture_id': fid, 'item_id': f['furnitureItemId']})
-    _furniture_notice(ctx, f['furnitureItemId'])
+    _furniture_notice(ctx, f['furnitureItemId'], -1)
 
 
 def _clear_garden(p):
@@ -1216,6 +1228,12 @@ def musical_item(ctx, req):
     iid = req.get('musical_item_instance_id', '0')
     p = ctx.p
     item_id = int(iid) if p.count(int(iid or 0)) > 0 else 0
+    if req.get('source') == 'MusicalItemSource_Furniture':
+        # an instrument placed in a plaza: the instance is the furniture piece, the item is its furniture item
+        # (sending 0 here hides the client's Play button)
+        owner = p if p.s.get('channel_id') == p.s['player_id'] else ctx.server.player_by_id(p.s.get('channel_id'))
+        f = (owner.s['garden']['furniture'] if owner else {}).get(str(iid)) or {}
+        item_id = f.get('furnitureItemId', 0)
     p.s['musical_item'] = {'source': req.get('source', 'MusicalItemSource_Self'), 'id': item_id}
     ctx.reply({'status': OK, 'source': req.get('source', 'MusicalItemSource_Self'), 'musical_item_instance_id': iid,
                'musical_item_id': item_id})

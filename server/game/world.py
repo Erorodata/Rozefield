@@ -72,13 +72,16 @@ def map_flags(d):
     dungeons = d.table('dungeon', 'Dungeon')
     from game import quests as Q
     x = Q.idx(d)
-    quest_of_dungeon = {}
+    quest_of_dungeon, quest_of_battle = {}, {}
     for qid in x['quests']:
         for c in Q.conditions_of(d, qid):
             a = x['ach'].get(c) or {}
             if a.get('NewAchieveCondition') == 6:      # "finish dungeon X" step of a quest
                 for prm in a.get('Param') or []:
                     quest_of_dungeon.setdefault(prm, qid)
+            elif a.get('NewAchieveCondition') == 4:    # "finish mission X" (story battle, e.g. Eliminate Ashen Creatures)
+                for prm in a.get('Param') or []:
+                    quest_of_battle.setdefault(prm, qid)
     out = {}
     for f in flags.values():
         g = (f.get('FlagGroupInfo') or [{}])[0]
@@ -91,8 +94,37 @@ def map_flags(d):
             dg = dungeons.get(g.get('RelationID')) or {}
             if dg.get('WorldID') == f.get('SceneID'):
                 out.setdefault(f.get('SceneID'), []).append((f['ID'], quest_of_dungeon.get(g.get('RelationID'))))
+        elif not t and g.get('RelationID') in quest_of_battle:
+            # story battle marker: shown only while its quest step is in progress (official removes it with
+            # FlagUnLockRemoveNotice when the battle is won)
+            out.setdefault(f.get('SceneID'), []).append((f['ID'], -quest_of_battle[g['RelationID']]))
     _FLAGS[id(d)] = out
     return out
+
+
+def flag_shown(p, q):
+    """q None: always; q > 0: once that quest was given; q < 0: only while quest -q is in progress."""
+    qs = p.s.get('quests', {})
+    if q is None:
+        return True
+    if q > 0:
+        return str(q) in qs
+    st = (qs.get(str(-q)) or {}).get('status')
+    return st == 'QuestStatus_InProgress'
+
+
+def story_flags_changed(ctx, changed_qids):
+    """A story battle step started or ended while the player is on that map: add / remove its marker live."""
+    p = ctx.p
+    sid = p.s.get('scene_id')
+    add, rem = [], []
+    for fid, q in map_flags(p.d).get(int(sid or 0), []):
+        if q is not None and q < 0 and str(-q) in changed_qids:
+            (add if flag_shown(p, q) else rem).append(fid)
+    if add:
+        ctx.push('FlagUnlockAddNotice', {'status': 'StatusCode_OK', 'flagIds': add})
+    if rem:
+        ctx.push('FlagUnLockRemoveNotice', {'status': 'StatusCode_OK', 'flagIds': rem})
 
 
 def scene_fields(p, sid):
@@ -115,8 +147,7 @@ def scene_fields(p, sid):
     for k in ('riddles', 'flags', 'challenges', 'areas', 'collections', 'flagIds'):
         if w[k]:
             out[k] = w[k]
-    qs = p.s.get('quests', {})
-    ids = {fid for fid, q in map_flags(p.d).get(int(sid), []) if q is None or str(q) in qs}
+    ids = {fid for fid, q in map_flags(p.d).get(int(sid), []) if flag_shown(p, q)}
     ids |= set(w['flagIds'])          # anything the player's own save already has
     if ids:
         out['flagIds'] = sorted(ids)

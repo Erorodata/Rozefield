@@ -372,6 +372,11 @@ def flush(ctx):
         ctx.push('AchieveNotice', {'status': 'StatusCode_OK', 'achieves': ach})
     if ch:
         ctx.push('QuestNotice', {'status': 'StatusCode_OK', 'quests': list(ch.values())})
+        try:
+            from game.world import story_flags_changed
+            story_flags_changed(ctx, {str(q.get('questId')) for q in ch.values()})
+        except Exception:
+            pass
 
 
 def quest_detail(p):
