@@ -1045,7 +1045,11 @@ def _claim_story(ctx, sid):
         got, changed = p.add_items(items) if items else ([], [])
         pack(ctx, changed)
     p.dirty = True
-    ctx.reply({'status': OK, 'quest': {'questId': sid, 'status': 'QuestStatus_Finish', 'completeCount': 1}, 'items': got})
+    # the client looks quest.questId up in its quest table (a story id there throws "QuestConfigure ... 1000001"
+    # and the reward popup never opens): answer with the story's last quest, finished
+    qids = sorted(Q.idx(p.d)['by_group'].get(st.get('QuestID'), [])) or [st.get('QuestID')]
+    last = p.s['quests'].get(str(qids[-1])) or {'questId': qids[-1], 'status': 'QuestStatus_Finish', 'completeCount': 1}
+    ctx.reply({'status': OK, 'quest': last, 'items': got})
 
 
 @handler('ClaimQuestRewardReq')
