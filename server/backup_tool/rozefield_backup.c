@@ -822,6 +822,7 @@ struct tcpdir { int used; uint32_t next; int have; unsigned char *buf; size_t le
 struct tcpflow { uint16_t lport; struct tcpdir d[2]; };
 static struct tcpflow g_flows[16];
 static uint32_t g_watch_ip, g_watch_local; static uint16_t g_watch_port;
+static volatile LONG g_pk_all, g_pk_game, g_pk_frames;
 
 static int frame_ok(const unsigned char *p, size_t avail, size_t *tot, struct head *h) {
     if (avail < 2) return 0;
@@ -847,6 +848,7 @@ static void watch_feed(struct tcpdir *t, int dir, int conn, const unsigned char 
         size_t hl = (f[0] << 8) | f[1];
         if (dir == 0 && h.msg_id == 1001) record(0, conn, f, (uint32_t)(2 + hl));
         else record(dir, conn, f, (uint32_t)tot);
+        InterlockedIncrement(&g_pk_frames);
         if (dir == 1) {
             if (h.msg_id == 1006 && !g_player[0]) {
                 find_name(f + 2 + hl, h.body_len, h.flag == 1);
@@ -901,6 +903,7 @@ static DWORD WINAPI watch_thread(LPVOID a) {
     static unsigned char pkt[65536];
     int n;
     while ((n = recv(s, (char *)pkt, sizeof pkt, 0)) > 0) {
+        InterlockedIncrement(&g_pk_all);
         if (n < 20 || (pkt[0] >> 4) != 4 || pkt[9] != 6) continue;
         int ihl = (pkt[0] & 15) * 4, tl = (pkt[2] << 8) | pkt[3]; if (tl > n) tl = n;
         uint32_t src, dst; memcpy(&src, pkt + 12, 4); memcpy(&dst, pkt + 16, 4);
@@ -912,6 +915,7 @@ static DWORD WINAPI watch_thread(LPVOID a) {
         if (dp == g_watch_port && (!g_watch_ip || dst == g_watch_ip)) dir = 0;
         else if (sp == g_watch_port && (!g_watch_ip || src == g_watch_ip)) dir = 1;
         else continue;
+        InterlockedIncrement(&g_pk_game);
         uint16_t lport = dir == 0 ? sp : dp;
         struct tcpflow *fl = NULL;
         for (int i = 0; i < 16; i++) if (g_flows[i].lport == lport) { fl = &g_flows[i]; break; }
@@ -920,6 +924,18 @@ static DWORD WINAPI watch_thread(LPVOID a) {
         watch_segment(fl, dir, seq, syn, tcp + thl, tl - ihl - thl);
     }
     closesocket(s);
+    return 0;
+}
+
+static DWORD WINAPI watch_stats(LPVOID a) {
+    LONG la = -1, lg = -1, lf = -1;
+    for (int i = 0; g_mode == M_WATCH; i++) {
+        Sleep(5000);
+        if (g_pk_all != la || g_pk_game != lg || g_pk_frames != lf) {
+            la = g_pk_all; lg = g_pk_game; lf = g_pk_frames;
+            ui_log("Listening: %ld packets on this PC, %ld from the game's connection, %ld game messages saved.", la, lg, lf);
+        }
+    }
     return 0;
 }
 
@@ -963,6 +979,13 @@ static void start_watch(void) {
         g_watch_local = me.sin_addr.s_addr;
     }
     InterlockedExchange(&g_mode, M_WATCH);
+    {
+        char a[32], b[32]; struct in_addr x;
+        x.s_addr = g_watch_ip; inet_ntop(AF_INET, &x, a, sizeof a); x.s_addr = g_watch_local; inet_ntop(AF_INET, &x, b, sizeof b);
+        if (g_watch_ip) ui_log("Found the game's connection: official %s:%d, this PC %s.", a, g_watch_port, b);
+        else ui_log("Game connection not found yet (port %d); listening on %s for it.", g_watch_port, b);
+    }
+    CloseHandle(CreateThread(NULL, 0, watch_stats, NULL, 0, NULL));
     if (!pid) ui_log("OverField is not running yet - start it any way you like; this window is listening.");
     CloseHandle(CreateThread(NULL, 0, watch_thread, NULL, 0, NULL));
 }
