@@ -49,8 +49,9 @@ $null = Write-Hosts $lines
 ipconfig /flushdns | Out-Null
 netsh advfirewall firewall delete rule name="$fwName" | Out-Null
 if ($ServerIP -eq '127.0.0.1') {   # server on this PC: the game needs no internet at all
-  netsh advfirewall firewall add rule name="$fwName" dir=out action=block program="$exe" enable=yes `
-    remoteip=1.0.0.0-126.255.255.255,128.0.0.0-255.255.255.255,2000::/3 | Out-Null
+  # quoted: PowerShell would split a bare a,b,c into separate arguments
+  netsh advfirewall firewall add rule "name=$fwName" dir=out action=block "program=$exe" enable=yes `
+    "remoteip=1.0.0.0-126.255.255.255,128.0.0.0-255.255.255.255,2000::/3" | Out-Null
   if ($LASTEXITCODE -eq 0) { Write-Host "Firewall: $exe can no longer reach the official servers." }
   else { Write-Warning "Firewall rule was NOT added (netsh error $LASTEXITCODE)." }
 }
