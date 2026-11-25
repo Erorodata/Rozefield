@@ -22,3 +22,7 @@ server/backup_tool/backups/
 server/backup_tool/recording.tmp
 server/backup_tool/RozefieldBackup.ini
 *.pdb
+
+# dev-only knowledge graph (graphify), never shipped
+graphify-out/
+.graphifyignore
