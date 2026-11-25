@@ -837,12 +837,46 @@ static int save_backup(char *out, int outsz) {
 static void start_backup_work(void);
 static DWORD WINAPI start_thread(LPVOID a) { start_backup_work(); return 0; }
 static volatile LONG g_starting = 0;
+/* Open game: start OverField exactly as normal (nothing changed in its files), wait until you are logged in on
+ * official, then take over the connection the same way as Use running game. Steam restarting the game, or the
+ * game looking its server up by itself, can't get around this. */
+static int is_admin(void);
+static int find_game_conn(MIB_TCPROW *out);
+static DWORD WINAPI open_then_reconnect(LPVOID a) {
+    char exe[MAX_PATH]; snprintf(exe, sizeof exe, "%s\\launcher.exe", g_game);
+    STARTUPINFOA si = {sizeof si}; PROCESS_INFORMATION pi;
+    if (!CreateProcessA(exe, NULL, NULL, NULL, FALSE, 0, NULL, g_game, &si, &pi)) {
+        ui_log("Could not start the game."); InterlockedExchange(&g_starting, 0); InterlockedExchange(&g_mode, M_IDLE); return 0;
+    }
+    CloseHandle(pi.hThread); CloseHandle(pi.hProcess);
+    InterlockedExchange(&g_mode, M_LOGIN);
+    ui_log("OverField started. Log in with your official account as usual - the backup starts by itself after that.");
+    MIB_TCPROW row; int seen = 0;
+    for (int t = 0; t < 1800; t++) {          /* up to 30 minutes */
+        Sleep(1000);
+        if (!find_launcher()) { if (t > 120) break; continue; }
+        if (find_game_conn(&row)) { if (++seen >= 25) break; }   /* logged in and settled for 25 s */
+        else seen = 0;
+    }
+    InterlockedExchange(&g_starting, 0);
+    if (seen < 25) { ui_log("The game didn't connect to official. Log in, then press Use running game."); InterlockedExchange(&g_mode, M_IDLE); return 0; }
+    InterlockedExchange(&g_mode, M_IDLE);
+    start_reconnect();
+    return 0;
+}
 static void start_backup(void) {   /* runs in the background so the window never freezes */
     if (find_launcher()) { start_reconnect(); return; }   /* already running: no second copy */
+    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"OverField Backup Data", MB_OK | MB_ICONWARNING); return; }
+    if (!is_admin()) {   /* taking over the connection needs administrator rights: ask now, not halfway */
+        wchar_t me[MAX_PATH]; GetModuleFileNameW(NULL, me, MAX_PATH);
+        SHELLEXECUTEINFOW ei = {sizeof ei}; ei.lpVerb = L"runas"; ei.lpFile = me; ei.lpParameters = L"--open"; ei.nShow = SW_SHOWNORMAL;
+        if (ShellExecuteExW(&ei)) { restore_all(); ExitProcess(0); }
+        ui_log("This needs administrator rights (the prompt was closed)."); return;
+    }
     if (InterlockedExchange(&g_starting, 1)) { ui_log("Already starting - please wait..."); return; }
     InterlockedExchange(&g_mode, M_STARTING);
-    ui_log("Starting... (button 1 pressed)");
-    CloseHandle(CreateThread(NULL, 0, start_thread, NULL, 0, NULL));
+    char ini[MAX_PATH]; ini_path(ini); WritePrivateProfileStringA("game", "folder", g_game, ini);
+    CloseHandle(CreateThread(NULL, 0, open_then_reconnect, NULL, 0, NULL));
 }
 
 static void start_backup_work(void) {
@@ -1621,6 +1655,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     SetTimer(g_win, 1, 30, NULL);
     ui_log("OverField Backup Data started. Game folder: %s", g_game[0] ? g_game : "(not found - use the folder button)");
     if (strstr(cmd, "--reconnect")) start_reconnect();
+    else if (strstr(cmd, "--open")) start_backup();
     else if (strstr(cmd, "--watch")) start_watch();
     else ui_log(g_game[0] ? "Press Open game, or Use running game if OverField is already open." : "Choose your OverField folder with the folder button on the left.");
     MSG msg;
