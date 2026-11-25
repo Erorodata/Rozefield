@@ -75,12 +75,15 @@ needed). The lookup address must fit in 12 characters; for a longer one add `-Lo
 
 ## Saving player accounts before the official shutdown (backup / import)
 
-**Easiest:** give players `backup_tool\OverField Backup Data.exe` (single file, nothing to install). They press
+**Easiest:** give players `backup_tool\Rozefield Backup.exe` (single file, nothing to install). They press
 **1. Open OverField (Official)**, log in as usual, open the menus in the checklist, and close the game: the backup
 (`backups\<name>_<date>.rzsave`) is saved automatically (or press **2. Save backup**). Later, in the Rozefield login
 window, **Import backup (.rzsave)...** uploads it and the account appears under their in-game name. Re-importing the
 same account replaces it (the previous save is kept as `<id>.json.before_import_<time>`); a name already used by a
 different account is refused.
+
+The backup never keeps the login token or device details (account SDK id, device id and model, analytics id,
+log-server token, the game's client logs); the server also drops them from older backups when importing.
 
 Script version of the same:
 

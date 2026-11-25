@@ -12,7 +12,7 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] Official traffic captures (redacted copies in repo)
 - [x] Archived account imported and playable
 - [x] Public snapshot of 490 other players
-- [~] Player backup tool OverField Backup Data.exe: built; first live run waits for the official server to come back
+- [~] Player backup tool Rozefield Backup.exe: built; first live run waits for the official server to come back
 - [x] Import backup from the login window
 
 ## Server & connection (91.7%)
@@ -76,6 +76,6 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Rankings: Abyss, Boss Rush (everyone on this server)
 - [~] Restaurant mini-game (buy, merge, sell, serve, quests): built from the game tables; no official capture
 - [~] Field gear drops follow world level, 3% rare top quality: estimate
-- [~] OverField Backup Data: background start, follows a Steam restart, log file: needs a live run
+- [~] Rozefield Backup: background start, follows a Steam restart, log file: needs a live run
 
 Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.

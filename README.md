@@ -1,15 +1,15 @@
-# Rozefield progress — 81.47%
+# Rozefield progress — 83.29%
 
-`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱` **81.47%**
+`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱` **83.29%**
 
 OverField preservation: run the game on your own server after the official one closes.
 
 | Area | Progress | |
 |---|---|---:|
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
-| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱` | **83.3%** |
+| Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **91.7%** |
 | Content (Global + CN) | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱` | **87.5%** |
-| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **61.3%** |
+| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱▱▱` | **60.2%** |
 
 🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet
 
@@ -23,10 +23,10 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Official traffic captures (redacted copies in repo) | done |
 | 🟩 | Archived account imported and playable | done |
 | 🟩 | Public snapshot of 490 other players | done |
-| 🟨 | Player backup tool OverField Backup Data.exe | in progress — built; first live run waits for the official server to come back |
+| 🟨 | Player backup tool Rozefield Backup.exe | in progress — built; first live run waits for the official server to come back |
 | 🟩 | Import backup from the login window | done |
 
-## Server & connection — 83.3%
+## Server & connection — 91.7%
 
 | | Item | Status |
 |---|---|---|
@@ -35,7 +35,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Patch delivery through the game's own updater | done |
 | 🟩 | Client requests with a server handler | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 303/303 |
 | 🟩 | Requests seen in real play that are handled | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 140/140 |
-| ⬛ | Multiplayer (other players in scenes, co-op) | not yet — phase 2 |
+| 🟨 | Online play: friends on other PCs (LAN / internet), per-player server address, friend setup script | in progress — needs a test with a second PC |
 
 ## Content (Global + CN) — 87.5%
 
@@ -46,7 +46,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN-only text translated to English | done |
 | 🟨 | English UI after the CN patch | in progress — fix shipped, needs an in-game check |
 
-## Gameplay — 61.3%
+## Gameplay — 60.2%
 
 | | Item | Status |
 |---|---|---|
@@ -54,20 +54,20 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Outfits, gear equip, weapon / armor enhance | done |
 | 🟨 | Character level up, level break, star up, skill up | in progress — costs from the game tables; needs in-game check |
 | 🟨 | Profile, outfit / gear presets, pets, visit a friend's garden | in progress — needs in-game check |
-| 🟩 | Shops (Rhombite shop gives the item) | done |
+| 🟨 | Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset | in progress — needs in-game check |
 | 🟩 | Food buffs and item use | done |
 | 🟩 | Channels, scenes, fields, friends' gardens | done |
-| 🟨 | Chat and GM console (no double text) | in progress — needs in-game check |
+| 🟨 | Chat and GM console: world and channel history kept across logins and restarts | in progress — needs in-game check |
 | 🟨 | Umbrella / badge / tool appearance | in progress — needs in-game check |
 | 🟨 | Garden plaza: lift, presets, 500,000 limit | in progress — needs in-game check |
 | 🟩 | Recruit banners and pulls | done |
 | 🟨 | Recruit result screen (animation, can't leave) | in progress — results now carry the official bonus items + quality; needs in-game check |
 | 🟨 | Quest engine: main story, story rewards, daily, delegate | in progress |
-| 🟨 | Quest steps with an event rule | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 97.71% 1,236/1,265 |
+| 🟩 | Quest steps with an event rule | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 1,265/1,265 |
 | 🟩 | Main story quests cleared by an automated new account | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.00% 648/648 |
 | 🟨 | Achievements: view archived progress | in progress |
 | 🟨 | Achievements: earn and claim | in progress — counted from play, claim + group rewards; needs in-game check |
-| 🟨 | Dye | in progress — colorants not consumed yet |
+| 🟨 | Dye | in progress — each dye uses 1 colorant as official; needs in-game check |
 | 🟨 | Scrap (disassemble) | in progress |
 | 🟨 | Life skills: cooking, sewing, making, handicraft, fishing | in progress — recipes, success chance, levels, skills, handbook rewards; needs in-game check |
 | 🟨 | Gathering tools (net, axe, hammer, gloves, bottle) | in progress — gather rewards + tool progress; needs in-game check |
@@ -89,13 +89,13 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Multiplayer: other players in the same scene, movement, emotes, group emotes, chat (nearby, world, private), sitting | in progress — tested with 2 local clients; needs in-game check |
 | 🟨 | Part-time tasks, Moon Points to Wish Stones (official step prices), co-op ticket refill (6 a day) | in progress — Moon Points per activity: 5 / 25 as seen |
 | 🟨 | Online Gomoku (2 players) | in progress — reward amounts estimated |
-| 🟨 | Photo wall (upload, browse, like, favourite, delete) | in progress — pictures are stored; whether the client can download them back is untested |
+| 🟨 | Photo wall (upload, browse, like, favourite, delete) | in progress — pictures served back to the game (full and thumbnail); needs in-game check |
 | 🟨 | Rankings: Abyss, Boss Rush (everyone on this server) | in progress |
 | 🟨 | Restaurant mini-game (buy, merge, sell, serve, quests) | in progress — built from the game tables; no official capture |
 | 🟨 | Field gear drops follow world level, 3% rare top quality | in progress — estimate |
-| 🟨 | OverField Backup Data: background start, follows a Steam restart, log file | in progress — needs a live run |
+| 🟨 | Rozefield Backup: background start, follows a Steam restart, log file | in progress — needs a live run |
 
-**Quest steps with a rule:** 1,236 / 1,265 (`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱` 97.7%)
+**Quest steps with a rule:** 1,265 / 1,265 (`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.0%)
 
 ![Rozefield progress chart](docs/progress.png)
 
@@ -108,5 +108,3 @@ Rozefield preserves OverField: the archived client and a private server that run
 - [Archive notes: client build, endpoints, protocol, captures](docs/ARCHIVE.md)
 - [Server: setup, login window, backup / import, GM commands](server/README.md)
 - [Checklist (plain)](docs/PROGRESS.md)
-- [Play-test issues](docs/TEST_ISSUES.md)
-- [Story check](docs/STORY_CHECKLIST.md)
