@@ -19,7 +19,7 @@
  * u32 len, frame bytes as on the wire}.
  *
  * Build: zig cc -target x86_64-windows-gnu -O2 rozefield_backup.c -o RozefieldBackup.exe
- *        -lws2_32 -lcomdlg32 -lshell32 -lole32 -luser32 -lgdi32 -ladvapi32 -Wl,--subsystem,windows
+ *        -lws2_32 -lcomdlg32 -lshell32 -lole32 -luser32 -lgdi32 -ladvapi32 -lmsimg32 -liphlpapi -lgdiplus -Wl,--subsystem,windows
  */
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
@@ -33,6 +33,9 @@
 #include <string.h>
 #include <stdint.h>
 #include <tlhelp32.h>
+#include <iphlpapi.h>
+#include <mstcpip.h>
+#include <math.h>
 #include "backup_queries.h"
 
 #define DISPATCH_HOST "dsp-global-of.inutan.com"
@@ -44,7 +47,15 @@
 #define WM_CHECK (WM_APP + 2)
 #define WM_GAMEEXIT (WM_APP + 3)
 
-static HWND g_win, g_log, g_check, g_edit, g_open, g_save, g_status;
+static HWND g_win;
+/* window state for the painted launcher-style UI */
+enum { M_IDLE, M_STARTING, M_LOGIN, M_FETCH, M_DONE, M_WATCH };
+static volatile LONG g_mode = M_IDLE, g_fetch_got = 0;
+static double g_pct_shown = 0;
+static wchar_t g_lastlog[512] = L"";
+static DWORD g_flash[32];
+static int g_hover = 0, g_saved_once = 0;
+static wchar_t g_savedpath[MAX_PATH];
 static char g_exedir[MAX_PATH], g_game[MAX_PATH], g_cfg[MAX_PATH], g_cfgbak[MAX_PATH];
 static char g_upstream_ip[64];
 static char g_gate_ip[64]; static int g_gate_port;
@@ -84,14 +95,9 @@ static struct check CHECKS[] = {
 };
 #define NCHECK (int)(sizeof CHECKS / sizeof CHECKS[0])
 
-static void refresh_checks(void) {
-    SendMessageW(g_check, LB_RESETCONTENT, 0, 0);
-    for (int i = 0; i < NCHECK; i++) {
-        char b[300]; wchar_t w[300];
-        snprintf(b, sizeof b, "%s  %s   (%s)", CHECKS[i].done ? "[saved]" : "[  -  ]", CHECKS[i].label, CHECKS[i].how);
-        MultiByteToWideChar(CP_UTF8, 0, b, -1, w, 300);
-        SendMessageW(g_check, LB_ADDSTRING, 0, (LPARAM)w);
-    }
+static void mark_check(int msg_id) {
+    for (int i = 0; i < NCHECK; i++)
+        if (!CHECKS[i].done && CHECKS[i].msg_id == msg_id) { CHECKS[i].done = 1; g_flash[i] = GetTickCount(); PostMessageW(g_win, WM_CHECK, 0, 0); }
 }
 
 /* ------------------------------------------------------------------ settings */
@@ -555,6 +561,7 @@ static int to_server(struct gconn *g, uint64_t msg_id, const unsigned char *head
 static DWORD WINAPI fetch_rest(LPVOID a) {
     struct gconn *g = (struct gconn *)a;
     Sleep(8000);   /* let the game finish its own login requests first */
+    InterlockedExchange(&g_fetch_got, 0); InterlockedExchange(&g_mode, M_FETCH);
     ui_log("Collecting the rest of your account (bag, gear, life skills, achievements, handbook, friends, mail)...");
     int sent = 0;
     for (int i = 0; i < NQUERY && !g->done; i++) {
@@ -566,7 +573,8 @@ static DWORD WINAPI fetch_rest(LPVOID a) {
         Sleep(120);
     }
     Sleep(3000);
-    if (!g->done) ui_log("Done: %d look-ups saved. You can keep playing or close the game - the backup saves itself.", sent);
+    InterlockedExchange(&g_mode, M_DONE);
+    if (!g->done) ui_log("Done: %d look-ups saved. Press Save backup, or just close the game - it saves itself.", sent);
     PostMessageW(g_win, WM_CHECK, 1, 0);
     return 0;
 }
@@ -634,11 +642,12 @@ static DWORD WINAPI server_to_game(LPVOID a) {
             if (h.msg_id == 1006 && !g_player[0]) {
                 find_name(frame + 2 + hl, h.body_len, h.flag == 1);
                 if (g_player[0]) ui_log("Logged in as %s. Nothing else to do - the rest is collected for you.", g_player);
+                PostMessageW(g_win, WM_CHECK, 0, 0);
             }
             if (h.msg_id == 1006 && !InterlockedExchange(&g->logged_in, 1))
                 CloseHandle(CreateThread(NULL, 0, fetch_rest, g, 0, NULL));
-            for (int i = 0; i < NCHECK; i++)
-                if (!CHECKS[i].done && CHECKS[i].msg_id == (int)h.msg_id) { CHECKS[i].done = 1; PostMessageW(g_win, WM_CHECK, 0, 0); }
+            if (ours) InterlockedIncrement(&g_fetch_got);
+            mark_check((int)h.msg_id);
             off += tot;
         }
         if (r < 0) break;
@@ -736,18 +745,17 @@ static DWORD WINAPI start_thread(LPVOID a) { start_backup_work(); return 0; }
 static volatile LONG g_starting = 0;
 static void start_backup(void) {   /* runs in the background so the window never freezes */
     if (InterlockedExchange(&g_starting, 1)) { ui_log("Already starting - please wait..."); return; }
+    InterlockedExchange(&g_mode, M_STARTING);
     ui_log("Starting... (button 1 pressed)");
     CloseHandle(CreateThread(NULL, 0, start_thread, NULL, 0, NULL));
 }
 
 static void start_backup_work(void) {
-    wchar_t wg[MAX_PATH]; GetWindowTextW(g_edit, wg, MAX_PATH);
-    WideCharToMultiByte(CP_ACP, 0, wg, -1, g_game, MAX_PATH, NULL, NULL);
-    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"Rozefield Backup", MB_OK | MB_ICONWARNING); InterlockedExchange(&g_starting, 0); return; }
+    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"Rozefield Backup", MB_OK | MB_ICONWARNING); InterlockedExchange(&g_starting, 0); InterlockedExchange(&g_mode, M_IDLE); return; }
     char ini[MAX_PATH]; ini_path(ini); WritePrivateProfileStringA("game", "folder", g_game, ini);
     if (!g_running) {
         ui_log("Finding the official server...");
-        if (!resolve_dispatch()) { ui_log("Could not find the official server. Check your internet connection."); InterlockedExchange(&g_starting, 0); return; }
+        if (!resolve_dispatch()) { ui_log("Could not find the official server. Check your internet connection."); InterlockedExchange(&g_starting, 0); InterlockedExchange(&g_mode, M_IDLE); return; }
         SOCKET h = tcp_listen(DISPATCH_PORT), g = tcp_listen(GATE_PORT), dns = tcp_listen(HTTPDNS_PORT);
         if (h == INVALID_SOCKET || g == INVALID_SOCKET || dns == INVALID_SOCKET) {
             ui_log("Ports %d/%d/%d are busy - close the Rozefield server or another copy of this window first.", HTTPDNS_PORT, DISPATCH_PORT, GATE_PORT);
@@ -761,26 +769,28 @@ static void start_backup_work(void) {
         g_tmp = fopen(g_tmppath, "wb+");
         g_running = 1;
     }
-    if (!patch_config()) { ui_log("Could not change Config.txt in the game folder (is it read-only?)."); InterlockedExchange(&g_starting, 0); return; }
+    if (!patch_config()) { ui_log("Could not change Config.txt in the game folder (is it read-only?)."); InterlockedExchange(&g_starting, 0); InterlockedExchange(&g_mode, M_IDLE); return; }
     if (!patch_metadata()) ui_log("Note: could not point the game's server lookup at this window (game running, or this copy is already changed). Trying anyway.");
     sdk_official(1);
     char exe[MAX_PATH]; snprintf(exe, sizeof exe, "%s\\launcher.exe", g_game);
     STARTUPINFOA si = {sizeof si}; PROCESS_INFORMATION pi;
-    if (!CreateProcessA(exe, NULL, NULL, NULL, FALSE, 0, NULL, g_game, &si, &pi)) { ui_log("Could not start the game."); restore_all(); InterlockedExchange(&g_starting, 0); return; }
+    if (!CreateProcessA(exe, NULL, NULL, NULL, FALSE, 0, NULL, g_game, &si, &pi)) { ui_log("Could not start the game."); restore_all(); InterlockedExchange(&g_starting, 0); InterlockedExchange(&g_mode, M_IDLE); return; }
     CloseHandle(pi.hThread); g_game_proc = pi.hProcess;
     CloseHandle(CreateThread(NULL, 0, watch_game, NULL, 0, NULL));
-    EnableWindow(g_open, FALSE);
-    ui_log("OverField started (%s). Log in with your official account as usual.", exe);
+    InterlockedExchange(&g_mode, M_LOGIN);
+    ui_log("OverField started. Log in with your official account as usual.");
     InterlockedExchange(&g_starting, 0);
 }
 
 static void do_save(int quiet) {
     char path[MAX_PATH];
     if (!save_backup(path, sizeof path)) {
-        if (!quiet) MessageBoxW(g_win, L"Nothing to save yet - start the game with the button above and log in first.", L"Rozefield Backup", MB_OK);
+        if (!quiet) MessageBoxW(g_win, g_mode == M_WATCH ? L"Nothing to save yet. In the game, go back to the title screen and log in again - the login is what holds your account."
+                                                        : L"Nothing to save yet - press Open game and log in first.", L"Rozefield Backup", MB_OK);
         return;
     }
     ui_log("Backup saved: %s", path);
+    g_saved_once = 1; MultiByteToWideChar(CP_UTF8, 0, path, -1, g_savedpath, MAX_PATH);
     wchar_t w[MAX_PATH + 200], wp[MAX_PATH]; MultiByteToWideChar(CP_UTF8, 0, path, -1, wp, MAX_PATH);
     swprintf(w, MAX_PATH + 200, L"Backup saved:\n%ls\n\nKeep this file. Import it in the Rozefield login window (\"Import backup\").", wp);
     MessageBoxW(g_win, w, L"Rozefield Backup", MB_OK | MB_ICONINFORMATION);
@@ -792,29 +802,452 @@ static void browse(void) {
     BROWSEINFOW bi = {0}; bi.hwndOwner = g_win; bi.lpszTitle = L"Choose your OverField game folder (the one with launcher.exe)";
     bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
     LPITEMIDLIST id = SHBrowseForFolderW(&bi);
-    if (id) { wchar_t p[MAX_PATH]; if (SHGetPathFromIDListW(id, p)) SetWindowTextW(g_edit, p); CoTaskMemFree(id); }
+    if (id) {
+        wchar_t p[MAX_PATH];
+        if (SHGetPathFromIDListW(id, p)) {
+            WideCharToMultiByte(CP_ACP, 0, p, -1, g_game, MAX_PATH, NULL, NULL);
+            char ini[MAX_PATH]; ini_path(ini); WritePrivateProfileStringA("game", "folder", g_game, ini);
+            ui_log(has_launcher(g_game) ? "Game folder: %s" : "launcher.exe is not in %s - choose the OverField folder.", g_game);
+        }
+        CoTaskMemFree(id);
+    }
+}
+
+/* ------------------------------------------------------------------ watch a game that is already running
+ * The game is already talking to the official server, so nothing can be fetched for it; this only listens.
+ * Windows lets an administrator read the PC's own network traffic (a raw socket with SIO_RCVALL). The game's
+ * connection to its game server is picked out, put back in order, and recorded like a relayed one. */
+#define SEGMAX 64
+struct tcpdir { int used; uint32_t next; int have; unsigned char *buf; size_t len, cap; struct { uint32_t seq; int n; unsigned char *d; } seg[SEGMAX]; };
+struct tcpflow { uint16_t lport; struct tcpdir d[2]; };
+static struct tcpflow g_flows[16];
+static uint32_t g_watch_ip, g_watch_local; static uint16_t g_watch_port;
+
+static int frame_ok(const unsigned char *p, size_t avail, size_t *tot, struct head *h) {
+    if (avail < 2) return 0;
+    size_t hl = (p[0] << 8) | p[1];
+    if (hl < 2 || hl > 64) return -1;
+    if (avail < 2 + hl) return 0;
+    parse_head(p + 2, p + 2 + hl, h);
+    if (!h->msg_id || h->msg_id > 20000 || h->body_len > (32u << 20) || h->flag > 1) return -1;
+    *tot = 2 + hl + h->body_len;
+    return avail >= *tot ? 1 : 0;
+}
+
+static void watch_feed(struct tcpdir *t, int dir, int conn, const unsigned char *d, size_t n) {
+    if (t->len + n > t->cap) { t->cap = (t->len + n) * 2 + 4096; t->buf = (unsigned char *)realloc(t->buf, t->cap); }
+    memcpy(t->buf + t->len, d, n); t->len += n;
+    size_t off = 0;
+    for (;;) {
+        size_t tot; struct head h;
+        int r = frame_ok(t->buf + off, t->len - off, &tot, &h);
+        if (r < 0) { off++; continue; }          /* joined mid-frame: slide until a frame lines up */
+        if (r == 0) break;
+        const unsigned char *f = t->buf + off;
+        size_t hl = (f[0] << 8) | f[1];
+        if (dir == 0 && h.msg_id == 1001) record(0, conn, f, (uint32_t)(2 + hl));
+        else record(dir, conn, f, (uint32_t)tot);
+        if (dir == 1) {
+            if (h.msg_id == 1006 && !g_player[0]) {
+                find_name(f + 2 + hl, h.body_len, h.flag == 1);
+                if (g_player[0]) ui_log("Caught the login: %s. Open the screens the checklist still shows.", g_player);
+                PostMessageW(g_win, WM_CHECK, 0, 0);
+            }
+            mark_check((int)h.msg_id);
+        }
+        off += tot;
+    }
+    memmove(t->buf, t->buf + off, t->len - off); t->len -= off;
+}
+
+static void watch_segment(struct tcpflow *fl, int dir, uint32_t seq, int syn, const unsigned char *d, int n) {
+    struct tcpdir *t = &fl->d[dir];
+    if (syn) { t->next = seq + 1; t->have = 1; t->len = 0; return; }
+    if (!t->have) { t->next = seq; t->have = 1; }
+    if (n <= 0) return;
+    int32_t ahead = (int32_t)(seq - t->next);
+    if (ahead > 0) {                              /* early: keep it until the gap is filled */
+        for (int i = 0; i < SEGMAX; i++) if (!t->seg[i].d) { t->seg[i].seq = seq; t->seg[i].n = n; t->seg[i].d = (unsigned char *)malloc(n); memcpy(t->seg[i].d, d, n); break; }
+        return;
+    }
+    if (-ahead >= n) return;                      /* already have it */
+    d += -ahead; n -= -ahead;
+    watch_feed(t, dir, fl->lport, d, n); t->next += n;
+    for (int again = 1; again;) {
+        again = 0;
+        for (int i = 0; i < SEGMAX; i++) {
+            if (!t->seg[i].d) continue;
+            int32_t a2 = (int32_t)(t->seg[i].seq - t->next);
+            if (a2 <= 0) {
+                if (-a2 < t->seg[i].n) { watch_feed(t, dir, fl->lport, t->seg[i].d + -a2, t->seg[i].n - -a2); t->next += t->seg[i].n - -a2; }
+                free(t->seg[i].d); t->seg[i].d = NULL; again = 1;
+            }
+        }
+    }
+}
+
+static DWORD WINAPI watch_thread(LPVOID a) {
+    SOCKET s = socket(AF_INET, SOCK_RAW, IPPROTO_IP);
+    struct sockaddr_in sa = {0}; sa.sin_family = AF_INET; sa.sin_addr.s_addr = g_watch_local;
+    DWORD on = RCVALL_ON, br = 0;
+    if (s == INVALID_SOCKET || bind(s, (struct sockaddr *)&sa, sizeof sa) != 0 ||
+        WSAIoctl(s, SIO_RCVALL, &on, sizeof on, NULL, 0, &br, NULL, NULL) != 0) {
+        ui_log("Could not listen to the network (error %d). Try Open game instead.", WSAGetLastError());
+        InterlockedExchange(&g_mode, M_IDLE); PostMessageW(g_win, WM_CHECK, 0, 0); return 0;
+    }
+    snprintf(g_tmppath, sizeof g_tmppath, "%srecording.tmp", g_exedir);
+    if (!g_tmp) g_tmp = fopen(g_tmppath, "wb+");
+    ui_log("Watching your running game. To save your account, go back to the title screen in the game and log in again.");
+    static unsigned char pkt[65536];
+    int n;
+    while ((n = recv(s, (char *)pkt, sizeof pkt, 0)) > 0) {
+        if (n < 20 || (pkt[0] >> 4) != 4 || pkt[9] != 6) continue;
+        int ihl = (pkt[0] & 15) * 4, tl = (pkt[2] << 8) | pkt[3]; if (tl > n) tl = n;
+        uint32_t src, dst; memcpy(&src, pkt + 12, 4); memcpy(&dst, pkt + 16, 4);
+        const unsigned char *tcp = pkt + ihl; if (ihl + 20 > tl) continue;
+        uint16_t sp = (tcp[0] << 8) | tcp[1], dp = (tcp[2] << 8) | tcp[3];
+        uint32_t seq = ((uint32_t)tcp[4] << 24) | (tcp[5] << 16) | (tcp[6] << 8) | tcp[7];
+        int thl = (tcp[12] >> 4) * 4, syn = tcp[13] & 2;
+        int dir;
+        if (dp == g_watch_port && (!g_watch_ip || dst == g_watch_ip)) dir = 0;
+        else if (sp == g_watch_port && (!g_watch_ip || src == g_watch_ip)) dir = 1;
+        else continue;
+        uint16_t lport = dir == 0 ? sp : dp;
+        struct tcpflow *fl = NULL;
+        for (int i = 0; i < 16; i++) if (g_flows[i].lport == lport) { fl = &g_flows[i]; break; }
+        if (!fl) for (int i = 0; i < 16; i++) if (!g_flows[i].lport) { fl = &g_flows[i]; fl->lport = lport; break; }
+        if (!fl) continue;
+        watch_segment(fl, dir, seq, syn, tcp + thl, tl - ihl - thl);
+    }
+    closesocket(s);
+    return 0;
+}
+
+static int is_admin(void) {
+    BOOL r = FALSE; HANDLE tok;
+    if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &tok)) {
+        TOKEN_ELEVATION e; DWORD sz;
+        if (GetTokenInformation(tok, TokenElevation, &e, sizeof e, &sz)) r = e.TokenIsElevated;
+        CloseHandle(tok);
+    }
+    return r;
+}
+
+static void start_watch(void) {
+    if (g_mode != M_IDLE && g_mode != M_DONE) return;
+    if (!is_admin()) {   /* reading the PC's own traffic needs one admin prompt: reopen this window elevated */
+        wchar_t me[MAX_PATH]; GetModuleFileNameW(NULL, me, MAX_PATH);
+        SHELLEXECUTEINFOW ei = {sizeof ei}; ei.lpVerb = L"runas"; ei.lpFile = me; ei.lpParameters = L"--watch"; ei.nShow = SW_SHOWNORMAL;
+        if (ShellExecuteExW(&ei)) { restore_all(); ExitProcess(0); }
+        ui_log("Watching needs administrator rights (the prompt was closed).");
+        return;
+    }
+    /* find the game's connection to its game server */
+    DWORD pid = find_launcher(), sz = 0;
+    g_watch_ip = 0; g_watch_port = 11001; g_watch_local = 0;
+    GetExtendedTcpTable(NULL, &sz, FALSE, AF_INET, TCP_TABLE_OWNER_PID_CONNECTIONS, 0);
+    MIB_TCPTABLE_OWNER_PID *tb = (MIB_TCPTABLE_OWNER_PID *)malloc(sz + 1024);
+    if (tb && GetExtendedTcpTable(tb, &sz, FALSE, AF_INET, TCP_TABLE_OWNER_PID_CONNECTIONS, 0) == NO_ERROR) {
+        for (DWORD i = 0; i < tb->dwNumEntries; i++) {
+            MIB_TCPROW_OWNER_PID *r = &tb->table[i];
+            if (pid && r->dwOwningPid == pid && ntohs((u_short)r->dwRemotePort) == 11001) {
+                g_watch_ip = r->dwRemoteAddr; g_watch_local = r->dwLocalAddr; break;
+            }
+        }
+    }
+    free(tb);
+    if (!g_watch_local) {   /* not connected yet: listen on the network card that reaches the internet */
+        SOCKET u = socket(AF_INET, SOCK_DGRAM, 0); struct sockaddr_in t = {0}; t.sin_family = AF_INET; t.sin_port = htons(53);
+        inet_pton(AF_INET, "8.8.8.8", &t.sin_addr); connect(u, (struct sockaddr *)&t, sizeof t);
+        struct sockaddr_in me; int ml = sizeof me; getsockname(u, (struct sockaddr *)&me, &ml); closesocket(u);
+        g_watch_local = me.sin_addr.s_addr;
+    }
+    InterlockedExchange(&g_mode, M_WATCH);
+    if (!pid) ui_log("OverField is not running yet - start it any way you like; this window is listening.");
+    CloseHandle(CreateThread(NULL, 0, watch_thread, NULL, 0, NULL));
+}
+
+/* ------------------------------------------------------------------ painted launcher-style window */
+#define WW 1100
+#define WH 640
+#define C_INK RGB(17, 18, 27)
+#define C_ACC RGB(242, 127, 163)
+#define C_OK RGB(95, 212, 135)
+#define C_TXT RGB(244, 245, 250)
+#define C_MUTE RGB(176, 180, 196)
+#define C_WARN RGB(255, 208, 138)
+enum { B_NONE, B_CLOSE, B_MIN, B_MAIN, B_RUNNING, B_SAVE, B_FOLDER, B_LOG, B_OPENDIR };
+static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
+static RECT r_main = {WW - 252, WH - 92, WW - 36, WH - 32}, r_run = {WW - 618, WH - 86, WW - 444, WH - 38}, r_save = {WW - 432, WH - 86, WW - 268, WH - 38};
+static RECT r_folder = {14, WH - 128, 58, WH - 84}, r_logb = {14, WH - 74, 58, WH - 30}, r_opendir = {0};
+static HFONT f_title, f_big, f_h, f_body, f_small, f_btn, f_pct;
+static HBITMAP g_bg; static int g_bgw, g_bgh;
+
+typedef struct { UINT32 GdiplusVersion; void *cb; BOOL a, b; } GpInput;
+int WINAPI GdiplusStartup(ULONG_PTR *, const GpInput *, void *);
+int WINAPI GdipCreateBitmapFromFile(const WCHAR *, void **);
+int WINAPI GdipCreateHBITMAPFromBitmap(void *, HBITMAP *, DWORD);
+int WINAPI GdipDisposeImage(void *);
+static void load_background(void) {   /* background.jpg / .png next to the exe: a screenshot of your own Plaza */
+    static const char *names[] = {"background.jpg", "background.png", "background.jpeg"};
+    ULONG_PTR tok; GpInput in = {1, NULL, FALSE, FALSE};
+    if (GdiplusStartup(&tok, &in, NULL) != 0) return;
+    for (int i = 0; i < 3 && !g_bg; i++) {
+        char p[MAX_PATH]; snprintf(p, sizeof p, "%s%s", g_exedir, names[i]);
+        wchar_t w[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, p, -1, w, MAX_PATH);
+        void *bmp = NULL;
+        if (GdipCreateBitmapFromFile(w, &bmp) == 0 && bmp) { GdipCreateHBITMAPFromBitmap(bmp, &g_bg, 0xff11121b); GdipDisposeImage(bmp); }
+    }
+    if (g_bg) { BITMAP b; GetObject(g_bg, sizeof b, &b); g_bgw = b.bmWidth; g_bgh = b.bmHeight; }
+}
+
+static void fill_alpha(HDC dc, RECT r, COLORREF c, BYTE alpha, int radius) {
+    int w = r.right - r.left, h = r.bottom - r.top; if (w <= 0 || h <= 0) return;
+    HDC m = CreateCompatibleDC(dc); HBITMAP b = CreateCompatibleBitmap(dc, 1, 1); HGDIOBJ o = SelectObject(m, b);
+    SetPixel(m, 0, 0, c);
+    HRGN rg = radius ? CreateRoundRectRgn(r.left, r.top, r.right + 1, r.bottom + 1, radius, radius) : CreateRectRgn(r.left, r.top, r.right, r.bottom);
+    SelectClipRgn(dc, rg);
+    BLENDFUNCTION bf = {AC_SRC_OVER, 0, alpha, 0};
+    AlphaBlend(dc, r.left, r.top, w, h, m, 0, 0, 1, 1, bf);
+    SelectClipRgn(dc, NULL); DeleteObject(rg);
+    SelectObject(m, o); DeleteObject(b); DeleteDC(m);
+}
+static void fill_round(HDC dc, RECT r, COLORREF c, int radius) {
+    HBRUSH br = CreateSolidBrush(c); HRGN rg = CreateRoundRectRgn(r.left, r.top, r.right + 1, r.bottom + 1, radius, radius);
+    FillRgn(dc, rg, br); DeleteObject(rg); DeleteObject(br);
+}
+static void outline_round(HDC dc, RECT r, COLORREF c, int radius) {
+    HPEN p = CreatePen(PS_SOLID, 1, c); HGDIOBJ op = SelectObject(dc, p), ob = SelectObject(dc, GetStockObject(NULL_BRUSH));
+    RoundRect(dc, r.left, r.top, r.right, r.bottom, radius, radius);
+    SelectObject(dc, op); SelectObject(dc, ob); DeleteObject(p);
+}
+static void txt(HDC dc, HFONT f, COLORREF c, RECT r, const wchar_t *s, UINT fmt) {
+    SelectObject(dc, f); SetTextColor(dc, c); SetBkMode(dc, TRANSPARENT); DrawTextW(dc, s, -1, &r, fmt | DT_NOPREFIX);
+}
+static void circle(HDC dc, int cx, int cy, int r, COLORREF c) {
+    HBRUSH b = CreateSolidBrush(c); HPEN p = CreatePen(PS_SOLID, 1, c);
+    HGDIOBJ ob = SelectObject(dc, b), op = SelectObject(dc, p); Ellipse(dc, cx - r, cy - r, cx + r + 1, cy + r + 1);
+    SelectObject(dc, ob); SelectObject(dc, op); DeleteObject(b); DeleteObject(p);
+}
+static void tick(HDC dc, int cx, int cy, COLORREF c) {
+    HPEN p = CreatePen(PS_SOLID, 2, c); HGDIOBJ o = SelectObject(dc, p);
+    MoveToEx(dc, cx - 5, cy, NULL); LineTo(dc, cx - 1, cy + 4); LineTo(dc, cx + 6, cy - 4);
+    SelectObject(dc, o); DeleteObject(p);
+}
+static void pill(HDC dc, RECT r, int primary, int hover, int enabled, const wchar_t *label) {
+    int rad = r.bottom - r.top;
+    if (primary) fill_round(dc, r, !enabled ? RGB(120, 92, 104) : hover ? RGB(248, 150, 182) : C_ACC, rad);
+    else { fill_alpha(dc, r, RGB(255, 255, 255), hover && enabled ? 46 : 22, rad); outline_round(dc, r, RGB(120, 124, 140), rad); }
+    txt(dc, primary ? f_btn : f_body, primary ? RGB(42, 10, 22) : (enabled ? C_TXT : C_MUTE), r, label, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+}
+
+static int target_pct(void) {
+    int done = 0; for (int i = 0; i < NCHECK; i++) done += CHECKS[i].done;
+    switch (g_mode) {
+    case M_STARTING: return 2;
+    case M_LOGIN: return g_player[0] ? 10 : 5;
+    case M_FETCH: return 10 + (int)(88.0 * g_fetch_got / NQUERY);
+    case M_DONE: return 100;
+    case M_WATCH: return (int)(100.0 * done / NCHECK);
+    default: return g_player[0] ? 100 : 0;
+    }
+}
+
+static void paint(HWND h) {
+    PAINTSTRUCT ps; HDC wdc = BeginPaint(h, &ps);
+    HDC dc = CreateCompatibleDC(wdc); HBITMAP bb = CreateCompatibleBitmap(wdc, WW, WH); HGDIOBJ ob = SelectObject(dc, bb);
+    DWORD now = GetTickCount();
+    /* background: your picture (cover), else a quiet ink field with one large accent disc */
+    RECT all = {0, 0, WW, WH};
+    HBRUSH ink = CreateSolidBrush(C_INK); FillRect(dc, &all, ink); DeleteObject(ink);
+    if (g_bg) {
+        HDC m = CreateCompatibleDC(dc); HGDIOBJ o = SelectObject(m, g_bg);
+        double sc = (double)WW / g_bgw > (double)WH / g_bgh ? (double)WW / g_bgw : (double)WH / g_bgh;
+        int sw = (int)(WW / sc), sh = (int)(WH / sc);
+        SetStretchBltMode(dc, HALFTONE); StretchBlt(dc, 0, 0, WW, WH, m, (g_bgw - sw) / 2, (g_bgh - sh) / 2, sw, sh, SRCCOPY);
+        SelectObject(m, o); DeleteDC(m);
+    } else {
+        HRGN rg = CreateEllipticRgn(560, -220, 1380, 600);
+        SelectClipRgn(dc, rg); fill_alpha(dc, all, C_ACC, 30, 0); SelectClipRgn(dc, NULL); DeleteObject(rg);
+        HRGN rg2 = CreateEllipticRgn(720, 260, 1240, 780);
+        SelectClipRgn(dc, rg2); fill_alpha(dc, all, RGB(111, 176, 207), 26, 0); SelectClipRgn(dc, NULL); DeleteObject(rg2);
+    }
+    /* left rail */
+    RECT rail = {0, 0, 72, WH}; fill_alpha(dc, rail, RGB(8, 9, 14), 200, 0);
+    circle(dc, 36, 40, 18, C_ACC);
+    RECT rl = {18, 22, 54, 58}; txt(dc, f_h, RGB(42, 10, 22), rl, L"R", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    /* folder + log icons */
+    RECT rf = r_folder; if (g_hover == B_FOLDER) fill_alpha(dc, rf, RGB(255, 255, 255), 30, 12);
+    { HPEN p = CreatePen(PS_SOLID, 2, C_MUTE); HGDIOBJ o = SelectObject(dc, p), b0 = SelectObject(dc, GetStockObject(NULL_BRUSH));
+      int x = rf.left + 12, y = rf.top + 13; RoundRect(dc, x, y + 3, x + 21, y + 18, 4, 4); MoveToEx(dc, x, y + 3, NULL); LineTo(dc, x, y); LineTo(dc, x + 8, y); LineTo(dc, x + 10, y + 3);
+      RECT rg = r_logb; int lx = rg.left + 13, ly = rg.top + 12; Rectangle(dc, lx, ly, lx + 18, ly + 21);
+      for (int i = 0; i < 3; i++) { MoveToEx(dc, lx + 4, ly + 6 + i * 5, NULL); LineTo(dc, lx + 14, ly + 6 + i * 5); }
+      SelectObject(dc, o); SelectObject(dc, b0); DeleteObject(p); }
+    if (g_hover == B_LOG) fill_alpha(dc, r_logb, RGB(255, 255, 255), 30, 12);
+    /* window buttons */
+    if (g_hover == B_CLOSE) fill_alpha(dc, r_close, RGB(232, 72, 85), 200, 8);
+    if (g_hover == B_MIN) fill_alpha(dc, r_min, RGB(255, 255, 255), 40, 8);
+    { HPEN p = CreatePen(PS_SOLID, 2, C_TXT); HGDIOBJ o = SelectObject(dc, p);
+      int cx = (r_close.left + r_close.right) / 2, cy = (r_close.top + r_close.bottom) / 2;
+      MoveToEx(dc, cx - 6, cy - 6, NULL); LineTo(dc, cx + 7, cy + 7); MoveToEx(dc, cx + 6, cy - 6, NULL); LineTo(dc, cx - 7, cy + 7);
+      cx = (r_min.left + r_min.right) / 2; MoveToEx(dc, cx - 7, cy, NULL); LineTo(dc, cx + 8, cy);
+      SelectObject(dc, o); DeleteObject(p); }
+    /* title (asymmetric, top-left) */
+    RECT rt = {104, 34, 700, 84}; txt(dc, f_title, C_TXT, rt, L"Rozefield Backup", DT_LEFT | DT_SINGLELINE);
+    RECT rs = {106, 84, 700, 108}; txt(dc, f_small, RGB(220, 222, 232), rs, L"Keep your OverField account. The official servers close on 8 Feb 2027.", DT_LEFT | DT_SINGLELINE);
+
+    /* status card */
+    RECT card = {104, 132, 560, 408}; fill_alpha(dc, card, RGB(12, 13, 20), 205, 22);
+    const wchar_t *st; COLORREF sc;
+    switch (g_mode) {
+    case M_STARTING: st = L"Starting the game"; sc = C_WARN; break;
+    case M_LOGIN: st = g_player[0] ? L"Logged in" : L"Waiting for you to log in"; sc = C_WARN; break;
+    case M_FETCH: st = L"Collecting your account"; sc = C_OK; break;
+    case M_DONE: st = L"Everything collected"; sc = C_OK; break;
+    case M_WATCH: st = L"Watching your running game"; sc = C_OK; break;
+    default: st = g_player[0] ? L"Ready to save" : L"Not started"; sc = C_MUTE;
+    }
+    int pulse = (g_mode == M_FETCH || g_mode == M_WATCH || g_mode == M_LOGIN) ? (int)(3 + 2 * sin(now / 260.0)) : 4;
+    circle(dc, 132, 164, pulse, sc);
+    RECT rst = {146, 152, 540, 176}; txt(dc, f_small, sc, rst, st, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    wchar_t nm[160]; if (g_player[0]) MultiByteToWideChar(CP_UTF8, 0, g_player, -1, nm, 160); else wcscpy(nm, L"No account yet");
+    RECT rn = {128, 182, 540, 230}; txt(dc, f_big, C_TXT, rn, nm, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+    /* percentage + animated bar */
+    wchar_t pc[16]; swprintf(pc, 16, L"%d%%", (int)(g_pct_shown + 0.5));
+    RECT rp = {128, 238, 400, 306}; txt(dc, f_pct, g_mode == M_IDLE && !g_player[0] ? C_MUTE : C_TXT, rp, pc, DT_LEFT | DT_SINGLELINE);
+    wchar_t sub[160];
+    if (g_mode == M_FETCH) swprintf(sub, 160, L"%ld of %d look-ups answered", (long)g_fetch_got, NQUERY);
+    else if (g_mode == M_WATCH) { int d = 0; for (int i = 0; i < NCHECK; i++) d += CHECKS[i].done; swprintf(sub, 160, L"%d of %d parts seen", d, NCHECK); }
+    else if (g_mode == M_DONE) wcscpy(sub, g_saved_once ? L"Saved. Close the game whenever you like." : L"Press Save backup, or close the game.");
+    else if (g_mode == M_LOGIN) wcscpy(sub, L"Log in with your official account");
+    else wcscpy(sub, L"Press Open game to begin");
+    RECT rsub = {300, 262, 540, 298}; txt(dc, f_small, C_MUTE, rsub, sub, DT_RIGHT | DT_BOTTOM | DT_SINGLELINE);
+    RECT track = {128, 312, 536, 322}; fill_alpha(dc, track, RGB(255, 255, 255), 36, 10);
+    int fw = (int)((track.right - track.left) * g_pct_shown / 100.0);
+    if (fw > 0) {
+        RECT fill = {track.left, track.top, track.left + fw, track.bottom}; fill_round(dc, fill, g_mode == M_DONE ? C_OK : C_ACC, 10);
+        if (g_mode == M_FETCH || g_mode == M_LOGIN || g_mode == M_WATCH) {   /* shimmer travels along the filled part */
+            int span = fw + 90, x = track.left - 90 + (int)((now / 4) % (DWORD)span);
+            HRGN clip = CreateRoundRectRgn(fill.left, fill.top, fill.right + 1, fill.bottom + 1, 10, 10);
+            SelectClipRgn(dc, clip);
+            for (int i = 0; i < 6; i++) { RECT sh = {x + i * 10, track.top, x + i * 10 + 10, track.bottom}; fill_alpha(dc, sh, RGB(255, 255, 255), (BYTE)(18 + 14 * (i < 3 ? i : 5 - i)), 0); }
+            SelectClipRgn(dc, NULL); DeleteObject(clip);
+        }
+    }
+    RECT rnote = {128, 340, 540, 396};
+    txt(dc, f_small, C_MUTE, rnote, L"Only read-only look-ups are sent, so nothing in your account changes. Your login token is not saved, and game files go back to normal afterwards.", DT_LEFT | DT_WORDBREAK);
+
+    /* checklist (right) */
+    RECT cl = {WW - 392, 84, WW - 36, 84 + 60 + NCHECK * 34}; fill_alpha(dc, cl, RGB(12, 13, 20), 205, 22);
+    int done = 0; for (int i = 0; i < NCHECK; i++) done += CHECKS[i].done;
+    RECT rch = {cl.left + 22, cl.top + 18, cl.right - 22, cl.top + 42}; txt(dc, f_h, C_TXT, rch, L"Checklist", DT_LEFT | DT_SINGLELINE);
+    wchar_t cnt[40]; swprintf(cnt, 40, L"%d of %d saved", done, NCHECK); txt(dc, f_small, C_MUTE, rch, cnt, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    for (int i = 0; i < NCHECK; i++) {
+        int y = cl.top + 50 + i * 34;
+        DWORD age = CHECKS[i].done ? now - g_flash[i] : 99999;
+        if (CHECKS[i].done) { RECT rb = {cl.left + 10, y, cl.right - 10, y + 30}; fill_alpha(dc, rb, age < 700 ? C_ACC : C_OK, (BYTE)(age < 700 ? 80 - age / 10 : 26), 12); }
+        int r = CHECKS[i].done ? (age < 220 ? 6 + (int)(age / 30) : 11) : 11;
+        circle(dc, cl.left + 30, y + 15, r, CHECKS[i].done ? C_OK : RGB(70, 73, 88));
+        if (CHECKS[i].done && age >= 160) tick(dc, cl.left + 30, y + 15, RGB(14, 26, 18));
+        wchar_t lb[120]; MultiByteToWideChar(CP_UTF8, 0, CHECKS[i].label, -1, lb, 120);
+        RECT rl2 = {cl.left + 52, y, cl.right - 120, y + 30}; txt(dc, f_body, CHECKS[i].done ? C_TXT : RGB(205, 208, 220), rl2, lb, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+        const wchar_t *tag; COLORREF tc = C_MUTE;
+        int optional = strstr(CHECKS[i].label, "optional") != NULL;
+        if (CHECKS[i].done) { tag = L"saved"; tc = RGB(159, 227, 180); }
+        else if (optional) tag = L"optional";
+        else if (g_mode == M_FETCH) { tag = L"collecting"; tc = C_WARN; }
+        else if (g_mode == M_WATCH) { tag = L"open in game"; tc = C_WARN; }
+        else tag = L"after login";
+        RECT rtg = {cl.right - 130, y, cl.right - 22, y + 30}; txt(dc, f_small, tc, rtg, tag, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    }
+
+    /* bottom bar */
+    RECT bar = {72, WH - 112, WW, WH}; fill_alpha(dc, bar, RGB(8, 9, 14), 190, 0);
+    RECT rlog = {104, WH - 92, WW - 640, WH - 64}; txt(dc, f_body, C_TXT, rlog, g_lastlog, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+    wchar_t gf[MAX_PATH + 32]; wchar_t wg[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_game, -1, wg, MAX_PATH);
+    swprintf(gf, MAX_PATH + 32, L"Game folder: %ls", g_game[0] ? wg : L"not found - use the folder button");
+    RECT rgf = {104, WH - 60, WW - 640, WH - 36}; txt(dc, f_small, C_MUTE, rgf, gf, DT_LEFT | DT_SINGLELINE | DT_PATH_ELLIPSIS);
+    int busy = g_mode == M_STARTING || g_mode == M_LOGIN || g_mode == M_FETCH || g_mode == M_WATCH;
+    pill(dc, r_run, 0, g_hover == B_RUNNING, !busy, g_mode == M_WATCH ? L"Watching\x2026" : L"Use running game");
+    pill(dc, r_save, 0, g_hover == B_SAVE, g_player[0] != 0, L"Save backup now");
+    const wchar_t *ml; wchar_t mlb[40];
+    switch (g_mode) {
+    case M_STARTING: ml = L"Starting\x2026"; break;
+    case M_LOGIN: ml = L"Log in to continue"; break;
+    case M_FETCH: swprintf(mlb, 40, L"Collecting %d%%", (int)(g_pct_shown + 0.5)); ml = mlb; break;
+    case M_DONE: ml = L"Save backup"; break;
+    case M_WATCH: ml = L"Save backup"; break;
+    default: ml = g_player[0] ? L"Save backup" : L"Open game";
+    }
+    pill(dc, r_main, 1, g_hover == B_MAIN, !(g_mode == M_STARTING || g_mode == M_LOGIN || g_mode == M_FETCH) || (g_mode == M_WATCH), ml);
+
+    BitBlt(wdc, 0, 0, WW, WH, dc, 0, 0, SRCCOPY);
+    SelectObject(dc, ob); DeleteObject(bb); DeleteDC(dc);
+    EndPaint(h, &ps);
+}
+
+static int hit(int x, int y) {
+    POINT pt = {x, y};
+    if (PtInRect(&r_close, pt)) return B_CLOSE;
+    if (PtInRect(&r_min, pt)) return B_MIN;
+    if (PtInRect(&r_main, pt)) return B_MAIN;
+    if (PtInRect(&r_run, pt)) return B_RUNNING;
+    if (PtInRect(&r_save, pt)) return B_SAVE;
+    if (PtInRect(&r_folder, pt)) return B_FOLDER;
+    if (PtInRect(&r_logb, pt)) return B_LOG;
+    return B_NONE;
+}
+
+static void on_click(int b) {
+    switch (b) {
+    case B_CLOSE: PostMessageW(g_win, WM_CLOSE, 0, 0); break;
+    case B_MIN: ShowWindow(g_win, SW_MINIMIZE); break;
+    case B_MAIN:
+        if (g_mode == M_IDLE && !g_player[0]) start_backup();
+        else if (g_mode == M_DONE || g_mode == M_WATCH || (g_mode == M_IDLE && g_player[0])) do_save(0);
+        break;
+    case B_RUNNING: start_watch(); break;
+    case B_SAVE: do_save(0); break;
+    case B_FOLDER: if (g_mode == M_IDLE) browse(); break;
+    case B_LOG: ShellExecuteA(NULL, "open", g_logpath, NULL, NULL, SW_SHOWNORMAL); break;
+    }
+    InvalidateRect(g_win, NULL, FALSE);
 }
 
 static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     switch (m) {
-    case WM_COMMAND:
-        if (LOWORD(w) == 1) start_backup();
-        else if (LOWORD(w) == 2) do_save(0);
-        else if (LOWORD(w) == 3) browse();
-        return 0;
-    case WM_LOG: {
-        wchar_t *s = (wchar_t *)l;
-        int i = (int)SendMessageW(g_log, LB_ADDSTRING, 0, (LPARAM)s); SendMessageW(g_log, LB_SETTOPINDEX, i, 0);
-        SetWindowTextW(g_status, s); free(s); return 0; }
-    case WM_CHECK: refresh_checks(); return 0;
+    case WM_PAINT: paint(h); return 0;
+    case WM_ERASEBKGND: return 1;
+    case WM_TIMER: {
+        double t = target_pct();
+        g_pct_shown += (t - g_pct_shown) * 0.10; if (fabs(t - g_pct_shown) < 0.05) g_pct_shown = t;
+        InvalidateRect(h, NULL, FALSE); return 0; }
+    case WM_NCHITTEST: {
+        LRESULT r = DefWindowProcW(h, m, w, l);
+        if (r == HTCLIENT) {
+            POINT pt = {(short)LOWORD(l), (short)HIWORD(l)}; ScreenToClient(h, &pt);
+            if (pt.y < 120 && hit(pt.x, pt.y) == B_NONE && pt.x > 72) return HTCAPTION;
+        }
+        return r; }
+    case WM_MOUSEMOVE: {
+        int b = hit((short)LOWORD(l), (short)HIWORD(l));
+        if (b != g_hover) { g_hover = b; TRACKMOUSEEVENT te = {sizeof te, TME_LEAVE, h, 0}; TrackMouseEvent(&te); }
+        return 0; }
+    case WM_MOUSELEAVE: g_hover = 0; return 0;
+    case WM_SETCURSOR:
+        if (LOWORD(l) == HTCLIENT && g_hover) { SetCursor(LoadCursor(NULL, IDC_HAND)); return TRUE; }
+        break;
+    case WM_LBUTTONUP: on_click(hit((short)LOWORD(l), (short)HIWORD(l))); return 0;
+    case WM_LOG: { wchar_t *s = (wchar_t *)l; wcsncpy(g_lastlog, s, 511); g_lastlog[511] = 0; free(s); return 0; }
+    case WM_CHECK: return 0;
     case WM_GAMEEXIT:
         restore_all();
-        EnableWindow(g_open, TRUE);
+        if (g_mode != M_WATCH) InterlockedExchange(&g_mode, M_IDLE);
         ui_log("The game was closed.");
-        if (g_player[0]) do_save(1);
+        if (g_player[0] && !g_saved_once) do_save(1);
         return 0;
     case WM_CLOSE:
-        if (g_frames && g_player[0] && MessageBoxW(h, L"Save the backup before closing?", L"Rozefield Backup", MB_YESNO | MB_ICONQUESTION) == IDYES) do_save(1);
+        if (g_frames && g_player[0] && !g_saved_once && MessageBoxW(h, L"Save the backup before closing?", L"Rozefield Backup", MB_YESNO | MB_ICONQUESTION) == IDYES) do_save(1);
         restore_all();
         if (g_tmp) { fclose(g_tmp); g_tmp = NULL; DeleteFileA(g_tmppath); }
         DestroyWindow(h); return 0;
@@ -832,37 +1265,28 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     CoInitialize(NULL);
     find_game();
     if (g_game[0]) restore_all();   /* undo an earlier run that was killed */
-    ui_log("RozefieldBackup started. Game folder: %s", g_game[0] ? g_game : "(not found - use Browse)");
+    load_background();
+
+    f_title = CreateFontW(-40, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Bahnschrift SemiBold");
+    f_big = CreateFontW(-34, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Bahnschrift SemiBold");
+    f_pct = CreateFontW(-60, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Bahnschrift");
+    f_h = CreateFontW(-19, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Bahnschrift SemiBold");
+    f_body = CreateFontW(-15, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Segoe UI");
+    f_small = CreateFontW(-13, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Segoe UI");
+    f_btn = CreateFontW(-20, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Bahnschrift SemiBold");
 
     WNDCLASSW wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = hi; wc.lpszClassName = L"RozefieldBackup";
-    wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wc.hCursor = LoadCursor(NULL, IDC_ARROW); wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     RegisterClassW(&wc);
-    int W = 640, H = 560;
-    g_win = CreateWindowW(L"RozefieldBackup", L"Rozefield Backup - save your OverField account", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
-                          (GetSystemMetrics(SM_CXSCREEN) - W) / 2, (GetSystemMetrics(SM_CYSCREEN) - H) / 2, W, H, NULL, NULL, hi, NULL);
-    HFONT f = CreateFontW(-15, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Segoe UI");
-    HFONT fb = CreateFontW(-17, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Segoe UI");
-    HWND c[12]; int n = 0;
-    c[n++] = CreateWindowW(L"STATIC", L"OverField game folder (official Steam version):", WS_CHILD | WS_VISIBLE, 16, 12, 600, 20, g_win, NULL, hi, NULL);
-    g_edit = c[n++] = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 16, 34, 500, 26, g_win, NULL, hi, NULL);
-    c[n++] = CreateWindowW(L"BUTTON", L"Browse...", WS_CHILD | WS_VISIBLE, 524, 33, 92, 28, g_win, (HMENU)3, hi, NULL);
-    g_open = c[n++] = CreateWindowW(L"BUTTON", L"1.  Open OverField (Official)", WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 16, 72, 296, 44, g_win, (HMENU)1, hi, NULL);
-    g_save = c[n++] = CreateWindowW(L"BUTTON", L"2.  Save backup", WS_CHILD | WS_VISIBLE, 320, 72, 296, 44, g_win, (HMENU)2, hi, NULL);
-    c[n++] = CreateWindowW(L"STATIC", L"Saved for you after you log in:", WS_CHILD | WS_VISIBLE, 16, 128, 600, 20, g_win, NULL, hi, NULL);
-    g_check = c[n++] = CreateWindowExW(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_NOSEL, 16, 150, 600, 200, g_win, NULL, hi, NULL);
-    c[n++] = CreateWindowW(L"STATIC", L"Log:", WS_CHILD | WS_VISIBLE, 16, 358, 600, 20, g_win, NULL, hi, NULL);
-    g_log = c[n++] = CreateWindowExW(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | LBS_NOSEL, 16, 380, 600, 104, g_win, NULL, hi, NULL);
-    g_status = c[n++] = CreateWindowW(L"STATIC", L"", WS_CHILD | WS_VISIBLE | SS_ENDELLIPSIS, 16, 492, 600, 20, g_win, NULL, hi, NULL);
-    for (int i = 0; i < n; i++) SendMessageW(c[i], WM_SETFONT, (WPARAM)f, TRUE);
-    SendMessageW(g_open, WM_SETFONT, (WPARAM)fb, TRUE); SendMessageW(g_save, WM_SETFONT, (WPARAM)fb, TRUE);
-    SendMessageW(g_log, LB_SETHORIZONTALEXTENT, 1600, 0);
-    wchar_t wg[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_game, -1, wg, MAX_PATH); SetWindowTextW(g_edit, wg);
-    refresh_checks();
+    g_win = CreateWindowExW(WS_EX_APPWINDOW, L"RozefieldBackup", L"Rozefield Backup", WS_POPUP | WS_MINIMIZEBOX | WS_SYSMENU,
+                            (GetSystemMetrics(SM_CXSCREEN) - WW) / 2, (GetSystemMetrics(SM_CYSCREEN) - WH) / 2, WW, WH, NULL, NULL, hi, NULL);
+    SetWindowRgn(g_win, CreateRoundRectRgn(0, 0, WW + 1, WH + 1, 16, 16), TRUE);
     ShowWindow(g_win, show); UpdateWindow(g_win);
-    ui_log(g_game[0] ? "Ready. Press 1 to start the game, then log in." : "Choose your OverField folder with Browse..., then press 1.");
-    ui_log("Only read-only look-ups are sent: nothing in your account changes. Your login token is not saved. Game files and settings are put back automatically.");
+    SetTimer(g_win, 1, 30, NULL);
+    ui_log("RozefieldBackup started. Game folder: %s", g_game[0] ? g_game : "(not found - use the folder button)");
+    if (strstr(cmd, "--watch")) start_watch();
+    else ui_log(g_game[0] ? "Press Open game, or Use running game if OverField is already open." : "Choose your OverField folder with the folder button on the left.");
     MSG msg;
-    while (GetMessageW(&msg, NULL, 0, 0) > 0) { if (!IsDialogMessageW(g_win, &msg)) { TranslateMessage(&msg); DispatchMessageW(&msg); } }
+    while (GetMessageW(&msg, NULL, 0, 0) > 0) { TranslateMessage(&msg); DispatchMessageW(&msg); }
     return 0;
 }
