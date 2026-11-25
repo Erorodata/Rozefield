@@ -301,6 +301,8 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
     if owner is not None:
         data['sceneGardenData'] = garden_data(ctx, owner)
         data['placedCharacters'] = placed_characters(owner)
+    elif scene_id == PUBLIC_SCENE:
+        data['sceneGardenData'] = {}    # official: a public channel sends an empty garden, which clears the last plaza's decorations
     if before_push:
         before_push(channel_id, chan_label)
     ctx.push('SceneDataNotice', {'status': OK, 'data': data})
