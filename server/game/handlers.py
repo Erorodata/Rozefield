@@ -244,9 +244,11 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
     else:   # gardens / plaza: gather spots need gatherLimits to spawn; your own garden also shows what you collected
         W = _world_mod()
         mine = W.W(p, PUBLIC_SCENE)
-        gl = mine.get('gatherLimits') or W.layout().get(str(PUBLIC_SCENE), {}).get('gatherLimits')
-        if gl:
-            data['gatherLimits'] = gl
+        from game.life import scene_gather_limits, temp_store
+        data['gatherLimits'] = scene_gather_limits(p, PUBLIC_SCENE)
+        stored = temp_store(p)          # back in the plaza: the field haul goes into the bag (official)
+        if stored:
+            ctx.push('PackNotice', {'status': OK, 'items': stored})
         if owner is p and mine.get('collections'):
             data['collections'] = mine['collections']
     if owner is not None:

@@ -152,6 +152,92 @@ def achieve(p, lt):
 
 
 # ------------------------------------------------------------------ handlers
+
+# ---------------------------------------------------------------- gathering limits / temporary pack
+GATHER_KEYS = {0: 'flower', 1: 'wood', 2: 'stone', 3: 'butterfly', 4: 'water', 5: 'pick'}
+GATHER_MOON = {2: 1107, 3: 1108, 5: 1104}   # Moon Points gameplay ids seen per gather type (official capture)
+MOON_CHANCE = 0.25                         # seen on 4 of 19 gathers; the server-side odds are not in the client
+
+
+def gather_type(reward):
+    """GatherReward ids start with type+1: 1 flower, 2 wood, 3 stone, 4 insects, 5 water, 6 small creatures."""
+    return max(0, int(reward) // 100000000 - 1)
+
+
+def gather_rule(d, sid, gtype):
+    """Daily (total, lucky) limits from the map's GatherRuleID (Scene table) -> GatherRule."""
+    sc = d.row('scene', 'Scene', int(sid)) or {}
+    rules = d.table('gather', 'GatherRule')
+    r = rules.get(sc.get('GatherRuleID', 0)) or rules.get(0) or rules.get(None) or {}
+    k = GATHER_KEYS.get(gtype, 'pick')
+    return r.get(k.capitalize() + 'Num', 9999), r.get('LuckyFinish' + k + 'Num', 9999 if k == 'pick' else 0)
+
+
+def _gather_day():
+    return time.strftime('%Y-%m-%d', time.gmtime(time.time() + 4 * 3600))
+
+
+def gather_limits(p, sid):
+    """Per-map list in the official SceneDataNotice / GatherRsp shape; today's counts reset each game day."""
+    w = p.s.setdefault('world', {}).setdefault(str(sid), {})
+    gl = w.setdefault('gatherLimits', [])
+    if w.get('gather_day') != _gather_day():
+        w['gather_day'] = _gather_day()
+        for e in gl:
+            e.pop('gatherLimitNum', None); e.pop('luckyGatherLimitNum', None)
+    return gl
+
+
+def gather_limit(p, sid, gtype):
+    gl = gather_limits(p, sid)
+    e = next((e for e in gl if e.get('gatherType', 0) == gtype), None)
+    if e is None:
+        e = {'gatherType': gtype} if gtype else {}
+        gl.append(e)
+    return e
+
+
+def scene_gather_limits(p, sid):
+    """SceneDataNotice gatherLimits: every type, the player's own counts (zeros for a new player)."""
+    for g in GATHER_KEYS:
+        gather_limit(p, sid, g)
+    return gather_limits(p, sid)
+
+
+def temp_pack(p):
+    return p.s.setdefault('misc', {}).setdefault('temp_pack', [])
+
+
+def temp_add(p, iid, n):
+    """Stack into the temporary pack; returns the ItemDetail with the new pack total (official PackNotice)."""
+    tp = temp_pack(p)
+    e = next((e for e in tp if e.get('itemId') == iid and 'baseItem' in e), None)
+    if e is None:
+        e = {'itemId': iid, 'itemTag': p.d.item_tag(iid), 'tempPackIndex': max([x.get('tempPackIndex', 0) for x in tp] + [0]) + 1,
+             'baseItem': {'itemId': iid, 'num': '0'}}
+        tp.append(e)
+    e['baseItem']['num'] = str(int(e['baseItem'].get('num', 0) or 0) + n)
+    p.dirty = True
+    return {'mainItem': dict(e), 'packType': 'PackType_TempPack'}
+
+
+def temp_store(p):
+    """Back in the plaza: everything in the temporary pack moves into the bag (official PackNotice of bag totals)."""
+    tp = temp_pack(p)
+    pairs = [(e['itemId'], int(e.get('baseItem', {}).get('num', 1) or 1)) for e in tp if e.get('itemId')]
+    if not pairs:
+        return []
+    p.s['misc']['temp_pack'] = []
+    p._in_quest_items = True          # already counted as obtained when gathered
+    try:
+        _, changed = p.add_items(pairs)
+    finally:
+        p._in_quest_items = False
+    for iid, _ in pairs:
+        Q.event(p, Q.C['ItemNum'], iid, absolute=p.count(iid))
+    p.dirty = True
+    return changed
+
 def register(H, pack):
     def craft(lt, field):
         def f(ctx, req):
@@ -269,13 +355,51 @@ def register(H, pack):
         return gather_tool.get(reward, 15)
 
     def gather(ctx, req):
+        """Official flow (capture 2026-11-25): the client says whether the spot was a lucky one; the lucky row of
+        GatherReward (Count 3) replaces the normal row while today's lucky count is under the map's GatherRule
+        limit. Each map keeps per type: gatherNum (all-time), gatherLimitNum / luckyGatherLimitNum (today).
+        Outside the plaza the haul goes to the temporary pack and is stored in the bag back in the plaza."""
         p = ctx.p
         gi = req.get('gatherItem', {})
-        rw = p.d.row('gather', 'GatherReward', gi.get('Reward', 0)) or {}
-        items = [(x['ItemID'], x.get('Count', 1)) for x in rw.get('GatherRewardGroupInfo', []) if x.get('ItemID')]
-        got, changed = p.add_items(items) if items else ([], [])
-        ctx.reply({'status': OK, 'index': gi.get('Index', 0), 'items': got})
-        use, gains = TOOL_COND.get(tool_of(p.d, gi.get('Reward', 0)), TOOL_COND[15])
+        reward = gi.get('Reward', 0)
+        sid = p.s['scene_id']
+        gtype = gather_type(reward)
+        lim = gather_limit(p, sid, gtype)
+        total, lucky_total = gather_rule(p.d, sid, gtype)
+        if lim.get('gatherLimitNum', 0) >= total:
+            return ctx.reply({'status': FAIL, 'index': gi.get('Index', 0)})
+        rw = p.d.row('gather', 'GatherReward', reward) or {}
+        rows = [x for x in rw.get('GatherRewardGroupInfo', []) if x.get('ItemID')]
+        lucky = bool(gi.get('isLucky')) and any(x.get('Lucky') for x in rows) and lim.get('luckyGatherLimitNum', 0) < lucky_total
+        pick = [x for x in rows if bool(x.get('Lucky')) == lucky] or rows[:1]
+        # one row per gather (official: 200000101 lists Normal + Fine wood, a gather gave one of them). The table has
+        # no weights; the first (common) row is taken 80% of the time.
+        x = pick[0] if len(pick) == 1 or random.random() < 0.8 else random.choice(pick[1:])
+        items = [(x['ItemID'], x.get('Count', 1))]
+        lim['gatherNum'] = lim.get('gatherNum', 0) + 1
+        lim['gatherLimitNum'] = lim.get('gatherLimitNum', 0) + 1
+        if lucky:
+            lim['luckyGatherLimitNum'] = lim.get('luckyGatherLimitNum', 0) + 1
+        p.dirty = True
+        if sid != 9999:
+            changed = [temp_add(p, i, n) for i, n in items]
+            rsp_items = [{'mainItem': {'itemId': i, 'itemTag': p.d.item_tag(i), 'baseItem': {'itemId': i, 'num': str(n)}},
+                          'packType': 'PackType_TempPack'} for i, n in items]
+            for i, n in items:
+                Q.event(p, Q.C['GetItem'], i, n)
+        else:
+            rsp_items, changed = p.add_items(items) if items else ([], [])
+        g = dict(lim)
+        ctx.reply({'status': OK, 'index': gi.get('Index', 0), 'items': rsp_items,
+                   'groupGatherLimit': {'gatherLimit': {k: v for k, v in g.items() if k != 'gatherNum'} | {'gatherNum': g['gatherLimitNum']}},
+                   'sceneGatherLimit': {'sceneId': sid, 'gatherLimits': list(gather_limits(p, sid))}})
+        if gtype in GATHER_MOON and random.random() < MOON_CHANCE:
+            try:
+                from game.events import moon_reward
+                moon_reward(ctx, GATHER_MOON[gtype], 5)
+            except Exception:
+                pass
+        use, gains = TOOL_COND.get(tool_of(p.d, reward), TOOL_COND[15])
         life_event(p, GATHER, use)
         lg = p.d.table('lifegather', 'LifeGatherItem')
         for iid, n in items:

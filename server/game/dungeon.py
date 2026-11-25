@@ -191,6 +191,12 @@ def register(H, pack, enter_scene, scene_player):
                 rsp['dropItem'] = {'index': idx, 'items': [{'mainItem': p.item_info(i, n)} for i, n in items]}
                 ctx.__dict__['kills_since_drop'] = 0
         ctx.reply(rsp)
+        if not ctx.__dict__.get('dungeon_id') and random.random() < 0.25:   # field kill Moon Points (official id 1101)
+            try:
+                from game.events import moon_reward
+                moon_reward(ctx, 1101, 5)
+            except Exception:
+                pass
         ctx.__dict__['dungeon_kills'] = ctx.__dict__.get('dungeon_kills', 0) + 1
         Q.event(p, Q.C['KillMonest'], mid)
         Q.event(p, Q.C['KillMonsterNum'])

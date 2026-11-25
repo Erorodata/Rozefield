@@ -120,11 +120,11 @@ def scene_fields(p, sid):
     ids |= set(w['flagIds'])          # anything the player's own save already has
     if ids:
         out['flagIds'] = sorted(ids)
-    for k in ('gatherLimits', 'chairInfoList', 'vehicleInfoList', 'campFires'):
+    for k in ('chairInfoList', 'vehicleInfoList', 'campFires'):
         if lay.get(k):
             out[k] = lay[k]
-    if w.get('gatherLimits'):          # the player's own official gather counts (from their backup)
-        out['gatherLimits'] = w['gatherLimits']
+    from game.life import scene_gather_limits   # the player's own counts (imported from their backup, then kept here)
+    out['gatherLimits'] = scene_gather_limits(p, sid)
     dt = p.d.table('dungeon', 'Dungeon')   # official sends each map only its own dungeons (by WorldID)
     mine = {int(k): v for k, v in p.s.get('dungeons', {}).items()}
     ds = [dict(v, monsters=v.get('monsters', [0])) for v in mine.values()
@@ -252,6 +252,8 @@ def register(H, pack, scene_player):
             if dyn is None:
                 return ctx.reply({'status': FAIL})
             items, changed = give(ctx, [(GOLD, random.randint(60, 120))] + roll_gear(p.d, random.randint(2, 3), p.s.get('world_level', 1)))
+            if random.random() < 0.5:     # field chest Moon Points (official id 1120)
+                _moon(ctx, 1120, 5)
             ctx.reply({'status': OK, 'items': items})
             pack(ctx, changed)
             Q.event(p, Q.C['OpenBox'])
@@ -279,6 +281,8 @@ def register(H, pack, scene_player):
         if big:
             items += roll_gear(p.d, 1, p.s.get('world_level', 1)) + [(102, 10)]
         items, changed = give(ctx, items)
+        if random.random() < 0.5:         # field chest Moon Points (official id 1120)
+            _moon(ctx, 1120, 5)
         ctx.reply({'status': OK, 'items': items})
         pack(ctx, changed)
         Q.event(p, Q.C['OpenBox'])
