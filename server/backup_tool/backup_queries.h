@@ -100,7 +100,9 @@ static const unsigned char Q96[] = {10,59,229,188,149,229,175,188,229,155,190,23
 static const unsigned char Q97[] = {10,47,229,188,149,229,175,188,229,155,190,231,137,135,95,229,188,149,229,175,188,231,149,140,233,157,162,45,232,135,170,229,138,168,230,136,152,230,150,151,229,188,149,229,175,188,228,184,128};  /* GetArchiveInfoReq */
 static const unsigned char Q98[] = {10,12,233,166,150,230,172,161,230,138,189,229,141,161};  /* GetArchiveInfoReq */
 static const unsigned char Q99[] = {10,12,233,166,150,230,172,161,230,159,147,232,137,178};  /* GetArchiveInfoReq */
+static const unsigned char QMAIN[] = {0};  /* PlayerMainDataReq: the account summary */
 static const struct query QUERIES[] = {
+    {1005, 0, QMAIN},
     {1611, 0, Q0},
     {1423, 0, Q1},
     {1523, 0, Q2},

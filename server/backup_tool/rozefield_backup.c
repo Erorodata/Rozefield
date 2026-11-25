@@ -38,6 +38,7 @@
 #include <math.h>
 #include "backup_queries.h"
 #include "msgids_known.h"
+#include "windivert.h"
 
 #define DISPATCH_HOST "dsp-global-of.inutan.com"
 #define DISPATCH_PORT 18881
@@ -57,6 +58,10 @@ static wchar_t g_lastlog[512] = L"";
 static DWORD g_flash[32];
 static int g_hover = 0, g_saved_once = 0;
 static wchar_t g_savedpath[MAX_PATH];
+static volatile int g_up_bound;
+static SOCKET tcp_connect_up(const char *ip, int port);
+static int wd_load(void);
+static DWORD WINAPI watch_wd_thread(LPVOID a);
 static char g_exedir[MAX_PATH], g_game[MAX_PATH], g_cfg[MAX_PATH], g_cfgbak[MAX_PATH];
 static char g_upstream_ip[64];
 static char g_gate_ip[64]; static int g_gate_port;
@@ -645,7 +650,7 @@ static DWORD WINAPI server_to_game(LPVOID a) {
                 if (g_player[0]) ui_log("Logged in as %s. Nothing else to do - the rest is collected for you.", g_player);
                 PostMessageW(g_win, WM_CHECK, 0, 0);
             }
-            if (h.msg_id == 1006 && !InterlockedExchange(&g->logged_in, 1))
+            if ((h.msg_id == 1006 || h.msg_id == 1004) && !InterlockedExchange(&g->logged_in, 1))
                 CloseHandle(CreateThread(NULL, 0, fetch_rest, g, 0, NULL));
             if (ours) InterlockedIncrement(&g_fetch_got);
             mark_check((int)h.msg_id);
@@ -663,8 +668,9 @@ static DWORD WINAPI server_to_game(LPVOID a) {
 static DWORD WINAPI gate_client(LPVOID arg) {
     SOCKET c = (SOCKET)(uintptr_t)arg;
     if (!g_gate_ip[0]) { closesocket(c); return 0; }
-    SOCKET u = tcp_connect(g_gate_ip, g_gate_port);
+    SOCKET u = g_up_bound ? tcp_connect_up(g_gate_ip, g_gate_port) : tcp_connect(g_gate_ip, g_gate_port);
     if (u == INVALID_SOCKET) { ui_log("Could not reach the official game server."); closesocket(c); return 0; }
+    if (g_up_bound) ui_log("The game reconnected through this window - collecting from official now.");
     struct gconn *g = (struct gconn *)calloc(1, sizeof *g);
     g->game = c; g->server = u; g->conn = InterlockedIncrement((LONG *)&g_conns);
     InitializeCriticalSection(&g->cs);
@@ -824,6 +830,7 @@ struct tcpflow { uint16_t lport; struct tcpdir d[2]; };
 static struct tcpflow g_flows[16];
 static uint32_t g_watch_ip, g_watch_local; static uint16_t g_watch_port;
 static volatile LONG g_pk_all, g_pk_game, g_pk_frames;
+static FILE *g_dbg; static int g_dbg_n;
 
 static int known_id(uint64_t id) {
     int lo = 0, hi = NKNOWN - 1;
@@ -926,6 +933,7 @@ static void watch_segment(struct tcpflow *fl, int dir, uint32_t seq, int syn, co
     watch_drain(fl, dir);
 }
 
+static void watch_packet(unsigned char *pkt, int n);
 static DWORD WINAPI watch_thread(LPVOID a) {
     SOCKET s = socket(AF_INET, SOCK_RAW, IPPROTO_IP);
     struct sockaddr_in sa = {0}; sa.sin_family = AF_INET; sa.sin_addr.s_addr = g_watch_local;
@@ -937,32 +945,41 @@ static DWORD WINAPI watch_thread(LPVOID a) {
     }
     snprintf(g_tmppath, sizeof g_tmppath, "%srecording.tmp", g_exedir);
     if (!g_tmp) g_tmp = fopen(g_tmppath, "wb+");
+    { char dp[MAX_PATH]; snprintf(dp, sizeof dp, "%swatch_debug.bin", g_exedir); g_dbg = fopen(dp, "wb"); }
     ui_log("Watching your running game. To save your account, go back to the title screen in the game and log in again.");
     static unsigned char pkt[65536];
     int n;
-    while ((n = recv(s, (char *)pkt, sizeof pkt, 0)) > 0) {
+    while ((n = recv(s, (char *)pkt, sizeof pkt, 0)) > 0) watch_packet(pkt, n);
+    closesocket(s);
+    return 0;
+}
+
+static void watch_packet(unsigned char *pkt, int n) {
+    {
         InterlockedIncrement(&g_pk_all);
-        if (n < 20 || (pkt[0] >> 4) != 4 || pkt[9] != 6) continue;
-        int ihl = (pkt[0] & 15) * 4, tl = (pkt[2] << 8) | pkt[3]; if (tl > n) tl = n;
+        if (n < 20 || (pkt[0] >> 4) != 4 || pkt[9] != 6) return;
+        int ihl = (pkt[0] & 15) * 4, tl = (pkt[2] << 8) | pkt[3];
+        if (tl > n || tl < ihl + 20) tl = n;   /* coalesced receives can carry a 0 / short IP length */
         uint32_t src, dst; memcpy(&src, pkt + 12, 4); memcpy(&dst, pkt + 16, 4);
-        const unsigned char *tcp = pkt + ihl; if (ihl + 20 > tl) continue;
+        const unsigned char *tcp = pkt + ihl; if (ihl + 20 > tl) return;
         uint16_t sp = (tcp[0] << 8) | tcp[1], dp = (tcp[2] << 8) | tcp[3];
         uint32_t seq = ((uint32_t)tcp[4] << 24) | (tcp[5] << 16) | (tcp[6] << 8) | tcp[7];
         int thl = (tcp[12] >> 4) * 4, syn = tcp[13] & 2;
         int dir;
         if (dp == g_watch_port && (!g_watch_ip || dst == g_watch_ip)) dir = 0;
         else if (sp == g_watch_port && (!g_watch_ip || src == g_watch_ip)) dir = 1;
-        else continue;
+        else return;
         InterlockedIncrement(&g_pk_game);
+        if (g_dbg && g_dbg_n < 400) {   /* first packets of the game's connection, for diagnosis */
+            uint32_t len = (uint32_t)n; fwrite(&len, 4, 1, g_dbg); fwrite(pkt, 1, n, g_dbg); fflush(g_dbg); g_dbg_n++;
+        }
         uint16_t lport = dir == 0 ? sp : dp;
         struct tcpflow *fl = NULL;
         for (int i = 0; i < 16; i++) if (g_flows[i].lport == lport) { fl = &g_flows[i]; break; }
         if (!fl) for (int i = 0; i < 16; i++) if (!g_flows[i].lport) { fl = &g_flows[i]; fl->lport = lport; break; }
-        if (!fl) continue;
+        if (!fl) return;
         watch_segment(fl, dir, seq, syn, tcp + thl, tl - ihl - thl);
     }
-    closesocket(s);
-    return 0;
 }
 
 static DWORD WINAPI watch_stats(LPVOID a) {
@@ -1024,8 +1041,143 @@ static void start_watch(void) {
         else ui_log("Game connection not found yet (port %d); listening on %s for it.", g_watch_port, b);
     }
     CloseHandle(CreateThread(NULL, 0, watch_stats, NULL, 0, NULL));
+    if (wd_load()) {
+        snprintf(g_tmppath, sizeof g_tmppath, "%srecording.tmp", g_exedir);
+        if (!g_tmp) g_tmp = fopen(g_tmppath, "wb+");
+        ui_log("Watching your running game (WinDivert).");
+        CloseHandle(CreateThread(NULL, 0, watch_wd_thread, NULL, 0, NULL));
+        return;
+    }
     if (!pid) ui_log("OverField is not running yet - start it any way you like; this window is listening.");
     CloseHandle(CreateThread(NULL, 0, watch_thread, NULL, 0, NULL));
+}
+
+/* ------------------------------------------------------------------ WinDivert (WinDivert.dll + WinDivert64.sys next to the exe)
+ * Used two ways, both only for the game's own connection to the OFFICIAL game server (port 11001):
+ *  - reconnect: the game's next connection is steered into this window's relay (packet addresses swapped, the
+ *    streamdump way), so the relay can fetch everything; the relay talks to the official server itself.
+ *  - watch: a read-only copy of the traffic, if the reconnect isn't wanted or fails. */
+typedef HANDLE (*tWDOpen)(const char *, WINDIVERT_LAYER, INT16, UINT64);
+typedef BOOL (*tWDRecv)(HANDLE, VOID *, UINT, UINT *, WINDIVERT_ADDRESS *);
+typedef BOOL (*tWDSend)(HANDLE, const VOID *, UINT, UINT *, const WINDIVERT_ADDRESS *);
+typedef BOOL (*tWDCalc)(VOID *, UINT, WINDIVERT_ADDRESS *, UINT64);
+typedef BOOL (*tWDClose)(HANDLE);
+static tWDOpen pWDOpen; static tWDRecv pWDRecv; static tWDSend pWDSend; static tWDCalc pWDCalc; static tWDClose pWDClose;
+static HANDLE g_wd_redirect = INVALID_HANDLE_VALUE;
+#define PROXY_PORT 41101
+#define UP_PORT0 41110
+#define UP_PORT1 41125
+
+static int wd_load(void) {
+    if (pWDOpen) return 1;
+    char p[MAX_PATH]; snprintf(p, sizeof p, "%sWinDivert.dll", g_exedir);
+    HMODULE m = LoadLibraryA(p);
+    if (!m) return 0;
+    pWDOpen = (tWDOpen)GetProcAddress(m, "WinDivertOpen"); pWDRecv = (tWDRecv)GetProcAddress(m, "WinDivertRecv");
+    pWDSend = (tWDSend)GetProcAddress(m, "WinDivertSend"); pWDCalc = (tWDCalc)GetProcAddress(m, "WinDivertHelperCalcChecksums");
+    pWDClose = (tWDClose)GetProcAddress(m, "WinDivertClose");
+    return pWDOpen && pWDRecv && pWDSend && pWDCalc && pWDClose;
+}
+
+static DWORD WINAPI watch_wd_thread(LPVOID a) {
+    HANDLE h = pWDOpen("tcp and (tcp.SrcPort == 11001 or tcp.DstPort == 11001)", WINDIVERT_LAYER_NETWORK, 0,
+                       WINDIVERT_FLAG_SNIFF | WINDIVERT_FLAG_RECV_ONLY);
+    if (h == INVALID_HANDLE_VALUE) { ui_log("Could not start listening (WinDivert error %lu).", GetLastError()); InterlockedExchange(&g_mode, M_IDLE); return 0; }
+    static unsigned char pkt[65536 + 64]; UINT n; WINDIVERT_ADDRESS addr;
+    while (g_mode == M_WATCH && pWDRecv(h, pkt, sizeof pkt, &n, &addr)) watch_packet(pkt, (int)n);
+    pWDClose(h);
+    return 0;
+}
+
+static DWORD WINAPI redirect_thread(LPVOID a) {
+    static unsigned char pkt[65536 + 64]; UINT n; WINDIVERT_ADDRESS addr;
+    while (pWDRecv(g_wd_redirect, pkt, sizeof pkt, &n, &addr)) {
+        if (n < 40 || (pkt[0] >> 4) != 4) { pWDSend(g_wd_redirect, pkt, n, NULL, &addr); continue; }
+        int ihl = (pkt[0] & 15) * 4; unsigned char *tcp = pkt + ihl;
+        uint16_t sp = (tcp[0] << 8) | tcp[1], dp = (tcp[2] << 8) | tcp[3];
+        unsigned char tmp[4];
+        memcpy(tmp, pkt + 16, 4); memcpy(pkt + 16, pkt + 12, 4); memcpy(pkt + 12, tmp, 4);   /* swap addresses */
+        if (dp == 11001) { tcp[2] = PROXY_PORT >> 8; tcp[3] = PROXY_PORT & 255; }            /* game -> relay */
+        else if (sp == PROXY_PORT) { tcp[0] = 11001 >> 8; tcp[1] = 11001 & 255; }           /* relay -> game */
+        addr.Outbound = 0;
+        pWDCalc(pkt, n, &addr, 0);
+        pWDSend(g_wd_redirect, pkt, n, NULL, &addr);
+    }
+    return 0;
+}
+
+static SOCKET tcp_listen_any(int port) {
+    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in a = {0}; a.sin_family = AF_INET; a.sin_port = htons((u_short)port); a.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (bind(s, (struct sockaddr *)&a, sizeof a) != 0 || listen(s, 16) != 0) { closesocket(s); return INVALID_SOCKET; }
+    return s;
+}
+
+/* the relay's own connection to the official game server uses a local port the redirect leaves alone */
+static SOCKET tcp_connect_up(const char *ip, int port) {
+    for (int q = UP_PORT0; q <= UP_PORT1; q++) {
+        SOCKET s = socket(AF_INET, SOCK_STREAM, 0); BOOL yes = 1;
+        setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char *)&yes, sizeof yes);
+        struct sockaddr_in me = {0}; me.sin_family = AF_INET; me.sin_port = htons((u_short)q);
+        if (bind(s, (struct sockaddr *)&me, sizeof me) != 0) { closesocket(s); continue; }
+        struct sockaddr_in a = {0}; a.sin_family = AF_INET; a.sin_port = htons((u_short)port); inet_pton(AF_INET, ip, &a.sin_addr);
+        if (connect(s, (struct sockaddr *)&a, sizeof a) == 0) return s;
+        closesocket(s);
+    }
+    return INVALID_SOCKET;
+}
+
+static int find_game_conn(MIB_TCPROW *out) {
+    DWORD pid = find_launcher(), sz = 0; int ok = 0;
+    GetExtendedTcpTable(NULL, &sz, FALSE, AF_INET, TCP_TABLE_OWNER_PID_CONNECTIONS, 0);
+    MIB_TCPTABLE_OWNER_PID *tb = (MIB_TCPTABLE_OWNER_PID *)malloc(sz + 4096);
+    if (tb && GetExtendedTcpTable(tb, &sz, FALSE, AF_INET, TCP_TABLE_OWNER_PID_CONNECTIONS, 0) == NO_ERROR)
+        for (DWORD i = 0; i < tb->dwNumEntries && !ok; i++) {
+            MIB_TCPROW_OWNER_PID *r = &tb->table[i];
+            if (pid && r->dwOwningPid == pid && ntohs((u_short)r->dwRemotePort) == 11001 && r->dwState == MIB_TCP_STATE_ESTAB) {
+                out->dwState = r->dwState; out->dwLocalAddr = r->dwLocalAddr; out->dwLocalPort = r->dwLocalPort;
+                out->dwRemoteAddr = r->dwRemoteAddr; out->dwRemotePort = r->dwRemotePort; ok = 1;
+            }
+        }
+    free(tb);
+    return ok;
+}
+
+static void start_reconnect(void) {
+    if (g_mode != M_IDLE && g_mode != M_DONE && g_mode != M_WATCH) return;
+    if (!is_admin()) {
+        wchar_t me[MAX_PATH]; GetModuleFileNameW(NULL, me, MAX_PATH);
+        SHELLEXECUTEINFOW ei = {sizeof ei}; ei.lpVerb = L"runas"; ei.lpFile = me; ei.lpParameters = L"--reconnect"; ei.nShow = SW_SHOWNORMAL;
+        if (ShellExecuteExW(&ei)) { restore_all(); ExitProcess(0); }
+        ui_log("This needs administrator rights (the prompt was closed).");
+        return;
+    }
+    if (!wd_load()) { ui_log("WinDivert.dll / WinDivert64.sys are missing next to this program - only watching is possible."); start_watch(); return; }
+    MIB_TCPROW row;
+    if (!find_game_conn(&row)) { ui_log("OverField isn't connected to its server yet. Log in first, then press Use running game."); return; }
+    struct in_addr ga; ga.s_addr = row.dwRemoteAddr; inet_ntop(AF_INET, &ga, g_gate_ip, sizeof g_gate_ip); g_gate_port = 11001;
+    g_up_bound = 1;
+    if (!g_running) {
+        SOCKET l = tcp_listen_any(PROXY_PORT);
+        if (l == INVALID_SOCKET) { ui_log("Port %d is busy - close other copies of this window.", PROXY_PORT); return; }
+        CloseHandle(CreateThread(NULL, 0, gate_server, (LPVOID)(uintptr_t)l, 0, NULL));
+        snprintf(g_tmppath, sizeof g_tmppath, "%srecording.tmp", g_exedir);
+        if (!g_tmp) g_tmp = fopen(g_tmppath, "wb+");
+        g_running = 1;
+    }
+    if (g_wd_redirect == INVALID_HANDLE_VALUE) {
+        char f[400];
+        snprintf(f, sizeof f, "outbound and tcp and ((ip.DstAddr == %s and tcp.DstPort == 11001 and (tcp.SrcPort < %d or tcp.SrcPort > %d)) or tcp.SrcPort == %d)",
+                 g_gate_ip, UP_PORT0, UP_PORT1, PROXY_PORT);
+        g_wd_redirect = pWDOpen(f, WINDIVERT_LAYER_NETWORK, 0, 0);
+        if (g_wd_redirect == INVALID_HANDLE_VALUE) { ui_log("Could not start WinDivert (error %lu). Falling back to watching.", GetLastError()); start_watch(); return; }
+        CloseHandle(CreateThread(NULL, 0, redirect_thread, NULL, 0, NULL));
+    }
+    InterlockedExchange(&g_mode, M_LOGIN);
+    row.dwState = MIB_TCP_STATE_DELETE_TCB;
+    DWORD e = SetTcpEntry(&row);
+    if (e != NO_ERROR) { ui_log("Could not make the game reconnect (error %lu).", e); return; }
+    ui_log("Asked the game to reconnect to official through this window. If the game shows a reconnect button, press it.");
 }
 
 /* ------------------------------------------------------------------ painted launcher-style window */
@@ -1162,7 +1314,7 @@ static void paint(HWND h) {
     const wchar_t *st; COLORREF sc;
     switch (g_mode) {
     case M_STARTING: st = L"Starting the game"; sc = C_WARN; break;
-    case M_LOGIN: st = g_player[0] ? L"Logged in" : L"Waiting for you to log in"; sc = C_WARN; break;
+    case M_LOGIN: st = g_up_bound ? L"Reconnecting the game through this window" : (g_player[0] ? L"Logged in" : L"Waiting for you to log in"); sc = C_WARN; break;
     case M_FETCH: st = L"Collecting your account"; sc = C_OK; break;
     case M_DONE: st = L"Everything collected"; sc = C_OK; break;
     case M_WATCH: st = L"Watching your running game"; sc = C_OK; break;
@@ -1234,7 +1386,7 @@ static void paint(HWND h) {
     const wchar_t *ml; wchar_t mlb[40];
     switch (g_mode) {
     case M_STARTING: ml = L"Starting\x2026"; break;
-    case M_LOGIN: ml = L"Log in to continue"; break;
+    case M_LOGIN: ml = g_up_bound ? L"Reconnecting\x2026" : L"Log in to continue"; break;
     case M_FETCH: swprintf(mlb, 40, L"Collecting %d%%", (int)(g_pct_shown + 0.5)); ml = mlb; break;
     case M_DONE: ml = L"Save backup"; break;
     case M_WATCH: ml = L"Save backup"; break;
@@ -1267,7 +1419,7 @@ static void on_click(int b) {
         if (g_mode == M_IDLE && !g_player[0]) start_backup();
         else if (g_mode == M_DONE || g_mode == M_WATCH || (g_mode == M_IDLE && g_player[0])) do_save(0);
         break;
-    case B_RUNNING: start_watch(); break;
+    case B_RUNNING: start_reconnect(); break;
     case B_SAVE: do_save(0); break;
     case B_FOLDER: if (g_mode == M_IDLE) browse(); break;
     case B_LOG: ShellExecuteA(NULL, "open", g_logpath, NULL, NULL, SW_SHOWNORMAL); break;
@@ -1310,6 +1462,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     case WM_CLOSE:
         if (g_frames && g_player[0] && !g_saved_once && MessageBoxW(h, L"Save the backup before closing?", L"Rozefield Backup", MB_YESNO | MB_ICONQUESTION) == IDYES) do_save(1);
         restore_all();
+        if (g_wd_redirect != INVALID_HANDLE_VALUE) { pWDClose(g_wd_redirect); g_wd_redirect = INVALID_HANDLE_VALUE; }
         if (g_tmp) { fclose(g_tmp); g_tmp = NULL; DeleteFileA(g_tmppath); }
         DestroyWindow(h); return 0;
     case WM_DESTROY: PostQuitMessage(0); return 0;
@@ -1345,7 +1498,8 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     ShowWindow(g_win, show); UpdateWindow(g_win);
     SetTimer(g_win, 1, 30, NULL);
     ui_log("RozefieldBackup started. Game folder: %s", g_game[0] ? g_game : "(not found - use the folder button)");
-    if (strstr(cmd, "--watch")) start_watch();
+    if (strstr(cmd, "--reconnect")) start_reconnect();
+    else if (strstr(cmd, "--watch")) start_watch();
     else ui_log(g_game[0] ? "Press Open game, or Use running game if OverField is already open." : "Choose your OverField folder with the folder button on the left.");
     MSG msg;
     while (GetMessageW(&msg, NULL, 0, 0) > 0) { TranslateMessage(&msg); DispatchMessageW(&msg); }
