@@ -42,7 +42,8 @@ class HTTP:
         pj = os.path.join(HERE, 'patch', 'patch.json')
         if os.path.exists(pj):
             self.patch = json.load(open(pj))
-            self.patch_files = json.load(open(os.path.join(HERE, 'patch', 'files.json'), encoding='utf-8'))
+            self.patch_files = {k: os.path.normpath(os.path.join(HERE, v.replace('\\', os.sep)))   # relative to the server folder
+                                for k, v in json.load(open(os.path.join(HERE, 'patch', 'files.json'), encoding='utf-8')).items()}
             cfg.res_version = self.patch['version']
             log.info('resource patch %s active (%d files)', self.patch['version'], len(self.patch_files))
 

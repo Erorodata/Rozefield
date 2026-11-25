@@ -6,7 +6,7 @@
 
 Writes patch/ (served by rozefield_server.py):
   patch/ManifestFiles/PackageManifest_DefaultPackage_<ver>.bytes/.hash + .version
-  patch/files.json  {"<hash>.bundle": "<path of the file on this PC>"}
+  patch/files.json  {"<hash>.bundle": "<path, relative to the server folder when inside it>"}
 The Global client then downloads the new files through its own updater. Nothing in the game folder is edited.
 """
 import argparse, collections, glob, json, os, sys
@@ -143,6 +143,8 @@ def main():
     open(os.path.join(md, 'PackageManifest_DefaultPackage.version'), 'w').write(ver)
     for f in os.listdir(md):
         files[f] = os.path.join(md, f)
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # paths inside the server folder are kept relative
+    files = {k: (os.path.relpath(os.path.abspath(v), here) if os.path.abspath(v).startswith(here + os.sep) else v) for k, v in files.items()}
     json.dump(files, open(os.path.join(a.out, 'files.json'), 'w', encoding='utf-8'), indent=0, ensure_ascii=False)
     json.dump({'version': ver, 'base': gver, 'cn': cver}, open(os.path.join(a.out, 'patch.json'), 'w'))
     size = sum(os.path.getsize(p) for p in files.values())

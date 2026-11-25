@@ -188,7 +188,7 @@ static DWORD WINAPI start_thread(LPVOID a) {
     if (!py) { note(L"Python 3 was not found. Install it from python.org (tick \"Add python to PATH\")."); g_starting = 0; return 0; }
     wchar_t c[256]; swprintf(c, 256, L"%ls -c \"import google.protobuf, cramjam\"", py);
     if (!run_ok(c)) { note(L"Installing what the server needs (first start)..."); swprintf(c, 256, L"%ls -m pip install -r requirements.txt", py); run_ok(c); }
-    char game[MAX_PATH] = "H:\\Backup\\OverField", gp[MAX_PATH]; snprintf(gp, sizeof gp, "%sgame_path.txt", g_dir);
+    char game[MAX_PATH], gp[MAX_PATH]; snprintf(game, sizeof game, "%s..\\Overfield", g_dir); snprintf(gp, sizeof gp, "%sgame_path.txt", g_dir);
     FILE *f = fopen(gp, "rb"); if (f) { if (fgets(game, sizeof game, f)) { char *e = game + strlen(game); while (e > game && (e[-1] == '\r' || e[-1] == '\n' || e[-1] == ' ')) *--e = 0; } fclose(f); }
     wchar_t wgame[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, game, -1, wgame, MAX_PATH);
     wchar_t cmd[1024]; swprintf(cmd, 1024, L"%ls rozefield_server.py --res-dir \"%ls\\launcher_Data\\yoo\"", py, wgame);

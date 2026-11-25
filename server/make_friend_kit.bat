@@ -10,7 +10,7 @@ copy /y sdk_stub\rozefield_sdk.ini "%KIT%\sdk_stub\" >nul
 (
 echo Rozefield - play on a friend's server
 echo.
-echo 1. Copy the Rozefield game folder from the host ^(the whole folder with launcher.exe; the _archive folder is not needed^).
+echo 1. Copy the Overfield game folder from the host ^(the whole folder with launcher.exe^).
 echo 2. Right-click Start ^> Terminal ^(Admin^), go to this folder and run:
 echo      powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Game "C:\Games\OverField" -ServerIP HOST_ADDRESS
 echo    HOST_ADDRESS = the host's LAN address ^(192.168.x.x^) or public internet address, as the host tells you.
@@ -21,5 +21,5 @@ echo.
 echo To undo:  powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Game "C:\Games\OverField" -Revert
 ) > "%KIT%\READ ME.txt"
 powershell -NoProfile -Command "Compress-Archive -Path '%KIT%\*' -DestinationPath '%~dp0Rozefield_friend_kit.zip' -Force"
-echo Made Rozefield_friend_kit.zip - send it to your friend together with a copy of the game folder.
+echo Made Rozefield_friend_kit.zip - send it to your friend together with a copy of the Overfield folder.
 pause

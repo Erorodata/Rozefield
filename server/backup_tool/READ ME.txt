@@ -1,0 +1,12 @@
+Rozefield Backup - save your OverField account before the official servers close (8 Feb 2027)
+
+1. Put this folder anywhere (it needs nothing installed).
+2. Start "Rozefield Backup.exe" and press Open game (or Use running game if OverField is already open).
+3. Log in with your official account as usual. The window collects your account by itself.
+4. When it says Everything collected, press Save backup (or just close the game).
+
+Your backup is saved in the "backups" folder next to the exe:  backups\<name>_<date>.rzsave
+Keep that file. After the shutdown, import it on any Rozefield server: in the Rozefield login window choose
+Import official backup.
+
+Nothing in your official account is changed. The backup never keeps your login token or device details.

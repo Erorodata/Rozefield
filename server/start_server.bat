@@ -1,7 +1,8 @@
 @echo off
 rem Rozefield private server launcher. Double-click to run. Close the window to stop.
 cd /d "%~dp0"
-set GAME=H:\Backup\OverField
+rem the game folder sits next to this Server folder (H:\Backup\Overfield); game_path.txt overrides it
+set GAME=%~dp0..\Overfield
 if exist game_path.txt set /p GAME=<game_path.txt
 rem UnityPy has no builds for pre-release Python 3.15 yet: prefer an installed 3.13 / 3.12
 set PY=python

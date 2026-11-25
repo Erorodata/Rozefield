@@ -1,4 +1,4 @@
-<#  Rozefield client switch. Default target is the backup copy (H:\Backup\OverField) so the Steam install stays
+<#  Rozefield client switch. Default target is the game folder next to the Server folder (H:\Backup\Overfield) so the Steam install stays
     original for the official servers. Run in an *Administrator* PowerShell:
       powershell -ExecutionPolicy Bypass -File setup_client.ps1            # point the game at this PC
       powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Revert    # restore the original files
@@ -7,7 +7,7 @@
        (3) adds a Windows Firewall rule that stops THIS copy's launcher.exe reaching the internet, so it can't fall
            back to the official servers while they are still up (local 127.0.0.1 traffic is unaffected),
        (4) with -AddHosts, adds hosts-file lines sending the game's dispatch domains to 127.0.0.1.            #>
-param([string]$Game = 'H:\Backup\OverField', [string]$ServerIP = '127.0.0.1', [string]$LookupName = '', [switch]$Revert, [switch]$AddHosts)
+param([string]$Game = (Join-Path $PSScriptRoot '..\Overfield'), [string]$ServerIP = '127.0.0.1', [string]$LookupName = '', [switch]$Revert, [switch]$AddHosts)
 $ErrorActionPreference = 'Stop'
 $admin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $admin) { Write-Host 'Run this in an Administrator window: right-click Start > Terminal (Admin), then run it again.' -ForegroundColor Red; exit 1 }
