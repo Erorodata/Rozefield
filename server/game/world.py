@@ -52,45 +52,47 @@ def W(p, sid):
     return w
 
 
-_BASE = None
-LEARNED = os.path.join(HERE, 'data', 'world_base_learned.json')
+_FLAGS = {}
 
 
-def world_base():
-    """Main game data, the same for every player: per map, the map entrances (Sequence/Aberrant Fields, landmarks...)
-    and dungeons that exist. game/world_base.json comes from the official captures; maps seen in players' backups
-    are added to data/world_base_learned.json when imported. What each player has done comes from their own save."""
-    global _BASE
-    if _BASE is None:
-        _BASE = {}
-        for f in (os.path.join(HERE, 'game', 'world_base.json'), LEARNED):
-            try:
-                for sid, v in json.load(open(f, encoding='utf-8')).items():
-                    b = _BASE.setdefault(sid, {'flagIds': [], 'dungeonIds': []})
-                    for k in ('flagIds', 'dungeonIds'):
-                        b[k] = sorted(set(b[k]) | set(v.get(k, [])))
-            except (OSError, ValueError):
-                pass
-    return _BASE
-
-
-def learn_world(seen):
-    """Add map entrances / dungeons seen in an imported backup ({sceneId: {'flagIds', 'dungeonIds'}}) to the shared
-    main game data, so every player gets them."""
-    global _BASE
-    try:
-        cur = json.load(open(LEARNED, encoding='utf-8'))
-    except (OSError, ValueError):
-        cur = {}
-    for sid, v in seen.items():
-        if str(sid) == '9999':
+def map_flags(d):
+    """Main game data, from the game's own tables (the same for every player): per map, the entrances that show on
+    it - landmarks, Aberrant Fields, Sequence Fields. Returns {scene: [(flagId, questId or None)]}: an entrance whose
+    dungeon is a main-story quest step only shows once that quest is given to the player.
+    (Checked against the official captures: a fully explored account had exactly these.)"""
+    if id(d) in _FLAGS:
+        return _FLAGS[id(d)]
+    flags = d.table('flag', 'Flag')
+    global_flags = set()
+    try:   # entrances only exist in maps the Global client has (CN-only ones have no object in the map)
+        gp = os.path.join(HERE, 'data', 'flag.json')
+        global_flags = {r['ID'] for r in json.load(open(gp, encoding='utf-8'))['Flag']['datas']}
+    except (OSError, ValueError, KeyError):
+        global_flags = set(flags)
+    dungeons = d.table('dungeon', 'Dungeon')
+    from game import quests as Q
+    x = Q.idx(d)
+    quest_of_dungeon = {}
+    for qid in x['quests']:
+        for c in Q.conditions_of(d, qid):
+            a = x['ach'].get(c) or {}
+            if a.get('NewAchieveCondition') == 6:      # "finish dungeon X" step of a quest
+                for prm in a.get('Param') or []:
+                    quest_of_dungeon.setdefault(prm, qid)
+    out = {}
+    for f in flags.values():
+        g = (f.get('FlagGroupInfo') or [{}])[0]
+        t = g.get('NewMissionType')
+        if f['ID'] not in global_flags or not g.get('IsItemUnlock'):
             continue
-        b = cur.setdefault(str(sid), {'flagIds': [], 'dungeonIds': []})
-        for k in ('flagIds', 'dungeonIds'):
-            b[k] = sorted(set(b[k]) | set(v.get(k, [])))
-    os.makedirs(os.path.dirname(LEARNED), exist_ok=True)
-    json.dump(cur, open(LEARNED, 'w', encoding='utf-8'))
-    _BASE = None
+        if t == 1:
+            out.setdefault(f.get('SceneID'), []).append((f['ID'], None))
+        elif t in (5, 7):
+            dg = dungeons.get(g.get('RelationID')) or {}
+            if dg.get('WorldID') == f.get('SceneID'):
+                out.setdefault(f.get('SceneID'), []).append((f['ID'], quest_of_dungeon.get(g.get('RelationID'))))
+    _FLAGS[id(d)] = out
+    return out
 
 
 def scene_fields(p, sid):
@@ -113,10 +115,11 @@ def scene_fields(p, sid):
     for k in ('riddles', 'flags', 'challenges', 'areas', 'collections', 'flagIds'):
         if w[k]:
             out[k] = w[k]
-    base = world_base().get(str(sid), {})
-    ids = sorted(set(base.get('flagIds', [])) | set(w['flagIds']))   # every entrance of the map, for every player
+    qs = p.s.get('quests', {})
+    ids = {fid for fid, q in map_flags(p.d).get(int(sid), []) if q is None or str(q) in qs}
+    ids |= set(w['flagIds'])          # anything the player's own save already has
     if ids:
-        out['flagIds'] = ids
+        out['flagIds'] = sorted(ids)
     for k in ('gatherLimits', 'chairInfoList', 'vehicleInfoList', 'campFires'):
         if lay.get(k):
             out[k] = lay[k]
@@ -126,9 +129,6 @@ def scene_fields(p, sid):
     mine = {int(k): v for k, v in p.s.get('dungeons', {}).items()}
     ds = [dict(v, monsters=v.get('monsters', [0])) for v in mine.values()
           if (dt.get(int(v.get('dungeonId', 0))) or {}).get('WorldID') == int(sid)]
-    for did in base.get('dungeonIds', []):   # dungeons of this map the player hasn't played yet
-        if did not in mine and did in dt:
-            ds.append({'dungeonId': did, 'monsters': [0]})
     if ds and str(sid) != '9999':
         out['dungeons'] = ds
     return out
