@@ -747,7 +747,7 @@ static void txt(HDC dc, HFONT f, COLORREF c, RECT r, const wchar_t *s, UINT fmt)
 /* ---------------------------------------------------------------- setup wizard
  * 1 Name (display name, start with Windows)  2 Who joins (me / Wi-Fi / internet)  3 Address (playit.gg)
  * 4 Letting friends in (Windows Firewall, router)  5 Share (game zip, Drive link, invite message).
- * Opens by itself the first time the server is up; the sidebar's Setup reopens it. Everything is also in Hosting. */
+ * Opens from the sidebar's Setup only (never by itself). Everything is also in Hosting. */
 enum { W_NAME, W_WHO, W_ADDR, W_ROUTER, W_SHARE, W_N };
 static HWND g_wz, g_wzc[W_N][8], g_wz_back, g_wz_next, g_wz_note[W_N]; static int g_wz_step, g_wz_who = 2, g_wz_addr_ok;
 static int setup_done(void) { char p[MAX_PATH]; conn_ini(p); return GetPrivateProfileIntA("setup", "done", 0, p); }
@@ -1471,7 +1471,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         else if ((HWND)l == g_search && HIWORD(w) == EN_CHANGE) rebuild_log();
         return 0;
     case WM_DATA:
-        { static int asked; if (!asked && g_up && !setup_done() && !g_bg) { asked = 1; PostMessageW(h, WM_APP + 9, 0, 0); } }
+        /* Setup no longer opens by itself: it's in the sidebar when wanted */
         if (w) fill_list();
         if (g_lines_dirty) rebuild_log();
         InvalidateRect(h, NULL, FALSE); return 0;
