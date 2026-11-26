@@ -117,6 +117,3 @@ Rozefield preserves OverField: the archived client and a private server that run
 - [Server: setup, login window, backup / import, GM commands](server/README.md)
 - [Host your own server](docs/HOSTING.md)
 - [Checklist (plain)](docs/PROGRESS.md)
-- [Play-test issues](docs/TEST_ISSUES.md) · [Story check](docs/STORY_CHECKLIST.md)
-- [Gameplay not built yet](docs/NOT_BUILT.md) · [Official capture checklist](docs/OFFICIAL_CAPTURE_CHECKLIST.md)
-- [Change log](docs/CHANGELOG.md)

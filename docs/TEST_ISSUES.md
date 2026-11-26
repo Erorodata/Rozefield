@@ -43,7 +43,7 @@ Status: **Fixed** = fixed and confirmed in game · **Fixed, retest** = fixed on 
 |---|---|---|---|---|
 | 13 | Field and Sequence entry point is random on every visit | Rozefield placed the team at the spot where you stood outside; official sends each Sequence's own start point | Official start points for the Sequences recorded in captures (39), the game's own start point for the rest; plaza entered from elsewhere starts at the plaza spawn, plaza-to-plaza keeps your position, leaving a Sequence puts you back at its entrance | Fixed, retest |
 | 14 | Gathering (flowers, wood, stone, insects, water) ignores daily limits and lucky gathers | Limits were not tracked | Daily limits from `GatherRule`, lucky gathers, field hauls kept in the temporary bag until you return to the plaza | Fixed |
-| 15 | Game closes about 25 s after entering one Sequence dungeon (11106) | Not known yet | — | Open |
+| 15 | Game closes about 25 s after entering Sequence "Lakeheart Isle" (11106) | Two differences from official (capture 2026-11-26 21:49): entering a dungeon never listed its chests (official always sends `treasureBoxes`), and opening any chest inside a Sequence was treated as the final chest ("final chest opened" notice mid-run) | Dungeon entry lists its chests (39 recorded lists, the rest from the chest table); chests along the way give their own contents and stay opened; only the final chest ends the run's rewards | Fixed, retest |
 
 ## Story and quests
 

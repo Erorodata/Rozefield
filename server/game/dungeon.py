@@ -64,6 +64,36 @@ except OSError:
     DUNGEON_STARTS = {}   # start points recorded from official DungeonEnterRsp (dungeon id -> char slot -> Pos/Rot)
 
 
+try:
+    DUNGEON_BOXES = _json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'dungeon_boxes.json'), encoding='utf-8'))
+except OSError:
+    DUNGEON_BOXES = {}   # official DungeonEnterRsp.treasureBoxes per dungeon (39 recorded)
+
+
+def dungeon_boxes(p, did):
+    """The chests of a dungeon as official sends them on entry: [{index, boxId, type}], opened ones marked Open.
+    Recorded lists first; otherwise the dungeon's chests from the TreasureBox table ('2'+id+nn / nnn, '3'+id)."""
+    lst = DUNGEON_BOXES.get(str(did))
+    if lst is None:
+        ids = sorted(i for i in p.d.table('treasurebox', 'TreasureBox')
+                     if str(i).startswith(('2' + str(did), '3' + str(did))) and len(str(i)) in (len(str(did)) + 3, len(str(did)) + 4, len(str(did)) + 1))
+        lst = [{'index': n, 'boxId': i, 'type': 'ETreasureBoxType_Normal'} for n, i in enumerate(ids)]
+    opened = set(dstate(p, did).get('openedBoxes', []))
+    out = []
+    for b in lst:
+        e = {k: v for k, v in b.items() if v or k == 'boxId'}
+        if b.get('index', 0) in opened:
+            e['state'] = 'TreasureBoxState_Open'
+        out.append(e)
+    return out
+
+
+def is_final_box(p, did, box_id):
+    """The run's reward chest: reward type 2 in the table, or a resource dungeon's single chest ('3'+id)."""
+    cfg = p.d.row('treasurebox', 'TreasureBox', box_id) or {}
+    return cfg.get('NewTreasureBoxRewardType') == 2 or str(box_id) == '3' + str(did) or not box_id
+
+
 def register(H, pack, enter_scene, scene_player):
     def enter(ctx, req, repeat=False):
         p = ctx.p
@@ -96,7 +126,8 @@ def register(H, pack, enter_scene, scene_player):
         if req.get('Rot'):
             ds['rot'] = req['Rot']
         p.dirty = True
-        ctx.reply({'status': OK, 'team': team, 'dungeon_data': dict(ds, monsters=[0])})
+        ctx.reply({'status': OK, 'team': team, 'dungeon_data': dict({k: v for k, v in ds.items() if k != 'openedBoxes'}, monsters=[0]),
+                   'treasureBoxes': dungeon_boxes(p, did)})   # official: every dungeon entry lists its chests
     H['DungeonEnterReq'] = enter
     H['DungeonRepeatEnterReq'] = lambda ctx, req: enter(ctx, req, repeat=True)
 
@@ -153,7 +184,7 @@ def register(H, pack, enter_scene, scene_player):
 
     def view(ctx, req):
         did = req.get('dungeon_id', 0)
-        ctx.reply({'status': OK, 'dungeon_data': dict(dstate(ctx.p, did), monsters=[0])})
+        ctx.reply({'status': OK, 'dungeon_data': dict({k: v for k, v in dstate(ctx.p, did).items() if k != 'openedBoxes'}, monsters=[0])})
     H['DungeonViewReq'] = view
 
     def sweep(ctx, req):

@@ -19,7 +19,7 @@ Status: **Captured** = the official answer is recorded · **Partly** = some of i
 | 8 | Handbook → Posters: claim a poster illustration reward | `PosterIllustrationRewardReq` | Poster handbook reward | **Captured**: 10 Starstones |
 | 9 | Handbook → Treasure: claim one of each kind | `TreasureIllustrationRewardReq` | Treasure handbook rewards | Needed |
 | 10 | Clear a Sequence for stars; claim star and task rewards | `DungeonStarRewardReq`, `DungeonTaskFinishRewardReq` | Sequence star / task rewards | Partly: 77 dungeon finishes + final chests, no star / task claim |
-| 11 | Pick up field coins; dig a treasure spot; open a supply box | `CollectCoinReq`, `TreasureDigReq`, `SupplyBoxRewardReq` | Coin, dig, supply box amounts | Partly: supply box captured (1 Starstone, 40 Feline Tokens, 90 Gold, next in 10–30 min) |
+| 11 | Pick up field coins; dig a treasure spot; open a supply box | `CollectCoinReq`, `TreasureDigReq`, `SupplyBoxRewardReq` | Coin, dig, supply box amounts | Partly: coins (1 Yellow Star each) and supply box captured; digging needed |
 | 12 | Open field chests of each kind (normal, riddle, challenge, encounter) | `TreasureBoxOpenReq`, `TreasureBoxPickupReq` | Field chest amounts | Partly: 84 opens + pickups |
 | 13 | Defeat field monsters on 2 world levels | `MonsterDeadRsp` drops | Gear drops by world level | Needed |
 | 14 | Gomoku vs AI: a win and a loss | `GomokuSinglePlayerRewardReq` | Gomoku AI reward | Needed |
@@ -52,6 +52,7 @@ Status: **Captured** = the official answer is recorded · **Partly** = some of i
 | capture_20261125_203025 | 390 | Login only |
 | capture_20261126_204010 | 719 | Login, Atlas state (box 31 first) |
 | capture_20261126_204253 (game_only) | 21,206 | Atlas boxes + achievements, poster handbook, supply box, 18 recruits, 7-day event quests, sweeps, scrap, character achievements, field chests |
+| capture_20261126_214953 | 12,451 | Sequence Lakeheart Isle (11106) full run, dungeon chests, coins, dye, stamina potions, achievement rewards, photo wall |
 | capture_20261123_161336 (game_only) | 8,639 | First official capture (none of the checklist rows) |
 
 When a capture is done, say which rows it covers.

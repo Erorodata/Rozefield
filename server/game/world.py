@@ -44,6 +44,20 @@ def observed():
     return _OBSERVED
 
 
+_BOX_ITEMS = None
+
+
+def box_items():
+    """Official contents of dungeon chests along the way (boxId -> [[item, n], ...]), from captures."""
+    global _BOX_ITEMS
+    if _BOX_ITEMS is None:
+        try:
+            _BOX_ITEMS = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dungeon_box_items.json'), encoding='utf-8'))
+        except OSError:
+            _BOX_ITEMS = {}
+    return _BOX_ITEMS
+
+
 def W(p, sid):
     w = p.s.setdefault('world', {}).setdefault(str(sid), {})
     for k, v in (('boxes', {}), ('riddles', []), ('flags', []), ('challenges', []), ('areas', []), ('collections', []),
@@ -158,7 +172,7 @@ def scene_fields(p, sid):
     out['gatherLimits'] = scene_gather_limits(p, sid)
     dt = p.d.table('dungeon', 'Dungeon')   # official sends each map only its own dungeons (by WorldID)
     mine = {int(k): v for k, v in p.s.get('dungeons', {}).items()}
-    ds = [dict(v, monsters=v.get('monsters', [0])) for v in mine.values()
+    ds = [dict({k: x for k, x in v.items() if k != 'openedBoxes'}, monsters=v.get('monsters', [0])) for v in mine.values()
           if (dt.get(int(v.get('dungeonId', 0))) or {}).get('WorldID') == int(sid)]
     if ds and str(sid) != '9999':
         out['dungeons'] = ds
@@ -261,7 +275,31 @@ def register(H, pack, scene_player):
         if loc == 'TreasureBoxLocType_DUNGEON':
             did = ctx.__dict__.get('dungeon_id')
             cfg = p.d.row('dungeon', 'Dungeon', did or 0)
-            if not cfg or ctx.__dict__.get('dungeon_box_open'):
+            if not cfg:
+                return ctx.reply({'status': FAIL})
+            from game.dungeon import dungeon_boxes, is_final_box, dstate
+            idx = req.get('treasureBoxIndex', 0)
+            box = next((b for b in dungeon_boxes(p, did) if b.get('index', 0) == idx), None)
+            if box and not is_final_box(p, did, box['boxId']):
+                # a chest along the way (official: no final-chest notice, never refills)
+                ds = dstate(p, did)
+                if idx in ds.setdefault('openedBoxes', []):
+                    return ctx.reply({'status': FAIL})
+                ds['openedBoxes'].append(idx)
+                p.dirty = True
+                seen = box_items().get(str(box['boxId']))
+                if seen:
+                    loot = [tuple(x) for x in seen]
+                elif (p.d.row('treasurebox', 'TreasureBox', box['boxId']) or {}).get('NewTreasureBoxRewardType') == 4:
+                    loot = []
+                else:
+                    loot = [(1102, 3)] if random.random() < 0.5 else roll_gear(p.d, 1, p.s.get('world_level', 1))
+                items, changed = give(ctx, loot)
+                ctx.reply({'status': OK, 'items': items})
+                pack(ctx, changed)
+                Q.event(p, Q.C['OpenBox'])
+                return
+            if ctx.__dict__.get('dungeon_box_open'):
                 return ctx.reply({'status': FAIL})
             ds = p.s.setdefault('dungeons', {}).get(str(did)) or {'finishTimes': 1}
             paid = []

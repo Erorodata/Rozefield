@@ -480,12 +480,19 @@ def register(H, pack):
 
     # ------------------------------------------------ field extras
     def coin(ctx, req):
-        done = _st(ctx.p, 'coins', [])
-        i = req.get('coinIndex')
+        """Yellow Stars (item 106), 1 each (official). Kept per dungeon (its coins list) or per map."""
+        p = ctx.p
+        i = req.get('coinIndex', 0)
+        did = ctx.__dict__.get('dungeon_id')
+        if did:
+            from game.dungeon import dstate
+            done = dstate(p, did).setdefault('coins', [])
+        else:
+            done = _st(p, 'coins_by_scene', {}).setdefault(str(p.s.get('scene_id')), [])
         if i in done:
             return ctx.reply({'status': FAIL})
         done.append(i)
-        got, changed = give(ctx, [(GOLD, 100)])   # estimate
+        got, changed = give(ctx, [(106, 1)])
         ctx.reply({'status': OK, 'coinIndex': i, 'rewards': got})
         pack(ctx, changed)
     H['CollectCoinReq'] = coin

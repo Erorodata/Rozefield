@@ -9,7 +9,6 @@ Kept up to date with every build; the capture rows that would fix each line are 
 | Feature | What happens now | Capture row |
 |---|---|---|
 | Photo share: buy an upload slot, copy an outfit dye | Accepted, nothing happens | 29 |
-| Sequence dungeon 11106 | Game closes about 25 s after entering (issue 15) | — |
 | New story content made with Overfield Builder | Server side ready (content packs); the game-side files (dialogue, NPC spots, areas) need the Builder | — |
 
 ## Built, but amounts are estimates
@@ -23,7 +22,7 @@ Kept up to date with every build; the capture rows that would fix each line are 
 | Rift (exploration break) reward | Stamina: captain / member counts from the game table (`ExploreInterval`) | 6, 7 |
 | Treasure handbook rewards | Starstone | 9 |
 | Sequence star / task rewards | Starstone, Gold | 10 |
-| Field coins, digging | Gold, Starstone | 11 |
+| Digging | Gold, Starstone | 11 |
 | Field chest amounts | Approximated | 12 |
 | Gear drops by world level | 3% rare top quality | 13 |
 | Gomoku (AI and online) | Gold | 14, 15 |

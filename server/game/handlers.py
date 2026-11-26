@@ -684,6 +684,8 @@ def item_use(ctx, req):
             for g in gb.get('GiftBagGroup', []):
                 a, b = p.add_items(d.reward_items(g.get('RewardPoolGroupID'), p.s['level']))
                 got += a; changed += b
+    if tag == 'EBagItemTag_Vitality':   # Stamina Potion 30 / 60 / 120 ml: RelateID = Stamina restored (official)
+        a, b = p.add_items([(10, (d.item(iid) or {}).get('RelateID', 30) * n)]); got += a; changed += b
     choose = req.get('chooseItemId')
     if choose:
         a, b = p.add_item(choose, n); got += a; changed += b
