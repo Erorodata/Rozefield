@@ -3,8 +3,9 @@
  * \\.\pipe\quickpc<gameName>. The real SDK opens a web login and then writes one JSON message per pipe
  * connection. This stub skips the web page and immediately reports a successful login with the
  * name the player types in a small window; the name travels in the token, uid = "rz_<lower-case name>".
- * The window also picks the server (list, invite code / name / address, home-network search). Choosing a server
- * other than the one the game started with logs in there, points the game at it and restarts it, logged in.
+ * The window also picks the server (list, invite code / name / address, home-network search). With the Rozefield
+ * link (winhttp.dll in the game folder) the game follows the pick at once; without it, choosing a server other than
+ * the one the game started with points the game at it and restarts it, logged in.
  * Build: zig cc -target x86_64-windows-gnu -O2 pcsdkui_stub.c -o PCSDKUI.exe -lws2_32 -lcomdlg32 -luser32 -lgdi32 -Wl,--subsystem,windows */
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -56,6 +57,7 @@ static char g_name[128], g_uid[160], g_key[64];
 static int g_done, g_tab;            /* 0 = log in, 1 = create account */
 static HWND g_win, g_ename, g_epw, g_epw2, g_btn;
 static char g_host[64] = "127.0.0.1", g_ini[MAX_PATH * 2];
+static int g_hport = 18880;   /* the server's link port (one port for everything); 18881 is tried for older servers */
 static wchar_t g_err[256];
 static int g_remember = 1;
 static char g_saved[8][128]; static int g_nsaved;
@@ -106,6 +108,9 @@ static int read_code(const char *s, char *ip) {   /* RZ-XXXX-XXX = IPv4 in base3
     if (n != 7 || v > 0xFFFFFFFFull) return 0;
     sprintf(ip, "%u.%u.%u.%u", (unsigned)(v >> 24) & 255, (unsigned)(v >> 16) & 255, (unsigned)(v >> 8) & 255, (unsigned)v & 255); return 1;
 }
+static int addr_port(const char *addr) {   /* host:port (a playit.gg address) or just host = link port 18880 */
+    const char *c = strrchr(addr, ':'); int p = c ? atoi(c + 1) : 0; return p > 0 && p < 65536 ? p : 18880;
+}
 static int resolve(const char *addr, char *ip) {
     WSADATA w; WSAStartup(MAKEWORD(2, 2), &w);
     char a[256], c[64]; snprintf(a, sizeof a, "%s", addr); char *col = strchr(a, ':'); if (col) *col = 0;
@@ -114,9 +119,32 @@ static int resolve(const char *addr, char *ip) {
     if (getaddrinfo(a, NULL, &h, &r) != 0 || !r) return 0;
     inet_ntop(AF_INET, &((struct sockaddr_in *)r->ai_addr)->sin_addr, ip, 64); freeaddrinfo(r); return 1;
 }
+static SOCKET dial_one(const char *ip, int port, int ms) {
+    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in a = {0}; a.sin_family = AF_INET; a.sin_port = htons((u_short)port); a.sin_addr.s_addr = inet_addr(ip);
+    u_long nb = 1; ioctlsocket(s, FIONBIO, &nb); connect(s, (struct sockaddr *)&a, sizeof a);
+    fd_set w, e; FD_ZERO(&w); FD_ZERO(&e); FD_SET(s, &w); FD_SET(s, &e); struct timeval tv = {ms / 1000, (ms % 1000) * 1000};
+    if (select(0, NULL, &w, &e, &tv) != 1 || FD_ISSET(s, &e)) { closesocket(s); return INVALID_SOCKET; }
+    nb = 0; ioctlsocket(s, FIONBIO, &nb); return s;
+}
+/* the server's HTTP: its link port, else (older servers) 18881 */
+static SOCKET srv_dial(const char *ip, int port, int timeout_ms) {
+    SOCKET s = dial_one(ip, port, 4000);
+    if (s == INVALID_SOCKET && port == 18880) s = dial_one(ip, 18881, 3000);
+    if (s != INVALID_SOCKET) { DWORD to = timeout_ms; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to); }
+    return s;
+}
 static char *read_all(const char *path, DWORD *len) {
     HANDLE f = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL); if (f == INVALID_HANDLE_VALUE) return NULL;
     DWORD sz = GetFileSize(f, NULL), got = 0; char *b = (char *)malloc(sz + 1); ReadFile(f, b, sz, &got, NULL); CloseHandle(f); b[got] = 0; if (len) *len = got; return b;
+}
+/* the Rozefield link (winhttp.dll next to launcher.exe) carries the game to whichever server is picked here:
+   no restart, the game's own settings always point at this PC */
+static int link_mode(void) { char p[MAX_PATH]; snprintf(p, sizeof p, "%swinhttp.dll", g_game); return GetFileAttributesA(p) != INVALID_FILE_ATTRIBUTES; }
+static void set_link_target(const char *addr) {
+    char a[300], ip[64]; snprintf(a, sizeof a, "%s", addr); char *col = strchr(a, ':'); char port[16] = ""; if (col) { snprintf(port, sizeof port, "%s", col); *col = 0; }
+    if (read_code(a, ip)) snprintf(a, sizeof a, "%s%s", ip, port); else snprintf(a, sizeof a, "%s", addr);
+    WritePrivateProfileStringA("link", "target", a, g_ini); logf_("link target %s", a);
 }
 static void load_servers(void) {
     char p[MAX_PATH], def[256] = ""; snprintf(p, sizeof p, "%srozefield_servers.json", g_game);
@@ -150,11 +178,8 @@ static void save_servers(void) {
 
 static int http_post(const char *path, const char *body, int blen, char *out, int outsz, int timeout_ms) {
     WSADATA w; WSAStartup(MAKEWORD(2, 2), &w);
-    SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
-    struct sockaddr_in a = {0}; a.sin_family = AF_INET; a.sin_port = htons(18881); a.sin_addr.s_addr = inet_addr(g_host);
-    DWORD to = timeout_ms; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
     out[0] = 0;
-    if (connect(s, (struct sockaddr *)&a, sizeof a) != 0) { closesocket(s); return 0; }
+    SOCKET s = srv_dial(g_host, g_hport, timeout_ms); if (s == INVALID_SOCKET) return 0;
     char hdr[256];
     int hl = snprintf(hdr, sizeof hdr, "POST %s HTTP/1.0\r\nHost: rozefield\r\nContent-Type: application/octet-stream\r\nContent-Length: %d\r\n\r\n", path, blen);
     send(s, hdr, hl, 0);
@@ -272,7 +297,7 @@ static void submit(void) {
     int bl = snprintf(body, sizeof body, "%s\n%s", n8, p8);
     SetCursor(LoadCursor(NULL, IDC_WAIT));
     { char ip[64]; if (!resolve(g_srv[g_cur].addr, ip)) { SetCursor(LoadCursor(NULL, IDC_ARROW)); wcscpy(g_err, L"Can't find that server name."); InvalidateRect(g_win, NULL, TRUE); return; }
-      snprintf(g_host, sizeof g_host, "%s", ip); }
+      snprintf(g_host, sizeof g_host, "%s", ip); g_hport = addr_port(g_srv[g_cur].addr); }
     int ok = http_post(g_tab ? "/rozefield/register" : "/rozefield/login", body, bl, out, sizeof out, 8000);
     SetCursor(LoadCursor(NULL, IDC_ARROW));
     if (!ok) { wcscpy(g_err, L"The Rozefield server didn't answer. Is it running?"); InvalidateRect(g_win, NULL, TRUE); return; }
@@ -334,17 +359,17 @@ static DWORD WINAPI stat_thread(LPVOID a) {
     if (!resolve(sv.addr, ip)) wcscpy(st, L"Can't find that server name.");
     else {
         char keep[64]; snprintf(keep, sizeof keep, "%s", g_host); snprintf(g_host, sizeof g_host, "%s", ip);
-        int ok = 0; SOCKET s = socket(AF_INET, SOCK_STREAM, 0); struct sockaddr_in a2 = {0}; a2.sin_family = AF_INET; a2.sin_port = htons(18881); a2.sin_addr.s_addr = inet_addr(ip);
-        DWORD to = 2500; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
-        if (connect(s, (struct sockaddr *)&a2, sizeof a2) == 0) {
+        g_hport = addr_port(sv.addr);
+        int ok = 0; SOCKET s = srv_dial(ip, g_hport, 3000);
+        if (s != INVALID_SOCKET) {
             const char *rq = "GET /rozefield/info HTTP/1.0\r\nHost: rozefield\r\n\r\n"; send(s, rq, (int)strlen(rq), 0);
             int l = 0, r; while (l < (int)sizeof out - 1 && (r = recv(s, out + l, sizeof out - 1 - l, 0)) > 0) l += r; out[l] = 0; ok = strstr(out, "rozefield-info") != NULL;
         }
-        closesocket(s); (void)keep;
+        if (s != INVALID_SOCKET) closesocket(s); (void)keep;
         if (!ok) swprintf(st, 200, L"Not reachable right now (%hs).", ip);
         else { const char *o = strstr(out, "\"online\":"); int on = o ? atoi(o + 9) : 0;
                swprintf(st, 200, L"Online  \x00B7  %d player%ls on now%ls", on, on == 1 ? L"" : L"s",
-                        g_game_ip[0] && strcmp(ip, g_game_ip) ? L"  \x00B7  game restarts to switch" : L""); c = RGB(95, 212, 154); }
+                        !link_mode() && g_game_ip[0] && strcmp(ip, g_game_ip) ? L"  \x00B7  game restarts to switch" : L""); c = RGB(95, 212, 154); }
     }
     if (gen == g_gen) { wcscpy(g_stat, st); g_statc = c; InvalidateRect(g_win, NULL, TRUE); }
     return 0;
@@ -384,7 +409,7 @@ static int input(const wchar_t *prompt) {
     EnableWindow(g_win, TRUE); SetForegroundWindow(g_win); return g_in_done == 1 && g_in[0];
 }
 static void do_add(void) {
-    if (!input(L"Invite code, server name or address (ask the server owner), e.g. RZ-1A2B-3CD or myserver.duckdns.org")) return;
+    if (!input(L"Invite code or address (ask the server owner), e.g. RZ-1A2B-3CD or word-word.gl.at.ply.gg:12345")) return;
     char a[256], ip[64]; WideCharToMultiByte(CP_UTF8, 0, g_in, -1, a, sizeof a, NULL, NULL);
     char *b = a; while (*b == ' ') b++; char *e = b + strlen(b); while (e > b && (e[-1] == ' ' || e[-1] == '/')) *--e = 0;
     if (!strncmp(b, "http://", 7)) b += 7;
@@ -438,9 +463,8 @@ static void do_export(void) {
     char n8[192], p8[384], body[600]; WideCharToMultiByte(CP_UTF8, 0, wn, -1, n8, sizeof n8, NULL, NULL); WideCharToMultiByte(CP_UTF8, 0, wp, -1, p8, sizeof p8, NULL, NULL);
     int bl = snprintf(body, sizeof body, "%s\n%s", n8, p8); SecureZeroMemory(p8, sizeof p8); SecureZeroMemory(wp, sizeof wp);
     /* the account file can be larger than http_post's buffer: read it here */
-    SOCKET s = socket(AF_INET, SOCK_STREAM, 0); struct sockaddr_in a = {0}; a.sin_family = AF_INET; a.sin_port = htons(18881); a.sin_addr.s_addr = inet_addr(g_host);
-    DWORD to = 30000; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
-    if (connect(s, (struct sockaddr *)&a, sizeof a)) { closesocket(s); wcscpy(g_err, L"The Rozefield server didn't answer."); InvalidateRect(g_win, NULL, TRUE); return; }
+    SOCKET s = srv_dial(g_host, g_hport, 30000);
+    if (s == INVALID_SOCKET) { wcscpy(g_err, L"The Rozefield server didn't answer."); InvalidateRect(g_win, NULL, TRUE); return; }
     char hdr[200]; int hl = snprintf(hdr, sizeof hdr, "POST /rozefield/export_account HTTP/1.0\r\nHost: rozefield\r\nContent-Length: %d\r\n\r\n", bl);
     send(s, hdr, hl, 0); send(s, body, bl, 0); SecureZeroMemory(body, sizeof body);
     size_t cap = 1 << 20, len = 0; int r; char *b = (char *)malloc(cap + 1);
@@ -682,7 +706,8 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
         } else {
             /* picked a server the running game isn't using: point the game there and restart it, logged in */
             const char *cur = g_game_ip[0] ? g_game_ip : "127.0.0.1";
-            if (strcmp(g_host, cur)) { switch_and_restart(g_host); return 0; }
+            if (link_mode()) set_link_target(g_srv[g_cur].addr);
+            else if (strcmp(g_host, cur)) { switch_and_restart(g_host); return 0; }
         }
         WritePrivateProfileStringA("account", "last_uid", g_uid, path);
         /* the account key is the uid; the display name travels in the token as @byte@byte@ */

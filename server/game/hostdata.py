@@ -150,15 +150,29 @@ def game_folder():
     return os.path.normpath(os.path.join(HERE, '..', 'Overfield'))
 
 
+LINK_DLL = os.path.join(HERE, 'link_relay', 'winhttp.dll')
+STUB_EXE = os.path.join(HERE, 'sdk_stub', 'PCSDKUI.exe')
+SDK_DIR = 'launcher_Data/Plugins/Win/PCSDK_release/'
+
+
+def link_files(address):
+    """The Rozefield link in a game folder: winhttp.dll (carries the game to any server), the Rozefield login window
+    and its settings with the default server. With these the game itself always talks to 127.0.0.1."""
+    out = {}
+    if os.path.exists(LINK_DLL):
+        out['winhttp.dll'] = open(LINK_DLL, 'rb').read()
+    if os.path.exists(STUB_EXE):
+        out[SDK_DIR + 'PCSDKUI.exe'] = open(STUB_EXE, 'rb').read()
+    out[SDK_DIR + 'rozefield_sdk.ini'] = (f'[link]\r\ntarget={address}\r\n[server]\r\naddress={address}\r\n').encode('utf-8')
+    return out
+
+
 def _point_package(game, address):
-    """Config.txt (RemoteServerIP) and the address lookup in the packaged game, set to the default server."""
-    import socket
+    """Config.txt (RemoteServerIP) and the address lookup in the packaged game: 127.0.0.1, where the Rozefield link
+    (winhttp.dll) takes the game on to the default server or whichever one the player picks."""
     import struct
     out = {}
-    try:
-        ip = socket.gethostbyname(address)
-    except OSError:
-        ip = address
+    ip = '127.0.0.1' if os.path.exists(LINK_DLL) else address
     cfg = os.path.join(game, 'launcher_Data', 'StreamingAssets', 'Config.txt')
     if os.path.exists(cfg):
         lines, seen = [], set()
@@ -213,15 +227,18 @@ def build_package(default_server):
                     files.append(os.path.join(root, f))
         PACKAGE.update(state='building', done=0, total=sum(os.path.getsize(f) for f in files), file='', error='')
         override = _point_package(game, default_server['address'])   # the game in the zip goes to this server
+        override.update(link_files(default_server['address']))
         try:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_STORED, allowZip64=True) as z:
                 for f in files:
                     rel = os.path.relpath(f, game).replace(os.sep, '/')
                     if rel in override:
-                        z.writestr('Overfield/' + rel, override[rel])
+                        z.writestr('Overfield/' + rel, override.pop(rel))
                     else:
                         z.write(f, 'Overfield/' + rel)
                     PACKAGE['done'] += os.path.getsize(f)
+                for rel, data in override.items():   # files the game folder doesn't have yet (winhttp.dll, settings)
+                    z.writestr('Overfield/' + rel, data)
                 z.writestr('Overfield/rozefield_servers.json', json.dumps(
                     {'format': 'rozefield-servers/1', 'default': default_server['address'], 'servers': [default_server]},
                     ensure_ascii=False, indent=1))

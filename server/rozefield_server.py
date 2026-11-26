@@ -63,6 +63,7 @@ class Config:
         self.host_ip = a.public_ip
         self.http_port = a.http_port
         self.gate_port = a.gate_port
+        self.link_port = a.link_port
         self.client_version = a.client_version
         self.res_version = a.res_version
         self.res_dirs = a.res_dir or []
@@ -235,7 +236,8 @@ class HTTP:
         return {'format': 'rozefield-info/1', 'name': s.get('display_name', 'Rozefield'), 'server_name': s.get('server_name', ''),
                 'online': len(self.game.sessions) if self.game else 0, 'accounts': acc,
                 'version': (self.patch or {}).get('version', self.cfg.res_version), 'lan_ip': netsvc.STATUS.get('lan_ip', ''),
-                'http_port': self.cfg.http_port, 'gate_port': self.cfg.gate_port,
+                'http_port': self.cfg.http_port, 'gate_port': self.cfg.gate_port, 'link_port': self.cfg.link_port,
+                'tunnel_address': s.get('tunnel_address', ''),
                 'invite_code': netsvc.invite_code(netsvc.STATUS.get('public_ip', '')) if netsvc.STATUS.get('public_ip') else '',
                 'lan_code': netsvc.invite_code(netsvc.STATUS.get('lan_ip', '')) if netsvc.STATUS.get('lan_ip') else ''}
 
@@ -331,7 +333,7 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
             return (await loop.run_in_executor(None, hostdata.stage_import, body)).encode('utf-8'), 200, txt
         if p == 'package' and method == 'POST':
             s = hostcfg.load()
-            addr = s.get('server_name') or netsvc.STATUS.get('public_ip') or netsvc.STATUS.get('lan_ip') or '127.0.0.1'
+            addr = s.get('tunnel_address') or s.get('server_name') or netsvc.STATUS.get('public_ip') or netsvc.STATUS.get('lan_ip') or '127.0.0.1'
             return hostdata.build_package({'name': s.get('display_name', 'Rozefield'), 'address': addr}).encode('utf-8'), 200, txt
         if p == 'package':
             return hostdata.package_status().encode('utf-8'), 200, txt
@@ -863,6 +865,7 @@ async def main():
     ap.add_argument('--http-port', type=int, default=18881)
     ap.add_argument('--dns-port', type=int, default=80, help='HTTPDNS port (0 = off)')
     ap.add_argument('--gate-port', type=int, default=11001)
+    ap.add_argument('--link-port', type=int, default=18880, help='one port for players from anywhere (0 = off)')
     ap.add_argument('--client-version', default='2026-10-24-12-00-58')
     ap.add_argument('--res-version', default='2026-11-23-15-53-19')
     ap.add_argument('--res-dir', action='append', help='folder(s) holding PackageManifest_* files to serve')
@@ -894,6 +897,11 @@ async def main():
     http.admin_token = admin.token()   # for Overfield Server.exe (control panel)
     servers = [await asyncio.start_server(http.handle, a.bind, a.http_port),
                await asyncio.start_server(lambda r, w: Session(game, r, w).run(), a.bind, a.gate_port)]
+    from game import link
+    if a.link_port:
+        ls = await link.start(a.bind, a.link_port, a.http_port, a.gate_port)
+        if ls:
+            servers.append(ls)
     if a.dns_port:
         try:
             servers.append(await asyncio.start_server(http.handle, a.bind, a.dns_port))
@@ -913,7 +921,7 @@ async def main():
     from game.player import migrate_local_ids
     migrate_local_ids(log.info)   # Rozefield-made accounts never sit on an official player id
     from game import netsvc
-    netsvc.start([80, a.http_port, a.gate_port] if a.dns_port else [a.http_port, a.gate_port], http.info)
+    netsvc.start(([a.link_port] if a.link_port else []) + ([80, a.http_port, a.gate_port] if a.dns_port else [a.http_port, a.gate_port]), http.info)
     log.info('Rozefield up: dispatch port %s, gate port %s, address %s', a.http_port, a.gate_port, a.public_ip)
     await asyncio.gather(*(s.serve_forever() for s in servers))
 
@@ -931,10 +939,14 @@ async def wait_for_game_data(a, http, admin):
     from game import hostcfg
     if not hostcfg.salt_info():
         log.warning('  For 1, first set an admin password on this PC: Hosting > Admin password')
-    server = await asyncio.start_server(http.handle, a.bind, a.http_port)
-    from game import netsvc
-    netsvc.start([a.http_port], http.info)
-    await server.serve_forever()
+    servers = [await asyncio.start_server(http.handle, a.bind, a.http_port)]
+    from game import link, netsvc
+    if a.link_port:
+        ls = await link.start(a.bind, a.link_port, a.http_port, a.gate_port)
+        if ls:
+            servers.append(ls)
+    netsvc.start(([a.link_port] if a.link_port else []) + [a.http_port], http.info)
+    await asyncio.gather(*(x.serve_forever() for x in servers))
 
 
 if __name__ == '__main__':

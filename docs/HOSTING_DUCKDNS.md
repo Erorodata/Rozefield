@@ -5,6 +5,12 @@ Overfield Server keeps the name pointed at your internet address by itself, even
 
 Time needed: about 15 minutes. Cost: free.
 
+> **Simpler: playit.gg.** If you'd rather not touch your router, or your internet provider blocks incoming
+> connections (CGNAT, common on mobile and some fibre plans), use **Share > Use playit.gg** instead. It gives your
+> server an address that works from anywhere, and you don't need DuckDNS at all. Players install nothing.
+>
+> Using DuckDNS? Your server now needs only **one port forwarded: TCP 18880**.
+
 The quickest way: **Setup** in the panel's sidebar walks you through steps 1 to 5 (it also opens by itself the first
 time). This page explains the same steps in detail.
 

@@ -40,4 +40,4 @@ systemctl daemon-reload
 systemctl enable --now rozefield
 echo "Overfield Server is running and starts on boot."
 echo "Set the control-panel password:  $DIR/start_server.sh --set-admin-password <password>"
-echo "Open TCP 80, 18881 and 11001 in the firewall (VPS: in the provider's firewall too)."
+echo "Open TCP 18880 (one port for players anywhere; also 80, 18881, 11001 for older games) in the firewall (VPS: in the provider's firewall too)."

@@ -138,8 +138,10 @@ static int http_at(const char *host, int remote, const unsigned char *key, DWORD
                    const char *method, const char *path, const char *body, int blen, char **out, int *outlen) {
     *out = NULL; if (outlen) *outlen = 0;
     struct addrinfo hints = {0}, *ai = NULL; hints.ai_family = AF_INET; hints.ai_socktype = SOCK_STREAM;
-    char port[16]; snprintf(port, sizeof port, "%d", g_port);
-    if (getaddrinfo(remote ? host : "127.0.0.1", port, &hints, &ai) != 0 || !ai) return 0;
+    /* host may carry a port (a playit.gg address: name:port, which reaches the server's link port) */
+    char port[16], hn[256]; snprintf(port, sizeof port, "%d", g_port); snprintf(hn, sizeof hn, "%s", remote ? host : "127.0.0.1");
+    { char *c = strrchr(hn, ':'); if (c && atoi(c + 1) > 0) { snprintf(port, sizeof port, "%d", atoi(c + 1)); *c = 0; } }
+    if (getaddrinfo(hn, port, &hints, &ai) != 0 || !ai) return 0;
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
     DWORD to = timeout; setsockopt(s, SOL_SOCKET, SO_SNDTIMEO, (char *)&to, sizeof to); setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
     int c = connect(s, ai->ai_addr, (int)ai->ai_addrlen); freeaddrinfo(ai);
@@ -318,9 +320,23 @@ static void show_start_errors(void) {   /* the last lines of start_errors.log th
     for (int i = cnt - 1; i >= 0; i--) { wchar_t w[400]; MultiByteToWideChar(CP_UTF8, 0, lines[i], -1, w, 400); w[399] = 0; note(L"    %ls", w); }
 }
 
+/* Windows Firewall rule for the server ports, once per PC (Windows asks Yes once). 2 = already done, 1 = done now, 0 = declined */
+static int firewall_open(HWND owner) {
+    char p[MAX_PATH]; conn_ini(p);
+    if (GetPrivateProfileIntA("setup", "firewall", 0, p) >= 2) return 2;   /* 2 = includes the link port 18880 */
+    SHELLEXECUTEINFOW se = {sizeof se}; se.fMask = SEE_MASK_NOCLOSEPROCESS; se.hwnd = owner; se.lpVerb = L"runas"; se.lpFile = L"cmd.exe"; se.nShow = SW_HIDE;
+    se.lpParameters = L"/c netsh advfirewall firewall delete rule name=Rozefield >nul & netsh advfirewall firewall add rule name=Rozefield dir=in action=allow protocol=TCP localport=18880,80,18881,11001";
+    DWORD code = 1;
+    if (ShellExecuteExW(&se) && se.hProcess) { WaitForSingleObject(se.hProcess, 20000); GetExitCodeProcess(se.hProcess, &code); CloseHandle(se.hProcess); }
+    if (code == 0) { WritePrivateProfileStringA("setup", "firewall", "2", p); return 1; }
+    return 0;
+}
 static DWORD WINAPI start_thread(LPVOID a) {
     if (g_up) { note(L"The server is already running."); g_starting = 0; return 0; }
     note(L"Starting the server...");
+    if (!g_remote) { int fw = firewall_open(g_win);
+        if (fw == 1) note(L"Windows Firewall now lets players in (TCP 18880).");
+        else if (fw == 0) note(L"Windows Firewall wasn't changed (the Yes prompt was declined): players on other PCs can't connect until you allow it (Setup)."); }
     /* same choice of Python as start_server.bat: an installed 3.13 / 3.12, else py -3, else python */
     static wchar_t own[MAX_PATH + 4]; static const wchar_t *pys[] = {own, L"py -3.13", L"py -3.12", L"py -3", L"python"};
     { wchar_t wd0[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_dir, -1, wd0, MAX_PATH); swprintf(own, MAX_PATH + 4, L"\"%lspython\\python.exe\"", wd0); }
@@ -489,11 +505,11 @@ static void autostart_set(int on) {
 
 static void do_connect(void) {
     wchar_t host[256]; MultiByteToWideChar(CP_UTF8, 0, g_host, -1, host, 256);
-    const wchar_t *lab[] = {L"Server address: its name, internet or home-network address (leave empty for this PC)"}; const wchar_t *init[] = {host};
+    const wchar_t *lab[] = {L"Server address: its name, internet or home-network address, or its playit.gg address (leave empty for this PC)"}; const wchar_t *init[] = {host};
     if (!ask(L"Connect", L"Control the Overfield Server on another device (mini PC, Linux box, VPS) with its admin password.", 1, lab, init, 4)) return;
     char nh[256]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[0], -1, nh, sizeof nh, NULL, NULL);
     { char *e = nh + strlen(nh); while (e > nh && (e[-1] == ' ' || e[-1] == '/')) *--e = 0; char *b = nh; while (*b == ' ') b++;
-      if (!strncmp(b, "http://", 7)) b += 7; memmove(nh, b, strlen(b) + 1); char *c = strchr(nh, ':'); if (c) *c = 0; }
+      if (!strncmp(b, "http://", 7)) b += 7; memmove(nh, b, strlen(b) + 1); }   /* name:port is kept (playit.gg address) */
     if (!nh[0] || !strcmp(nh, "localhost") || !strcmp(nh, "127.0.0.1")) {
         g_host[0] = 0; g_remote = 0; g_haskey = 0; save_conn(); read_token(); note(L"Connected to this PC."); return;
     }
@@ -632,20 +648,23 @@ static void to_clipboard(const wchar_t *t) {
 }
 static void share_fill(HWND d) {
     char *js; if (!http("GET", "/admin/host/status", "", 0, &js)) { SetWindowTextW(g_sh_warn, L"The server didn't answer."); return; }
-    char code[32], lcode[32], name[256], link[512], router[300], pub[64], lan[64], pkg[400];
+    char code[32], lcode[32], name[256], link[512], router[300], pub[64], lan[64], pkg[400], tun[300];
     json_get(js, NULL, "invite_code", code, sizeof code); json_get(js, NULL, "lan_code", lcode, sizeof lcode);
+    json_get(js, "\"settings\"", "tunnel_address", tun, sizeof tun);
     json_get(js, "\"settings\"", "server_name", name, sizeof name); json_get(js, "\"settings\"", "download_link", link, sizeof link);
     json_get(js, NULL, "router", router, sizeof router); json_get(js, NULL, "public_ip", pub, sizeof pub); json_get(js, NULL, "lan_ip", lan, sizeof lan);
     json_get(js, NULL, "package", pkg, sizeof pkg); free(js);
     char dl[600]; if (link[0]) snprintf(dl, sizeof dl, "%s", link); else snprintf(dl, sizeof dl, "http://%s/", name[0] ? name : pub[0] ? pub : lan);
-    const char *vals[4] = {lcode[0] ? lcode : "(unknown)", code[0] ? code : "(internet address unknown)", name[0] ? name : "not set - use Hosting", dl};
+    const char *vals[4] = {lcode[0] ? lcode : "(unknown)", tun[0] ? tun : code[0] ? code : "(internet address unknown)", name[0] ? name : "not set - use Hosting", dl};
     for (int i = 0; i < 4; i++) { wchar_t w[600]; MultiByteToWideChar(CP_UTF8, 0, vals[i], -1, w, 600); SetWindowTextW(g_sh_edit[i], w); }
     wchar_t warn[700];
-    if (!strncmp(router, "open", 4)) swprintf(warn, 700, L"Router: %hs", router);
-    else swprintf(warn, 700, L"Internet players can't reach you yet: forward TCP 80, 18881 and 11001 to %hs in your router, or turn on UPnP there, then Check again. (Same Wi-Fi works now.)", lan);
+    if (tun[0]) swprintf(warn, 700, L"Internet: through playit.gg (%hs) - works with any router or internet provider.", tun);
+    else if (!strncmp(router, "open", 4)) swprintf(warn, 700, L"Router: %hs", router);
+    else swprintf(warn, 700, L"Internet players can't reach you yet: your router or internet provider blocks them. Easiest: press Use playit.gg (free, works with any connection). "
+                             L"Or forward TCP 18880 to %hs in your router. (Same Wi-Fi works now.)", lan);
     if (strncmp(pkg, "done", 4) && !link[0]) wcscat(warn, L"\nThe game download needs Game package first (or a Drive link in Hosting).");
     SetWindowTextW(g_sh_warn, warn);
-    const char *join = name[0] ? name : code;
+    const char *join = tun[0] ? tun : name[0] ? name : code;
     snprintf(g_sh_msg, sizeof g_sh_msg,
              "Join my OverField server (Rozefield)!\r\n"
              "1. Download the game: %s\r\n"
@@ -653,6 +672,31 @@ static void share_fill(HWND d) {
              "2. Start launcher.exe in the Overfield folder.\r\n"
              "3. In the login window press + and enter: %s - then Create account (or Bring my account).\r\n"
              "Same Wi-Fi as me? Use %s instead, or press the search button.", dl, join, lcode);
+}
+/* playit.gg: a free tunnel that gives this server an internet address through any router or provider (CGNAT) */
+static void do_playit(HWND owner) {
+    int r = MessageBoxW(owner,
+        L"playit.gg gives your server an address that works from anywhere, with any router or internet provider. Free; players install nothing.\n\n"
+        L"1. Install playit from playit.gg/download and sign in (it starts with Windows and stays on).\n"
+        L"2. On playit.gg add a tunnel: type TCP, local port 18880.\n"
+        L"3. Copy the address playit shows (like word-word.gl.at.ply.gg:12345) and paste it in the next window.\n\n"
+        L"Yes: open playit.gg/download now.   No: I already have the address.",
+        L"Use playit.gg", MB_YESNOCANCEL | MB_ICONINFORMATION);
+    if (r == IDCANCEL) return;
+    if (r == IDYES) ShellExecuteW(NULL, L"open", L"https://playit.gg/download", NULL, NULL, SW_SHOWNORMAL);
+    char *js; char cur[300] = ""; if (http("GET", "/admin/host/status", "", 0, &js)) { json_get(js, "\"settings\"", "tunnel_address", cur, sizeof cur); free(js); }
+    wchar_t wc[300]; MultiByteToWideChar(CP_UTF8, 0, cur, -1, wc, 300);
+    const wchar_t *lab[] = {L"playit.gg address for port 18880 (empty = stop using playit)"}; const wchar_t *init[] = {wc};
+    int ok = ask(L"Use playit.gg", NULL, 1, lab, init, 4);
+    EnableWindow(g_win, FALSE); SetForegroundWindow(owner);
+    if (!ok) return;
+    char a[300]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[0], -1, a, sizeof a, NULL, NULL);
+    char *b = a; while (*b == ' ') b++; char *e = b + strlen(b); while (e > b && (e[-1] == ' ' || e[-1] == '/')) *--e = 0;
+    if (!strncmp(b, "tcp://", 6)) b += 6; else if (!strncmp(b, "http://", 7)) b += 7;
+    wchar_t wb[300]; MultiByteToWideChar(CP_UTF8, 0, b, -1, wb, 300);
+    char body[700] = "{"; json_put(body, sizeof body, "tunnel_address", wb, 0); strcat(body, "}");
+    int okc; wchar_t *res = host_call("POST", "/admin/host/settings", body, (int)strlen(body), &okc); free(res);
+    if (okc) note(b[0] ? L"Internet address set: %hs (playit.gg). Share shows it as the invite." : L"playit.gg address cleared.", b);
 }
 static LRESULT CALLBACK ShareProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     switch (m) {
@@ -664,6 +708,7 @@ static LRESULT CALLBACK ShareProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         int id = LOWORD(w);
         if (id >= 100 && id < 104) { wchar_t t[600]; GetWindowTextW(g_sh_edit[id - 100], t, 600); to_clipboard(t); SetWindowTextW(GetDlgItem(h, id), L"Copied"); }
         else if (id == 110) { wchar_t t[2000]; MultiByteToWideChar(CP_UTF8, 0, g_sh_msg, -1, t, 2000); to_clipboard(t); SetWindowTextW(GetDlgItem(h, 110), L"Copied - paste it in chat"); }
+        else if (id == 112) { do_playit(h); share_fill(h); }
         else if (id == 111) { SetWindowTextW(g_sh_warn, L"Asking the router\x2026"); UpdateWindow(h); char *o; if (http("POST", "/admin/host/router", "", 0, &o)) free(o); share_fill(h); }
         else if (id == IDCANCEL) DestroyWindow(h);
         return 0; }
@@ -674,10 +719,10 @@ static LRESULT CALLBACK ShareProc(HWND h, UINT m, WPARAM w, LPARAM l) {
 }
 static void do_share(void) {
     static int reg; if (!reg) { WNDCLASSW wc = {0}; wc.lpfnWndProc = ShareProc; wc.hInstance = GetModuleHandleW(NULL); wc.lpszClassName = L"RzShare"; wc.hCursor = LoadCursor(NULL, IDC_ARROW); RegisterClassW(&wc); reg = 1; }
-    int W = 620, H = 400; RECT pr; GetWindowRect(g_win, &pr);
+    int W = 720, H = 400; RECT pr; GetWindowRect(g_win, &pr);
     HWND d = CreateWindowExW(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, L"RzShare", L"Share with players", WS_POPUP | WS_CAPTION | WS_SYSMENU,
                              (pr.left + pr.right - W) / 2, (pr.top + pr.bottom - H) / 2, W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
-    const wchar_t *lab[] = {L"Same Wi-Fi (invite code)", L"Internet (invite code)", L"Fixed server name", L"Game download"};
+    const wchar_t *lab[] = {L"Same Wi-Fi (invite code)", L"Internet (anywhere)", L"Fixed server name", L"Game download"};
     for (int i = 0; i < 4; i++) {
         int y = 18 + i * 44;
         HWND s = CreateWindowW(L"STATIC", lab[i], WS_CHILD | WS_VISIBLE, 18, y + 6, 170, 22, d, NULL, NULL, NULL); SendMessageW(s, WM_SETFONT, (WPARAM)f_small, TRUE);
@@ -689,6 +734,7 @@ static void do_share(void) {
     HWND b1 = CreateWindowW(L"BUTTON", L"Copy invite message", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 18, 290, 220, 34, d, (HMENU)110, NULL, NULL);
     HWND b2 = CreateWindowW(L"BUTTON", L"Check router again", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 248, 290, 170, 34, d, (HMENU)111, NULL, NULL);
     HWND b3 = CreateWindowW(L"BUTTON", L"Close", WS_CHILD | WS_VISIBLE | WS_TABSTOP, W - 124, 290, 96, 34, d, (HMENU)IDCANCEL, NULL, NULL);
+    HWND b4 = CreateWindowW(L"BUTTON", L"Use playit.gg\x2026", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 428, 290, 140, 34, d, (HMENU)112, NULL, NULL); SendMessageW(b4, WM_SETFONT, (WPARAM)f_small, TRUE);
     HWND hint = CreateWindowW(L"STATIC", L"The invite message has the download link, the code (or fixed name) and 3 steps, ready to paste in chat.", WS_CHILD | WS_VISIBLE, 18, 332, W - 40, 22, d, NULL, NULL, NULL);
     SendMessageW(b1, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(b2, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(b3, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(hint, WM_SETFONT, (WPARAM)f_small, TRUE);
     share_fill(d);
@@ -728,14 +774,10 @@ static void wz_post_setting(const char *key, const wchar_t *val, int boolean) {
     int ok; wchar_t *r = host_call("POST", "/admin/host/settings", b, (int)strlen(b), &ok); free(r);
 }
 static void wz_firewall(void) {
-    if (g_remote) { wz_note(W_ROUTER, C_MUTE, L"Connected to another device: open TCP 80, 18881, 11001 in that device's firewall."); return; }
-    char p[MAX_PATH]; conn_ini(p);
-    if (GetPrivateProfileIntA("setup", "firewall", 0, p)) { wz_note(W_ROUTER, C_OK, L"\x2713 Windows Firewall lets players in (TCP 80, 18881, 11001)."); return; }
-    SHELLEXECUTEINFOW se = {sizeof se}; se.fMask = SEE_MASK_NOCLOSEPROCESS; se.hwnd = g_wz; se.lpVerb = L"runas"; se.lpFile = L"cmd.exe"; se.nShow = SW_HIDE;
-    se.lpParameters = L"/c netsh advfirewall firewall delete rule name=Rozefield >nul & netsh advfirewall firewall add rule name=Rozefield dir=in action=allow protocol=TCP localport=80,18881,11001";
-    DWORD code = 1;
-    if (ShellExecuteExW(&se) && se.hProcess) { WaitForSingleObject(se.hProcess, 20000); GetExitCodeProcess(se.hProcess, &code); CloseHandle(se.hProcess); }
-    if (code == 0) { WritePrivateProfileStringA("setup", "firewall", "1", p); wz_note(W_ROUTER, C_OK, L"\x2713 Windows Firewall now lets players in (TCP 80, 18881, 11001)."); }
+    if (g_remote) { wz_note(W_ROUTER, C_MUTE, L"Connected to another device: open TCP 18880 (and 80, 18881, 11001) in that device's firewall."); return; }
+    int r = firewall_open(g_wz);
+    if (r == 2) wz_note(W_ROUTER, C_OK, L"\x2713 Windows Firewall lets players in (TCP 18880, 80, 18881, 11001).");
+    else if (r == 1) wz_note(W_ROUTER, C_OK, L"\x2713 Windows Firewall now lets players in (TCP 18880, 80, 18881, 11001).");
     else wz_note(W_ROUTER, C_BAD, L"Windows Firewall wasn't changed (the admin prompt was declined). Press Check again, or run allow_friends.bat as administrator.");
 }
 static void wz_router(void) {

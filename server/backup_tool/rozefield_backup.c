@@ -1612,8 +1612,18 @@ static char *slurp(const char *f, long *n) {
 }
 static int spill(const char *f, const char *d, long n) { FILE *o = fopen(f, "wb"); if (!o) return 0; int ok = fwrite(d, 1, n, o) == (size_t)n; fclose(o); return ok; }
 
+/* the Rozefield link (rozefield\winhttp.dll next to this exe): the game always talks to 127.0.0.1 and the link takes
+   it to whichever server the player picks in the login window, so the server here is only the first default */
+static int rz_link_available(void) { char p[MAX_PATH]; snprintf(p, sizeof p, "%srozefield\\winhttp.dll", g_exedir); return GetFileAttributesA(p) != INVALID_FILE_ATTRIBUTES; }
 static int rz_apply(const char *dir, const char *name, const char *ip, wchar_t *err) {
     char f[MAX_PATH], src[MAX_PATH];
+    if (rz_link_available()) {
+        snprintf(src, sizeof src, "%srozefield\\winhttp.dll", g_exedir); snprintf(f, sizeof f, "%s\\winhttp.dll", dir);
+        if (!CopyFileA(src, f, FALSE)) { wcscpy(err, L"Couldn't add the Rozefield link (winhttp.dll). Close the game and try again."); return 0; }
+        char ini[MAX_PATH]; snprintf(ini, sizeof ini, "%s\\launcher_Data\\Plugins\\Win\\PCSDK_release\\rozefield_sdk.ini", dir);
+        if (name[0]) WritePrivateProfileStringA("link", "target", name, ini);
+        ip = "127.0.0.1";
+    }
     /* 1. login window */
     snprintf(src, sizeof src, "%srozefield\\PCSDKUI.exe", g_exedir);
     snprintf(f, sizeof f, "%s\\launcher_Data\\Plugins\\Win\\PCSDK_release\\PCSDKUI.exe", dir);
@@ -1621,7 +1631,7 @@ static int rz_apply(const char *dir, const char *name, const char *ip, wchar_t *
     if (GetFileAttributesA(f) == INVALID_FILE_ATTRIBUTES) { wcscpy(err, L"This folder has no login window (launcher_Data\\Plugins\\Win\\PCSDK_release)."); return 0; }
     if (!keep_orig(f) || !CopyFileA(src, f, FALSE)) { wcscpy(err, L"Couldn't replace the login window. Close the game and try again."); return 0; }
     { char ini[MAX_PATH]; snprintf(ini, sizeof ini, "%s\\launcher_Data\\Plugins\\Win\\PCSDK_release\\rozefield_sdk.ini", dir);
-      WritePrivateProfileStringA("server", "ip", ip, ini); WritePrivateProfileStringA("server", "address", name, ini); }
+      WritePrivateProfileStringA("server", "ip", ip, ini); if (name[0]) WritePrivateProfileStringA("server", "address", name, ini); }
     /* 2. Config.txt */
     snprintf(f, sizeof f, "%s\\launcher_Data\\StreamingAssets\\Config.txt", dir);
     long n; char *t = slurp(f, &n);
@@ -1657,6 +1667,7 @@ static int rz_apply(const char *dir, const char *name, const char *ip, wchar_t *
         free(d);
     }
     /* 4. the default server for the login window */
+    if (!name[0]) return 1;
     snprintf(f, sizeof f, "%s\\rozefield_servers.json", dir);
     char js[700]; snprintf(js, sizeof js, "{\"format\": \"rozefield-servers/1\", \"default\": \"%s\", \"servers\": [{\"name\": \"%s\", \"address\": \"%s\"}]}\n", name, name, name);
     spill(f, js, (long)strlen(js));
@@ -1670,6 +1681,7 @@ static int rz_undo(const char *dir) {
         if (GetFileAttributesA(o) != INVALID_FILE_ATTRIBUTES && CopyFileA(o, f, FALSE)) { DeleteFileA(o); n++; }
     }
     char f[MAX_PATH]; snprintf(f, sizeof f, "%s\\rozefield_servers.json", dir); DeleteFileA(f);
+    snprintf(f, sizeof f, "%s\\winhttp.dll", dir); DeleteFileA(f);   /* the Rozefield link */
     return n;
 }
 static int is_patched(const char *dir) {
@@ -1737,12 +1749,15 @@ static void patch_go(void) {
     if (find_launcher()) { pmsg(RGB(220, 60, 70), L"Close the game first."); return; }
     wchar_t w[256]; GetWindowTextW(g_psrv, w, 256); char a[256]; WideCharToMultiByte(CP_UTF8, 0, w, -1, a, sizeof a, NULL, NULL);
     char *b = a; while (*b == ' ') b++; char *e = b + strlen(b); while (e > b && (e[-1] == ' ' || e[-1] == '/')) *--e = 0; if (!strncmp(b, "http://", 7)) b += 7;
-    if (!*b) { pmsg(RGB(220, 60, 70), L"Type the server: invite code (RZ-XXXX-XXX), name or address."); return; }
-    char ip[64];
-    if (!read_code(b, ip)) {
-        struct addrinfo hn = {0}, *r = NULL; hn.ai_family = AF_INET;
-        if (getaddrinfo(b, NULL, &hn, &r) || !r) { pmsg(RGB(220, 60, 70), L"Can't find that server name."); return; }
-        inet_ntop(AF_INET, &((struct sockaddr_in *)r->ai_addr)->sin_addr, ip, sizeof ip); freeaddrinfo(r);
+    char ip[64] = "127.0.0.1";
+    if (!*b && !rz_link_available()) { pmsg(RGB(220, 60, 70), L"Type the server: invite code (RZ-XXXX-XXX), name or address."); return; }
+    if (*b) {   /* host[:port] (a playit.gg address has a port) or an invite code */
+        char h[256]; snprintf(h, sizeof h, "%s", b); char *col = strrchr(h, ':'); if (col) *col = 0;
+        if (!read_code(h, ip)) {
+            struct addrinfo hn = {0}, *r = NULL; hn.ai_family = AF_INET;
+            if (getaddrinfo(h, NULL, &hn, &r) || !r) { pmsg(RGB(220, 60, 70), L"Can't find that server name."); return; }
+            inet_ntop(AF_INET, &((struct sockaddr_in *)r->ai_addr)->sin_addr, ip, sizeof ip); freeaddrinfo(r);
+        }
     }
     snprintf(g_pname, sizeof g_pname, "%s", b); snprintf(g_pip, sizeof g_pip, "%s", ip);
     if (g_pmode == 0) {
@@ -1804,10 +1819,10 @@ static void paint_patch(HDC dc) {
     for (int i = 0; i < 2; i++) { fill_round(dc, rr[i], g_pmode == i ? RGB(232, 248, 250) : C_CARD, 10); outline_round(dc, rr[i], g_pmode == i ? C_ACC : C_LINE, 10);
         circle(dc, rr[i].left + 18, (rr[i].top + rr[i].bottom) / 2, 7, g_pmode == i ? C_ACC : C_LINE); if (g_pmode != i) circle(dc, rr[i].left + 18, (rr[i].top + rr[i].bottom) / 2, 5, C_CARD);
         RECT t = {rr[i].left + 34, rr[i].top, rr[i].right - 8, rr[i].bottom}; txt(dc, f_small, C_TXT, t, ht[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS); }
-    RECT sv = {124, 412, 600, 434}; txt(dc, f_small, C_MUTE, sv, L"Default server (ask the server owner)", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    RECT sv = {124, 412, 600, 434}; txt(dc, f_small, C_MUTE, sv, L"Server (optional: invite code or address; players can also pick it in the login window)", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     /* what it changes */
     RECT wc2 = {124, 480, WW - 60, 548}; fill_round(dc, wc2, C_TILE, 12);
-    const wchar_t *wl[] = {L"Login window: the Rozefield login (official one kept as .orig)", L"The game points at the server: Config.txt and the address lookup (originals kept)", L"The Rozefield update downloads from the server the first time you start"};
+    const wchar_t *wl[] = {L"Login window: the Rozefield login (official one kept as .orig)", L"The Rozefield link (winhttp.dll): pick any server in the login window, no restart", L"The Rozefield update downloads from the server the first time you start"};
     for (int i = 0; i < 3; i++) { RECT t = {wc2.left + 34, wc2.top + 6 + i * 21, wc2.right - 10, wc2.top + 27 + i * 21}; circle(dc, wc2.left + 18, t.top + 10, 6, C_OK); tick(dc, wc2.left + 18, t.top + 10, RGB(255, 255, 255));
         txt(dc, f_small, C_TXT, t, wl[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE); }
     wchar_t gl[60]; if (g_pbusy && g_ptotal) swprintf(gl, 60, L"Copying %d%%", (int)(g_pdone * 100 / g_ptotal)); else wcscpy(gl, g_pbusy ? L"Working\x2026" : g_pmode == 0 ? L"Make Rozefield copy" : L"Change this game");
