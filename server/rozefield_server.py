@@ -886,6 +886,11 @@ async def main():
         hostcfg.set_admin_password(a.set_admin_password)
         print('admin password set')
         return
+    for st in (sys.stdout, sys.stderr):   # Windows consoles/logs are cp1252: never crash on Chinese quest keys
+        try:
+            st.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S',
                         handlers=[logging.StreamHandler(sys.stdout),
                                   logging.FileHandler(os.path.join(HERE, 'server.log'), encoding='utf-8')])

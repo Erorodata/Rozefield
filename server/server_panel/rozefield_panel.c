@@ -369,6 +369,17 @@ static DWORD WINAPI start_thread(LPVOID a) {
                 CloseHandle(old);
             }
         }
+        /* an older copy that wrote no pid file (or was started by hand): find it by its command line, ask before stopping it */
+        static const wchar_t *find = L"powershell -NoProfile -NonInteractive -Command \"if (@(Get-CimInstance Win32_Process -Filter \\\"Name like 'py%'\\\" | ? { $_.CommandLine -like '*rozefield_server.py*' }).Count) { exit 1 }\"";
+        static const wchar_t *stop = L"powershell -NoProfile -NonInteractive -Command \"Get-CimInstance Win32_Process -Filter \\\"Name like 'py%'\\\" | ? { $_.CommandLine -like '*rozefield_server.py*' } | % { Stop-Process -Id $_.ProcessId -Force }\"";
+        if (!run_ok(find)) {
+            if (MessageBoxW(g_win, L"Another Overfield Server is still running in the background (an older copy). It holds the ports, so this one can't start.\n\nStop the old one now? Players on it will be disconnected.",
+                            APPNAME, MB_YESNO | MB_ICONQUESTION) != IDYES) {
+                note(L"Not started: an older server is still running. Close it (or press Start again and choose Yes)."); g_starting = 0; return 0;
+            }
+            note(L"Stopping the older server...");
+            run_ok(stop); Sleep(1500);
+        }
     }
     note(L"Starting the server...");
     if (!g_remote) { int fw = firewall_open(g_win);

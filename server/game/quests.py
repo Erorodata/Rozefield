@@ -125,10 +125,12 @@ def _need(p, aid):
 
 def _set_progress(p, q, c, value):
     need = _need(p, c['conditionId'])
+    before = (c.get('progress'), c.get('status'))
     c['progress'] = min(value, need)
     if c['progress'] >= need:
         c['status'] = COMPLETED
-    _changed(p, q)
+    if (c.get('progress'), c.get('status')) != before:   # only real changes go to the client
+        _changed(p, q)
 
 
 def _check_state_conditions(p, q):
@@ -352,6 +354,19 @@ def on_items(p, pairs):
         event(p, C['ItemNum'], iid, absolute=p.count(iid))
 
 
+def _atlas_repair(p):
+    """Astral Atlas boxes activated on an older build paid Gold instead of their unlock (e.g. Double Jump):
+    give the missing unlock items once, so the quest that waits for them can finish."""
+    rewards = _packs.system('atlas', 'box_rewards', {}) or {}
+    rec = ((p.s.get('records') or {}).get('AbilityBadgeListReq') or {}).get('{}') or {}
+    for pg in rec.get('abilityBadgePages', []):
+        for b in pg.get('activeBoxIds', []):
+            for iid, n in rewards.get(f"{pg.get('page')}:{b}", []):
+                if p.count(iid) < 1:
+                    p.add_items([(iid, n)])
+                    p.dirty = True
+
+
 def login(p):
     k = day_key()
     if p.s.get('login_day') != k:
@@ -360,6 +375,7 @@ def login(p):
     event(p, 82, absolute=p.s['login_days'])            # EAchieveCondition_LoginDays
     event(p, C['PlayerLv'], absolute=p.s.get('level', 1))
     refresh_daily(p)
+    _atlas_repair(p)
     advance_main(p)
     for q in list(p.s['quests'].values()):
         if q.get('status') == IN_PROGRESS and q.get('questId'):
@@ -376,6 +392,9 @@ def flush(ctx):
     if p.__dict__.pop('_leveled', None):
         on_level(p)
     refresh_daily(p)
+    for q in list(p.s['quests'].values()):   # "own item X", "reach level N", "be in scene S": re-check after anything changed
+        if q.get('status') == IN_PROGRESS and q.get('questId'):
+            _check_state_conditions(p, q)
     ch = p.__dict__.pop('_qchanged', None)
     pk = p.__dict__.pop('_qpack', None)
     if pk:

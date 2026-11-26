@@ -343,13 +343,28 @@ def register(H, pack):
         return e
 
     def badge_box(ctx, req):
-        e = badge_page(ctx.p, req.get('page'))
-        b = req.get('boxId')
+        """Astral Atlas: activate one box of a page (moonstone.StoneUnlockData, page = its ID).
+        Costs the box's ItemID x ItemCount; pays packs/*/systems/atlas.json box_rewards (official ones known
+        from play), else the old Gold estimate."""
+        p = ctx.p
+        page, b = req.get('page'), req.get('boxId')
+        e = badge_page(p, page)
         if b in e.setdefault('activeBoxIds', []):
-            return ctx.reply({'status': FAIL})
+            return ctx.reply({'status': FAIL})   # official: AbilityBadgeBoxAlreadyActive
+        row = p.d.row('moonstone', 'StoneUnlockData', page) or {}
+        box = next((x for x in row.get('StoneUnlockDataGroupInfo', []) if x.get('BoxID') == b), None)
+        cost = (box or {}).get('ItemID'), (box or {}).get('ItemCount', 0)
+        if cost[0] and cost[1]:
+            spent = p.remove_item(cost[0], cost[1])
+            if spent is None:
+                return ctx.reply({'status': FAIL})
+            pack(ctx, spent)
         e['activeBoxIds'].append(b)
-        got, changed = give(ctx, [(GOLD, 2000)])   # estimate
-        ctx.reply({'status': OK, 'page': req.get('page'), 'boxId': b, 'items': got})
+        from game import packs
+        rw = (packs.system('atlas', 'box_rewards', {}) or {}).get(f'{page}:{b}')
+        pay = [tuple(x) for x in rw] if rw else [(GOLD, 2000)]   # estimate for boxes not known yet
+        got, changed = give(ctx, pay)
+        ctx.reply({'status': OK, 'page': page, 'boxId': b, 'items': got})
         pack(ctx, changed)
     H['AbilityBadgePageBoxActiveReq'] = badge_box
 

@@ -1,0 +1,14 @@
+{
+ "_about": "Astral Atlas boxes: \"page:box\" -> [[item, count]]. Only rewards confirmed from play are here; other boxes pay an estimate.",
+ "box_rewards": {
+  "1:31": [
+   [
+    101000000,
+    1
+   ]
+  ]
+ },
+ "_sources": {
+  "1:31": "Prologue tutorial: 'Unlock [Double jump] via [Astral Atlas]' (quest 100032 needs item 101000000) activates page 1 box 31; official accounts activate 31 first"
+ }
+}
