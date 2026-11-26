@@ -18,7 +18,7 @@ PARTS = {
     'data': ('data/', 'data-merged/', 'data-merged.zip'),
     'patch': ('patch/',),
     'panel': ('Overfield Server.exe',),
-    'stub': ('sdk_stub/PCSDKUI.exe',),
+    'stub': ('sdk_stub/PCSDKUI.exe', 'link_relay/winhttp.dll'),   # login window + the Rozefield link for game packages
 }
 SKIP = ('__pycache__', '.pyc', '.tmp', '.log')
 
