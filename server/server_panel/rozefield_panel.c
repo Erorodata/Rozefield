@@ -56,6 +56,7 @@ static HBRUSH br_panel, br_field;
 static char g_dir[MAX_PATH], g_token[64];
 static int g_port = 18881;
 static HANDLE g_proc;                 /* the server we started (NULL if attached to one started elsewhere) */
+static void show_start_errors(void);
 static volatile int g_up, g_starting;
 static int g_hover, g_filter, g_sel = -1;
 static long g_lognext;
@@ -262,19 +263,47 @@ static DWORD WINAPI poller(LPVOID a) {
         g_up = up;
         if (g_proc && WaitForSingleObject(g_proc, 0) == WAIT_OBJECT_0) {
             DWORD code = 0; GetExitCodeProcess(g_proc, &code); CloseHandle(g_proc); g_proc = NULL;
-            note(L"The server stopped (exit code %lu).%ls", code, code ? L" Run start_server.bat once to see the error." : L"");
+            note(L"The server stopped (exit code %lu).", code);
+            if (code) show_start_errors();
         }
         Sleep(up ? 700 : 1200);
     }
     return 0;
 }
 
-static int run_ok(const wchar_t *cmd) {   /* runs a command hidden, returns its exit code == 0 */
+static HANDLE open_startlog(int fresh) {  /* start_errors.log next to the server: pip + Python output, for the panel to show */
+    SECURITY_ATTRIBUTES sa = {sizeof sa, NULL, TRUE}; char p[MAX_PATH]; snprintf(p, sizeof p, "%sstart_errors.log", g_dir);
+    HANDLE h = CreateFileA(p, FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE, &sa, fresh ? CREATE_ALWAYS : OPEN_ALWAYS, 0, NULL);
+    return h == INVALID_HANDLE_VALUE ? NULL : h;
+}
+static int run_logged(const wchar_t *cmd, int logit, DWORD wait) {   /* runs a command hidden; 1 if exit code 0 */
     STARTUPINFOW si = {sizeof si}; PROCESS_INFORMATION pi; wchar_t c[1024]; wcsncpy(c, cmd, 1023); c[1023] = 0;
     wchar_t wd[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_dir, -1, wd, MAX_PATH);
-    if (!CreateProcessW(NULL, c, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, wd, &si, &pi)) return 0;
-    WaitForSingleObject(pi.hProcess, 120000); DWORD code = 1; GetExitCodeProcess(pi.hProcess, &code);
+    HANDLE lg = logit ? open_startlog(0) : NULL;
+    if (lg) { si.dwFlags = STARTF_USESTDHANDLES; si.hStdOutput = lg; si.hStdError = lg; si.hStdInput = NULL;
+              char hdr[1200]; int n = snprintf(hdr, sizeof hdr, "\r\n> %ls\r\n", cmd); DWORD w; WriteFile(lg, hdr, n, &w, NULL); }
+    BOOL ok = CreateProcessW(NULL, c, NULL, NULL, lg != NULL, CREATE_NO_WINDOW, NULL, wd, &si, &pi);
+    if (lg) CloseHandle(lg);
+    if (!ok) return 0;
+    WaitForSingleObject(pi.hProcess, wait); DWORD code = 1; GetExitCodeProcess(pi.hProcess, &code);
     CloseHandle(pi.hProcess); CloseHandle(pi.hThread); return code == 0;
+}
+static int run_ok(const wchar_t *cmd) { return run_logged(cmd, 0, 120000); }
+
+static void show_start_errors(void) {   /* the last lines of start_errors.log that explain a failed start */
+    char p[MAX_PATH]; snprintf(p, sizeof p, "%sstart_errors.log", g_dir);
+    FILE *f = fopen(p, "rb"); if (!f) return;
+    static char buf[65536]; fseek(f, 0, SEEK_END); long sz = ftell(f); fseek(f, sz > 65000 ? sz - 65000 : 0, SEEK_SET);
+    size_t n = fread(buf, 1, sizeof buf - 1, f); fclose(f); buf[n] = 0;
+    char *lines[8]; int cnt = 0; char *e = buf + n;
+    while (e > buf && cnt < 8) {   /* walk back over the last non-empty lines */
+        while (e > buf && (e[-1] == '\n' || e[-1] == '\r' || e[-1] == ' ')) *--e = 0;
+        char *b = e; while (b > buf && b[-1] != '\n') b--;
+        if (b == e) break; lines[cnt++] = b; e = b;
+    }
+    if (!cnt) return;
+    note(L"Why it stopped (from start_errors.log in the Server folder):");
+    for (int i = cnt - 1; i >= 0; i--) { wchar_t w[400]; MultiByteToWideChar(CP_UTF8, 0, lines[i], -1, w, 400); w[399] = 0; note(L"    %ls", w); }
 }
 
 static DWORD WINAPI start_thread(LPVOID a) {
@@ -287,20 +316,37 @@ static DWORD WINAPI start_thread(LPVOID a) {
     for (int i = 0; i < 5 && !py; i++) { wchar_t c[64]; swprintf(c, 64, L"%ls -c \"1\"", pys[i]); if (run_ok(c)) py = pys[i]; }
     if (!py) { note(L"Python 3 was not found. Run setup_python.bat once (or install Python from python.org)."); g_starting = 0; return 0; }
     wchar_t c[256]; swprintf(c, 256, L"%ls -c \"import google.protobuf, cramjam\"", py);
-    if (!run_ok(c)) { note(L"Installing what the server needs (first start)..."); swprintf(c, 256, L"%ls -m pip install -r requirements.txt", py); run_ok(c); }
+    { HANDLE lg = open_startlog(1); if (lg) CloseHandle(lg); }   /* fresh log for this start */
+    if (!run_ok(c)) {
+        note(L"Installing what the server needs (first start, needs internet)...");
+        static const wchar_t *need[] = {L"protobuf>=4.25", L"cramjam>=2.8", L"dpkt>=1.9"};
+        for (int i = 0; i < 3; i++) {
+            swprintf(c, 256, L"%ls -m pip install --disable-pip-version-check \"%ls\"", py, need[i]);
+            if (!run_logged(c, 1, 600000)) {
+                note(L"Could not install %ls.", need[i]);
+                swprintf(c, 256, L"%ls -c \"import sys; sys.exit(sys.version_info >= (3, 14))\"", py);
+                if (!run_ok(c)) note(L"This Python is newer than the server supports. Run setup_python.bat once in the Server folder (it gets Python 3.12 just for the server), then press Start again.");
+                else note(L"Check the internet connection, then press Start again.");
+                show_start_errors(); g_starting = 0; return 0;
+            }
+        }
+        note(L"Done.");
+    }
     char game[MAX_PATH], gp[MAX_PATH]; snprintf(game, sizeof game, "%s..\\Overfield", g_dir); snprintf(gp, sizeof gp, "%sgame_path.txt", g_dir);
     FILE *f = fopen(gp, "rb"); if (f) { if (fgets(game, sizeof game, f)) { char *e = game + strlen(game); while (e > game && (e[-1] == '\r' || e[-1] == '\n' || e[-1] == ' ')) *--e = 0; } fclose(f); }
     wchar_t wgame[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, game, -1, wgame, MAX_PATH);
     wchar_t cmd[1024]; swprintf(cmd, 1024, L"%ls rozefield_server.py --res-dir \"%ls\\launcher_Data\\yoo\"", py, wgame);
     STARTUPINFOW si = {sizeof si}; si.dwFlags = STARTF_USESTDHANDLES;
     SECURITY_ATTRIBUTES sa = {sizeof sa, NULL, TRUE};
-    HANDLE nul = CreateFileW(L"NUL", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, &sa, OPEN_EXISTING, 0, NULL);
-    si.hStdInput = nul; si.hStdOutput = nul; si.hStdError = nul;
+    HANDLE nul = CreateFileW(L"NUL", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, &sa, OPEN_EXISTING, 0, NULL);
+    HANDLE lg = open_startlog(0); if (!lg) lg = nul;
+    si.hStdInput = nul; si.hStdOutput = lg; si.hStdError = lg;
     PROCESS_INFORMATION pi; wchar_t wd[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_dir, -1, wd, MAX_PATH);
-    if (!CreateProcessW(NULL, cmd, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, wd, &si, &pi)) { note(L"Could not start Python."); CloseHandle(nul); g_starting = 0; return 0; }
-    CloseHandle(nul); CloseHandle(pi.hThread); g_proc = pi.hProcess; g_lognext = 0;
+    if (!CreateProcessW(NULL, cmd, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, wd, &si, &pi)) { note(L"Could not start Python."); CloseHandle(nul); if (lg != nul) CloseHandle(lg); g_starting = 0; return 0; }
+    CloseHandle(nul); if (lg != nul) CloseHandle(lg); CloseHandle(pi.hThread); g_proc = pi.hProcess; g_lognext = 0;
     for (int i = 0; i < 60 && !g_up && g_proc; i++) Sleep(500);
-    note(g_up ? L"Server is up." : L"The server is taking long to start - check server.log.");
+    if (g_up) note(L"Server is up.");
+    else if (g_proc) note(L"The server is still starting (the first start builds the game data, a minute or two)...");
     g_starting = 0;
     return 0;
 }
