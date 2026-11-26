@@ -434,7 +434,9 @@ def register(H, pack, scene_player):
             a = {'areaId': aid, 'areaState': 'Unlock', 'level': 1}
             w['areas'].append(a)
             p.dirty = True
-            Q.event(p, Q.C['AreaUlockNum'], absolute=sum(len(W(p, s)['areas']) for s in p.s['world']))
+        # every visit counts, so a terminal opened before the quest asked for it still completes "Access Area Terminal"
+        sid = p.s['scene_id']
+        Q.event(p, Q.C['AreaUlockNum'], sid, absolute=Q.areas_unlocked(p, sid))
         ctx.reply({'status': OK, 'area': a})
     H['AreaUnlockReq'] = area_unlock
 

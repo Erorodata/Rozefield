@@ -881,6 +881,13 @@ def gacha(ctx, req):
             got_sr = True
         results.append(pick)
         st['records'].append({'gachaId': gid, 'itemId': pick, 'gachaTime': str(int(time.time()))})
+    # a new player's first recruit always brings a new salvager: the tutorial right after asks to deploy a second one
+    owned = {int(c) for c in p.s['characters']}
+    if len(owned) < 2 and not any(d.item_tag(x) == 'EBagItemTag_Card' and x not in owned for x in results):
+        fresh = [x for pid in (300, 400) for x in tiers.get(pid, []) if d.item_tag(x) == 'EBagItemTag_Card' and x not in owned]
+        if fresh:
+            results[-1] = random.choice(fresh)
+            st['records'][-1]['itemId'] = results[-1]
     got, changed = p.add_items([(x, 1) for x in results])
     p.dirty = True
     Q.event(p, Q.C['Gacha'], n=len(results))

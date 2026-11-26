@@ -143,7 +143,19 @@ def _check_state_conditions(p, q):
             _set_progress(p, q, c, p.count(par[0]))
         elif t == C['PlayerLv']:
             _set_progress(p, q, c, p.s.get('level', 1))
+        elif t == C['AreaUlockNum']:   # "Access Area Terminal": an area terminal already opened counts
+            n = areas_unlocked(p, par[0] if par else None)
+            if n:
+                _set_progress(p, q, c, n)
     _maybe_complete(p, q)
+
+
+def areas_unlocked(p, scene=None):
+    """Area terminals opened: in one scene (the condition's Param), or everywhere."""
+    world = p.s.get('world') or {}
+    if scene is not None and str(scene) in world:
+        return len((world[str(scene)] or {}).get('areas', []) if isinstance(world[str(scene)], dict) else [])
+    return sum(len(v.get('areas', [])) for v in world.values() if isinstance(v, dict))
 
 
 def _maybe_complete(p, q):
