@@ -3,9 +3,14 @@
  * players online/offline, reset / clear password, rename, GM commands, mail, chat log, kick, ban, mute,
  * reclaim an old official id, import a backup, and the live log with filters.
  * If the server is already running (start_server.bat) the panel attaches to it.
+ * Connect: control a Rozefield Server on another device (Linux box, VPS, another PC) with its admin password; every
+ * request is signed (HMAC-SHA256, key from PBKDF2 of the password), the password itself is never sent.
+ * Hosting: display name, fixed server name, router ports, download link, home-network discovery, start with Windows.
+ * Imports (review / undo), Move server (export / import everything), Game package (Rozefield.zip for players).
+ * --background (used by "start with Windows"): start the server and stay in the tray.
  *
  * Build: zig cc -target x86_64-windows-gnu -O2 rozefield_panel.c panel.rc -o "Rozefield Server.exe"
- *        -lws2_32 -lcomdlg32 -lshell32 -luser32 -lgdi32 -lmsimg32 -Wl,--subsystem,windows
+ *        -lws2_32 -lcomdlg32 -lshell32 -luser32 -lgdi32 -lmsimg32 -lbcrypt -ladvapi32 -Wl,--subsystem,windows
  */
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
@@ -19,6 +24,8 @@
 #include <wchar.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <bcrypt.h>
+#include <time.h>
 
 #define WW 1180
 #define WH 720
@@ -34,6 +41,7 @@
 #define C_WARN RGB(232, 140, 20)
 #define C_FIELD RGB(236, 237, 241)
 #define WM_DATA (WM_APP + 1)
+#define WM_TRAY (WM_APP + 2)
 #ifndef EM_SETCUEBANNER
 #define EM_SETCUEBANNER 0x1501
 #endif
@@ -48,6 +56,9 @@ static volatile int g_up, g_starting;
 static int g_hover, g_filter, g_sel = -1;
 static long g_lognext;
 static int g_follow = 1;   /* next log rebuild jumps to the newest line (filter change, start) */
+/* where the server is: this PC (g_remote 0, token) or another device (g_host, signing key from the admin password) */
+static char g_host[256]; static int g_remote; static unsigned char g_key[32]; static int g_haskey;
+static NOTIFYICONDATAW g_tray; static int g_bg;
 
 /* ---------------------------------------------------------------- players */
 struct pl { int pid; char uid[64]; wchar_t name[64]; int level, online, banned, muted, pw, official, label; };
@@ -74,15 +85,57 @@ static void note(const wchar_t *fmt, ...) {
     add_line(u);
 }
 
+/* ---------------------------------------------------------------- signing (another device) */
+static int hmac256(const unsigned char *key, int kl, const unsigned char *msg, int ml, unsigned char out[32]) {
+    BCRYPT_ALG_HANDLE alg; BCRYPT_HASH_HANDLE hh; int ok = 0;
+    if (BCryptOpenAlgorithmProvider(&alg, BCRYPT_SHA256_ALGORITHM, NULL, key ? BCRYPT_ALG_HANDLE_HMAC_FLAG : 0)) return 0;
+    if (!BCryptCreateHash(alg, &hh, NULL, 0, (PUCHAR)key, key ? kl : 0, 0)) {
+        ok = !BCryptHashData(hh, (PUCHAR)msg, ml, 0) && !BCryptFinishHash(hh, out, 32, 0);
+        BCryptDestroyHash(hh);
+    }
+    BCryptCloseAlgorithmProvider(alg, 0); return ok;
+}
+static void hexs(const unsigned char *b, int n, char *o) { for (int i = 0; i < n; i++) sprintf(o + 2 * i, "%02x", b[i]); o[2 * n] = 0; }
+static int unhex(const char *h, unsigned char *o, int n) {
+    for (int i = 0; i < n; i++) { unsigned v; if (sscanf(h + 2 * i, "%2x", &v) != 1) return 0; o[i] = (unsigned char)v; } return 1;
+}
+static int derive_key(const char *pw, const char *salthex, int rounds, unsigned char out[32]) {
+    unsigned char salt[64]; int sl = (int)strlen(salthex) / 2; if (sl > 64 || !unhex(salthex, salt, sl)) return 0;
+    BCRYPT_ALG_HANDLE alg; if (BCryptOpenAlgorithmProvider(&alg, BCRYPT_SHA256_ALGORITHM, NULL, BCRYPT_ALG_HANDLE_HMAC_FLAG)) return 0;
+    int ok = !BCryptDeriveKeyPBKDF2(alg, (PUCHAR)pw, (ULONG)strlen(pw), salt, sl, rounds, out, 32, 0);
+    BCryptCloseAlgorithmProvider(alg, 0); return ok;
+}
+static void conn_ini(char *p) { snprintf(p, MAX_PATH, "%sRozefield Server.ini", g_dir); }
+static void load_conn(void) {
+    char p[MAX_PATH], k[80]; conn_ini(p);
+    GetPrivateProfileStringA("connect", "host", "", g_host, sizeof g_host, p);
+    GetPrivateProfileStringA("connect", "key", "", k, sizeof k, p);
+    g_remote = g_host[0] != 0; g_haskey = strlen(k) == 64 && unhex(k, g_key, 32);
+}
+static void save_conn(void) {
+    char p[MAX_PATH], k[80] = ""; conn_ini(p); if (g_haskey) hexs(g_key, 32, k);
+    WritePrivateProfileStringA("connect", "host", g_host, p); WritePrivateProfileStringA("connect", "key", g_remote ? k : "", p);
+}
+
 /* ---------------------------------------------------------------- HTTP to the server */
-static int http(const char *method, const char *path, const char *body, int blen, char **out) {
-    *out = NULL;
+static int http_raw(const char *method, const char *path, const char *body, int blen, char **out, int *outlen) {
+    *out = NULL; if (outlen) *outlen = 0;
+    struct addrinfo hints = {0}, *ai = NULL; hints.ai_family = AF_INET; hints.ai_socktype = SOCK_STREAM;
+    char port[16]; snprintf(port, sizeof port, "%d", g_port);
+    if (getaddrinfo(g_remote ? g_host : "127.0.0.1", port, &hints, &ai) != 0 || !ai) return 0;
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
-    struct sockaddr_in a = {0}; a.sin_family = AF_INET; a.sin_port = htons((u_short)g_port); a.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    DWORD to = 15000; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
-    if (connect(s, (struct sockaddr *)&a, sizeof a) != 0) { closesocket(s); return 0; }
-    char hdr[400];
-    int hl = snprintf(hdr, sizeof hdr, "%s %s HTTP/1.0\r\nHost: rozefield\r\nX-Admin-Token: %s\r\nContent-Length: %d\r\n\r\n", method, path, g_token, blen);
+    DWORD to = 20000; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
+    int c = connect(s, ai->ai_addr, (int)ai->ai_addrlen); freeaddrinfo(ai);
+    if (c != 0) { closesocket(s); return 0; }
+    char hdr[700], auth[300] = "";
+    if (g_remote) {
+        unsigned char bh[32], sig[32]; char bhx[65], sigx[65]; hmac256(NULL, 0, (const unsigned char *)body, blen, bh); hexs(bh, 32, bhx);
+        long long t = (long long)time(NULL); size_t ml = strlen(path) + 200; char *msg = (char *)malloc(ml);
+        int n = snprintf(msg, ml, "%lld\n%s\n%s\n%s", t, method, path, bhx);
+        hmac256(g_key, 32, (const unsigned char *)msg, n, sig); hexs(sig, 32, sigx); free(msg);
+        snprintf(auth, sizeof auth, "X-Admin-Time: %lld\r\nX-Admin-Sig: %s\r\n", t, sigx);
+    } else snprintf(auth, sizeof auth, "X-Admin-Token: %s\r\n", g_token);
+    int hl = snprintf(hdr, sizeof hdr, "%s %s HTTP/1.0\r\nHost: rozefield\r\n%sContent-Length: %d\r\n\r\n", method, path, auth, blen);
     send(s, hdr, hl, 0);
     for (int off = 0; off < blen;) { int n = send(s, body + off, blen - off, 0); if (n <= 0) break; off += n; }
     int cap = 65536, len = 0, r; char *b = (char *)malloc(cap + 1);
@@ -90,9 +143,25 @@ static int http(const char *method, const char *path, const char *body, int blen
     b[len] = 0; closesocket(s);
     int code = 0; sscanf(b, "HTTP/%*s %d", &code);
     char *p = strstr(b, "\r\n\r\n");
-    if (!p || code != 200) { free(b); return 0; }
-    memmove(b, p + 4, len - (p + 4 - b) + 1);
-    *out = b; return 1;
+    if (!p || code != 200) { free(b); return code == 403 ? -1 : 0; }
+    int bl = len - (int)(p + 4 - b);
+    memmove(b, p + 4, bl + 1);
+    *out = b; if (outlen) *outlen = bl; return 1;
+}
+static int http(const char *method, const char *path, const char *body, int blen, char **out) {
+    return http_raw(method, path, body, blen, out, NULL) == 1;
+}
+static wchar_t *wide(const char *u) {
+    int n = MultiByteToWideChar(CP_UTF8, 0, u, -1, NULL, 0); wchar_t *w = (wchar_t *)malloc(n * sizeof(wchar_t));
+    MultiByteToWideChar(CP_UTF8, 0, u, -1, w, n); return w;
+}
+/* POST/GET a hosting call; returns malloc'd text after OK| / ERR| (or the whole answer), *ok set */
+static wchar_t *host_call(const char *method, const char *path, const char *body, int blen, int *ok) {
+    char *out; *ok = 0;
+    if (!http(method, path, body, blen, &out)) return _wcsdup(L"The server didn't answer (or refused the admin password).");
+    *ok = strncmp(out, "ERR|", 4) != 0;
+    const char *t = (!strncmp(out, "OK|", 3) || !strncmp(out, "ERR|", 4)) ? strchr(out, '|') + 1 : out;
+    wchar_t *w = wide(t); free(out); return w;
 }
 
 static void read_token(void) {
@@ -130,8 +199,8 @@ static void put_kv(char *b, size_t bs, const char *k, const wchar_t *v) {
 static DWORD WINAPI poller(LPVOID a) {
     for (int tick = 0;; tick++) {
         char *out;
-        if (g_token[0] == 0 || tick % 10 == 0) read_token();
-        int up = g_token[0] && http("GET", "/admin/players", "", 0, &out);
+        if (!g_remote && (g_token[0] == 0 || tick % 10 == 0)) read_token();
+        int up = (g_remote ? g_haskey : g_token[0] != 0) && http("GET", "/admin/players", "", 0, &out);
         if (up) {
             g_npl_new = 0;
             char *save = NULL;
@@ -182,10 +251,11 @@ static DWORD WINAPI start_thread(LPVOID a) {
     if (g_up) { note(L"The server is already running."); g_starting = 0; return 0; }
     note(L"Starting the server...");
     /* same choice of Python as start_server.bat: an installed 3.13 / 3.12, else py -3, else python */
-    static const wchar_t *pys[] = {L"py -3.13", L"py -3.12", L"py -3", L"python"};
+    static wchar_t own[MAX_PATH + 4]; static const wchar_t *pys[] = {own, L"py -3.13", L"py -3.12", L"py -3", L"python"};
+    { wchar_t wd0[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_dir, -1, wd0, MAX_PATH); swprintf(own, MAX_PATH + 4, L"\"%lspython\\python.exe\"", wd0); }
     const wchar_t *py = NULL;
-    for (int i = 0; i < 4 && !py; i++) { wchar_t c[64]; swprintf(c, 64, L"%ls -c \"1\"", pys[i]); if (run_ok(c)) py = pys[i]; }
-    if (!py) { note(L"Python 3 was not found. Install it from python.org (tick \"Add python to PATH\")."); g_starting = 0; return 0; }
+    for (int i = 0; i < 5 && !py; i++) { wchar_t c[64]; swprintf(c, 64, L"%ls -c \"1\"", pys[i]); if (run_ok(c)) py = pys[i]; }
+    if (!py) { note(L"Python 3 was not found. Run setup_python.bat once (or install Python from python.org)."); g_starting = 0; return 0; }
     wchar_t c[256]; swprintf(c, 256, L"%ls -c \"import google.protobuf, cramjam\"", py);
     if (!run_ok(c)) { note(L"Installing what the server needs (first start)..."); swprintf(c, 256, L"%ls -m pip install -r requirements.txt", py); run_ok(c); }
     char game[MAX_PATH], gp[MAX_PATH]; snprintf(game, sizeof game, "%s..\\Overfield", g_dir); snprintf(gp, sizeof gp, "%sgame_path.txt", g_dir);
@@ -204,17 +274,23 @@ static DWORD WINAPI start_thread(LPVOID a) {
     g_starting = 0;
     return 0;
 }
-static void start_server(void) { if (!g_starting) { g_starting = 1; CloseHandle(CreateThread(NULL, 0, start_thread, NULL, 0, NULL)); } }
+static void start_server(void) {
+    if (g_remote) { note(L"Connected to %hs: start it on that device (or it starts by itself as a service).", g_host); return; }
+    if (!g_starting) { g_starting = 1; CloseHandle(CreateThread(NULL, 0, start_thread, NULL, 0, NULL)); }
+}
 static void stop_server(void) {
     int ok; wchar_t *r = act("stop", &ok); free(r);
     if (g_proc) { if (WaitForSingleObject(g_proc, 4000) != WAIT_OBJECT_0) TerminateProcess(g_proc, 0); }
     note(L"Server stopped.");
 }
-static DWORD WINAPI restart_thread(LPVOID a) { stop_server(); for (int i = 0; i < 20 && g_up; i++) Sleep(300); Sleep(800); start_server(); return 0; }
+static DWORD WINAPI restart_thread(LPVOID a) {
+    if (g_remote) { int ok; wchar_t *r = host_call("POST", "/admin/host/restart", "", 0, &ok); note(L"Restart: %ls", r); free(r); return 0; }
+    stop_server(); for (int i = 0; i < 20 && g_up; i++) Sleep(300); Sleep(800); start_server(); return 0;
+}
 
 /* ---------------------------------------------------------------- dialogs */
-static wchar_t g_dlg_out[4][1024]; static int g_dlg_done, g_dlg_n;
-static HWND g_dlg_edits[4], g_dlg_combo;
+static wchar_t g_dlg_out[10][1024]; static int g_dlg_done, g_dlg_n;
+static HWND g_dlg_edits[10], g_dlg_combo;
 
 static LRESULT CALLBACK DlgProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     switch (m) {
@@ -232,10 +308,10 @@ static LRESULT CALLBACK DlgProc(HWND h, UINT m, WPARAM w, LPARAM l) {
 
 /* fields: label, initial text; flags bit0 = password, bit1 = multiline (last field only). Returns 1 on OK. */
 static int ask(const wchar_t *title, const wchar_t *intro, int n, const wchar_t **labels, const wchar_t **init, int flags) {
-    int W = 460, rowh = 58, H = 120 + n * rowh + ((flags & 2) ? 90 : 0) + (intro ? 44 : 0);
+    int W = (flags & 4) ? 620 : 460, rowh = n > 5 ? 52 : 58, H = 120 + n * rowh + ((flags & 2) ? 90 : 0) + (intro ? 44 : 0);
     RECT pr; GetWindowRect(g_win, &pr);
     HWND d = CreateWindowExW(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, L"RzDlg", title, WS_POPUP | WS_CAPTION | WS_SYSMENU,
-                             (pr.left + pr.right - W) / 2, (pr.top + pr.bottom - H) / 2, W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
+                             (pr.left + pr.right - W) / 2, max(0, (int)(pr.top + pr.bottom - H) / 2), W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
     int y = 16;
     if (intro) { HWND s = CreateWindowW(L"STATIC", intro, WS_CHILD | WS_VISIBLE, 18, y, W - 40, 40, d, NULL, NULL, NULL); SendMessageW(s, WM_SETFONT, (WPARAM)f_small, TRUE); y += 44; }
     g_dlg_n = n;
@@ -243,7 +319,8 @@ static int ask(const wchar_t *title, const wchar_t *intro, int n, const wchar_t 
         HWND s = CreateWindowW(L"STATIC", labels[i], WS_CHILD | WS_VISIBLE, 18, y, W - 40, 18, d, NULL, NULL, NULL);
         SendMessageW(s, WM_SETFONT, (WPARAM)f_small, TRUE);
         int multi = (flags & 2) && i == n - 1;
-        DWORD st = WS_CHILD | WS_VISIBLE | WS_TABSTOP | (multi ? (ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL) : ES_AUTOHSCROLL) | ((flags & 1) ? ES_PASSWORD : 0);
+        int pw = (flags & 1) || ((flags >> 8) & (1 << i));   /* bit 8+i: only field i hides what is typed */
+        DWORD st = WS_CHILD | WS_VISIBLE | WS_TABSTOP | (multi ? (ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL) : ES_AUTOHSCROLL) | (pw ? ES_PASSWORD : 0);
         g_dlg_edits[i] = CreateWindowExW(0, L"EDIT", init && init[i] ? init[i] : L"", st, 18, y + 20, W - 40, multi ? 110 : 28, d, NULL, NULL, NULL);
         SendMessageW(g_dlg_edits[i], WM_SETFONT, (WPARAM)f_body, TRUE);
         SendMessageW(g_dlg_edits[i], EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(6, 6));
@@ -266,6 +343,7 @@ static void show_text(const wchar_t *title, const wchar_t *text) {   /* long res
 
 /* ---------------------------------------------------------------- actions */
 enum { B_NONE, B_CLOSE, B_MIN, B_START, B_STOP, B_RESTART, B_SAVEDIR, B_LOGFILE, B_IMPORT, B_MAILALL,
+       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE,
        A_FIRST, A_RESETPW = A_FIRST, A_CLEARPW, A_RENAME, A_GM, A_MAIL, A_CHAT, A_KICK, A_BAN, A_MUTE, A_RECLAIM, A_LAST,
        F_FIRST = 50 };
 static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Rename", L"GM commands", L"Send mail", L"Chat log",
@@ -275,7 +353,8 @@ static const wchar_t *FILTERS[] = {L"All", L"Logins", L"Errors", L"Chat", L"Admi
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
 static RECT r_start = {WW - 470, WH - 70, WW - 340, WH - 26}, r_stop = {WW - 330, WH - 70, WW - 200, WH - 26}, r_restart = {WW - 190, WH - 70, WW - 36, WH - 26};
 static RECT r_savedir = {14, WH - 128, 58, WH - 84}, r_logfile = {14, WH - 74, 58, WH - 30};
-static RECT r_import = {96, WH - 70, 262, WH - 26}, r_mailall = {272, WH - 70, 430, WH - 26};
+static RECT r_import = {96, WH - 70, 262, WH - 26}, r_mailall = {272, WH - 70, 430, WH - 26}, r_connect = {440, WH - 70, 600, WH - 26};
+static RECT r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
 static RECT r_act[10], r_filt[NFILT];
 
 static struct pl *sel(void) { return (g_sel >= 0 && g_sel < g_npl) ? &g_pl[g_sel] : NULL; }
@@ -286,11 +365,182 @@ static void result(const wchar_t *what, wchar_t *r, int ok) {
     free(r);
 }
 
+/* ---------------------------------------------------------------- hosting */
+/* value of "key" in a flat JSON text (after `from`): strings (with \" and \\), true/false/numbers */
+static int json_get(const char *js, const char *from, const char *key, char *out, int n) {
+    out[0] = 0; const char *b = from ? strstr(js, from) : js; if (!b) return 0;
+    char k[80]; snprintf(k, sizeof k, "\"%s\":", key); const char *p = strstr(b, k); if (!p) return 0;
+    p += strlen(k); while (*p == ' ') p++;
+    int i = 0;
+    if (*p == '"') { for (p++; *p && *p != '"' && i < n - 1; p++) { if (*p == '\\' && p[1]) { p++; out[i++] = *p == 'n' ? '\n' : *p; } else out[i++] = *p; } }
+    else while (*p && *p != ',' && *p != '}' && i < n - 1) out[i++] = *p++;
+    out[i] = 0; return 1;
+}
+static void json_put(char *b, size_t bs, const char *k, const wchar_t *v, int boolean) {
+    char u[2048]; WideCharToMultiByte(CP_UTF8, 0, v, -1, u, sizeof u, NULL, NULL);
+    size_t l = strlen(b); l += snprintf(b + l, bs - l, "%s\"%s\":", l > 1 ? "," : "", k);
+    if (boolean) { snprintf(b + l, bs - l, "%s", (u[0] == 'y' || u[0] == 'Y' || u[0] == '1' || u[0] == 'o' || u[0] == 'O') ? "true" : "false"); return; }
+    b[l++] = '"';
+    for (char *c = u; *c && l < bs - 4; c++) { if (*c == '"' || *c == '\\') b[l++] = '\\'; if ((unsigned char)*c >= 32) b[l++] = *c; }
+    b[l++] = '"'; b[l] = 0;
+}
+#define RUNKEY L"Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+static int autostart_on(void) {
+    wchar_t v[MAX_PATH * 2]; DWORD sz = sizeof v;
+    return RegGetValueW(HKEY_CURRENT_USER, RUNKEY, L"Rozefield Server", RRF_RT_REG_SZ, NULL, v, &sz) == ERROR_SUCCESS;
+}
+static void autostart_set(int on) {
+    HKEY k; if (RegCreateKeyExW(HKEY_CURRENT_USER, RUNKEY, 0, NULL, 0, KEY_WRITE, NULL, &k, NULL)) return;
+    if (on) { wchar_t exe[MAX_PATH], v[MAX_PATH + 32]; GetModuleFileNameW(NULL, exe, MAX_PATH); swprintf(v, MAX_PATH + 32, L"\"%ls\" --background", exe);
+              RegSetValueExW(k, L"Rozefield Server", 0, REG_SZ, (BYTE *)v, (DWORD)((wcslen(v) + 1) * sizeof(wchar_t))); }
+    else RegDeleteValueW(k, L"Rozefield Server");
+    RegCloseKey(k);
+}
+
+static void do_connect(void) {
+    wchar_t host[256]; MultiByteToWideChar(CP_UTF8, 0, g_host, -1, host, 256);
+    const wchar_t *lab[] = {L"Server address: its name, internet or home-network address (leave empty for this PC)"}; const wchar_t *init[] = {host};
+    if (!ask(L"Connect", L"Control the Rozefield Server on another device (mini PC, Linux box, VPS) with its admin password.", 1, lab, init, 4)) return;
+    char nh[256]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[0], -1, nh, sizeof nh, NULL, NULL);
+    { char *e = nh + strlen(nh); while (e > nh && (e[-1] == ' ' || e[-1] == '/')) *--e = 0; char *b = nh; while (*b == ' ') b++;
+      if (!strncmp(b, "http://", 7)) b += 7; memmove(nh, b, strlen(b) + 1); char *c = strchr(nh, ':'); if (c) *c = 0; }
+    if (!nh[0] || !strcmp(nh, "localhost") || !strcmp(nh, "127.0.0.1")) {
+        g_host[0] = 0; g_remote = 0; g_haskey = 0; save_conn(); read_token(); note(L"Connected to this PC."); return;
+    }
+    const wchar_t *lab2[] = {L"Admin password (set on that device)"};
+    if (!ask(L"Connect", NULL, 1, lab2, NULL, 1)) return;
+    char pw[512]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[0], -1, pw, sizeof pw, NULL, NULL);
+    char old[256]; int oldr = g_remote, oldk = g_haskey; unsigned char oldkey[32]; strcpy(old, g_host); memcpy(oldkey, g_key, 32);
+    strcpy(g_host, nh); g_remote = 1; g_haskey = 0;
+    char *out; int ok = 0;
+    if (http("GET", "/admin/salt", "", 0, &out)) {
+        char *bar = strchr(out, '|');
+        if (!out[0]) MessageBoxW(g_win, L"That server has no admin password yet.\n\nOn that device run:  start_server --set-admin-password <password>\n(or set it in Hosting on that device's own panel).", L"Connect", MB_OK | MB_ICONWARNING);
+        else if (bar) { *bar = 0; ok = derive_key(pw, out, atoi(bar + 1), g_key); }
+        free(out);
+    } else MessageBoxW(g_win, L"No Rozefield Server answered at that address (TCP 18881).", L"Connect", MB_OK | MB_ICONWARNING);
+    SecureZeroMemory(pw, sizeof pw);
+    if (ok) { g_haskey = 1; char *o2; int r = http_raw("GET", "/admin/host/status", "", 0, &o2, NULL); if (r == 1) free(o2); ok = r == 1;
+              if (r == -1) MessageBoxW(g_win, L"Wrong admin password.", L"Connect", MB_OK | MB_ICONWARNING); }
+    if (!ok) { strcpy(g_host, old); g_remote = oldr; g_haskey = oldk; memcpy(g_key, oldkey, 32); return; }
+    save_conn(); g_lognext = 0; note(L"Connected to %hs.", g_host);
+}
+
+static void do_hosting(void) {
+    char *js; if (!http("GET", "/admin/host/status", "", 0, &js)) { MessageBoxW(g_win, L"The server didn't answer.", L"Hosting", MB_OK); return; }
+    static const char *keys[] = {"display_name", "server_name", "name_provider", "duckdns_token", "update_url", "download_link", "upnp", "lan_discovery"};
+    wchar_t cur[8][600]; char v[1200];
+    for (int i = 0; i < 8; i++) { json_get(js, "\"settings\"", keys[i], v, sizeof v); if (i >= 6) strcpy(v, strcmp(v, "false") ? "yes" : "no"); MultiByteToWideChar(CP_UTF8, 0, v, -1, cur[i], 600); }
+    char ns[300], rt[300], pub[64], lan[64]; json_get(js, NULL, "name_status", ns, sizeof ns); json_get(js, NULL, "router", rt, sizeof rt);
+    json_get(js, NULL, "public_ip", pub, sizeof pub); json_get(js, NULL, "lan_ip", lan, sizeof lan);
+    char code[32], lcode[32]; json_get(js, NULL, "invite_code", code, sizeof code); json_get(js, NULL, "lan_code", lcode, sizeof lcode); free(js);
+    wchar_t intro[900]; swprintf(intro, 900, L"Invite code %hs (internet)  \x00B7  %hs (home network)  \x00B7  name: %hs\nRouter: %hs",
+                                 code[0] ? code : "unknown", lcode, ns, rt); (void)pub; (void)lan;
+    const wchar_t *lab[] = {L"Display name (shown in the launcher and on the download page)", L"Fixed server name players use (e.g. myserver.duckdns.org)",
+                            L"Name service: none, duckdns, or url (own domain)", L"DuckDNS token (from duckdns.org)", L"Own domain: dynamic-DNS update URL ({ip} = this server's address)",
+                            L"Download link for Rozefield.zip (e.g. Google Drive), tried before this server", L"Open router ports automatically (yes / no)",
+                            L"Answer launchers on the home network (yes / no)", L"Start with Windows, in the tray (yes / no)", L"New admin password for connecting from another device (empty = keep)"};
+    const wchar_t *init[10]; for (int i = 0; i < 8; i++) init[i] = cur[i];
+    init[8] = g_remote ? L"(only on that device)" : autostart_on() ? L"yes" : L"no"; init[9] = L"";
+    int n = g_remote ? 8 : 10;
+    if (!ask(L"Hosting", intro, n, lab, init, 4 | (1 << (8 + 9)))) return;
+    char b[8192] = "{";
+    for (int i = 0; i < 8; i++) json_put(b, sizeof b, keys[i], g_dlg_out[i], i >= 6);
+    strcat(b, "}");
+    int ok; wchar_t *r = host_call("POST", "/admin/host/settings", b, (int)strlen(b), &ok);
+    wchar_t msg[2000]; swprintf(msg, 2000, L"Settings: %ls", r); free(r);
+    if (!g_remote) {
+        int on = g_dlg_out[8][0] == L'y' || g_dlg_out[8][0] == L'Y'; autostart_set(on);
+        wcscat(msg, on ? L"\nStarts with Windows: on (in the tray)." : L"\nStarts with Windows: off.");
+        if (g_dlg_out[9][0]) {
+            char pw[512]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[9], -1, pw, sizeof pw, NULL, NULL);
+            int ok2; wchar_t *r2 = host_call("POST", "/admin/host/password", pw, (int)strlen(pw), &ok2); SecureZeroMemory(pw, sizeof pw);
+            wcscat(msg, L"\nAdmin password: "); wcscat(msg, r2); free(r2);
+        }
+    }
+    wchar_t *r3 = host_call("POST", "/admin/host/name", "", 0, &ok); wcscat(msg, L"\nServer name: "); wcsncat(msg, r3, 400); free(r3);
+    MessageBoxW(g_win, msg, L"Hosting", MB_OK | MB_ICONINFORMATION);
+}
+
+static void do_imports(void) {
+    char *out; if (!http("GET", "/admin/host/imports", "", 0, &out)) { MessageBoxW(g_win, L"The server didn't answer.", L"Imports", MB_OK); return; }
+    size_t cap = strlen(out) * 2 + 64; char *t = (char *)malloc(cap); t[0] = 0; size_t l = 0; char *save = NULL;
+    for (char *line = strtok_s(out, "\n", &save); line; line = strtok_s(NULL, "\n", &save)) {
+        char *f[7] = {0}; int k = 0; char *q = line;
+        while (k < 7) { f[k++] = q; char *bar = strchr(q, '|'); if (!bar) break; *bar = 0; q = bar + 1; }
+        if (k < 7) continue;
+        time_t tt = (time_t)atoll(f[1]); struct tm *lt = localtime(&tt); char when[32] = "";
+        if (lt) strftime(when, sizeof when, "%d %b %H:%M", lt);
+        l += snprintf(t + l, cap - l, "#%s  %s  %s  %s (%s)%s%s\r\n", f[0], when, f[2][0] ? f[2] : "?", !strcmp(f[5], "ok") ? "imported" : "REFUSED",
+                      f[4], f[6][0] ? ": " : "", f[6]);
+    }
+    if (!l) strcpy(t, "No imports yet.");
+    wchar_t *w = wide(t); free(t); free(out);
+    const wchar_t *lab[] = {L"Import number to undo (e.g. 3) - leave empty to close", L"Imports, newest first"}; const wchar_t *init[] = {L"", w};
+    int r = ask(L"Imported accounts", L"Undo puts the account back as it was before (or removes it if it was new). The player must be offline.", 2, lab, init, 2 | 4);
+    free(w);
+    if (!r || !g_dlg_out[0][0]) return;
+    int id = _wtoi(g_dlg_out[0][0] == L'#' ? g_dlg_out[0] + 1 : g_dlg_out[0]); if (id <= 0) return;
+    wchar_t q[100]; swprintf(q, 100, L"Undo import #%d?", id);
+    if (MessageBoxW(g_win, q, L"Imported accounts", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
+    char b[32]; snprintf(b, sizeof b, "%d", id); int ok; wchar_t *res = host_call("POST", "/admin/host/undo_import", b, (int)strlen(b), &ok);
+    MessageBoxW(g_win, res, L"Imported accounts", MB_OK | (ok ? MB_ICONINFORMATION : MB_ICONWARNING)); free(res);
+}
+
+static void do_move(void) {
+    int r = MessageBoxW(g_win, L"Move this server to another device.\n\nYes: export everything (accounts, chat, photos, settings, game update) to one file.\nNo: import a file exported from another server (replaces this server's data after a restart; the current data is kept).",
+                        L"Move server", MB_YESNOCANCEL | MB_ICONQUESTION);
+    if (r == IDYES) {
+        wchar_t fn[MAX_PATH] = L"Rozefield server export.zip"; OPENFILENAMEW of = {0}; of.lStructSize = sizeof of; of.hwndOwner = g_win;
+        of.lpstrFilter = L"Server export (*.zip)\0*.zip\0"; of.lpstrFile = fn; of.nMaxFile = MAX_PATH; of.lpstrDefExt = L"zip"; of.Flags = OFN_OVERWRITEPROMPT;
+        if (!GetSaveFileNameW(&of)) return;
+        note(L"Exporting the server..."); char *out; int len;
+        if (http_raw("GET", "/admin/host/export", "", 0, &out, &len) != 1) { MessageBoxW(g_win, L"The server didn't answer.", L"Move server", MB_OK); return; }
+        HANDLE f = CreateFileW(fn, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL); DWORD w = 0;
+        if (f != INVALID_HANDLE_VALUE) { WriteFile(f, out, len, &w, NULL); CloseHandle(f); }
+        free(out);
+        wchar_t m[MAX_PATH + 300]; swprintf(m, MAX_PATH + 300, w == (DWORD)len ? L"Saved (%d MB):\n%ls\n\nOn the new device: start Rozefield Server, then Move server > No (import) and pick this file." : L"Couldn't write %d MB to\n%ls", len >> 20, fn);
+        MessageBoxW(g_win, m, L"Move server", MB_OK);
+    } else if (r == IDNO) {
+        wchar_t fn[MAX_PATH] = L""; OPENFILENAMEW of = {0}; of.lStructSize = sizeof of; of.hwndOwner = g_win;
+        of.lpstrFilter = L"Server export (*.zip)\0*.zip\0"; of.lpstrFile = fn; of.nMaxFile = MAX_PATH; of.Flags = OFN_FILEMUSTEXIST;
+        if (!GetOpenFileNameW(&of)) return;
+        HANDLE f = CreateFileW(fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+        if (f == INVALID_HANDLE_VALUE) { MessageBoxW(g_win, L"Couldn't open that file.", L"Move server", MB_OK); return; }
+        DWORD sz = GetFileSize(f, NULL), got = 0; char *data = (char *)malloc(sz + 1); ReadFile(f, data, sz, &got, NULL); CloseHandle(f);
+        int ok; wchar_t *res = host_call("POST", "/admin/host/import", data, (int)got, &ok); free(data);
+        if (ok && MessageBoxW(g_win, res, L"Move server - restart now?", MB_YESNO | MB_ICONQUESTION) == IDYES) CloseHandle(CreateThread(NULL, 0, restart_thread, NULL, 0, NULL));
+        else if (!ok) MessageBoxW(g_win, res, L"Move server", MB_OK | MB_ICONWARNING);
+        free(res);
+    }
+}
+
+static void do_package(void) {
+    char *out; if (!http("GET", "/admin/host/package", "", 0, &out)) { MessageBoxW(g_win, L"The server didn't answer.", L"Game package", MB_OK); return; }
+    char st[32] = "", file[MAX_PATH] = "", err[300] = ""; long long done = 0, total = 0;
+    { char *f[5] = {0}; int k = 0; char *q = out; while (k < 5) { f[k++] = q; char *bar = strchr(q, '|'); if (!bar) break; *bar = 0; q = bar + 1; }
+      if (k == 5) { snprintf(st, sizeof st, "%s", f[0]); done = atoll(f[1]); total = atoll(f[2]); snprintf(file, sizeof file, "%s", f[3]); snprintf(err, sizeof err, "%s", f[4]); } }
+    free(out);
+    wchar_t m[1200];
+    if (!strcmp(st, "building")) { swprintf(m, 1200, L"Building Rozefield.zip: %d%% (%lld of %lld MB).", total ? (int)(done * 100 / total) : 0, done >> 20, total >> 20); MessageBoxW(g_win, m, L"Game package", MB_OK); return; }
+    if (!strcmp(st, "done")) swprintf(m, 1200, L"Ready: %hs\n\nPlayers download it from this server's page (http://<server name>/) or from your Drive link.\n\nBuild it again now (after a game update)?", file);
+    else if (!strcmp(st, "failed")) swprintf(m, 1200, L"The last build failed: %hs\n\nTry again?", err);
+    else wcscpy(m, L"Build Rozefield.zip for players: the Overfield game folder next to the Server folder, with this server set as the default.\n\nIt can take a few minutes (several GB). Build now?");
+    if (MessageBoxW(g_win, m, L"Game package", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
+    int ok; wchar_t *r = host_call("POST", "/admin/host/package", "", 0, &ok);
+    MessageBoxW(g_win, ok ? L"Building in the background. Press Game package again to see how far it is." : r, L"Game package", MB_OK | (ok ? MB_ICONINFORMATION : MB_ICONWARNING)); free(r);
+}
+
 static void do_action(int a) {
     struct pl *p = sel(); char b[8192]; int ok; wchar_t *r;
     if (a >= A_FIRST && a < A_LAST && !p) { MessageBoxW(g_win, L"Choose a player in the list first.", L"Rozefield Server", MB_OK); return; }
     wchar_t who[120]; if (p) swprintf(who, 120, L"%ls (UID %d)", p->name, p->label);
     switch (a) {
+    case B_CONNECT: do_connect(); break;
+    case B_HOSTING: do_hosting(); break;
+    case B_IMPORTS: do_imports(); break;
+    case B_MOVE: do_move(); break;
+    case B_PACKAGE: do_package(); break;
     case A_RESETPW: {
         const wchar_t *lab[] = {L"New password (4+ characters)"};
         if (!ask(L"Reset password", who, 1, lab, NULL, 0)) return;
@@ -447,11 +697,12 @@ static void paint(HWND h) {
 
     RECT rt = {96, 22, 600, 64}; txt(dc, f_title, C_TXT, rt, L"Rozefield Server", DT_LEFT | DT_SINGLELINE);
     int online = 0; for (int i = 0; i < g_npl; i++) online += g_pl[i].online;
-    wchar_t st[160];
+    wchar_t st[480];
     if (g_up) swprintf(st, 160, L"Running  \x00B7  %d online  \x00B7  %d accounts%ls", online, g_npl, g_proc ? L"" : L"  \x00B7  started outside this window");
-    else wcscpy(st, g_starting ? L"Starting\x2026" : L"Stopped");
+    else wcscpy(st, g_starting ? L"Starting\x2026" : g_remote ? L"Not reachable" : L"Stopped");
+    if (g_remote) { wchar_t c[300]; swprintf(c, 300, L"  \x00B7  connected to %hs", g_host); wcscat(st, c); }
     dot(dc, 104, 79, 5, g_up ? C_OK : g_starting ? C_WARN : C_BAD);
-    RECT rs = {116, 68, 900, 92}; txt(dc, f_small, g_up ? C_OK : C_MUTE, rs, st, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    RECT rs = {116, 68, WW - 40, 92}; txt(dc, f_small, g_up ? C_OK : C_MUTE, rs, st, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
     /* players panel */
     RECT pp = {96, 106, 446, WH - 92}; fill(dc, pp, C_PANEL, 18); outline(dc, pp, C_LINE, 18);
@@ -481,7 +732,12 @@ static void paint(HWND h) {
     RECT bar = {72, WH - 84, WW, WH}; fill(dc, bar, C_PANEL, 0); { RECT ln = {72, WH - 84, WW, WH - 83}; fill(dc, ln, C_LINE, 0); }
     pill(dc, r_import, 0, g_hover == B_IMPORT, g_up, L"Import backup");
     pill(dc, r_mailall, 0, g_hover == B_MAILALL, g_up, L"Mail everyone");
-    pill(dc, r_start, 1, g_hover == B_START, !g_up && !g_starting, L"Start");
+    pill(dc, r_connect, 0, g_hover == B_CONNECT, 1, g_remote ? L"Connect (other device)" : L"Connect\x2026");
+    pill(dc, r_hosting, 0, g_hover == B_HOSTING, g_up, L"Hosting");
+    pill(dc, r_imports, 0, g_hover == B_IMPORTS, g_up, L"Imports");
+    pill(dc, r_move, 0, g_hover == B_MOVE, g_up, L"Move server");
+    pill(dc, r_package, 0, g_hover == B_PACKAGE, g_up, L"Game package");
+    pill(dc, r_start, 1, g_hover == B_START, !g_up && !g_starting && !g_remote, L"Start");
     pill(dc, r_stop, 2, g_hover == B_STOP, g_up, L"Stop");
     pill(dc, r_restart, 0, g_hover == B_RESTART, g_up, L"Restart");
 
@@ -500,6 +756,11 @@ static int hit(int x, int y) {
     if (PtInRect(&r_logfile, pt)) return B_LOGFILE;
     if (PtInRect(&r_import, pt)) return B_IMPORT;
     if (PtInRect(&r_mailall, pt)) return B_MAILALL;
+    if (PtInRect(&r_connect, pt)) return B_CONNECT;
+    if (PtInRect(&r_hosting, pt)) return B_HOSTING;
+    if (PtInRect(&r_imports, pt)) return B_IMPORTS;
+    if (PtInRect(&r_move, pt)) return B_MOVE;
+    if (PtInRect(&r_package, pt)) return B_PACKAGE;
     for (int i = 0; i < 10; i++) if (PtInRect(&r_act[i], pt)) return A_FIRST + i;
     for (int i = 0; i < NFILT; i++) if (PtInRect(&r_filt[i], pt)) return F_FIRST + i;
     return B_NONE;
@@ -509,7 +770,8 @@ static void click(int b) {
     char p[MAX_PATH + 16];
     switch (b) {
     case B_CLOSE: PostMessageW(g_win, WM_CLOSE, 0, 0); return;
-    case B_MIN: ShowWindow(g_win, SW_MINIMIZE); return;
+    case B_MIN: ShowWindow(g_win, SW_HIDE); return;   /* to the tray: the server keeps running */
+    case B_CONNECT: do_action(B_CONNECT); break;
     case B_START: if (!g_up) start_server(); break;
     case B_STOP: if (g_up && MessageBoxW(g_win, L"Stop the server? Everyone online is disconnected.", L"Rozefield Server", MB_YESNO | MB_ICONQUESTION) == IDYES) stop_server(); break;
     case B_RESTART: if (g_up) CloseHandle(CreateThread(NULL, 0, restart_thread, NULL, 0, NULL)); break;
@@ -517,7 +779,7 @@ static void click(int b) {
     case B_LOGFILE: snprintf(p, sizeof p, "%sserver.log", g_dir); ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break;
     default:
         if (b >= F_FIRST && b < F_FIRST + NFILT) { g_filter = b - F_FIRST; g_follow = 1; rebuild_log(); }
-        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL) { if (g_up) do_action(b); }
+        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_PACKAGE)) { if (g_up) do_action(b); }
     }
     InvalidateRect(g_win, NULL, FALSE);
 }
@@ -601,7 +863,10 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
             if (r == IDYES) stop_server();
         }
         DestroyWindow(h); return 0;
-    case WM_DESTROY: PostQuitMessage(0); return 0;
+    case WM_TRAY:
+        if (l == WM_LBUTTONUP || l == WM_LBUTTONDBLCLK) { ShowWindow(h, SW_SHOW); ShowWindow(h, SW_RESTORE); SetForegroundWindow(h); }
+        return 0;
+    case WM_DESTROY: Shell_NotifyIconW(NIM_DELETE, &g_tray); PostQuitMessage(0); return 0;
     }
     return DefWindowProcW(h, m, w, l);
 }
@@ -625,7 +890,7 @@ static int sync_screen_prefs(void) {
     return n;
 }
 int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
-    /* one panel only: a second start brings the open one to the front */
+    /* one panel only: a second start brings the open one to the front (also when it is in the tray) */
     CreateMutexW(NULL, TRUE, L"Local\\RozefieldServerPanel");
     if (GetLastError() == ERROR_ALREADY_EXISTS) {
         HWND w = FindWindowW(L"RozefieldServerPanel", NULL);
@@ -663,11 +928,16 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     SendMessageW(g_find, WM_SETFONT, (WPARAM)f_body, TRUE); SendMessageW(g_search, WM_SETFONT, (WPARAM)f_body, TRUE);
     SendMessageW(g_logv, WM_SETFONT, (WPARAM)f_mono, TRUE);
     SendMessageW(g_find, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(6, 6)); SendMessageW(g_search, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(6, 6));
-    ShowWindow(g_win, show); UpdateWindow(g_win);
+    g_bg = strstr(cmd, "--background") != NULL;
+    g_tray.cbSize = sizeof g_tray; g_tray.hWnd = g_win; g_tray.uID = 1; g_tray.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    g_tray.uCallbackMessage = WM_TRAY; g_tray.hIcon = LoadIconW(hi, MAKEINTRESOURCEW(1)); if (!g_tray.hIcon) g_tray.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wcscpy(g_tray.szTip, L"Rozefield Server - click to open"); Shell_NotifyIconW(NIM_ADD, &g_tray);
+    if (!g_bg) { ShowWindow(g_win, show); UpdateWindow(g_win); }
+    load_conn();
     note(L"Rozefield Server panel opened.");
     { int n = sync_screen_prefs(); wchar_t m[160];
       swprintf(m, 160, n ? L"Window settings copied from your official game (%d) - same screen, mode and refresh." : L"No official window settings found to copy.", n); note(m); }
-    read_token();
+    if (!g_remote) read_token(); else note(L"Connected to %hs (Connect to change).", g_host);
     CloseHandle(CreateThread(NULL, 0, poller, NULL, 0, NULL));
     Sleep(900);
     if (!g_up && !strstr(cmd, "--no-start")) start_server();   /* opening the panel starts the server */

@@ -54,7 +54,25 @@ Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsy
 | Default plaza look | The plaza never shows event decorations: no seasonal stage (event lawn, Ferris wheel, Halloween stage) and no event furniture (the scene's "活动家具" group: Halloween trees, ghosts, pumpkins, cake world, voxel buildings) | Patch: event `SceneTheme` rows have no dates (`tools/default_stage.py`); the home scene bundle has the event furniture group switched off (`tools/plaza_event_furniture.py`) |
 | Spawn rules | Login: plaza spawn. Entering the plaza from anywhere else: plaza spawn. Switching plaza channel / visiting another plaza from the plaza: you keep your position. Maps and fields: their start point (a teleport point you pick is used). Sequences: the Sequence's own start point. Leaving a Sequence: back at its entrance | `game/handlers.py` (`change_scene`), `game/dungeon.py`, `game/dungeon_starts.json` |
 
-## Play with friends (other PCs, LAN or internet)
+## Hosting (one device is the server, every PC just plays)
+
+| Who | What to do |
+|---|---|
+| Host, Windows | Put the `Server` folder next to the `Overfield` folder. No Python installed? Run `setup_python.bat` once. Start `Rozefield Server.exe`. Hosting > Start with Windows keeps it in the tray from boot (log-in) on |
+| Host, Linux / mini PC / VPS | Copy the `Server` folder (and `Overfield` beside it if you have it), then `sudo ./install_linux.sh`: a service that starts on boot. Set the panel password with `./start_server.sh --set-admin-password <password>`. Open TCP 80, 18881, 11001 |
+| Host, control from your PC | `Rozefield Server.exe` > Connect: the device's address and its admin password. Every request is signed; the password is never sent |
+| Host, fixed name | Hosting > Name service `duckdns` (free name + token from duckdns.org) or `url` (own domain's dynamic-DNS update URL, `{ip}` = address). The server keeps it pointed at itself |
+| Host, router | Hosting > Open router ports (UPnP). If the router refuses, forward TCP 80, 18881, 11001 to the server by hand |
+| Host, give players the game | Game package builds `downloads\Rozefield.zip` (the Overfield folder with this server as default). Players get it from `http://<server name>/` or the Drive link set in Hosting |
+| Host, move to a new device | Move server > Yes (export one file) on the old one; on the new one Move server > No (import), restart. Players change nothing if the fixed name moved with it |
+| Host, imports | Imports lists every official backup / Rozefield account brought in; Undo puts the account back (or removes it if it was new) |
+| Player | Unzip, start `Rozefield.exe`. The default server is already chosen; Add server takes an invite code (`RZ-XXXX-XXX`, shown in Hosting), a name or an address; Find on my network lists home-network servers. Create account: fresh, official backup (`.rzsave`) or a Rozefield account (`.rzaccount`). Play opens the game signed in. No admin rights |
+| Player, change server | Export my account (`.rzaccount`), then on the other server Create account > Bring my account from another Rozefield server |
+
+A server list kept on GitHub (or any https page) works too: put `"list_url": "https://.../servers.json"` in the game's
+`rozefield_servers.json`; Hosting's `servers.json` (`/admin/host/servers.json`) gives the content.
+
+## Play with friends the old way (setup_client.ps1, still works)
 
 The server answers every player with the address they reached it on, so players on the host PC, the LAN and the
 internet can play together at the same time. Co-op (Pop Balloons, Aerial Adventure: all 10 layouts each, team

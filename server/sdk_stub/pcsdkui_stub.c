@@ -9,6 +9,7 @@
 #include <commdlg.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 static char g_dir[MAX_PATH];
 static FILE *g_log;
@@ -362,7 +363,18 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
         GetPrivateProfileStringA("server", "ip", "127.0.0.1", host, sizeof host, path);
         GetPrivateProfileStringA("account", "last_uid", "", last, sizeof last, path);
         snprintf(g_ini, sizeof g_ini, "%s", path);
-        if (!pick_account(host, last)) {
+        /* Rozefield.exe already logged in: it leaves the account here for 10 minutes, used once */
+        char hu[64] = "", hn[128] = "", hk[64] = "", he[32] = "";
+        GetPrivateProfileStringA("handoff", "uid", "", hu, sizeof hu, path);
+        GetPrivateProfileStringA("handoff", "name", "", hn, sizeof hn, path);
+        GetPrivateProfileStringA("handoff", "key", "", hk, sizeof hk, path);
+        GetPrivateProfileStringA("handoff", "expires", "0", he, sizeof he, path);
+        int handed = hu[0] && hk[0] && (long long)time(NULL) < _atoi64(he);
+        WritePrivateProfileStringA("handoff", NULL, NULL, path);
+        if (handed) {
+            snprintf(g_uid, sizeof g_uid, "%s", hu); snprintf(g_name, sizeof g_name, "%s", hn); snprintf(g_key, sizeof g_key, "%s", hk);
+            logf_("logged in by Rozefield.exe as %s", hu);
+        } else if (!pick_account(host, last)) {
             send_msg("{\"action\":\"init\",\"params\":{}}");
             send_msg("{\"action\":\"loginCancel\",\"params\":{}}");
             return 0;

@@ -9,10 +9,12 @@ set PY=python
 where py >nul 2>nul && set PY=py -3
 py -3.12 -c "1" >nul 2>nul && set PY=py -3.12
 py -3.13 -c "1" >nul 2>nul && set PY=py -3.13
+rem a private Python made by setup_python.bat wins: nothing has to be installed on this PC
+if exist "%~dp0python\python.exe" set PY="%~dp0python\python.exe"
 echo Using %PY%
 %PY% -c "import google.protobuf, cramjam" 2>nul || %PY% -m pip install -r requirements.txt
 if errorlevel 1 (
-  echo Python 3 is needed: install it from python.org ^(tick "Add python to PATH"^), then run this again.
+  echo Python 3 is needed: run setup_python.bat once ^(or install Python from python.org^), then run this again.
   pause & exit /b 1
 )
 %PY% rozefield_server.py --res-dir "%GAME%\launcher_Data\yoo" %*

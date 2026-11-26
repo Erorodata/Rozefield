@@ -18,6 +18,16 @@ log = logging.getLogger('rozefield')
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+START = time.time()
+
+
+def restart_self():
+    """Start the server again in place (used by the panel's Restart from another device)."""
+    logging.getLogger('rozefield').info('restarting...')
+    logging.shutdown()
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
+
 def now_ms():
     return int(time.time() * 1000)
 
@@ -53,10 +63,22 @@ class HTTP:
         if self.cfg.host_ip not in ('', 'auto'):
             return self.cfg.host_ip
         try:
-            ip = (writer.get_extra_info('sockname') or ('127.0.0.1',))[0]
+            ip = (writer.get_extra_info('sockname') or ('127.0.0.1',))[0].replace('::ffff:', '')
+            peer = (writer.get_extra_info('peername') or ('127.0.0.1',))[0].replace('::ffff:', '')
         except Exception:
-            ip = '127.0.0.1'
-        return '127.0.0.1' if ip in ('0.0.0.0', '::', '::1') else ip.replace('::ffff:', '')
+            ip = peer = '127.0.0.1'
+        if ip in ('0.0.0.0', '::', '::1'):
+            return '127.0.0.1'
+        # behind a router: a player from the internet reached our home address through port forwarding, so the
+        # address we see is the home one; give them the internet address (or the fixed server name's) instead
+        import ipaddress
+        try:
+            if ipaddress.ip_address(ip).is_private and not ipaddress.ip_address(peer).is_private:
+                from game import netsvc
+                return netsvc.STATUS.get('public_ip') or ip
+        except ValueError:
+            pass
+        return ip
 
     def gm_config(self, ip=None):
         c = self.cfg
@@ -125,10 +147,22 @@ class HTTP:
             self.game.save_login_keys()
         return f'OK|{uid}|{name}|{key}'
 
-    def import_backup(self, data, name=None):
+    def import_backup(self, data, name=None, by='player'):
         from tools.import_player import import_bytes, ImportFailed
+        from game import hostdata
         os.makedirs(os.path.join(HERE, 'save', 'imports'), exist_ok=True)
         open(os.path.join(HERE, 'save', 'imports', time.strftime('%Y%m%d_%H%M%S') + '.rzsave'), 'wb').write(data)
+        if data[:40].lstrip().startswith(b'{') and b'rzaccount/' in data[:200]:   # an account moved from another server
+            try:
+                if not name:
+                    return 'ERR|choose a log-in name for this account'
+                pid, uid, nm = hostdata.import_account(data, name)
+            except ImportFailed as e:
+                hostdata.log_import({'name': name, 'pid': '', 'kind': 'rozefield account', 'status': 'failed', 'detail': str(e), 'by': by})
+                return f'ERR|{e}'
+            hostdata.log_import({'name': nm, 'pid': pid, 'kind': 'rozefield account', 'status': 'ok', 'detail': f'log-in name {name}', 'by': by})
+            log.info('imported Rozefield account "%s" as %s', nm, uid)
+            return f'OK|{uid}|{nm}'
         try:
             from tools.import_player import read_rzsave_bytes
             try:
@@ -139,15 +173,132 @@ class HTTP:
             uid = 'rz_' + (name or md.get('player_name') or meta.get('player_name') or '').lower()
             if self.game and any(s.p and s.p.s.get('uid') == uid for s in self.game.sessions.values()):
                 return 'ERR|that account is online right now - log out first'
+            before = sorted(f for f in os.listdir(os.path.join(HERE, 'save', 'accounts')) if '.before_import_' in f) \
+                if os.path.isdir(os.path.join(HERE, 'save', 'accounts')) else []
             path, uid, name = import_bytes(data, name)
+            pid = os.path.splitext(os.path.basename(path))[0]
+            new_before = [f for f in os.listdir(os.path.dirname(path)) if f.startswith(pid + '.json.before_import_') and f not in before]
+            hostdata.log_import({'name': name, 'pid': pid, 'kind': 'official backup', 'status': 'ok', 'by': by,
+                                 'detail': 'replaced an earlier import' if new_before else 'new account',
+                                 'before': os.path.join(os.path.dirname(path), sorted(new_before)[-1]) if new_before else ''})
         except ImportFailed as e:
             log.warning('import failed: %s', e)
+            hostdata.log_import({'name': name or '', 'pid': '', 'kind': 'official backup', 'status': 'failed', 'detail': str(e), 'by': by})
             return f'ERR|{e}'
         except Exception as e:
             log.exception('import error')
             return f'ERR|server error: {e}'
         log.info('imported backup "%s" as %s', name, uid)
         return f'OK|{uid}|{name}'
+
+    def pid_of(self, uid):
+        try:
+            reg = json.load(open(os.path.join(HERE, 'save', 'accounts', '_registry.json'), encoding='utf-8'))
+            return reg['by_uid'].get(uid)
+        except Exception:
+            return None
+
+    def info(self):
+        from game import hostcfg, netsvc
+        s = hostcfg.load()
+        acc = 0
+        try:
+            acc = len(json.load(open(os.path.join(HERE, 'save', 'accounts', '_registry.json'), encoding='utf-8'))['by_uid'])
+        except Exception:
+            pass
+        return {'format': 'rozefield-info/1', 'name': s.get('display_name', 'Rozefield'), 'server_name': s.get('server_name', ''),
+                'online': len(self.game.sessions) if self.game else 0, 'accounts': acc,
+                'version': (self.patch or {}).get('version', self.cfg.res_version), 'lan_ip': netsvc.STATUS.get('lan_ip', ''),
+                'http_port': self.cfg.http_port, 'gate_port': self.cfg.gate_port,
+                'invite_code': netsvc.invite_code(netsvc.STATUS.get('public_ip', '')) if netsvc.STATUS.get('public_ip') else '',
+                'lan_code': netsvc.invite_code(netsvc.STATUS.get('lan_ip', '')) if netsvc.STATUS.get('lan_ip') else ''}
+
+    def download_page(self):
+        import html
+        from game import hostcfg, hostdata
+        s = hostcfg.load()
+        name = html.escape(s.get('display_name') or 'Rozefield')
+        here = os.path.exists(os.path.join(hostdata.DOWNLOADS, 'Rozefield.zip'))
+        size = f' ({os.path.getsize(os.path.join(hostdata.DOWNLOADS, "Rozefield.zip")) >> 20} MB)' if here else ''
+        btns = []
+        if s.get('download_link'):
+            btns.append(f'<a class="b" href="{html.escape(s["download_link"])}">Download Rozefield</a>')
+        if here:
+            btns.append(f'<a class="{"s" if btns else "b"}" href="/download/Rozefield.zip">'
+                        f'{"Download from this server" if btns else "Download Rozefield"}{size}</a>')
+        if not btns:
+            btns.append('<p class="m">The game package isn\'t ready yet. Ask the server owner.</p>')
+        from game import netsvc
+        addr = s.get('server_name') or netsvc.invite_code(netsvc.STATUS.get('public_ip', '')) if (s.get('server_name') or netsvc.STATUS.get('public_ip')) else ''
+        server_line = f'<p>Server: <b>{html.escape(addr)}</b> (already set in the download)</p>' if addr else ''
+        return f'''<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{name}</title><style>body{{margin:0;background:#F4F6F8;color:#2A2C36;font-family:"Segoe UI",system-ui,sans-serif}}
+main{{max-width:560px;margin:8vh auto;padding:28px;background:#fff;border:1px solid #D6DAE2;border-radius:14px}}
+h1{{font-family:Bahnschrift,"Segoe UI",sans-serif;font-weight:600;margin:0 0 6px}}.m{{color:#7A7E8E}}
+a.b,a.s{{display:block;text-align:center;text-decoration:none;border-radius:22px;padding:12px;margin:12px 0;font-size:17px}}
+a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}}ol{{line-height:1.8}}</style></head>
+<body><main><h1>{name}</h1><p class="m">Private OverField server</p>{''.join(btns)}
+{server_line}<ol><li>Unzip Rozefield.zip anywhere.</li><li>Open the Overfield folder and start <b>Rozefield.exe</b>.</li>
+<li>Create an account (or bring your official account with its backup file) and press Play.</li></ol>
+<p class="m">Saving your official account before 8 Feb 2027? Use Rozefield Backup.</p></main></body></html>'''.encode('utf-8')
+
+    async def host_admin(self, u, method, body, local):
+        """Hosting controls for the panel (this PC or another device). -> (bytes, code, content type)"""
+        from game import hostcfg, hostdata, netsvc
+        loop = asyncio.get_running_loop()
+        txt = 'text/plain; charset=utf-8'
+        p = u.path[len('/admin/host/'):]
+        q = urllib.parse.parse_qs(u.query)
+        if p == 'status':
+            i = self.info()
+            st = dict(i, uptime=int(time.time() - START), name_status=netsvc.STATUS['name'], router=netsvc.STATUS['router'],
+                      public_ip=netsvc.STATUS['public_ip'], package=hostdata.package_status(),
+                      settings=hostcfg.public_view(), local=local)
+            return json.dumps(st, ensure_ascii=False).encode('utf-8'), 200, 'application/json'
+        if p == 'settings' and method == 'POST':
+            try:
+                hostcfg.update(json.loads(body.decode('utf-8')))
+            except Exception as e:
+                return f'ERR|{e}'.encode(), 200, txt
+            loop.run_in_executor(None, netsvc.update_name)
+            return b'OK|saved', 200, txt
+        if p == 'password' and method == 'POST':
+            if not local:
+                return b'ERR|the admin password can only be set on the server device itself', 200, txt
+            try:
+                hostcfg.set_admin_password(body.decode('utf-8').strip('\r\n'))
+            except ValueError as e:
+                return f'ERR|{e}'.encode(), 200, txt
+            return b'OK|admin password set', 200, txt
+        if p == 'name' and method == 'POST':
+            r = await loop.run_in_executor(None, netsvc.update_name)
+            return f'OK|{r}'.encode('utf-8'), 200, txt
+        if p == 'router' and method == 'POST':
+            r = await loop.run_in_executor(None, netsvc.open_ports, [80, self.cfg.http_port, self.cfg.gate_port])
+            netsvc.STATUS['router'] = r
+            return f'OK|{r}'.encode('utf-8'), 200, txt
+        if p == 'servers.json':
+            return netsvc.servers_json().encode('utf-8'), 200, 'application/json'
+        if p == 'imports':
+            return hostdata.imports_text().encode('utf-8'), 200, txt
+        if p == 'undo_import' and method == 'POST':
+            r = hostdata.undo_import(int(body.decode() or 0), lambda pid: bool(self.game and self.game.is_online(pid)))
+            return r.encode('utf-8'), 200, txt
+        if p == 'export':
+            data = await loop.run_in_executor(None, hostdata.export_server)
+            return data, 200, 'application/zip'
+        if p == 'import' and method == 'POST':
+            return (await loop.run_in_executor(None, hostdata.stage_import, body)).encode('utf-8'), 200, txt
+        if p == 'package' and method == 'POST':
+            s = hostcfg.load()
+            addr = s.get('server_name') or netsvc.STATUS.get('public_ip') or netsvc.STATUS.get('lan_ip') or '127.0.0.1'
+            return hostdata.build_package({'name': s.get('display_name', 'Rozefield'), 'address': addr}).encode('utf-8'), 200, txt
+        if p == 'package':
+            return hostdata.package_status().encode('utf-8'), 200, txt
+        if p == 'restart' and method == 'POST':
+            loop.call_later(1.0, restart_self)
+            return b'OK|restarting', 200, txt
+        return b'not found', 404, txt
 
     def find_resource(self, path):
         name = os.path.basename(urllib.parse.unquote(path))
@@ -194,9 +345,16 @@ class HTTP:
         u = urllib.parse.urlparse(path)
         if u.path.startswith('/admin/'):   # owner control panel: this PC + token only, never logged
             from game import admin
+            from game import hostcfg
             peer = (writer.get_extra_info('peername') or ('',))[0]
-            if peer not in ('127.0.0.1', '::1') or hdr.get('x-admin-token') != getattr(self, 'admin_token', None):
+            local = peer in ('127.0.0.1', '::1') and hdr.get('x-admin-token') == getattr(self, 'admin_token', None)
+            ctype = 'text/plain; charset=utf-8'
+            if u.path == '/admin/salt':   # public: lets the panel on another device derive its signing key
+                out, code = hostcfg.salt_info().encode(), 200
+            elif not (local or hostcfg.check_signed(method, path, body, hdr)):
                 out, code = b'forbidden', 403
+            elif u.path.startswith('/admin/host/'):
+                out, code, ctype = await self.host_admin(u, method, body, local)
             elif u.path == '/admin/players':
                 out, code = admin.players(self.game).encode('utf-8'), 200
             elif u.path == '/admin/log':
@@ -206,9 +364,9 @@ class HTTP:
                 out, code = admin.do(self.game, body).encode('utf-8'), 200
             else:
                 out, code = b'not found', 404
-            writer.write(f'HTTP/1.1 {code} OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: {len(out)}\r\nConnection: close\r\n\r\n'.encode() + out)
+            writer.write(f'HTTP/1.1 {code} OK\r\nContent-Type: {ctype}\r\nContent-Length: {len(out)}\r\nConnection: close\r\n\r\n'.encode() + out)
             await writer.drain(); writer.close(); return
-        shown = b'(hidden)' if u.path in ('/rozefield/login', '/rozefield/register', '/rozefield/import') else body[:200]
+        shown = b'(hidden)' if u.path in ('/rozefield/login', '/rozefield/register', '/rozefield/import', '/rozefield/export_account', '/admin/host/password') else body[:200]
         log.info('HTTP %s %s host=%s body=%s', method, u.path, hdr.get('host'), shown)
         ctype, out, code = 'application/json', b'', 200
         p = u.path
@@ -242,10 +400,34 @@ class HTTP:
         elif p in ('/rozefield/login', '/rozefield/register') and method == 'POST':
             # login window: body "name\npassword" -> "OK|uid|name|key" or "ERR|reason"
             out = self.account_login(body, p.endswith('register')).encode('utf-8'); ctype = 'text/plain; charset=utf-8'
-        elif p == '/rozefield/import' and method == 'POST':  # login window "Import backup": body = .rzsave
+        elif p == '/rozefield/import' and method == 'POST':  # login window "Import backup": body = .rzsave / .rzaccount
             nm = (urllib.parse.parse_qs(u.query).get('name') or [None])[0]   # the control panel can choose the log-in name
-            out = (await asyncio.get_running_loop().run_in_executor(None, self.import_backup, body, nm)).encode('utf-8')
+            by = 'host' if hdr.get('x-admin-token') == getattr(self, 'admin_token', None) else 'player'
+            out = (await asyncio.get_running_loop().run_in_executor(None, self.import_backup, body, nm, by)).encode('utf-8')
             ctype = 'text/plain; charset=utf-8'
+        elif p == '/rozefield/info':   # launcher: what this server is
+            out = json.dumps(self.info()).encode('utf-8')
+        elif p == '/rozefield/export_account' and method == 'POST':   # "name\npassword" -> the player's own .rzaccount
+            r = self.account_login(body, False)
+            if r.startswith('OK|'):
+                from game import hostdata
+                pid = self.pid_of(r.split('|')[1])
+                if pid and self.game and self.game.is_online(pid):
+                    out, ctype = b'ERR|log out of the game first', 'text/plain; charset=utf-8'
+                elif pid and os.path.exists(os.path.join(HERE, 'save', 'accounts', f'{pid}.json')):
+                    out, ctype = hostdata.export_account(pid), 'application/json'
+                else:
+                    out, ctype = b'ERR|this account has not been played yet', 'text/plain; charset=utf-8'
+            else:
+                out, ctype = r.encode('utf-8'), 'text/plain; charset=utf-8'
+        elif p in ('/', '/download', '/download/'):
+            out, ctype = self.download_page(), 'text/html; charset=utf-8'
+        elif p == '/download/Rozefield.zip':
+            from game import hostdata
+            f = os.path.join(hostdata.DOWNLOADS, 'Rozefield.zip')
+            if os.path.exists(f):
+                return await self.send_file(writer, f, hdr.get('range'))
+            code, out = 404, b'no game package on this server yet'
         elif p.startswith('/photo/'):   # photo wall pictures: <cdn>/<code> and <cdn>/thumb/<code> (game builds both)
             import base64, re
             m = re.fullmatch(r'/photo/(?:thumb/)?(\d+)(?:\.\w+)?', p)
@@ -626,13 +808,21 @@ async def main():
     ap.add_argument('--res-dir', action='append', help='folder(s) holding PackageManifest_* files to serve')
     ap.add_argument('--all-banners', action='store_true', help='show recruit banners whose dates have passed')
     ap.add_argument('--traffic-log', default=os.path.join(HERE, 'traffic.jsonl'))
+    ap.add_argument('--set-admin-password', metavar='PASSWORD', help='set the password the control panel uses from another device, then exit')
     a = ap.parse_args()
+    if a.set_admin_password:
+        from game import hostcfg
+        hostcfg.set_admin_password(a.set_admin_password)
+        print('admin password set')
+        return
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S',
                         handlers=[logging.StreamHandler(sys.stdout),
                                   logging.FileHandler(os.path.join(HERE, 'server.log'), encoding='utf-8')])
     from game import admin
     admin.RING.setFormatter(logging.Formatter('%(asctime)s %(message)s', '%H:%M:%S'))
     logging.getLogger().addHandler(admin.RING)
+    from game import hostdata
+    hostdata.apply_incoming(log.info)   # a server export imported from the panel switches in here
     cfg = Config(a)
     http = HTTP(cfg)
     game = Server(cfg, a)
@@ -658,6 +848,8 @@ async def main():
     log.info('Type GM commands here, e.g.  <name> /all outfits   or  list')
     from game.player import migrate_local_ids
     migrate_local_ids(log.info)   # Rozefield-made accounts never sit on an official player id
+    from game import netsvc
+    netsvc.start([80, a.http_port, a.gate_port] if a.dns_port else [a.http_port, a.gate_port], http.info)
     log.info('Rozefield up: dispatch port %s, gate port %s, address %s', a.http_port, a.gate_port, a.public_ip)
     await asyncio.gather(*(s.serve_forever() for s in servers))
 
