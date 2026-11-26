@@ -5,6 +5,9 @@ Rozefield Server keeps the name pointed at your internet address by itself, even
 
 Time needed: about 15 minutes. Cost: free.
 
+The quickest way: **Setup** in the panel's sidebar walks you through steps 1 to 5 (it also opens by itself the first
+time). This page explains the same steps in detail.
+
 ## What you need
 
 | Item | Notes |

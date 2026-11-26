@@ -10,7 +10,7 @@
  * --background (used by "start with Windows"): start the server and stay in the tray.
  *
  * Build: zig cc -target x86_64-windows-gnu -O2 rozefield_panel.c panel.rc -o "Rozefield Server.exe"
- *        -lws2_32 -lcomdlg32 -lshell32 -luser32 -lgdi32 -lmsimg32 -lbcrypt -ladvapi32 -Wl,--subsystem,windows
+ *        -lws2_32 -lcomdlg32 -lshell32 -luser32 -lgdi32 -lmsimg32 -lbcrypt -ladvapi32 -liphlpapi -Wl,--subsystem,windows
  */
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
@@ -27,6 +27,7 @@
 #include <bcrypt.h>
 #include <time.h>
 #include <richedit.h>
+#include <iphlpapi.h>
 
 #define WW 1180
 #define WH 760
@@ -369,7 +370,7 @@ static void show_text(const wchar_t *title, const wchar_t *text) {   /* long res
 
 /* ---------------------------------------------------------------- actions */
 enum { B_NONE, B_CLOSE, B_MIN, B_START, B_STOP, B_RESTART, B_SAVEDIR, B_LOGFILE, B_IMPORT, B_MAILALL,
-       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE,
+       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE, B_SETUP,
        A_FIRST, A_RESETPW = A_FIRST, A_CLEARPW, A_RENAME, A_GM, A_MAIL, A_CHAT, A_KICK, A_BAN, A_MUTE, A_RECLAIM, A_LAST,
        F_FIRST = 50 };
 static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Rename", L"GM commands", L"Send mail", L"Chat log",
@@ -378,7 +379,7 @@ static const wchar_t *FILTERS[] = {L"All", L"Logins", L"Errors", L"Chat", L"Admi
 #define NFILT 7
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
 static RECT r_start = {WW - 420, WH - 70, WW - 300, WH - 26}, r_stop = {WW - 290, WH - 70, WW - 170, WH - 26}, r_restart = {WW - 160, WH - 70, WW - 36, WH - 26};
-static RECT r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
+static RECT r_setup = {12, WH - 158, SB - 12, WH - 126}, r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
 static RECT r_import = {X0, WH - 70, X0 + 150, WH - 26}, r_mailall = {X0 + 160, WH - 70, X0 + 300, WH - 26}, r_connect = {X0 + 310, WH - 70, X0 + 470, WH - 26};
 static RECT r_share = {508, 26, 592, 58}, r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
 static RECT r_act[10], r_filt[NFILT];
@@ -631,6 +632,213 @@ static void do_share(void) {
     EnableWindow(g_win, FALSE); ShowWindow(d, SW_SHOW);
 }
 
+
+static void fill(HDC dc, RECT r, COLORREF c, int rad);
+static void txt(HDC dc, HFONT f, COLORREF c, RECT r, const wchar_t *s, UINT fmt);
+/* ---------------------------------------------------------------- setup wizard
+ * 1 Name (display name, start with Windows)  2 Who joins (me / Wi-Fi / internet)  3 Address (DuckDNS)
+ * 4 Letting friends in (Windows Firewall, router)  5 Share (game zip, Drive link, invite message).
+ * Opens by itself the first time the server is up; the sidebar's Setup reopens it. Everything is also in Hosting. */
+enum { W_NAME, W_WHO, W_ADDR, W_ROUTER, W_SHARE, W_N };
+static HWND g_wz, g_wzc[W_N][8], g_wz_back, g_wz_next, g_wz_note[W_N]; static int g_wz_step, g_wz_who = 2, g_wz_addr_ok;
+static int setup_done(void) { char p[MAX_PATH]; conn_ini(p); return GetPrivateProfileIntA("setup", "done", 0, p); }
+static void setup_mark(void) { char p[MAX_PATH]; conn_ini(p); WritePrivateProfileStringA("setup", "done", "1", p); }
+static void wz_note(int step, COLORREF c, const wchar_t *fmt, ...) {
+    wchar_t b[700]; va_list ap; va_start(ap, fmt); vswprintf(b, 700, fmt, ap); va_end(ap);
+    SetWindowTextW(g_wz_note[step], b); SetWindowLongPtrW(g_wz_note[step], GWLP_USERDATA, (LONG_PTR)c); InvalidateRect(g_wz_note[step], NULL, TRUE);
+}
+static void wz_show(void) {
+    for (int st = 0; st < W_N; st++) {
+        for (int i = 0; i < 8; i++) if (g_wzc[st][i]) ShowWindow(g_wzc[st][i], st == g_wz_step ? SW_SHOW : SW_HIDE);
+        ShowWindow(g_wz_note[st], st == g_wz_step ? SW_SHOW : SW_HIDE);
+    }
+    if (g_wz_step == W_ROUTER) {   /* router part only for internet play; autostart/firewall only on this PC */
+        ShowWindow(g_wzc[W_ROUTER][1], g_wz_who == 2 ? SW_SHOW : SW_HIDE); ShowWindow(g_wzc[W_ROUTER][2], g_wz_who == 2 ? SW_SHOW : SW_HIDE);
+    }
+    if (g_wz_step == W_NAME && g_remote) ShowWindow(g_wzc[W_NAME][2], SW_HIDE);
+    EnableWindow(g_wz_back, g_wz_step > 0);
+    SetWindowTextW(g_wz_next, g_wz_step == W_SHARE || (g_wz_step == W_WHO && g_wz_who == 0) ? L"Finish" : L"Next");
+    InvalidateRect(g_wz, NULL, TRUE);
+}
+static void wz_post_setting(const char *key, const wchar_t *val, int boolean) {
+    char b[2048] = "{"; json_put(b, sizeof b, key, val, boolean); strcat(b, "}");
+    int ok; wchar_t *r = host_call("POST", "/admin/host/settings", b, (int)strlen(b), &ok); free(r);
+}
+static void wz_firewall(void) {
+    if (g_remote) { wz_note(W_ROUTER, C_MUTE, L"Connected to another device: open TCP 80, 18881, 11001 in that device's firewall."); return; }
+    char p[MAX_PATH]; conn_ini(p);
+    if (GetPrivateProfileIntA("setup", "firewall", 0, p)) { wz_note(W_ROUTER, C_OK, L"\x2713 Windows Firewall lets players in (TCP 80, 18881, 11001)."); return; }
+    SHELLEXECUTEINFOW se = {sizeof se}; se.fMask = SEE_MASK_NOCLOSEPROCESS; se.hwnd = g_wz; se.lpVerb = L"runas"; se.lpFile = L"cmd.exe"; se.nShow = SW_HIDE;
+    se.lpParameters = L"/c netsh advfirewall firewall delete rule name=Rozefield >nul & netsh advfirewall firewall add rule name=Rozefield dir=in action=allow protocol=TCP localport=80,18881,11001";
+    DWORD code = 1;
+    if (ShellExecuteExW(&se) && se.hProcess) { WaitForSingleObject(se.hProcess, 20000); GetExitCodeProcess(se.hProcess, &code); CloseHandle(se.hProcess); }
+    if (code == 0) { WritePrivateProfileStringA("setup", "firewall", "1", p); wz_note(W_ROUTER, C_OK, L"\x2713 Windows Firewall now lets players in (TCP 80, 18881, 11001)."); }
+    else wz_note(W_ROUTER, C_BAD, L"Windows Firewall wasn't changed (the admin prompt was declined). Press Check again, or run allow_friends.bat as administrator.");
+}
+static void wz_router(void) {
+    char *js; char lan[64] = "this PC";
+    if (http("GET", "/admin/host/status", "", 0, &js)) { json_get(js, NULL, "lan_ip", lan, sizeof lan); free(js); }
+    SetWindowTextW(g_wzc[W_ROUTER][1], L"Asking the router\x2026"); UpdateWindow(g_wz);
+    int ok; wchar_t *r = host_call("POST", "/admin/host/router", "", 0, &ok);
+    wchar_t m[900];
+    if (!wcsncmp(r, L"open", 4)) swprintf(m, 900, L"\x2713 Router: %ls\n\nTest it: on your phone with Wi-Fi off, open the server's page (http://<your server name>/).", r);
+    else swprintf(m, 900, L"! The router didn't open the ports by itself.\nIn your router's page, forward TCP 80, 18881 and 11001 to %hs (Port Forwarding / Virtual Server), "
+                          L"and give this PC a fixed address there. Then press Check again.\n\nTest it: on your phone with Wi-Fi off, open http://<your server name>/.", lan);
+    SetWindowTextW(g_wzc[W_ROUTER][1], m); free(r);
+}
+static void wz_check_addr(void) {
+    wchar_t sub[128], tok[128]; GetWindowTextW(g_wzc[W_ADDR][2], sub, 128); GetWindowTextW(g_wzc[W_ADDR][5], tok, 128);
+    wchar_t *d = wcsstr(sub, L".duckdns.org"); if (d) *d = 0;
+    if (!sub[0] || !tok[0]) { wz_note(W_ADDR, C_BAD, L"Type the DuckDNS name and token first."); return; }
+    wchar_t full[200]; swprintf(full, 200, L"%ls.duckdns.org", sub);
+    char b[2048] = "{"; json_put(b, sizeof b, "name_provider", L"duckdns", 0); json_put(b, sizeof b, "server_name", full, 0); json_put(b, sizeof b, "duckdns_token", tok, 0); strcat(b, "}");
+    int ok; wchar_t *r = host_call("POST", "/admin/host/settings", b, (int)strlen(b), &ok); free(r);
+    wz_note(W_ADDR, C_MUTE, L"Checking with DuckDNS\x2026"); UpdateWindow(g_wz);
+    r = host_call("POST", "/admin/host/name", "", 0, &ok);
+    g_wz_addr_ok = ok && wcsstr(r, L"->") && !wcsstr(r, L"refused") && !wcsstr(r, L"could not");
+    wz_note(W_ADDR, g_wz_addr_ok ? C_OK : C_BAD, g_wz_addr_ok ? L"\x2713 %ls" : L"%ls", r); free(r);
+}
+static void wz_package_note(void) {
+    char *o; if (!http("GET", "/admin/host/package", "", 0, &o)) return;
+    long long done = 0, total = 0; char st[32] = ""; sscanf(o, "%31[^|]|%lld|%lld", st, &done, &total); free(o);
+    if (!strcmp(st, "building")) wz_note(W_SHARE, C_WARN, L"Building Rozefield.zip: %d%%\x2026 (you can press Finish; it keeps going)", total ? (int)(done * 100 / total) : 0);
+    else if (!strcmp(st, "done")) wz_note(W_SHARE, C_OK, L"\x2713 Rozefield.zip is ready on this server's download page.");
+    else wz_note(W_SHARE, C_MUTE, L"Players need the game: build Rozefield.zip (several GB, a few minutes), or give them your Drive link.");
+}
+static void wz_enter(int step) {
+    g_wz_step = step; wz_show();
+    if (step == W_ROUTER) { wz_firewall(); if (g_wz_who == 2) wz_router(); }
+    if (step == W_SHARE) wz_package_note();
+}
+static void wz_next(void) {
+    wchar_t v[256];
+    switch (g_wz_step) {
+    case W_NAME:
+        GetWindowTextW(g_wzc[W_NAME][1], v, 256); if (v[0]) wz_post_setting("display_name", v, 0);
+        if (!g_remote) autostart_set(SendMessageW(g_wzc[W_NAME][2], BM_GETCHECK, 0, 0) == BST_CHECKED);
+        wz_enter(W_WHO); break;
+    case W_WHO:
+        for (int i = 0; i < 3; i++) if (SendMessageW(g_wzc[W_WHO][1 + i], BM_GETCHECK, 0, 0) == BST_CHECKED) g_wz_who = i;
+        if (g_wz_who == 0) { wz_post_setting("upnp", L"no", 1); setup_mark(); DestroyWindow(g_wz); return; }
+        wz_post_setting("upnp", g_wz_who == 2 ? L"yes" : L"no", 1);
+        wz_enter(g_wz_who == 2 ? W_ADDR : W_ROUTER); break;
+    case W_ADDR:
+        if (!g_wz_addr_ok) wz_check_addr();
+        if (!g_wz_addr_ok && MessageBoxW(g_wz, L"The DuckDNS name isn't working yet. Continue anyway (friends can use the invite code from Share meanwhile)?", L"Setup", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
+        wz_enter(W_ROUTER); break;
+    case W_ROUTER: wz_enter(W_SHARE); break;
+    case W_SHARE:
+        GetWindowTextW(g_wzc[W_SHARE][2], v, 256); if (v[0]) wz_post_setting("download_link", v, 0);
+        setup_mark(); DestroyWindow(g_wz); note(L"Setup finished. Share has everything to send to players."); return;
+    }
+}
+static void wz_back(void) {
+    int to = g_wz_step - 1;
+    if (g_wz_step == W_ROUTER && g_wz_who == 1) to = W_WHO;
+    if (g_wz_step == W_SHARE && g_wz_who == 0) to = W_WHO;
+    if (to >= 0) wz_enter(to);
+}
+static LRESULT CALLBACK WizProc(HWND h, UINT m, WPARAM w, LPARAM l) {
+    switch (m) {
+    case WM_CTLCOLORSTATIC: case WM_CTLCOLORBTN: {
+        COLORREF c = (COLORREF)GetWindowLongPtrW((HWND)l, GWLP_USERDATA);
+        SetTextColor((HDC)w, c ? c : C_TXT); SetBkColor((HDC)w, C_PANEL); return (LRESULT)br_panel; }
+    case WM_CTLCOLOREDIT: SetTextColor((HDC)w, C_TXT); SetBkColor((HDC)w, C_FIELD); return (LRESULT)br_field;
+    case WM_ERASEBKGND: { RECT r; GetClientRect(h, &r); FillRect((HDC)w, &r, br_panel); return 1; }
+    case WM_PAINT: {
+        PAINTSTRUCT ps; HDC dc = BeginPaint(h, &ps);
+        static const wchar_t *names[] = {L"1 Name", L"2 Who joins", L"3 Address", L"4 Letting in", L"5 Share"};
+        for (int i = 0; i < W_N; i++) {
+            RECT r = {18 + i * 106, 14, 18 + i * 106 + 100, 42};
+            int skipped = (g_wz_who != 2 && i == W_ADDR) || (g_wz_who == 0 && i > W_WHO);
+            fill(dc, r, i == g_wz_step ? C_ACC : i < g_wz_step && !skipped ? RGB(225, 245, 238) : C_TILE, 10);
+            txt(dc, f_small, i == g_wz_step ? RGB(255, 255, 255) : i < g_wz_step && !skipped ? RGB(15, 110, 86) : C_MUTE, r, names[i], DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        }
+        EndPaint(h, &ps); return 0; }
+    case WM_COMMAND: {
+        HWND c = (HWND)l;
+        if (c == g_wz_next) wz_next();
+        else if (c == g_wz_back) wz_back();
+        else if (c == g_wzc[W_ADDR][0]) ShellExecuteW(NULL, L"open", L"https://www.duckdns.org", NULL, NULL, SW_SHOWNORMAL);
+        else if (c == g_wzc[W_ADDR][6]) { g_wz_addr_ok = 0; wz_check_addr(); }
+        else if ((c == g_wzc[W_ADDR][2] || c == g_wzc[W_ADDR][5]) && HIWORD(w) == EN_CHANGE) g_wz_addr_ok = 0;
+        else if (c == g_wzc[W_ROUTER][2]) { wz_firewall(); if (g_wz_who == 2) wz_router(); }
+        else if (c == g_wzc[W_ROUTER][3]) {
+            MIB_IPFORWARDROW rt; char gw[64] = "192.168.1.1";
+            if (GetBestRoute(inet_addr("8.8.8.8"), 0, &rt) == NO_ERROR) { struct in_addr a; a.s_addr = rt.dwForwardNextHop; snprintf(gw, sizeof gw, "%s", inet_ntoa(a)); }
+            char url[96]; snprintf(url, sizeof url, "http://%s/", gw); ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+        }
+        else if (c == g_wzc[W_SHARE][3]) { int ok; wchar_t *r = host_call("POST", "/admin/host/package", "", 0, &ok); free(r); Sleep(400); wz_package_note(); SetTimer(h, 1, 2000, NULL); }
+        else if (c == g_wzc[W_SHARE][4]) { share_fill(NULL); wchar_t t[2000]; MultiByteToWideChar(CP_UTF8, 0, g_sh_msg, -1, t, 2000); to_clipboard(t); SetWindowTextW(c, L"Copied - paste it in chat"); }
+        else if (c == g_wzc[W_WHO][1] || c == g_wzc[W_WHO][2] || c == g_wzc[W_WHO][3]) {
+            for (int i = 0; i < 3; i++) if (SendMessageW(g_wzc[W_WHO][1 + i], BM_GETCHECK, 0, 0) == BST_CHECKED) g_wz_who = i;
+            wz_show(); }
+        return 0; }
+    case WM_TIMER: if (g_wz_step == W_SHARE) wz_package_note(); return 0;
+    case WM_CLOSE: DestroyWindow(h); return 0;
+    case WM_DESTROY: KillTimer(h, 1); g_wz = NULL; EnableWindow(g_win, TRUE); SetForegroundWindow(g_win); return 0;
+    }
+    return DefWindowProcW(h, m, w, l);
+}
+static HWND wz_ctl(const wchar_t *cls, const wchar_t *t, DWORD st, int x, int y, int w, int hh, HFONT f) {
+    HWND c = CreateWindowExW(!wcscmp(cls, L"EDIT") ? 0 : 0, cls, t, WS_CHILD | st, x, y, w, hh, g_wz, NULL, NULL, NULL);
+    SendMessageW(c, WM_SETFONT, (WPARAM)f, TRUE); if (!wcscmp(cls, L"EDIT")) SendMessageW(c, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(6, 6));
+    return c;
+}
+static void do_wizard(void) {
+    if (g_wz) { SetForegroundWindow(g_wz); return; }
+    static int reg; if (!reg) { WNDCLASSW wc = {0}; wc.lpfnWndProc = WizProc; wc.hInstance = GetModuleHandleW(NULL); wc.lpszClassName = L"RzWizard"; wc.hCursor = LoadCursor(NULL, IDC_ARROW); RegisterClassW(&wc); reg = 1; }
+    int W = 580, H = 470; RECT pr; GetWindowRect(g_win, &pr);
+    g_wz = CreateWindowExW(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, L"RzWizard", L"Set up your Rozefield server", WS_POPUP | WS_CAPTION | WS_SYSMENU,
+                           (pr.left + pr.right - W) / 2, (pr.top + pr.bottom - H) / 2, W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
+    memset(g_wzc, 0, sizeof g_wzc); g_wz_addr_ok = 0;
+    char *js = NULL; char dn[200] = "Rozefield", sn[256] = "";
+    if (http("GET", "/admin/host/status", "", 0, &js)) { json_get(js, "\"settings\"", "display_name", dn, sizeof dn); json_get(js, "\"settings\"", "server_name", sn, sizeof sn); free(js); }
+    wchar_t w1[200], w2[256]; MultiByteToWideChar(CP_UTF8, 0, dn, -1, w1, 200); MultiByteToWideChar(CP_UTF8, 0, sn, -1, w2, 256);
+    int y = 60, X = 22, CWD = W - 60;
+    /* 1 name */
+    g_wzc[W_NAME][0] = wz_ctl(L"STATIC", L"What should players see as your server's name?", 0, X, y, CWD, 24, f_h);
+    g_wzc[W_NAME][1] = wz_ctl(L"EDIT", w1, WS_TABSTOP | ES_AUTOHSCROLL, X, y + 34, CWD, 30, f_body);
+    g_wzc[W_NAME][2] = wz_ctl(L"BUTTON", L"Start with Windows, in the tray (the server is up whenever this PC is on)", WS_TABSTOP | BS_AUTOCHECKBOX, X, y + 82, CWD, 26, f_small);
+    if (!g_remote && autostart_on()) SendMessageW(g_wzc[W_NAME][2], BM_SETCHECK, BST_CHECKED, 0);
+    g_wz_note[W_NAME] = wz_ctl(L"STATIC", L"You can change all of this later in Hosting.", 0, X, y + 124, CWD, 40, f_small);
+    /* 2 who */
+    g_wzc[W_WHO][0] = wz_ctl(L"STATIC", L"Who will play on your server?", 0, X, y, CWD, 24, f_h);
+    const wchar_t *who[] = {L"Only me, on this PC", L"Friends on my Wi-Fi / home network", L"Friends over the internet (needs a free DuckDNS name)"};
+    for (int i = 0; i < 3; i++) g_wzc[W_WHO][1 + i] = wz_ctl(L"BUTTON", who[i], WS_TABSTOP | BS_AUTORADIOBUTTON | (i == 0 ? WS_GROUP : 0), X, y + 36 + i * 36, CWD, 30, f_body);
+    SendMessageW(g_wzc[W_WHO][1 + g_wz_who], BM_SETCHECK, BST_CHECKED, 0);
+    g_wz_note[W_WHO] = wz_ctl(L"STATIC", L"Same Wi-Fi friends join with the home-network code or the search button in their login window.", 0, X, y + 150, CWD, 40, f_small);
+    /* 3 address */
+    g_wzc[W_ADDR][0] = wz_ctl(L"BUTTON", L"1. Open duckdns.org (sign in, add a name, copy the token)", WS_TABSTOP, X, y, CWD, 32, f_small);
+    g_wzc[W_ADDR][1] = wz_ctl(L"STATIC", L"DuckDNS name", 0, X, y + 46, 200, 20, f_small);
+    { wchar_t sub[256]; wcscpy(sub, w2); wchar_t *d = wcsstr(sub, L".duckdns.org"); if (d) *d = 0;
+      g_wzc[W_ADDR][2] = wz_ctl(L"EDIT", sub, WS_TABSTOP | ES_AUTOHSCROLL, X, y + 68, 300, 30, f_body); }
+    g_wzc[W_ADDR][3] = wz_ctl(L"STATIC", L".duckdns.org", 0, X + 308, y + 74, 120, 22, f_body);
+    g_wzc[W_ADDR][4] = wz_ctl(L"STATIC", L"Token (keep it secret)", 0, X, y + 110, 300, 20, f_small);
+    g_wzc[W_ADDR][5] = wz_ctl(L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL | ES_PASSWORD, X, y + 132, CWD - 120, 30, f_body);
+    g_wzc[W_ADDR][6] = wz_ctl(L"BUTTON", L"Check", WS_TABSTOP, X + CWD - 110, y + 132, 110, 30, f_small);
+    g_wz_note[W_ADDR] = wz_ctl(L"STATIC", sn[0] ? L"A name is already set; type the token again to change it, or press Next." : L"", 0, X, y + 176, CWD, 60, f_small);
+    if (sn[0]) g_wz_addr_ok = 1;
+    /* 4 letting friends in */
+    g_wzc[W_ROUTER][0] = wz_ctl(L"STATIC", L"Letting friends in", 0, X, y, CWD, 24, f_h);
+    g_wz_note[W_ROUTER] = wz_ctl(L"STATIC", L"", 0, X, y + 34, CWD, 40, f_small);
+    g_wzc[W_ROUTER][1] = wz_ctl(L"STATIC", L"", 0, X, y + 80, CWD, 130, f_small);
+    g_wzc[W_ROUTER][2] = wz_ctl(L"BUTTON", L"Check again", WS_TABSTOP, X, y + 222, 150, 32, f_small);
+    g_wzc[W_ROUTER][3] = wz_ctl(L"BUTTON", L"Open router page", WS_TABSTOP, X + 160, y + 222, 170, 32, f_small);
+    /* 5 share */
+    g_wzc[W_SHARE][0] = wz_ctl(L"STATIC", L"Invite players", 0, X, y, CWD, 24, f_h);
+    g_wzc[W_SHARE][1] = wz_ctl(L"STATIC", L"Drive link for Rozefield.zip (optional, faster downloads)", 0, X, y + 96, CWD, 20, f_small);
+    g_wzc[W_SHARE][2] = wz_ctl(L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL, X, y + 118, CWD, 30, f_body);
+    g_wzc[W_SHARE][3] = wz_ctl(L"BUTTON", L"Build game zip", WS_TABSTOP, X, y + 164, 170, 32, f_small);
+    g_wzc[W_SHARE][4] = wz_ctl(L"BUTTON", L"Copy invite message", WS_TABSTOP, X + 180, y + 164, 220, 32, f_small);
+    g_wz_note[W_SHARE] = wz_ctl(L"STATIC", L"", 0, X, y + 34, CWD, 52, f_small);
+    g_wz_back = CreateWindowW(L"BUTTON", L"Back", WS_CHILD | WS_VISIBLE | WS_TABSTOP, X, H - 90, 110, 34, g_wz, NULL, NULL, NULL);
+    g_wz_next = CreateWindowW(L"BUTTON", L"Next", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, W - 150, H - 90, 110, 34, g_wz, NULL, NULL, NULL);
+    SendMessageW(g_wz_back, WM_SETFONT, (WPARAM)f_body, TRUE); SendMessageW(g_wz_next, WM_SETFONT, (WPARAM)f_body, TRUE);
+    EnableWindow(g_win, FALSE); ShowWindow(g_wz, SW_SHOW);
+    wz_enter(W_NAME);
+}
+
 static void do_action(int a) {
     struct pl *p = sel(); char b[8192]; int ok; wchar_t *r;
     if (a >= A_FIRST && a < A_LAST && !p) { MessageBoxW(g_win, L"Choose a player in the list first.", L"Rozefield Server", MB_OK); return; }
@@ -642,6 +850,7 @@ static void do_action(int a) {
     case B_MOVE: do_move(); break;
     case B_PACKAGE: do_package(); break;
     case B_SHARE: do_share(); break;
+    case B_SETUP: do_wizard(); break;
     case A_RESETPW: {
         const wchar_t *lab[] = {L"New password (4+ characters)"};
         if (!ask(L"Reset password", who, 1, lab, NULL, 0)) return;
@@ -838,8 +1047,8 @@ static void paint(HWND h) {
         RECT ri = {r.left + 10, r.top, r.left + 34, r.bottom}; txt(dc, f_icon, c, ri, ICONS[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE);
         RECT rt2 = {r.left + 38, r.top, r.right - 6, r.bottom}; txt(dc, f_body, c, rt2, lb, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     }
-    { RECT rs2[] = {r_savedir, r_logfile}; const wchar_t *lab[] = {L"Save folder", L"Log file"}, *ic[] = {L"\xE8B7", L"\xE8A5"}; int hv[] = {B_SAVEDIR, B_LOGFILE};
-      for (int i = 0; i < 2; i++) { RECT r = rs2[i]; if (g_hover == hv[i]) fill(dc, r, C_TILE, 10);
+    { RECT rs2[] = {r_setup, r_savedir, r_logfile}; const wchar_t *lab[] = {L"Setup", L"Save folder", L"Log file"}, *ic[] = {L"\xE713", L"\xE8B7", L"\xE8A5"}; int hv[] = {B_SETUP, B_SAVEDIR, B_LOGFILE};
+      for (int i = 0; i < 3; i++) { RECT r = rs2[i]; if (g_hover == hv[i]) fill(dc, r, C_TILE, 10);
           RECT ri = {r.left + 10, r.top, r.left + 34, r.bottom}; txt(dc, f_icon, C_MUTE, ri, ic[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE);
           RECT rt2 = {r.left + 38, r.top, r.right, r.bottom}; txt(dc, f_body, C_MUTE, rt2, lab[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE); } }
     if (g_hover == B_CLOSE) fill(dc, r_close, RGB(200, 64, 76), 8);
@@ -934,6 +1143,7 @@ static int hit(int x, int y) {
     if (PtInRect(&r_mailall, pt)) return B_MAILALL;
     if (PtInRect(&r_connect, pt)) return B_CONNECT;
     if (PtInRect(&r_share, pt)) return B_SHARE;
+    if (PtInRect(&r_setup, pt)) return B_SETUP;
     if (PtInRect(&r_hosting, pt)) return B_HOSTING;
     if (PtInRect(&r_imports, pt)) return B_IMPORTS;
     if (PtInRect(&r_move, pt)) return B_MOVE;
@@ -956,7 +1166,7 @@ static void click(int b) {
     case B_LOGFILE: snprintf(p, sizeof p, "%sserver.log", g_dir); ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break;
     default:
         if (b >= F_FIRST && b < F_FIRST + NFILT) { g_filter = b - F_FIRST; g_follow = 1; rebuild_log(); }
-        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_SHARE)) { if (g_up) do_action(b); }
+        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_SETUP)) { if (g_up) do_action(b); }
     }
     InvalidateRect(g_win, NULL, FALSE);
 }
@@ -1019,6 +1229,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         else if ((HWND)l == g_search && HIWORD(w) == EN_CHANGE) rebuild_log();
         return 0;
     case WM_DATA:
+        { static int asked; if (!asked && g_up && !setup_done() && !g_bg) { asked = 1; PostMessageW(h, WM_APP + 9, 0, 0); } }
         if (w) fill_list();
         if (g_lines_dirty) rebuild_log();
         InvalidateRect(h, NULL, FALSE); return 0;
@@ -1040,6 +1251,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
             if (r == IDYES) stop_server();
         }
         DestroyWindow(h); return 0;
+    case WM_APP + 9: do_wizard(); return 0;
     case WM_TRAY:
         if (l == WM_LBUTTONUP || l == WM_LBUTTONDBLCLK) { ShowWindow(h, SW_SHOW); ShowWindow(h, SW_RESTORE); SetForegroundWindow(h); }
         return 0;
