@@ -120,14 +120,50 @@ static void reply(SOCKET c, int code, const char *body) {
     send_all(c, h, hl); send_all(c, body, bl);
 }
 static const char *DEF_VER = "2026-10-24-12-00-58_2026-11-23-15-53-19";
+/* the version the game already has on disk (launcher_Data\yoo\...\PackageManifest_DefaultPackage.version), so with no
+   server it finds nothing new to download and goes straight on to the login window */
+static void local_version(char *out, int n) {
+    snprintf(out, n, "%s", DEF_VER);
+    char p[MAX_PATH]; snprintf(p, sizeof p, "%slauncher_Data\\yoo\\DefaultPackage\\ManifestFiles\\PackageManifest_DefaultPackage.version", g_game);
+    char *v = read_file(p); if (!v) return;
+    char *e = v; while (*e && *e != '\r' && *e != '\n' && *e != ' ') e++; *e = 0;
+    if (*v) { const char *us = strchr(DEF_VER, '_'); snprintf(out, n, "%.*s_%s", (int)(us - DEF_VER), DEF_VER, v); }
+    free(v);
+}
+static int find_local(const char *dir, const char *name, char *out) {   /* the file by name anywhere under dir */
+    char pat[MAX_PATH]; snprintf(pat, sizeof pat, "%s\\*", dir);
+    WIN32_FIND_DATAA fd; HANDLE h = FindFirstFileA(pat, &fd); if (h == INVALID_HANDLE_VALUE) return 0;
+    int ok = 0;
+    do {
+        if (!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, "..")) continue;
+        char p[MAX_PATH]; snprintf(p, sizeof p, "%s\\%s", dir, fd.cFileName);
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ok = find_local(p, name, out);
+        else if (!_stricmp(fd.cFileName, name)) { snprintf(out, MAX_PATH, "%s", p); ok = 1; }
+    } while (!ok && FindNextFileA(h, &fd));
+    FindClose(h); return ok;
+}
+static int serve_local(SOCKET c, const char *path) {   /* /Resources/<name> from the game's own files */
+    const char *name = strrchr(path, '/'); if (!name) return 0; name++;
+    char nm[MAX_PATH]; snprintf(nm, sizeof nm, "%s", name); char *q = strchr(nm, '?'); if (q) *q = 0;
+    char found[MAX_PATH], d1[MAX_PATH], d2[MAX_PATH];
+    snprintf(d1, sizeof d1, "%slauncher_Data\\yoo", g_game); snprintf(d2, sizeof d2, "%slauncher_Data\\StreamingAssets\\yoo", g_game);
+    if (!find_local(d1, nm, found) && !find_local(d2, nm, found)) return 0;
+    FILE *f = fopen(found, "rb"); if (!f) return 0;
+    fseek(f, 0, SEEK_END); long sz = ftell(f); fseek(f, 0, SEEK_SET);
+    char h[256]; int hl = snprintf(h, sizeof h, "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: %ld\r\nConnection: close\r\n\r\n", sz);
+    send_all(c, h, hl);
+    char buf[65536]; size_t n; while ((n = fread(buf, 1, sizeof buf, f)) > 0) send_all(c, buf, (int)n);
+    fclose(f); return 1;
+}
 static void offline_answer(SOCKET c, const char *path) {
     char p[MAX_PATH], body[2048];
     const char *name = strstr(path, "/resolve") ? "resolve" : strstr(path, "client_hot_update") ? "client_hot_update" :
                        strstr(path, "region_info") ? "region_info" : NULL;
-    if (name && strcmp(name, "resolve")) {
+    if (name && !strcmp(name, "region_info")) {
         cache_file(name, p, sizeof p); char *b = read_file(p);
         if (b) { reply(c, 200, b); free(b); return; }
     }
+    char ver[160]; local_version(ver, sizeof ver);
     if (name && !strcmp(name, "resolve")) {
         snprintf(body, sizeof body, "{\"host\":\"\",\"ttl\":600,\"ips\":[\"127.0.0.1\"],\"cip\":\"127.0.0.1\",\"cl\":[3]}");
     } else if (name && !strcmp(name, "client_hot_update")) {
@@ -135,16 +171,19 @@ static void offline_answer(SOCKET c, const char *path) {
                  "{\"status\":true,\"message\":\"success\",\"hotOssUrl\":\"http://127.0.0.1:18881/Resources\",\"currentVersion\":\"%s\","
                  "\"server\":\"rozefield_local\",\"ssAppId\":\"\",\"ssServerUrl\":\"http://127.0.0.1:18881/ta\",\"open_gm\":false,"
                  "\"open_error_log\":false,\"open_netConnecting_log\":false,\"ipAddress\":\"127.0.0.1\",\"payUrl\":\"http://127.0.0.1:18881/pay\","
-                 "\"isTestServer\":false,\"error_log_level\":2,\"server_id\":\"31000\",\"open_cs\":false,\"serverTime\":0}", DEF_VER);
+                 "\"isTestServer\":false,\"error_log_level\":2,\"server_id\":\"31000\",\"open_cs\":false,\"serverTime\":0}", ver);
     } else if (name) {
         snprintf(body, sizeof body,
                  "{\"status\":true,\"message\":\"success\",\"gate_tcp_ip\":\"127.0.0.1\",\"gate_tcp_port\":11001,\"is_server_open\":true,"
                  "\"text\":\"\",\"client_log_tcp_ip\":\"127.0.0.1\",\"client_log_tcp_port\":21001,\"currentVersion\":\"%s\","
-                 "\"photo_share_cdn_url\":\"http://127.0.0.1:18881/photo\"}", DEF_VER);
+                 "\"photo_share_cdn_url\":\"http://127.0.0.1:18881/photo\"}", ver);
     } else if (strstr(path, "get_login_url_list")) {
         body[0] = 0;
     } else if (strstr(path, "/dispatch/")) {
         snprintf(body, sizeof body, "{\"status\":true,\"message\":\"success\",\"data\":[]}");
+    } else if (strstr(path, "/Resources/")) {
+        if (!serve_local(c, path)) reply(c, 404, "{}");
+        return;
     } else { reply(c, 404, "{}"); return; }
     reply(c, 200, body);
 }
@@ -180,10 +219,11 @@ static DWORD WINAPI serve(LPVOID a) {
     head[hl] = 0;
     char path[1024] = ""; sscanf(head, "%*s %1023s", path);
     int startup = strstr(path, "/dispatch/") || strstr(path, "/resolve");
+    int resource = strstr(path, "/Resources/") != NULL;
     to = 0; setsockopt(c, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
     SOCKET u = up(0);
     if (u == INVALID_SOCKET) {
-        if (startup) { offline_answer(c, path); lg("no server answers: answered %s here", path); }
+        if (startup || resource) { offline_answer(c, path); lg("no server answers: answered %s here", path); }
         closesocket(c); return 0;
     }
     send_all(u, head, hl);
@@ -202,6 +242,10 @@ static DWORD WINAPI serve(LPVOID a) {
 struct lis { int port, kind; };
 static DWORD WINAPI listen_on(LPVOID a) {
     struct lis L = *(struct lis *)a; free(a);
+    /* a Rozefield server on this PC already answers here: the game talks to it directly (Windows would let this
+       relay take 127.0.0.1 from under a server listening on all addresses, so ask first) */
+    SOCKET probe = dial("127.0.0.1", L.port, 400);
+    if (probe != INVALID_SOCKET) { closesocket(probe); lg("port %d: a server on this PC answers, the game uses it directly", L.port); return 0; }
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in sa = {0}; sa.sin_family = AF_INET; sa.sin_port = htons((u_short)L.port); sa.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     if (bind(s, (struct sockaddr *)&sa, sizeof sa) || listen(s, 64)) {
