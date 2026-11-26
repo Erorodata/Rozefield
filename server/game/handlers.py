@@ -352,16 +352,13 @@ def sit(ctx, req):
     ctx.server.broadcast(ctx, 'SceneSitChairRsp', r, include_self=False)   # official: others get the same answer
 
 
-# ============================================================ chat (+ GM commands)
+# ============================================================ chat
 @handler('SendChatMsgReq')
 def chat(ctx, req):
     text = req.get('text', '')
     ctx.reply({'status': OK, 'text': text})
-    if text.startswith('/') and ctx.p.s.get('gm'):
-        out = gm_command(ctx, text)
-        ctx.push('ChatMsgNotice', {'status': OK, 'type': req.get('type', 'ChatChannelType_None'),
-                                   'msg': {'playerId': 0, 'name': 'Rozefield', 'text': out, 'sendTime': str(now_ms())}})
-        return
+    # GM commands are not taken from in-game chat (anyone could type them): use the server panel (GM commands) or
+    # the server console instead; a line starting with "/" is ordinary chat
     s = ctx.p.s
     from game import admin
     admin.CHAT.append((time.time(), s['player_id'], s['name'], req.get('type', ''), text))

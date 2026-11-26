@@ -164,7 +164,7 @@ class Player:
             'quests': {}, 'chapters': {}, 'tutorials': [],
             'garden': {'furniture': {}, 'likes': 0, 'access': 0, 'open': True, 'next_furniture_id': 1},
             'placed_characters': [], 'buffs': {}, 'gacha': {}, 'shop': {}, 'appearance': {},
-            'gm': True,
+            'gm': False,   # GM commands only from the server panel / console, never from in-game chat
         }
 
     def grant_initial(self):
