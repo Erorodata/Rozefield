@@ -292,6 +292,8 @@ def register(H, pack, scene_player):
                     loot = [tuple(x) for x in seen]
                 elif (p.d.row('treasurebox', 'TreasureBox', box['boxId']) or {}).get('NewTreasureBoxRewardType') == 4:
                     loot = []
+                if (p.d.row('treasurebox', 'TreasureBox', box['boxId']) or {}).get('NewTreasureBoxRewardType') == 4:
+                    ds['isOpenSecretBox'] = True   # hidden chest: the map's dungeon list shows it as found (official)
                 else:
                     loot = [(1102, 3)] if random.random() < 0.5 else roll_gear(p.d, 1, p.s.get('world_level', 1))
                 items, changed = give(ctx, loot)
@@ -312,7 +314,8 @@ def register(H, pack, scene_player):
                     return ctx.reply({'status': FAIL})
             ctx.__dict__['dungeon_box_open'] = True
             items, changed = give(ctx, dungeon_chest(p, cfg, ds))
-            ctx.push('DungeonOpenFinalBoxNotice', {'status': OK, 'dungeonId': did})
+            if not str(did).startswith(('111', '511')):   # official: resource dungeons only, never Sequences
+                ctx.push('DungeonOpenFinalBoxNotice', {'status': OK, 'dungeonId': did})
             ctx.reply({'status': OK, 'items': items})
             pack(ctx, paid + changed)
             Q.event(p, Q.C['OpenBox'])
