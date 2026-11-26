@@ -236,6 +236,18 @@ class HTTP:
                 'invite_code': netsvc.invite_code(netsvc.STATUS.get('public_ip', '')) if netsvc.STATUS.get('public_ip') else '',
                 'lan_code': netsvc.invite_code(netsvc.STATUS.get('lan_ip', '')) if netsvc.STATUS.get('lan_ip') else ''}
 
+    def warn_restart(self, text):
+        """A line in everyone's world chat from the server."""
+        if not self.game:
+            return
+        note = {'status': 'StatusCode_OK', 'type': 'ChatChannel_ChatRoom',
+                'msg': {'playerId': 0, 'name': 'Server', 'text': text, 'sendTime': str(now_ms())}}
+        for sess in list(self.game.sessions.values()):
+            try:
+                sess.push('ChatMsgNotice', note)
+            except Exception:
+                pass
+
     def download_page(self):
         import html
         from game import hostcfg, hostdata
@@ -320,6 +332,20 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
             return hostdata.build_package({'name': s.get('display_name', 'Rozefield'), 'address': addr}).encode('utf-8'), 200, txt
         if p == 'package':
             return hostdata.package_status().encode('utf-8'), 200, txt
+        if p == 'version':
+            from game import updates
+            return updates.versions_text().encode('utf-8'), 200, txt
+        if p in ('update', 'rollback') and method == 'POST':
+            from game import updates
+            try:
+                msg = await loop.run_in_executor(None, updates.apply, body) if p == 'update' else updates.rollback()
+            except Exception as e:
+                log.warning('[admin] %s refused: %s', p, e)
+                return f'ERR|{e}'.encode('utf-8'), 200, txt
+            log.info('[admin] %s: %s', p, msg)
+            self.warn_restart('The server restarts in 1 minute for an update. Your progress is saved.')
+            loop.call_later(60, restart_self)
+            return f'OK|{msg}. Players were told; the server restarts in 1 minute.'.encode('utf-8'), 200, txt
         if p == 'restart' and method == 'POST':
             loop.call_later(1.0, restart_self)
             return b'OK|restarting', 200, txt
@@ -392,7 +418,7 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
                 out, code = b'not found', 404
             writer.write(f'HTTP/1.1 {code} OK\r\nContent-Type: {ctype}\r\nContent-Length: {len(out)}\r\nConnection: close\r\n\r\n'.encode() + out)
             await writer.drain(); writer.close(); return
-        shown = b'(hidden)' if u.path in ('/rozefield/login', '/rozefield/register', '/rozefield/import', '/rozefield/export_account', '/admin/host/password') else body[:200]
+        shown = b'(hidden)' if u.path in ('/rozefield/login', '/rozefield/register', '/rozefield/import', '/rozefield/export_account', '/admin/host/password', '/admin/host/update') else body[:200]
         log.info('HTTP %s %s host=%s body=%s', method, u.path, hdr.get('host'), shown)
         ctype, out, code = 'application/json', b'', 200
         p = u.path

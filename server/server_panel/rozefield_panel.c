@@ -62,7 +62,7 @@ static long g_lognext;
 static int g_follow = 1;   /* next log rebuild jumps to the newest line (filter change, start) */
 /* where the server is: this PC (g_remote 0, token) or another device (g_host, signing key from the admin password) */
 static char g_host[256]; static int g_remote; static unsigned char g_key[32]; static int g_haskey;
-static NOTIFYICONDATAW g_tray; static int g_bg;
+static NOTIFYICONDATAW g_tray; static int g_bg; static DWORD g_http_timeout = 20000;
 
 /* ---------------------------------------------------------------- players */
 struct pl { int pid; char uid[64]; wchar_t name[64]; int level, online, banned, muted, pw, official, label; };
@@ -131,7 +131,7 @@ static int http_raw(const char *method, const char *path, const char *body, int 
     char port[16]; snprintf(port, sizeof port, "%d", g_port);
     if (getaddrinfo(g_remote ? g_host : "127.0.0.1", port, &hints, &ai) != 0 || !ai) return 0;
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
-    DWORD to = 20000; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
+    DWORD to = g_http_timeout; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
     int c = connect(s, ai->ai_addr, (int)ai->ai_addrlen); freeaddrinfo(ai);
     if (c != 0) { closesocket(s); return 0; }
     char hdr[700], auth[300] = "";
@@ -373,7 +373,7 @@ static void show_text(const wchar_t *title, const wchar_t *text) {   /* long res
 
 /* ---------------------------------------------------------------- actions */
 enum { B_NONE, B_CLOSE, B_MIN, B_START, B_STOP, B_RESTART, B_SAVEDIR, B_LOGFILE, B_IMPORT, B_MAILALL,
-       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE, B_SETUP,
+       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE, B_SETUP, B_PUSH,
        A_FIRST, A_RESETPW = A_FIRST, A_CLEARPW, A_RENAME, A_GM, A_MAIL, A_CHAT, A_KICK, A_BAN, A_MUTE, A_RECLAIM, A_LAST,
        F_FIRST = 50 };
 static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Rename", L"GM commands", L"Send mail", L"Chat log",
@@ -382,7 +382,7 @@ static const wchar_t *FILTERS[] = {L"All", L"Logins", L"Errors", L"Chat", L"Admi
 #define NFILT 7
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
 static RECT r_start = {WW - 420, WH - 70, WW - 300, WH - 26}, r_stop = {WW - 290, WH - 70, WW - 170, WH - 26}, r_restart = {WW - 160, WH - 70, WW - 36, WH - 26};
-static RECT r_setup = {12, WH - 158, SB - 12, WH - 126}, r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
+static RECT r_push = {12, WH - 196, SB - 12, WH - 164}, r_setup = {12, WH - 158, SB - 12, WH - 126}, r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
 static RECT r_import = {X0, WH - 70, X0 + 150, WH - 26}, r_mailall = {X0 + 160, WH - 70, X0 + 300, WH - 26}, r_connect = {X0 + 310, WH - 70, X0 + 470, WH - 26};
 static RECT r_share = {508, 26, 592, 58}, r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
 static RECT r_act[10], r_filt[NFILT];
@@ -844,6 +844,122 @@ static void do_wizard(void) {
     wz_enter(W_NAME);
 }
 
+
+/* ---------------------------------------------------------------- Push update (this PC -> the connected server PC)
+ * Same parts as game/updates.py. Package RZUP1: "RZUP1\n" + {u32 path len, path, u64 size, bytes}. */
+static const char *PUSH_KEYS[] = {"code", "data", "patch", "panel", "stub"};
+static const wchar_t *PUSH_NAMES[] = {L"Server code", L"Game data (tables)", L"Game update (patch)", L"Panel app (Overfield Server.exe)", L"Login window (PCSDKUI.exe)"};
+static const char *PUSH_PATHS[5][13] = {
+    {"rozefield_server.py", "ofproto.py", "requirements.txt", "game/", "tools/", "proto/", "start_server.bat", "start_server.sh", "install_linux.sh", "setup_python.bat", "allow_friends.bat", "README.md", "DuckDNS guide.md"},
+    {"data/", "data-merged/", "data-merged.zip"}, {"patch/"}, {"Overfield Server.exe"}, {"sdk_stub/PCSDKUI.exe"}};
+struct pbuf { char *b; size_t n, cap; long long newest; int files; long long bytes; };
+static void pb_put(struct pbuf *p, const void *d, size_t n) {
+    if (!p->b && p->cap == (size_t)-1) return;
+    if (p->n + n > p->cap) { size_t c = (p->n + n) * 2; char *nb = (char *)realloc(p->b, c); if (!nb) return; p->b = nb; p->cap = c; }
+    memcpy(p->b + p->n, d, n); p->n += n;
+}
+static int skip_name(const char *f) {
+    size_t l = strlen(f); const char *ext[] = {".pyc", ".tmp", ".log"};
+    for (int i = 0; i < 3; i++) if (l > 4 && !_stricmp(f + l - 4, ext[i])) return 1;
+    return !strcmp(f, "__pycache__");
+}
+static void push_file(struct pbuf *p, const char *rel, int collect) {   /* rel uses '/' */
+    char full[MAX_PATH]; snprintf(full, sizeof full, "%s%s", g_dir, rel); for (char *c = full; *c; c++) if (*c == '/') *c = '\\';
+    WIN32_FILE_ATTRIBUTE_DATA fa; if (!GetFileAttributesExA(full, GetFileExInfoStandard, &fa)) return;
+    long long t = ((((long long)fa.ftLastWriteTime.dwHighDateTime) << 32) | fa.ftLastWriteTime.dwLowDateTime) / 10000000LL - 11644473600LL;
+    long long sz = (((long long)fa.nFileSizeHigh) << 32) | fa.nFileSizeLow;
+    if (t > p->newest) p->newest = t; p->files++; p->bytes += sz;
+    if (!collect) return;
+    HANDLE f = CreateFileA(full, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, 0, NULL); if (f == INVALID_HANDLE_VALUE) return;
+    char *d = (char *)malloc((size_t)sz + 1); DWORD got = 0; ReadFile(f, d, (DWORD)sz, &got, NULL); CloseHandle(f);
+    unsigned int pl = (unsigned int)strlen(rel); unsigned long long z = got;
+    pb_put(p, &pl, 4); pb_put(p, rel, pl); pb_put(p, &z, 8); pb_put(p, d, got); free(d);
+}
+static void push_tree(struct pbuf *p, const char *rel, int collect) {   /* rel ends with '/' */
+    char pat[MAX_PATH]; snprintf(pat, sizeof pat, "%s%s*", g_dir, rel); for (char *c = pat; *c; c++) if (*c == '/') *c = '\\';
+    WIN32_FIND_DATAA fd; HANDLE h = FindFirstFileA(pat, &fd); if (h == INVALID_HANDLE_VALUE) return;
+    do {
+        if (!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, "..") || skip_name(fd.cFileName)) continue;
+        char r2[MAX_PATH]; snprintf(r2, sizeof r2, "%s%s%s", rel, fd.cFileName, (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? "/" : "");
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) push_tree(p, r2, collect); else push_file(p, r2, collect);
+    } while (FindNextFileA(h, &fd));
+    FindClose(h);
+}
+static void push_part(struct pbuf *p, int part, int collect) {
+    for (int i = 0; i < 13 && PUSH_PATHS[part][i]; i++) {
+        const char *r = PUSH_PATHS[part][i]; size_t l = strlen(r);
+        if (r[l - 1] == '/') push_tree(p, r, collect); else push_file(p, r, collect);
+    }
+}
+static HWND g_pu_chk[5], g_pu_note; static long long g_pu_remote[5];
+static void fmt_when(long long t, wchar_t *o) {
+    if (!t) { wcscpy(o, L"none"); return; }
+    time_t tt = (time_t)t; struct tm *lt = localtime(&tt); if (!lt) { wcscpy(o, L"?"); return; }
+    wcsftime(o, 40, L"%d %b %H:%M", lt);
+}
+static void push_send(HWND d, int rollback) {
+    if (!g_remote) return;
+    if (rollback) {
+        if (MessageBoxW(d, L"Go back to the server PC's previous version? Players are told and the server restarts in 1 minute.", L"Roll back", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
+        int ok; wchar_t *r = host_call("POST", "/admin/host/rollback", "", 0, &ok); SetWindowTextW(g_pu_note, r); free(r); return;
+    }
+    struct pbuf p = {0}; int any = 0; pb_put(&p, "RZUP1\n", 6);
+    for (int i = 0; i < 5; i++) if (SendMessageW(g_pu_chk[i], BM_GETCHECK, 0, 0) == BST_CHECKED) { push_part(&p, i, 1); any = 1; }
+    if (!any) { SetWindowTextW(g_pu_note, L"Tick at least one part."); free(p.b); return; }
+    wchar_t q[200]; swprintf(q, 200, L"Send %.1f MB to %hs? Players are told and the server restarts in 1 minute.", p.n / 1048576.0, g_host);
+    if (MessageBoxW(d, q, L"Push update", MB_YESNO | MB_ICONQUESTION) != IDYES) { free(p.b); return; }
+    SetWindowTextW(g_pu_note, L"Sending\x2026"); UpdateWindow(d);
+    g_http_timeout = 600000; int ok; wchar_t *r = host_call("POST", "/admin/host/update", p.b, (int)p.n, &ok); g_http_timeout = 20000;
+    free(p.b); SetWindowTextW(g_pu_note, r); free(r);
+}
+static LRESULT CALLBACK PushProc(HWND h, UINT m, WPARAM w, LPARAM l) {
+    switch (m) {
+    case WM_CTLCOLORSTATIC: case WM_CTLCOLORBTN: SetTextColor((HDC)w, C_TXT); SetBkColor((HDC)w, C_PANEL); return (LRESULT)br_panel;
+    case WM_ERASEBKGND: { RECT r; GetClientRect(h, &r); FillRect((HDC)w, &r, br_panel); return 1; }
+    case WM_COMMAND:
+        if (LOWORD(w) == 201) push_send(h, 0);
+        else if (LOWORD(w) == 202) push_send(h, 1);
+        else if (LOWORD(w) == IDCANCEL) DestroyWindow(h);
+        return 0;
+    case WM_CLOSE: DestroyWindow(h); return 0;
+    case WM_DESTROY: EnableWindow(g_win, TRUE); SetForegroundWindow(g_win); return 0;
+    }
+    return DefWindowProcW(h, m, w, l);
+}
+static void do_push(void) {
+    if (!g_remote) { MessageBoxW(g_win, L"Push update sends this PC's server files to another server PC.\n\nConnect to the server PC first (Connect\x2026 at the bottom), then press Push update.", L"Push update", MB_OK | MB_ICONINFORMATION); return; }
+    char *out; memset(g_pu_remote, 0, sizeof g_pu_remote);
+    if (!http("GET", "/admin/host/version", "", 0, &out)) { MessageBoxW(g_win, L"The server PC didn't answer (or runs an older version without updates: copy rozefield_server.py and game\\updates.py to it once by hand).", L"Push update", MB_OK | MB_ICONWARNING); return; }
+    char *save = NULL;
+    for (char *line = strtok_s(out, "\n", &save); line; line = strtok_s(NULL, "\n", &save)) {
+        char k[16]; long long t = 0; if (sscanf(line, "%15[^|]|%lld", k, &t) == 2) for (int i = 0; i < 5; i++) if (!strcmp(k, PUSH_KEYS[i])) g_pu_remote[i] = t;
+    }
+    free(out);
+    static int reg; if (!reg) { WNDCLASSW wc = {0}; wc.lpfnWndProc = PushProc; wc.hInstance = GetModuleHandleW(NULL); wc.lpszClassName = L"RzPush"; wc.hCursor = LoadCursor(NULL, IDC_ARROW); RegisterClassW(&wc); reg = 1; }
+    int W = 640, H = 420; RECT pr; GetWindowRect(g_win, &pr);
+    HWND d = CreateWindowExW(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, L"RzPush", L"Push update to the server PC", WS_POPUP | WS_CAPTION | WS_SYSMENU,
+                             (pr.left + pr.right - W) / 2, (pr.top + pr.bottom - H) / 2, W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
+    wchar_t head[300]; swprintf(head, 300, L"From this PC to %hs. Accounts, chat, photos and settings on the server PC are never sent or changed.", g_host);
+    HWND hs = CreateWindowW(L"STATIC", head, WS_CHILD | WS_VISIBLE, 18, 14, W - 40, 40, d, NULL, NULL, NULL); SendMessageW(hs, WM_SETFONT, (WPARAM)f_small, TRUE);
+    for (int i = 0; i < 5; i++) {
+        struct pbuf p = {0}; p.cap = (size_t)-1; push_part(&p, i, 0);
+        wchar_t a[40], b[40], lb[300]; fmt_when(p.newest, a); fmt_when(g_pu_remote[i], b);
+        int newer = p.files && p.newest > g_pu_remote[i] + 2;
+        swprintf(lb, 300, L"%ls   \x00B7   this PC: %ls (%d files, %.1f MB)   \x00B7   server PC: %ls%ls", PUSH_NAMES[i], a, p.files, p.bytes / 1048576.0, b, newer ? L"   \x2190 newer here" : L"");
+        g_pu_chk[i] = CreateWindowW(L"BUTTON", lb, WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX, 18, 64 + i * 40, W - 40, 32, d, NULL, NULL, NULL);
+        SendMessageW(g_pu_chk[i], WM_SETFONT, (WPARAM)f_small, TRUE);
+        if (i == 0 || newer) SendMessageW(g_pu_chk[i], BM_SETCHECK, BST_CHECKED, 0);
+        if (!p.files) EnableWindow(g_pu_chk[i], FALSE);
+    }
+    g_pu_note = CreateWindowW(L"STATIC", L"Ticked: server code, plus every part that is newer on this PC. The server PC keeps a copy of what it replaces (Roll back).", WS_CHILD | WS_VISIBLE, 18, 270, W - 40, 50, d, NULL, NULL, NULL);
+    SendMessageW(g_pu_note, WM_SETFONT, (WPARAM)f_small, TRUE);
+    HWND b1 = CreateWindowW(L"BUTTON", L"Push update", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 18, 330, 160, 34, d, (HMENU)201, NULL, NULL);
+    HWND b2 = CreateWindowW(L"BUTTON", L"Roll back last update", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 188, 330, 190, 34, d, (HMENU)202, NULL, NULL);
+    HWND b3 = CreateWindowW(L"BUTTON", L"Close", WS_CHILD | WS_VISIBLE | WS_TABSTOP, W - 124, 330, 96, 34, d, (HMENU)IDCANCEL, NULL, NULL);
+    SendMessageW(b1, WM_SETFONT, (WPARAM)f_body, TRUE); SendMessageW(b2, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(b3, WM_SETFONT, (WPARAM)f_small, TRUE);
+    EnableWindow(g_win, FALSE); ShowWindow(d, SW_SHOW);
+}
+
 static void do_action(int a) {
     struct pl *p = sel(); char b[8192]; int ok; wchar_t *r;
     if (a >= A_FIRST && a < A_LAST && !p) { MessageBoxW(g_win, L"Choose a player in the list first.", L"Overfield Server", MB_OK); return; }
@@ -856,6 +972,7 @@ static void do_action(int a) {
     case B_PACKAGE: do_package(); break;
     case B_SHARE: do_share(); break;
     case B_SETUP: do_wizard(); break;
+    case B_PUSH: do_push(); break;
     case A_RESETPW: {
         const wchar_t *lab[] = {L"New password (4+ characters)"};
         if (!ask(L"Reset password", who, 1, lab, NULL, 0)) return;
@@ -1053,8 +1170,8 @@ static void paint(HWND h) {
         RECT ri = {r.left + 10, r.top, r.left + 34, r.bottom}; txt(dc, f_icon, c, ri, ICONS[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE);
         RECT rt2 = {r.left + 38, r.top, r.right - 6, r.bottom}; txt(dc, f_body, c, rt2, lb, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     }
-    { RECT rs2[] = {r_setup, r_savedir, r_logfile}; const wchar_t *lab[] = {L"Setup", L"Save folder", L"Log file"}, *ic[] = {L"\xE713", L"\xE8B7", L"\xE8A5"}; int hv[] = {B_SETUP, B_SAVEDIR, B_LOGFILE};
-      for (int i = 0; i < 3; i++) { RECT r = rs2[i]; if (g_hover == hv[i]) fill(dc, r, C_TILE, 10);
+    { RECT rs2[] = {r_push, r_setup, r_savedir, r_logfile}; const wchar_t *lab[] = {L"Push update", L"Setup", L"Save folder", L"Log file"}, *ic[] = {L"\xE898", L"\xE713", L"\xE8B7", L"\xE8A5"}; int hv[] = {B_PUSH, B_SETUP, B_SAVEDIR, B_LOGFILE};
+      for (int i = 0; i < 4; i++) { RECT r = rs2[i]; if (g_hover == hv[i]) fill(dc, r, C_TILE, 10);
           RECT ri = {r.left + 10, r.top, r.left + 34, r.bottom}; txt(dc, f_icon, C_MUTE, ri, ic[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE);
           RECT rt2 = {r.left + 38, r.top, r.right, r.bottom}; txt(dc, f_body, C_MUTE, rt2, lab[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE); } }
     if (g_hover == B_CLOSE) fill(dc, r_close, RGB(200, 64, 76), 8);
@@ -1150,6 +1267,7 @@ static int hit(int x, int y) {
     if (PtInRect(&r_connect, pt)) return B_CONNECT;
     if (PtInRect(&r_share, pt)) return B_SHARE;
     if (PtInRect(&r_setup, pt)) return B_SETUP;
+    if (PtInRect(&r_push, pt)) return B_PUSH;
     if (PtInRect(&r_hosting, pt)) return B_HOSTING;
     if (PtInRect(&r_imports, pt)) return B_IMPORTS;
     if (PtInRect(&r_move, pt)) return B_MOVE;
@@ -1172,7 +1290,7 @@ static void click(int b) {
     case B_LOGFILE: snprintf(p, sizeof p, "%sserver.log", g_dir); ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break;
     default:
         if (b >= F_FIRST && b < F_FIRST + NFILT) { g_filter = b - F_FIRST; g_follow = 1; rebuild_log(); }
-        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_SETUP)) { if (g_up) do_action(b); }
+        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_PUSH)) { if (g_up) do_action(b); }
     }
     InvalidateRect(g_win, NULL, FALSE);
 }
