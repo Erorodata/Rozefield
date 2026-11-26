@@ -745,7 +745,7 @@ static void do_share(void) {
 static void fill(HDC dc, RECT r, COLORREF c, int rad);
 static void txt(HDC dc, HFONT f, COLORREF c, RECT r, const wchar_t *s, UINT fmt);
 /* ---------------------------------------------------------------- setup wizard
- * 1 Name (display name, start with Windows)  2 Who joins (me / Wi-Fi / internet)  3 Address (DuckDNS)
+ * 1 Name (display name, start with Windows)  2 Who joins (me / Wi-Fi / internet)  3 Address (playit.gg)
  * 4 Letting friends in (Windows Firewall, router)  5 Share (game zip, Drive link, invite message).
  * Opens by itself the first time the server is up; the sidebar's Setup reopens it. Everything is also in Hosting. */
 enum { W_NAME, W_WHO, W_ADDR, W_ROUTER, W_SHARE, W_N };
@@ -787,21 +787,25 @@ static void wz_router(void) {
     int ok; wchar_t *r = host_call("POST", "/admin/host/router", "", 0, &ok);
     wchar_t m[900];
     if (!wcsncmp(r, L"open", 4)) swprintf(m, 900, L"\x2713 Router: %ls\n\nTest it: on your phone with Wi-Fi off, open the server's page (http://<your server name>/).", r);
-    else swprintf(m, 900, L"! The router didn't open the ports by itself.\nIn your router's page, forward TCP 80, 18881 and 11001 to %hs (Port Forwarding / Virtual Server), "
+    else swprintf(m, 900, L"! The router didn't open the ports by itself.\nIn your router's page, forward TCP 18880 to %hs (Port Forwarding / Virtual Server), "
                           L"and give this PC a fixed address there. Then press Check again.\n\nTest it: on your phone with Wi-Fi off, open http://<your server name>/.", lan);
     SetWindowTextW(g_wzc[W_ROUTER][1], m); free(r);
 }
-static void wz_check_addr(void) {
-    wchar_t sub[128], tok[128]; GetWindowTextW(g_wzc[W_ADDR][2], sub, 128); GetWindowTextW(g_wzc[W_ADDR][5], tok, 128);
-    wchar_t *d = wcsstr(sub, L".duckdns.org"); if (d) *d = 0;
-    if (!sub[0] || !tok[0]) { wz_note(W_ADDR, C_BAD, L"Type the DuckDNS name and token first."); return; }
-    wchar_t full[200]; swprintf(full, 200, L"%ls.duckdns.org", sub);
-    char b[2048] = "{"; json_put(b, sizeof b, "name_provider", L"duckdns", 0); json_put(b, sizeof b, "server_name", full, 0); json_put(b, sizeof b, "duckdns_token", tok, 0); strcat(b, "}");
-    int ok; wchar_t *r = host_call("POST", "/admin/host/settings", b, (int)strlen(b), &ok); free(r);
-    wz_note(W_ADDR, C_MUTE, L"Checking with DuckDNS\x2026"); UpdateWindow(g_wz);
-    r = host_call("POST", "/admin/host/name", "", 0, &ok);
-    g_wz_addr_ok = ok && wcsstr(r, L"->") && !wcsstr(r, L"refused") && !wcsstr(r, L"could not");
-    wz_note(W_ADDR, g_wz_addr_ok ? C_OK : C_BAD, g_wz_addr_ok ? L"\x2713 %ls" : L"%ls", r); free(r);
+static void wz_check_addr(void) {   /* the playit.gg address: save it, then reach this server through it */
+    wchar_t a[300]; GetWindowTextW(g_wzc[W_ADDR][2], a, 300);
+    wchar_t *b = a; while (*b == L' ') b++; wchar_t *e = b + wcslen(b); while (e > b && (e[-1] == L' ' || e[-1] == L'/')) *--e = 0;
+    if (!wcsncmp(b, L"tcp://", 6)) b += 6;
+    if (!b[0]) { wz_note(W_ADDR, C_BAD, L"Paste the address playit shows for your tunnel first."); return; }
+    char body[700] = "{"; json_put(body, sizeof body, "tunnel_address", b, 0); strcat(body, "}");
+    int ok; wchar_t *r = host_call("POST", "/admin/host/settings", body, (int)strlen(body), &ok); free(r);
+    wz_note(W_ADDR, C_MUTE, L"Checking the address\x2026"); UpdateWindow(g_wz);
+    char a8[300]; WideCharToMultiByte(CP_UTF8, 0, b, -1, a8, sizeof a8, NULL, NULL);
+    if (!strchr(a8, ':')) { wz_note(W_ADDR, C_BAD, L"The address needs its port too, like word-word.gl.at.ply.gg:12345."); g_wz_addr_ok = 0; return; }
+    char *out = NULL; unsigned char nokey[32] = {0};
+    g_wz_addr_ok = http_at(a8, 1, nokey, 8000, "GET", "/rozefield/info", "", 0, &out, NULL) == 1 && out && strstr(out, "rozefield-info");
+    free(out);
+    wz_note(W_ADDR, g_wz_addr_ok ? C_OK : C_BAD, g_wz_addr_ok ? L"\x2713 Players anywhere reach this server at %hs" :
+            L"Nothing answered at %hs yet. Check that playit is running and its tunnel goes to local port 18880, then press Check.", a8);
 }
 static void wz_package_note(void) {
     char *o; if (!http("GET", "/admin/host/package", "", 0, &o)) return;
@@ -812,7 +816,10 @@ static void wz_package_note(void) {
 }
 static void wz_enter(int step) {
     g_wz_step = step; wz_show();
-    if (step == W_ROUTER) { wz_firewall(); if (g_wz_who == 2) wz_router(); }
+    if (step == W_ROUTER) { wz_firewall();
+        if (g_wz_who == 2 && !g_wz_addr_ok) wz_router();
+        else SetWindowTextW(g_wzc[W_ROUTER][1], g_wz_who == 2 ? L"\x2713 Internet players come in through playit.gg: nothing to change on your router." :
+                                                                L"\x2713 Friends on your Wi-Fi can join now: in their login window, Find on my network."); }
     if (step == W_SHARE) wz_package_note();
 }
 static void wz_next(void) {
@@ -829,7 +836,7 @@ static void wz_next(void) {
         wz_enter(g_wz_who == 2 ? W_ADDR : W_ROUTER); break;
     case W_ADDR:
         if (!g_wz_addr_ok) wz_check_addr();
-        if (!g_wz_addr_ok && MessageBoxW(g_wz, L"The DuckDNS name isn't working yet. Continue anyway (friends can use the invite code from Share meanwhile)?", L"Setup", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
+        if (!g_wz_addr_ok && MessageBoxW(g_wz, L"The playit.gg address isn't answering yet. Continue anyway (you can finish it later in Share > Use playit.gg)?", L"Setup", MB_YESNO | MB_ICONQUESTION) != IDYES) return;
         wz_enter(W_ROUTER); break;
     case W_ROUTER: wz_enter(W_SHARE); break;
     case W_SHARE:
@@ -864,10 +871,10 @@ static LRESULT CALLBACK WizProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         HWND c = (HWND)l;
         if (c == g_wz_next) wz_next();
         else if (c == g_wz_back) wz_back();
-        else if (c == g_wzc[W_ADDR][0]) ShellExecuteW(NULL, L"open", L"https://www.duckdns.org", NULL, NULL, SW_SHOWNORMAL);
+        else if (c == g_wzc[W_ADDR][0]) ShellExecuteW(NULL, L"open", L"https://playit.gg/download", NULL, NULL, SW_SHOWNORMAL);
         else if (c == g_wzc[W_ADDR][6]) { g_wz_addr_ok = 0; wz_check_addr(); }
-        else if ((c == g_wzc[W_ADDR][2] || c == g_wzc[W_ADDR][5]) && HIWORD(w) == EN_CHANGE) g_wz_addr_ok = 0;
-        else if (c == g_wzc[W_ROUTER][2]) { wz_firewall(); if (g_wz_who == 2) wz_router(); }
+        else if (c == g_wzc[W_ADDR][2] && HIWORD(w) == EN_CHANGE) g_wz_addr_ok = 0;
+        else if (c == g_wzc[W_ROUTER][2]) { wz_firewall(); if (g_wz_who == 2 && !g_wz_addr_ok) wz_router(); }
         else if (c == g_wzc[W_ROUTER][3]) {
             MIB_IPFORWARDROW rt; char gw[64] = "192.168.1.1";
             if (GetBestRoute(inet_addr("8.8.8.8"), 0, &rt) == NO_ERROR) { struct in_addr a; a.s_addr = rt.dwForwardNextHop; snprintf(gw, sizeof gw, "%s", inet_ntoa(a)); }
@@ -898,7 +905,7 @@ static void do_wizard(void) {
                            (pr.left + pr.right - W) / 2, (pr.top + pr.bottom - H) / 2, W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
     memset(g_wzc, 0, sizeof g_wzc); g_wz_addr_ok = 0;
     char *js = NULL; char dn[200] = "Rozefield", sn[256] = "";
-    if (http("GET", "/admin/host/status", "", 0, &js)) { json_get(js, "\"settings\"", "display_name", dn, sizeof dn); json_get(js, "\"settings\"", "server_name", sn, sizeof sn); free(js); }
+    if (http("GET", "/admin/host/status", "", 0, &js)) { json_get(js, "\"settings\"", "display_name", dn, sizeof dn); json_get(js, "\"settings\"", "tunnel_address", sn, sizeof sn); free(js); }
     wchar_t w1[200], w2[256]; MultiByteToWideChar(CP_UTF8, 0, dn, -1, w1, 200); MultiByteToWideChar(CP_UTF8, 0, sn, -1, w2, 256);
     int y = 60, X = 22, CWD = W - 60;
     /* 1 name */
@@ -909,20 +916,18 @@ static void do_wizard(void) {
     g_wz_note[W_NAME] = wz_ctl(L"STATIC", L"You can change all of this later in Hosting.", 0, X, y + 124, CWD, 40, f_small);
     /* 2 who */
     g_wzc[W_WHO][0] = wz_ctl(L"STATIC", L"Who will play on your server?", 0, X, y, CWD, 24, f_h);
-    const wchar_t *who[] = {L"Only me, on this PC", L"Friends on my Wi-Fi / home network", L"Friends over the internet (needs a free DuckDNS name)"};
+    const wchar_t *who[] = {L"Only me, on this PC", L"Friends on my Wi-Fi / home network", L"Friends over the internet (free playit.gg address)"};
     for (int i = 0; i < 3; i++) g_wzc[W_WHO][1 + i] = wz_ctl(L"BUTTON", who[i], WS_TABSTOP | BS_AUTORADIOBUTTON | (i == 0 ? WS_GROUP : 0), X, y + 36 + i * 36, CWD, 30, f_body);
     SendMessageW(g_wzc[W_WHO][1 + g_wz_who], BM_SETCHECK, BST_CHECKED, 0);
     g_wz_note[W_WHO] = wz_ctl(L"STATIC", L"Same Wi-Fi friends join with the home-network code or the search button in their login window.", 0, X, y + 150, CWD, 40, f_small);
     /* 3 address */
-    g_wzc[W_ADDR][0] = wz_ctl(L"BUTTON", L"1. Open duckdns.org (sign in, add a name, copy the token)", WS_TABSTOP, X, y, CWD, 32, f_small);
-    g_wzc[W_ADDR][1] = wz_ctl(L"STATIC", L"DuckDNS name", 0, X, y + 46, 200, 20, f_small);
-    { wchar_t sub[256]; wcscpy(sub, w2); wchar_t *d = wcsstr(sub, L".duckdns.org"); if (d) *d = 0;
-      g_wzc[W_ADDR][2] = wz_ctl(L"EDIT", sub, WS_TABSTOP | ES_AUTOHSCROLL, X, y + 68, 300, 30, f_body); }
-    g_wzc[W_ADDR][3] = wz_ctl(L"STATIC", L".duckdns.org", 0, X + 308, y + 74, 120, 22, f_body);
-    g_wzc[W_ADDR][4] = wz_ctl(L"STATIC", L"Token (keep it secret)", 0, X, y + 110, 300, 20, f_small);
-    g_wzc[W_ADDR][5] = wz_ctl(L"EDIT", L"", WS_TABSTOP | ES_AUTOHSCROLL | ES_PASSWORD, X, y + 132, CWD - 120, 30, f_body);
-    g_wzc[W_ADDR][6] = wz_ctl(L"BUTTON", L"Check", WS_TABSTOP, X + CWD - 110, y + 132, 110, 30, f_small);
-    g_wz_note[W_ADDR] = wz_ctl(L"STATIC", sn[0] ? L"A name is already set; type the token again to change it, or press Next." : L"", 0, X, y + 176, CWD, 60, f_small);
+    g_wzc[W_ADDR][0] = wz_ctl(L"BUTTON", L"1. Open playit.gg/download (install playit, sign in)", WS_TABSTOP, X, y, CWD, 32, f_small);
+    g_wzc[W_ADDR][1] = wz_ctl(L"STATIC", L"2. On playit.gg add a tunnel: type TCP, local port 18880. Playit stays on with Windows.", 0, X, y + 44, CWD, 22, f_small);
+    g_wzc[W_ADDR][4] = wz_ctl(L"STATIC", L"3. Paste the address playit shows (like word-word.gl.at.ply.gg:12345)", 0, X, y + 76, CWD, 20, f_small);
+    g_wzc[W_ADDR][2] = wz_ctl(L"EDIT", w2, WS_TABSTOP | ES_AUTOHSCROLL, X, y + 100, CWD - 120, 30, f_body);
+    g_wzc[W_ADDR][6] = wz_ctl(L"BUTTON", L"Check", WS_TABSTOP, X + CWD - 110, y + 100, 110, 30, f_small);
+    g_wz_note[W_ADDR] = wz_ctl(L"STATIC", sn[0] ? L"An address is already set: press Next, or paste a new one and press Check." :
+                               L"Works with any router or internet provider. Players install nothing; they type this address in the login window.", 0, X, y + 146, CWD, 60, f_small);
     if (sn[0]) g_wz_addr_ok = 1;
     /* 4 letting friends in */
     g_wzc[W_ROUTER][0] = wz_ctl(L"STATIC", L"Letting friends in", 0, X, y, CWD, 24, f_h);
