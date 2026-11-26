@@ -15,7 +15,7 @@ python\python.exe python\get-pip.py --no-warn-script-location -q || goto fail
 :deps
 python\python.exe -m pip install -q --no-warn-script-location "protobuf>=4.25" "cramjam>=2.8" || goto fail
 echo.
-echo Done: this Server folder now has its own Python (python\). start_server.bat and Rozefield Server.exe use it.
+echo Done: this Server folder now has its own Python (python\). start_server.bat and Overfield Server.exe use it.
 pause
 exit /b 0
 :fail

@@ -1,4 +1,4 @@
-/* Rozefield Backup.exe - save your OverField account while the official server is still online.
+/* Overfield Backup.exe - save your OverField account while the official server is still online.
  *
  * Click "Open OverField (Official)": the game starts and logs in to the official server as usual, but its
  * connection passes through this window, which records what the server tells the game about your account.
@@ -18,7 +18,7 @@
  * File format (RZSAVE2): "RZSAVE2\n" + JSON meta line + records {u8 dir(0=client,1=server), u16 conn, f64 time,
  * u32 len, frame bytes as on the wire}.
  *
- * Build: zig cc -target x86_64-windows-gnu -O2 rozefield_backup.c -o "Rozefield Backup.exe"
+ * Build: zig cc -target x86_64-windows-gnu -O2 rozefield_backup.c backup.rc -o "Overfield Backup.exe"
  *        -lws2_32 -lcomdlg32 -lshell32 -lole32 -luser32 -lgdi32 -ladvapi32 -lmsimg32 -liphlpapi -lgdiplus -Wl,--subsystem,windows
  */
 #define WIN32_LEAN_AND_MEAN
@@ -83,7 +83,7 @@ static HANDLE g_game_proc;
 static char g_logpath[MAX_PATH];
 static void ui_log(const char *fmt, ...) {
     char b[1024]; va_list ap; va_start(ap, fmt); vsnprintf(b, sizeof b, fmt, ap); va_end(ap);
-    if (g_logpath[0]) {   /* "Rozefield Backup.log" next to the exe: send it when something goes wrong */
+    if (g_logpath[0]) {   /* "Overfield Backup.log" next to the exe: send it when something goes wrong */
         FILE *lf = fopen(g_logpath, "ab");
         if (lf) { SYSTEMTIME t; GetLocalTime(&t); fprintf(lf, "%02d:%02d:%02d  %s\r\n", t.wHour, t.wMinute, t.wSecond, b); fclose(lf); }
     }
@@ -116,7 +116,7 @@ static void mark_check(int msg_id) {
 }
 
 /* ------------------------------------------------------------------ settings */
-static void ini_path(char *out) { snprintf(out, MAX_PATH, "%sRozefield Backup.ini", g_exedir); }
+static void ini_path(char *out) { snprintf(out, MAX_PATH, "%sOverfield Backup.ini", g_exedir); }
 
 static int has_launcher(const char *dir) {
     char p[MAX_PATH]; snprintf(p, sizeof p, "%s\\launcher.exe", dir);
@@ -883,7 +883,7 @@ static int save_backup(char *out, int outsz) {
     if (o) {
         fprintf(o, "RZSAVE2\n{\"format\":\"rzsave/2\",\"player_name\":\"");
         for (char *c = g_player; *c; c++) { if (*c == '"' || *c == '\\') fputc('\\', o); fputc(*c, o); }
-        fprintf(o, "\",\"frames\":%ld,\"saved\":\"%04d-%02d-%02d %02d:%02d\",\"tool\":\"Rozefield Backup 2\"}\n", g_frames,
+        fprintf(o, "\",\"frames\":%ld,\"saved\":\"%04d-%02d-%02d %02d:%02d\",\"tool\":\"Overfield Backup 2\"}\n", g_frames,
                 st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute);
         FILE *in = fopen(g_tmppath, "rb");
         if (in) { copy_records_private(in, o); fclose(in); ok = 1; }
@@ -927,7 +927,7 @@ static DWORD WINAPI open_then_reconnect(LPVOID a) {
 }
 static void start_backup(void) {   /* runs in the background so the window never freezes */
     if (find_launcher()) { start_reconnect(); return; }   /* already running: no second copy */
-    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"Rozefield Backup", MB_OK | MB_ICONWARNING); return; }
+    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"Overfield Backup", MB_OK | MB_ICONWARNING); return; }
     if (!is_admin()) {   /* taking over the connection needs administrator rights: ask now, not halfway */
         wchar_t me[MAX_PATH]; GetModuleFileNameW(NULL, me, MAX_PATH);
         SHELLEXECUTEINFOW ei = {sizeof ei}; ei.lpVerb = L"runas"; ei.lpFile = me; ei.lpParameters = L"--open"; ei.nShow = SW_SHOWNORMAL;
@@ -941,7 +941,7 @@ static void start_backup(void) {   /* runs in the background so the window never
 }
 
 static void start_backup_work(void) {
-    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"Rozefield Backup", MB_OK | MB_ICONWARNING); InterlockedExchange(&g_starting, 0); InterlockedExchange(&g_mode, M_IDLE); return; }
+    if (!has_launcher(g_game)) { MessageBoxW(g_win, L"launcher.exe was not found in that folder.\nChoose your OverField game folder (Steam: steamapps\\common\\OverField).", L"Overfield Backup", MB_OK | MB_ICONWARNING); InterlockedExchange(&g_starting, 0); InterlockedExchange(&g_mode, M_IDLE); return; }
     char ini[MAX_PATH]; ini_path(ini); WritePrivateProfileStringA("game", "folder", g_game, ini);
     if (!g_running) {
         ui_log("Finding the official server...");
@@ -976,14 +976,14 @@ static void do_save(int quiet) {
     char path[MAX_PATH];
     if (!save_backup(path, sizeof path)) {
         if (!quiet) MessageBoxW(g_win, g_mode == M_WATCH ? L"Nothing to save yet. In the game, go back to the title screen and log in again - the login is what holds your account."
-                                                        : L"Nothing to save yet - press Open game and log in first.", L"Rozefield Backup", MB_OK);
+                                                        : L"Nothing to save yet - press Open game and log in first.", L"Overfield Backup", MB_OK);
         return;
     }
     ui_log("Backup saved: %s", path);
     g_saved_once = 1; MultiByteToWideChar(CP_UTF8, 0, path, -1, g_savedpath, MAX_PATH);
     wchar_t w[MAX_PATH + 200], wp[MAX_PATH]; MultiByteToWideChar(CP_UTF8, 0, path, -1, wp, MAX_PATH);
     swprintf(w, MAX_PATH + 200, L"Backup saved:\n%ls\n\nKeep this file. Import it in the Rozefield login window (\"Import backup\").", wp);
-    MessageBoxW(g_win, w, L"Rozefield Backup", MB_OK | MB_ICONINFORMATION);
+    MessageBoxW(g_win, w, L"Overfield Backup", MB_OK | MB_ICONINFORMATION);
     char sel[MAX_PATH + 16]; snprintf(sel, sizeof sel, "/select,\"%s\"", path);
     ShellExecuteA(NULL, "open", "explorer.exe", sel, NULL, SW_SHOWNORMAL);
 }
@@ -1587,7 +1587,7 @@ static int rz_apply(const char *dir, const char *name, const char *ip, wchar_t *
     /* 1. login window */
     snprintf(src, sizeof src, "%srozefield\\PCSDKUI.exe", g_exedir);
     snprintf(f, sizeof f, "%s\\launcher_Data\\Plugins\\Win\\PCSDK_release\\PCSDKUI.exe", dir);
-    if (GetFileAttributesA(src) == INVALID_FILE_ATTRIBUTES) { wcscpy(err, L"The Rozefield login (rozefield\\PCSDKUI.exe) is missing next to Rozefield Backup.exe."); return 0; }
+    if (GetFileAttributesA(src) == INVALID_FILE_ATTRIBUTES) { wcscpy(err, L"The Rozefield login (rozefield\\PCSDKUI.exe) is missing next to Overfield Backup.exe."); return 0; }
     if (GetFileAttributesA(f) == INVALID_FILE_ATTRIBUTES) { wcscpy(err, L"This folder has no login window (launcher_Data\\Plugins\\Win\\PCSDK_release)."); return 0; }
     if (!keep_orig(f) || !CopyFileA(src, f, FALSE)) { wcscpy(err, L"Couldn't replace the login window. Close the game and try again."); return 0; }
     { char ini[MAX_PATH]; snprintf(ini, sizeof ini, "%s\\launcher_Data\\Plugins\\Win\\PCSDK_release\\rozefield_sdk.ini", dir);
@@ -1712,7 +1712,7 @@ static void patch_go(void) {
             if (rr == IDCANCEL) return;
             if (rr == IDYES) { snprintf(g_pgame, sizeof g_pgame, "%s", g_pdest); g_pmode = 1; }
         }
-    } else if (MessageBoxW(g_win, L"Change this game so it plays on Rozefield?\n\nIt stops logging in to the official servers until you press Undo. Make your backup with Rozefield Backup first.", L"Play on Rozefield", MB_OKCANCEL | MB_ICONQUESTION) != IDOK) return;
+    } else if (MessageBoxW(g_win, L"Change this game so it plays on Rozefield?\n\nIt stops logging in to the official servers until you press Undo. Make your backup with Overfield Backup first.", L"Play on Rozefield", MB_OKCANCEL | MB_ICONQUESTION) != IDOK) return;
     InterlockedExchange(&g_pbusy, 1); pmsg(RGB(122, 126, 142), L"Working\x2026");
     CloseHandle(CreateThread(NULL, 0, patch_thread, NULL, 0, NULL));
 }
@@ -1808,7 +1808,7 @@ static void paint(HWND h) {
       cx = (r_min.left + r_min.right) / 2; MoveToEx(dc, cx - 7, cy, NULL); LineTo(dc, cx + 8, cy);
       SelectObject(dc, o); DeleteObject(p); }
     /* title (asymmetric, top-left) */
-    RECT rt = {104, 34, 700, 84}; txt(dc, f_title, C_TXT, rt, L"Rozefield Backup", DT_LEFT | DT_SINGLELINE);
+    RECT rt = {104, 34, 700, 84}; txt(dc, f_title, C_TXT, rt, L"Overfield Backup", DT_LEFT | DT_SINGLELINE);
     RECT rs = {106, 84, 700, 108}; txt(dc, f_small, C_MUTE, rs, L"Keep your OverField account. The official servers close on 8 Feb 2027.", DT_LEFT | DT_SINGLELINE);
     { RECT t0 = r_tab0, t1 = r_tab1;
       fill_round(dc, t0, g_tab == 0 ? C_ACC : C_CARD, 18); if (g_tab) outline_round(dc, t0, C_LINE, 18);
@@ -2039,7 +2039,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         if (g_player[0] && !g_saved_once) do_save(1);
         return 0;
     case WM_CLOSE:
-        if (g_frames && g_player[0] && !g_saved_once && MessageBoxW(h, L"Save the backup before closing?", L"Rozefield Backup", MB_YESNO | MB_ICONQUESTION) == IDYES) do_save(1);
+        if (g_frames && g_player[0] && !g_saved_once && MessageBoxW(h, L"Save the backup before closing?", L"Overfield Backup", MB_YESNO | MB_ICONQUESTION) == IDYES) do_save(1);
         restore_all();
         if (g_wd_redirect != INVALID_HANDLE_VALUE) { pWDClose(g_wd_redirect); g_wd_redirect = INVALID_HANDLE_VALUE; }
         if (g_tmp) { fclose(g_tmp); g_tmp = NULL; DeleteFileA(g_tmppath); }
@@ -2052,7 +2052,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
 int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     GetModuleFileNameA(NULL, g_exedir, MAX_PATH);
     char *sl = strrchr(g_exedir, '\\'); if (sl) sl[1] = 0;
-    snprintf(g_logpath, sizeof g_logpath, "%sRozefield Backup.log", g_exedir);
+    snprintf(g_logpath, sizeof g_logpath, "%sOverfield Backup.log", g_exedir);
     InitializeCriticalSection(&g_cs);
     WSADATA wd; WSAStartup(MAKEWORD(2, 2), &wd);
     CoInitialize(NULL);
@@ -2071,7 +2071,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     WNDCLASSW wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = hi; wc.lpszClassName = L"RozefieldBackup";
     wc.hCursor = LoadCursor(NULL, IDC_ARROW); wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     RegisterClassW(&wc);
-    g_win = CreateWindowExW(WS_EX_APPWINDOW, L"RozefieldBackup", L"Rozefield Backup", WS_POPUP | WS_MINIMIZEBOX | WS_SYSMENU,
+    g_win = CreateWindowExW(WS_EX_APPWINDOW, L"RozefieldBackup", L"Overfield Backup", WS_POPUP | WS_MINIMIZEBOX | WS_SYSMENU,
                             (GetSystemMetrics(SM_CXSCREEN) - WW) / 2, (GetSystemMetrics(SM_CYSCREEN) - WH) / 2, WW, WH, NULL, NULL, hi, NULL);
     SetWindowRgn(g_win, CreateRoundRectRgn(0, 0, WW + 1, WH + 1, 16, 16), TRUE);
     g_psrv = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_TABSTOP | ES_AUTOHSCROLL, 124, 424, 520, 34, g_win, NULL, hi, NULL);
@@ -2080,7 +2080,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     ShowWindow(g_win, show); UpdateWindow(g_win);
     SetTimer(g_win, 1, 30, NULL);
     if (strstr(cmd, "--play")) set_tab(1);
-    ui_log("Rozefield Backup started. Game folder: %s", g_game[0] ? g_game : "(not found - use the folder button)");
+    ui_log("Overfield Backup started. Game folder: %s", g_game[0] ? g_game : "(not found - use the folder button)");
     if (strstr(cmd, "--reconnect")) start_reconnect();
     else if (strstr(cmd, "--open")) start_backup();
     else if (strstr(cmd, "--watch")) start_watch();

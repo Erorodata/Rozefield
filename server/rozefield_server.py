@@ -22,6 +22,28 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 START = time.time()
 
 
+def ensure_game_data(res_dirs):
+    """A fresh Overfield Server has no game tables (they belong to the game and aren't shared): build them once from
+    the Overfield game folder next to the server (tools/extract_config.py, needs UnityPy)."""
+    import subprocess
+    if any(os.path.exists(os.path.join(HERE, d, 'item.json')) for d in ('data-merged', 'data')) or \
+            os.path.exists(os.path.join(HERE, 'data-merged.zip')):
+        return
+    yoo = next((d for d in res_dirs if os.path.isdir(os.path.join(d, 'DefaultPackage'))), None)
+    if not yoo:
+        log.error('No game data yet, and no game folder to build it from: put the Overfield folder next to the Server '
+                  'folder (or set game_path.txt), then start again.')
+        return
+    log.info('First start: building the game data from %s (a minute or two)...', yoo)
+    try:
+        import UnityPy  # noqa: F401
+    except ImportError:
+        log.info('installing UnityPy (needed once to read the game files)...')
+        subprocess.call([sys.executable, '-m', 'pip', 'install', '-q', 'UnityPy'])
+    r = subprocess.call([sys.executable, os.path.join(HERE, 'tools', 'extract_config.py'), yoo])
+    log.info('game data ready' if r == 0 else 'building the game data failed (see above); run tools/extract_config.py by hand')
+
+
 def restart_self():
     """Start the server again in place (used by the panel's Restart from another device)."""
     logging.getLogger('rozefield').info('restarting...')
@@ -241,7 +263,7 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
 <body><main><h1>{name}</h1><p class="m">Private OverField server</p>{''.join(btns)}
 {server_line}<ol><li>Unzip Rozefield.zip anywhere.</li><li>Open the Overfield folder and start <b>launcher.exe</b>.</li>
 <li>In the login window: Create account (or Bring my account with your official backup file), then Enter game.</li></ol>
-<p class="m">Saving your official account before 8 Feb 2027? Use Rozefield Backup.</p></main></body></html>'''.encode('utf-8')
+<p class="m">Saving your official account before 8 Feb 2027? Use Overfield Backup.</p></main></body></html>'''.encode('utf-8')
 
     async def host_admin(self, u, method, body, local):
         """Hosting controls for the panel (this PC or another device). -> (bytes, code, content type)"""
@@ -832,11 +854,12 @@ async def main():
     logging.getLogger().addHandler(admin.RING)
     from game import hostdata
     hostdata.apply_incoming(log.info)   # a server export imported from the panel switches in here
+    ensure_game_data(a.res_dir or [])
     cfg = Config(a)
     http = HTTP(cfg)
     game = Server(cfg, a)
     http.game = game
-    http.admin_token = admin.token()   # for Rozefield Server.exe (control panel)
+    http.admin_token = admin.token()   # for Overfield Server.exe (control panel)
     servers = [await asyncio.start_server(http.handle, a.bind, a.http_port),
                await asyncio.start_server(lambda r, w: Session(game, r, w).run(), a.bind, a.gate_port)]
     if a.dns_port:

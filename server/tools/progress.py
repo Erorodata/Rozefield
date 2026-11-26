@@ -205,7 +205,15 @@ def readme(cfg, m, areas, overall):
     """Front page of the repo: the progress chart drawn in text (shows even where images are blocked)."""
     area_vals = [sum(r[1] for r in rows) / len(rows) for _, rows in areas]
     out = [f'# {cfg["title"]} — {overall * 100:.2f}%', '', f'`{bar(overall, 40)}` **{overall * 100:.2f}%**', '',
-           cfg['subtitle'], '', '| Area | Progress | |', '|---|---|---:|']
+           cfg['subtitle'], '', '## The three parts', '',
+           '| Part | What it is | Get it |', '|---|---|---|',
+           '| **Overfield** | The game. Not shared here (it belongs to its makers): use your own copy (Steam or the OverField launcher) '
+           'and point it at a server with Overfield Backup, or the game package your server owner gives you | your own install |',
+           '| **Overfield Backup** (by RozenCrimsonvale) | Save your official account before 8 Feb 2027; **Play on Rozefield** points your '
+           'own game at a server (a copy, or the game itself) | [Releases](https://github.com/Erorodata/Rozefield/releases/latest): `Overfield-Backup.zip` |',
+           '| **Overfield Server** (by RozenCrimsonvale) | Host a server: control panel with a setup wizard, sharing, traffic, '
+           'imports, moving to another device; Windows, Linux or a VPS | [Releases](https://github.com/Erorodata/Rozefield/releases/latest): `Overfield-Server.zip` |', '',
+           '| Area | Progress | |', '|---|---|---:|']
     for (name, _), v in zip(areas, area_vals):
         out.append(f'| {name} | `{bar(v)}` | **{v * 100:.1f}%** |')
     out += ['', '🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet', '']
@@ -227,6 +235,7 @@ def readme(cfg, m, areas, overall):
             'Rozefield preserves OverField: the archived client and a private server that runs it after the official shutdown.', '',
             '- [Archive notes: client build, endpoints, protocol, captures](docs/ARCHIVE.md)',
             '- [Server: setup, login window, backup / import, GM commands](server/README.md)',
+            '- [Host your own server with a DuckDNS name](docs/HOSTING_DUCKDNS.md)',
             '- [Checklist (plain)](docs/PROGRESS.md)', '']
     return '\n'.join(out)
 

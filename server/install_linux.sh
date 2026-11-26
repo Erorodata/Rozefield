@@ -1,5 +1,5 @@
 #!/bin/sh
-# Installs Rozefield Server as a service that starts when the device boots (systemd: Debian, Ubuntu, Raspberry Pi OS).
+# Installs Overfield Server as a service that starts when the device boots (systemd: Debian, Ubuntu, Raspberry Pi OS).
 #   sudo ./install_linux.sh            install and start
 #   sudo ./install_linux.sh --remove   stop and remove the service (the server folder is not touched)
 # Manage it with:  sudo systemctl status|restart|stop rozefield      Log: journalctl -u rozefield -f
@@ -19,7 +19,7 @@ sudo -u "$USER_NAME" python3 -c "import google.protobuf, cramjam" 2>/dev/null ||
 chmod +x "$DIR/start_server.sh"
 cat > "$UNIT" <<EOF
 [Unit]
-Description=Rozefield Server
+Description=Overfield Server
 After=network-online.target
 Wants=network-online.target
 
@@ -38,6 +38,6 @@ WantedBy=multi-user.target
 EOF
 systemctl daemon-reload
 systemctl enable --now rozefield
-echo "Rozefield Server is running and starts on boot."
+echo "Overfield Server is running and starts on boot."
 echo "Set the control-panel password:  $DIR/start_server.sh --set-admin-password <password>"
 echo "Open TCP 80, 18881 and 11001 in the firewall (VPS: in the provider's firewall too)."

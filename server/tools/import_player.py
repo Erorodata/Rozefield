@@ -1,4 +1,4 @@
-"""Import a player's backup (.rzsave, made with Rozefield Backup.exe or export_my_data.bat while the official server
+"""Import a player's backup (.rzsave, made with Overfield Backup.exe or export_my_data.bat while the official server
 was online) as their own Rozefield account. Everything they had done carries over; logging in with a name that was
 never imported starts a fresh account as usual. Players can also import from the Rozefield login window.
 
@@ -14,7 +14,7 @@ MAGIC2 = b'RZSAVE2\n'
 
 
 # login and device details (account SDK id, device id/model, analytics id, log-server token, client logs): never kept,
-# even from backups made before Rozefield Backup left them out
+# even from backups made before Overfield Backup left them out
 PRIVATE = {'VerifyLoginTokenReq', 'VerifyLoginTokenRsp', 'PlayerLoginReq', 'PlayerLoginRsp', 'ClientLogAuthReq', 'ClientLogMessageReq'}
 
 
@@ -32,7 +32,7 @@ def _msg(t, direction, conn, mid, pid, body):
 
 
 def read_rzsave_bytes(data):
-    """-> (meta, [decoded messages]). Supports the zip format (export_my_data.bat) and RZSAVE2 (Rozefield Backup.exe)."""
+    """-> (meta, [decoded messages]). Supports the zip format (export_my_data.bat) and RZSAVE2 (Overfield Backup.exe)."""
     msgs = []
     if data.startswith(MAGIC2):
         import cramjam

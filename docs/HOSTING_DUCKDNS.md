@@ -1,7 +1,7 @@
 # Host your own Rozefield server with a DuckDNS name
 
 A free DuckDNS name (e.g. `myserver.duckdns.org`) gives your server an address that never changes. Players add it once.
-Rozefield Server keeps the name pointed at your internet address by itself, even when your provider changes it.
+Overfield Server keeps the name pointed at your internet address by itself, even when your provider changes it.
 
 Time needed: about 15 minutes. Cost: free.
 
@@ -26,9 +26,9 @@ time). This page explains the same steps in detail.
    Treat it like a password: anyone with it can move your name. If it leaks, make a new one on duckdns.org and put
    the new one in Rozefield.
 
-## Step 2: Put them into Rozefield Server
+## Step 2: Put them into Overfield Server
 
-1. Start `Rozefield Server.exe` and press **Start**.
+1. Start `Overfield Server.exe` and press **Start**.
 2. Press **Hosting** and fill in:
 
 | Field | What to type |
@@ -81,7 +81,7 @@ data instead:
    Optional: upload it to Google Drive and put the share link in Hosting > Download link (faster for players).
 2. **Share > Copy invite message** and paste it in your chat. It has the download link, your server name and the
    steps.
-3. Players who already have OverField can use **Rozefield Backup > Play on Rozefield** with `myserver.duckdns.org`
+3. Players who already have OverField can use **Overfield Backup > Play on Rozefield** with `myserver.duckdns.org`
    instead of downloading the game.
 
 ## If it doesn't work

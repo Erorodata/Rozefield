@@ -58,9 +58,9 @@ Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsy
 
 | Who | What to do |
 |---|---|
-| Host, Windows | Put the `Server` folder next to the `Overfield` folder. No Python installed? Run `setup_python.bat` once. Start `Rozefield Server.exe`. Hosting > Start with Windows keeps it in the tray from boot (log-in) on |
+| Host, Windows | Put the `Server` folder next to the `Overfield` folder. No Python installed? Run `setup_python.bat` once. Start `Overfield Server.exe`. Hosting > Start with Windows keeps it in the tray from boot (log-in) on |
 | Host, Linux / mini PC / VPS | Copy the `Server` folder (and `Overfield` beside it if you have it), then `sudo ./install_linux.sh`: a service that starts on boot. Set the panel password with `./start_server.sh --set-admin-password <password>`. Open TCP 80, 18881, 11001 |
-| Host, control from your PC | `Rozefield Server.exe` > Connect: the device's address and its admin password. Every request is signed; the password is never sent |
+| Host, control from your PC | `Overfield Server.exe` > Connect: the device's address and its admin password. Every request is signed; the password is never sent |
 | Host, fixed name | Hosting > Name service `duckdns` (free name + token from duckdns.org) or `url` (own domain's dynamic-DNS update URL, `{ip}` = address). The server keeps it pointed at itself. Step by step: `docs/HOSTING_DUCKDNS.md` (`DuckDNS guide.md` in the Server folder) |
 | Host, router | Hosting > Open router ports (UPnP). If the router refuses, forward TCP 80, 18881, 11001 to the server by hand |
 | Host, give players the game | Game package builds `downloads\Rozefield.zip` (the Overfield folder with this server as default). Players get it from `http://<server name>/` or the Drive link set in Hosting |
@@ -93,7 +93,7 @@ needed). The lookup address must fit in 12 characters; for a longer one add `-Lo
 
 ## Saving player accounts before the official shutdown (backup / import)
 
-**Easiest:** give players `backup_tool\Rozefield Backup.exe` (single file, nothing to install). They press
+**Easiest:** give players `backup_tool\Overfield Backup.exe` (single file, nothing to install). They press
 **1. Open OverField (Official)**, log in as usual, open the menus in the checklist, and close the game: the backup
 (`backups\<name>_<date>.rzsave`) is saved automatically (or press **2. Save backup**). Later, in the Rozefield login
 window, **Import backup (.rzsave)...** uploads it and the account appears under their in-game name. Re-importing the

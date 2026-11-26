@@ -1,5 +1,5 @@
 #!/bin/sh
-# Rozefield Server on Linux (mini PC, Raspberry Pi, VPS). Runs in this terminal; for start-on-boot use install_linux.sh.
+# Overfield Server on Linux (mini PC, Raspberry Pi, VPS). Runs in this terminal; for start-on-boot use install_linux.sh.
 #   ./start_server.sh                       start
 #   ./start_server.sh --set-admin-password X   password for the control panel on your PC, then exit
 cd "$(dirname "$0")"

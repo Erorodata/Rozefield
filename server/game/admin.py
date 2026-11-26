@@ -1,4 +1,4 @@
-"""Owner control panel API (used by Rozefield Server.exe). Only answers requests from this PC (127.0.0.1) that carry
+"""Owner control panel API (used by Overfield Server.exe). Only answers requests from this PC (127.0.0.1) that carry
 the token from save/admin_token.txt, so other players on the network can't use it.
 
     GET  /admin/players            one line per account: pid|uid|name|level|online|banned|muted|password|official|label

@@ -4,6 +4,14 @@
 
 OverField preservation: run the game on your own server after the official one closes.
 
+## The three parts
+
+| Part | What it is | Get it |
+|---|---|---|
+| **Overfield** | The game. Not shared here (it belongs to its makers): use your own copy (Steam or the OverField launcher) and point it at a server with Overfield Backup, or the game package your server owner gives you | your own install |
+| **Overfield Backup** (by RozenCrimsonvale) | Save your official account before 8 Feb 2027; **Play on Rozefield** points your own game at a server (a copy, or the game itself) | [Releases](https://github.com/Erorodata/Rozefield/releases/latest): `Overfield-Backup.zip` |
+| **Overfield Server** (by RozenCrimsonvale) | Host a server: control panel with a setup wizard, sharing, traffic, imports, moving to another device; Windows, Linux or a VPS | [Releases](https://github.com/Erorodata/Rozefield/releases/latest): `Overfield-Server.zip` |
+
 | Area | Progress | |
 |---|---|---:|
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
@@ -23,7 +31,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | Official traffic captures (redacted copies in repo) | done |
 | 🟩 | Archived account imported and playable | done |
 | 🟩 | Public snapshot of 490 other players | done |
-| 🟨 | Player backup tool Rozefield Backup.exe | in progress — built; first live run waits for the official server to come back |
+| 🟨 | Player backup tool Overfield Backup.exe | in progress — built; first live run waits for the official server to come back |
 | 🟩 | Import backup from the login window | done |
 
 ## Server & connection — 91.7%
@@ -93,7 +101,7 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Rankings: Abyss, Boss Rush (everyone on this server) | in progress |
 | 🟨 | Restaurant mini-game (buy, merge, sell, serve, quests) | in progress — built from the game tables; no official capture |
 | 🟨 | Field gear drops follow world level, 3% rare top quality | in progress — estimate |
-| 🟨 | Rozefield Backup: background start, follows a Steam restart, log file | in progress — needs a live run |
+| 🟨 | Overfield Backup: background start, follows a Steam restart, log file | in progress — needs a live run |
 
 **Quest steps with a rule:** 1,265 / 1,265 (`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰` 100.0%)
 
@@ -107,4 +115,5 @@ Rozefield preserves OverField: the archived client and a private server that run
 
 - [Archive notes: client build, endpoints, protocol, captures](docs/ARCHIVE.md)
 - [Server: setup, login window, backup / import, GM commands](server/README.md)
+- [Host your own server with a DuckDNS name](docs/HOSTING_DUCKDNS.md)
 - [Checklist (plain)](docs/PROGRESS.md)

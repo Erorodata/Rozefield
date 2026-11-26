@@ -34,7 +34,7 @@
           "done"
         ],
         [
-          "Player backup tool OverField Backup Data.exe",
+          "Player backup tool Overfield Backup.exe",
           "partial",
           "built; first live run waits for the official server to come back"
         ],
@@ -303,7 +303,7 @@
           "estimate"
         ],
         [
-          "OverField Backup Data: background start, follows a Steam restart, log file",
+          "Overfield Backup: background start, follows a Steam restart, log file",
           "partial",
           "needs a live run"
         ]
