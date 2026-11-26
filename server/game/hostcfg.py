@@ -28,7 +28,8 @@ DEFAULTS = {
     'public_list': False,             # offer servers.json for a server list on GitHub
     'lan_discovery': True,            # answer launchers looking for servers on the home network
     'tunnel': 'auto',                 # auto (router first, then playit.gg) | playit | off
-    'tunnel_address': '',             # the playit.gg address players use, e.g. word-word.gl.at.ply.gg:12345
+    'tunnel_address': '',
+    'playit_wanted': False,           # use playit.gg even when the router opened the port             # the playit.gg address players use, e.g. word-word.gl.at.ply.gg:12345
 }
 _lock = threading.Lock()
 _seen = {}

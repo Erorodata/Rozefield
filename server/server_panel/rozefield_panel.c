@@ -266,7 +266,18 @@ static DWORD WINAPI poller(LPVOID a) {
                 long next = atol(out);
                 if (nl && next > g_lognext) {
                     char *save2 = NULL;
-                    for (char *l = strtok_s(nl + 1, "\n", &save2); l; l = strtok_s(NULL, "\n", &save2)) add_line(l);
+                    for (char *l = strtok_s(nl + 1, "\n", &save2); l; l = strtok_s(NULL, "\n", &save2)) {
+                        add_line(l);
+                        /* built-in playit.gg asks the host to sign in once: open that page on this PC */
+                        const char *u = strstr(l, "https://playit.gg/claim/");
+                        static char opened[96];
+                        if (u && strstr(l, "sign-in") && strncmp(opened, u, sizeof opened - 1)) {
+                            snprintf(opened, sizeof opened, "%.95s", u);
+                            if (!g_remote) ShellExecuteA(NULL, "open", opened, NULL, NULL, SW_SHOWNORMAL);
+                            note(g_remote ? L"playit.gg: open %hs on any device and sign in once (free), so players anywhere can join."
+                                          : L"playit.gg: sign in once on the page that opened (free) - then players anywhere can join.", opened);
+                        }
+                    }
                 }
                 g_lognext = next;
                 free(out);
@@ -654,7 +665,7 @@ static void share_fill(HWND d) {
     json_get(js, "\"settings\"", "server_name", name, sizeof name); json_get(js, "\"settings\"", "download_link", link, sizeof link);
     json_get(js, NULL, "router", router, sizeof router); json_get(js, NULL, "public_ip", pub, sizeof pub); json_get(js, NULL, "lan_ip", lan, sizeof lan);
     json_get(js, NULL, "package", pkg, sizeof pkg); free(js);
-    char dl[600]; if (link[0]) snprintf(dl, sizeof dl, "%s", link); else snprintf(dl, sizeof dl, "http://%s/", name[0] ? name : pub[0] ? pub : lan);
+    char dl[600]; if (link[0]) snprintf(dl, sizeof dl, "%s", link); else snprintf(dl, sizeof dl, "http://%s/", tun[0] ? tun : name[0] ? name : pub[0] ? pub : lan);
     const char *vals[4] = {lcode[0] ? lcode : "(unknown)", tun[0] ? tun : code[0] ? code : "(internet address unknown)", name[0] ? name : "not set - use Hosting", dl};
     for (int i = 0; i < 4; i++) { wchar_t w[600]; MultiByteToWideChar(CP_UTF8, 0, vals[i], -1, w, 600); SetWindowTextW(g_sh_edit[i], w); }
     wchar_t warn[700];
@@ -674,29 +685,12 @@ static void share_fill(HWND d) {
              "Same Wi-Fi as me? Use %s instead, or press the search button.", dl, join, lcode);
 }
 /* playit.gg: a free tunnel that gives this server an internet address through any router or provider (CGNAT) */
-static void do_playit(HWND owner) {
-    int r = MessageBoxW(owner,
-        L"playit.gg gives your server an address that works from anywhere, with any router or internet provider. Free; players install nothing.\n\n"
-        L"1. Install playit from playit.gg/download and sign in (it starts with Windows and stays on).\n"
-        L"2. On playit.gg add a tunnel: type TCP, local port 18880.\n"
-        L"3. Copy the address playit shows (like word-word.gl.at.ply.gg:12345) and paste it in the next window.\n\n"
-        L"Yes: open playit.gg/download now.   No: I already have the address.",
-        L"Use playit.gg", MB_YESNOCANCEL | MB_ICONINFORMATION);
-    if (r == IDCANCEL) return;
-    if (r == IDYES) ShellExecuteW(NULL, L"open", L"https://playit.gg/download", NULL, NULL, SW_SHOWNORMAL);
-    char *js; char cur[300] = ""; if (http("GET", "/admin/host/status", "", 0, &js)) { json_get(js, "\"settings\"", "tunnel_address", cur, sizeof cur); free(js); }
-    wchar_t wc[300]; MultiByteToWideChar(CP_UTF8, 0, cur, -1, wc, 300);
-    const wchar_t *lab[] = {L"playit.gg address for port 18880 (empty = stop using playit)"}; const wchar_t *init[] = {wc};
-    int ok = ask(L"Use playit.gg", NULL, 1, lab, init, 4);
-    EnableWindow(g_win, FALSE); SetForegroundWindow(owner);
-    if (!ok) return;
-    char a[300]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[0], -1, a, sizeof a, NULL, NULL);
-    char *b = a; while (*b == ' ') b++; char *e = b + strlen(b); while (e > b && (e[-1] == ' ' || e[-1] == '/')) *--e = 0;
-    if (!strncmp(b, "tcp://", 6)) b += 6; else if (!strncmp(b, "http://", 7)) b += 7;
-    wchar_t wb[300]; MultiByteToWideChar(CP_UTF8, 0, b, -1, wb, 300);
-    char body[700] = "{"; json_put(body, sizeof body, "tunnel_address", wb, 0); strcat(body, "}");
-    int okc; wchar_t *res = host_call("POST", "/admin/host/settings", body, (int)strlen(body), &okc); free(res);
-    if (okc) note(b[0] ? L"Internet address set: %hs (playit.gg). Share shows it as the invite." : L"playit.gg address cleared.", b);
+static void do_playit(HWND owner) {   /* the server sets playit.gg up itself; the host only signs in once */
+    if (MessageBoxW(owner, L"Use playit.gg so anyone can join from anywhere, with any router or internet provider?\n\n"
+                           L"Overfield Server sets it up by itself. The first time only, a playit.gg page opens: sign in there (free). "
+                           L"Players install nothing; the address never changes.", L"Use playit.gg", MB_OKCANCEL | MB_ICONINFORMATION) != IDOK) return;
+    int ok; wchar_t *r = host_call("POST", "/admin/host/playit", "", 0, &ok);
+    note(L"playit.gg: %ls", r); free(r);
 }
 static LRESULT CALLBACK ShareProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     switch (m) {
@@ -871,7 +865,8 @@ static LRESULT CALLBACK WizProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         HWND c = (HWND)l;
         if (c == g_wz_next) wz_next();
         else if (c == g_wz_back) wz_back();
-        else if (c == g_wzc[W_ADDR][0]) ShellExecuteW(NULL, L"open", L"https://playit.gg/download", NULL, NULL, SW_SHOWNORMAL);
+        else if (c == g_wzc[W_ADDR][0]) { int ok; wchar_t *r = host_call("POST", "/admin/host/playit", "", 0, &ok); free(r);
+                                            wz_note(W_ADDR, C_MUTE, L"Sign in on the playit.gg page that opens (first time only). The address appears here by itself; then press Check."); SetTimer(h, 2, 3000, NULL); }
         else if (c == g_wzc[W_ADDR][6]) { g_wz_addr_ok = 0; wz_check_addr(); }
         else if (c == g_wzc[W_ADDR][2] && HIWORD(w) == EN_CHANGE) g_wz_addr_ok = 0;
         else if (c == g_wzc[W_ROUTER][2]) { wz_firewall(); if (g_wz_who == 2 && !g_wz_addr_ok) wz_router(); }
@@ -886,9 +881,15 @@ static LRESULT CALLBACK WizProc(HWND h, UINT m, WPARAM w, LPARAM l) {
             for (int i = 0; i < 3; i++) if (SendMessageW(g_wzc[W_WHO][1 + i], BM_GETCHECK, 0, 0) == BST_CHECKED) g_wz_who = i;
             wz_show(); }
         return 0; }
-    case WM_TIMER: if (g_wz_step == W_SHARE) wz_package_note(); return 0;
+    case WM_TIMER:
+        if (w == 2) {   /* waiting for the server's playit address */
+            char *js; char a[300] = "";
+            if (http("GET", "/admin/host/status", "", 0, &js)) { json_get(js, "\"settings\"", "tunnel_address", a, sizeof a); free(js); }
+            if (a[0]) { KillTimer(h, 2); wchar_t wa[300]; MultiByteToWideChar(CP_UTF8, 0, a, -1, wa, 300); SetWindowTextW(g_wzc[W_ADDR][2], wa); wz_check_addr(); }
+            return 0; }
+        if (g_wz_step == W_SHARE) wz_package_note(); return 0;
     case WM_CLOSE: DestroyWindow(h); return 0;
-    case WM_DESTROY: KillTimer(h, 1); g_wz = NULL; EnableWindow(g_win, TRUE); SetForegroundWindow(g_win); return 0;
+    case WM_DESTROY: KillTimer(h, 1); KillTimer(h, 2); g_wz = NULL; EnableWindow(g_win, TRUE); SetForegroundWindow(g_win); return 0;
     }
     return DefWindowProcW(h, m, w, l);
 }
@@ -921,9 +922,9 @@ static void do_wizard(void) {
     SendMessageW(g_wzc[W_WHO][1 + g_wz_who], BM_SETCHECK, BST_CHECKED, 0);
     g_wz_note[W_WHO] = wz_ctl(L"STATIC", L"Same Wi-Fi friends join with the home-network code or the search button in their login window.", 0, X, y + 150, CWD, 40, f_small);
     /* 3 address */
-    g_wzc[W_ADDR][0] = wz_ctl(L"BUTTON", L"1. Open playit.gg/download (install playit, sign in)", WS_TABSTOP, X, y, CWD, 32, f_small);
-    g_wzc[W_ADDR][1] = wz_ctl(L"STATIC", L"2. On playit.gg add a tunnel: type TCP, local port 18880. Playit stays on with Windows.", 0, X, y + 44, CWD, 22, f_small);
-    g_wzc[W_ADDR][4] = wz_ctl(L"STATIC", L"3. Paste the address playit shows (like word-word.gl.at.ply.gg:12345)", 0, X, y + 76, CWD, 20, f_small);
+    g_wzc[W_ADDR][0] = wz_ctl(L"BUTTON", L"Set up playit.gg (free; you sign in once, nothing to install)", WS_TABSTOP, X, y, CWD, 32, f_small);
+    g_wzc[W_ADDR][1] = wz_ctl(L"STATIC", L"Overfield Server runs playit by itself and makes the tunnel. Or paste an address you already have:", 0, X, y + 44, CWD, 22, f_small);
+    g_wzc[W_ADDR][4] = wz_ctl(L"STATIC", L"Internet address (like word-word.gl.at.ply.gg:12345)", 0, X, y + 76, CWD, 20, f_small);
     g_wzc[W_ADDR][2] = wz_ctl(L"EDIT", w2, WS_TABSTOP | ES_AUTOHSCROLL, X, y + 100, CWD - 120, 30, f_body);
     g_wzc[W_ADDR][6] = wz_ctl(L"BUTTON", L"Check", WS_TABSTOP, X + CWD - 110, y + 100, 110, 30, f_small);
     g_wz_note[W_ADDR] = wz_ctl(L"STATIC", sn[0] ? L"An address is already set: press Next, or paste a new one and press Check." :

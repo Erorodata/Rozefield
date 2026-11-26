@@ -36,3 +36,4 @@ server/server_panel/master.inc
 server/server_panel/master.rc
 server/server_panel/Overfield Master.exe
 graphify-out/
+server/playit/

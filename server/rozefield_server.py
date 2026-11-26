@@ -50,6 +50,11 @@ def ensure_game_data(res_dirs):
 def restart_self():
     """Start the server again in place (used by the panel's Restart from another device)."""
     logging.getLogger('rozefield').info('restarting...')
+    try:
+        from game import playit
+        playit.stop()   # the new server starts its own
+    except Exception:
+        pass
     logging.shutdown()
     os.execv(sys.executable, [sys.executable] + sys.argv)
 
@@ -293,8 +298,12 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
             i = self.info()
             st = dict(i, uptime=int(time.time() - START), name_status=netsvc.STATUS['name'], router=netsvc.STATUS['router'],
                       public_ip=netsvc.STATUS['public_ip'], package=hostdata.package_status(),
-                      settings=hostcfg.public_view(), local=local)
+                      settings=hostcfg.public_view(), local=local, playit=__import__('game.playit', fromlist=['STATE']).STATE)
             return json.dumps(st, ensure_ascii=False).encode('utf-8'), 200, 'application/json'
+        if p == 'playit' and method == 'POST':   # Share > Use playit.gg
+            from game import playit
+            st = playit.want_now()
+            return f"OK|{st.get('state')}|{st.get('address') or st.get('url') or st.get('msg')}".encode('utf-8'), 200, txt
         if p == 'settings' and method == 'POST':
             try:
                 hostcfg.update(json.loads(body.decode('utf-8')))
@@ -922,6 +931,10 @@ async def main():
     migrate_local_ids(log.info)   # Rozefield-made accounts never sit on an official player id
     from game import netsvc
     netsvc.start(([a.link_port] if a.link_port else []) + ([80, a.http_port, a.gate_port] if a.dns_port else [a.http_port, a.gate_port]), http.info)
+    from game import playit   # players anywhere: playit.gg when the router didn't open the port
+    playit.start(a.link_port, lambda: str(netsvc.STATUS.get('router', '')).startswith('open'))
+    import atexit
+    atexit.register(playit.stop)
     log.info('Rozefield up: dispatch port %s, gate port %s, address %s', a.http_port, a.gate_port, a.public_ip)
     await asyncio.gather(*(s.serve_forever() for s in servers))
 
