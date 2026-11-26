@@ -238,8 +238,8 @@ h1{{font-family:Bahnschrift,"Segoe UI",sans-serif;font-weight:600;margin:0 0 6px
 a.b,a.s{{display:block;text-align:center;text-decoration:none;border-radius:22px;padding:12px;margin:12px 0;font-size:17px}}
 a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}}ol{{line-height:1.8}}</style></head>
 <body><main><h1>{name}</h1><p class="m">Private OverField server</p>{''.join(btns)}
-{server_line}<ol><li>Unzip Rozefield.zip anywhere.</li><li>Open the Overfield folder and start <b>Rozefield.exe</b>.</li>
-<li>Create an account (or bring your official account with its backup file) and press Play.</li></ol>
+{server_line}<ol><li>Unzip Rozefield.zip anywhere.</li><li>Open the Overfield folder and start <b>launcher.exe</b>.</li>
+<li>In the login window: Create account (or Bring my account with your official backup file), then Enter game.</li></ol>
 <p class="m">Saving your official account before 8 Feb 2027? Use Rozefield Backup.</p></main></body></html>'''.encode('utf-8')
 
     async def host_admin(self, u, method, body, local):

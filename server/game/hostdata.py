@@ -150,6 +150,45 @@ def game_folder():
     return os.path.normpath(os.path.join(HERE, '..', 'Overfield'))
 
 
+def _point_package(game, address):
+    """Config.txt (RemoteServerIP) and the address lookup in the packaged game, set to the default server."""
+    import socket
+    import struct
+    out = {}
+    try:
+        ip = socket.gethostbyname(address)
+    except OSError:
+        ip = address
+    cfg = os.path.join(game, 'launcher_Data', 'StreamingAssets', 'Config.txt')
+    if os.path.exists(cfg):
+        lines, seen = [], set()
+        for ln in open(cfg, encoding='utf-8-sig').read().splitlines():
+            k = ln.split('=')[0].strip()
+            if k == 'UseCustomConfig':
+                ln = 'UseCustomConfig = TRUE'
+            elif k == 'RemoteServerIP':
+                ln = f'RemoteServerIP = {ip}'
+            seen.add(k)
+            lines.append(ln)
+        lines += [x for k, x in (('UseCustomConfig', 'UseCustomConfig = TRUE'), ('RemoteServerIP', f'RemoteServerIP = {ip}')) if k not in seen]
+        out['launcher_Data/StreamingAssets/Config.txt'] = ('\r\n'.join(lines) + '\r\n').encode('utf-8')
+    meta = os.path.join(game, 'launcher_Data', 'il2cpp_data', 'Metadata', 'global-metadata.dat')
+    src = meta + '.orig' if os.path.exists(meta + '.orig') else meta
+    target = (ip if len(ip) <= 12 else '127.0.0.1').encode()
+    try:
+        d = bytearray(open(src, 'rb').read())
+        _, _, lo, ls, ldo, _ = struct.unpack_from('<IiIIII', d, 0)
+        pos = d.find(b'8.134.240.36', ldo) - ldo
+        hit = [lo + i * 8 for i in range(ls // 8) if pos >= 0 and struct.unpack_from('<Ii', d, lo + i * 8) == (12, pos)]
+        if len(hit) == 1:
+            d[ldo + pos:ldo + pos + len(target)] = target
+            struct.pack_into('<I', d, hit[0], len(target))
+            out['launcher_Data/il2cpp_data/Metadata/global-metadata.dat'] = bytes(d)
+    except Exception:
+        log.exception('could not set the address lookup in the package')
+    return out
+
+
 def package_status():
     p = PACKAGE
     return f"{p['state']}|{p['done']}|{p['total']}|{p['file']}|{p['error']}"
@@ -170,13 +209,18 @@ def build_package(default_server):
         for root, dirs, fs in os.walk(game):
             dirs[:] = [d for d in dirs if d not in ('_archive', 'Claude outputs')]
             for f in fs:
-                if not f.lower().endswith(SKIP_EXT) and f.lower() not in ('rozefield_launcher.ini', 'rozefield_sdk.ini', 'rozefield_sdk.log', 'player.log', 'player-prev.log'):
+                if not f.lower().endswith(SKIP_EXT) and f.lower() not in ('rozefield.exe', 'rozefield_launcher.ini', 'rozefield_sdk.ini', 'rozefield_sdk.log', 'player.log', 'player-prev.log'):
                     files.append(os.path.join(root, f))
         PACKAGE.update(state='building', done=0, total=sum(os.path.getsize(f) for f in files), file='', error='')
+        override = _point_package(game, default_server['address'])   # the game in the zip goes to this server
         try:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_STORED, allowZip64=True) as z:
                 for f in files:
-                    z.write(f, os.path.join('Overfield', os.path.relpath(f, game)))
+                    rel = os.path.relpath(f, game).replace(os.sep, '/')
+                    if rel in override:
+                        z.writestr('Overfield/' + rel, override[rel])
+                    else:
+                        z.write(f, 'Overfield/' + rel)
                     PACKAGE['done'] += os.path.getsize(f)
                 z.writestr('Overfield/rozefield_servers.json', json.dumps(
                     {'format': 'rozefield-servers/1', 'default': default_server['address'], 'servers': [default_server]},

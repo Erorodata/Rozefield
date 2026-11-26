@@ -66,8 +66,8 @@ Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsy
 | Host, give players the game | Game package builds `downloads\Rozefield.zip` (the Overfield folder with this server as default). Players get it from `http://<server name>/` or the Drive link set in Hosting |
 | Host, move to a new device | Move server > Yes (export one file) on the old one; on the new one Move server > No (import), restart. Players change nothing if the fixed name moved with it |
 | Host, imports | Imports lists every official backup / Rozefield account brought in; Undo puts the account back (or removes it if it was new) |
-| Player | Unzip, start `Rozefield.exe`. The default server is already chosen; Add server takes an invite code (`RZ-XXXX-XXX`, shown in Hosting), a name or an address; Find on my network lists home-network servers. Create account: fresh, official backup (`.rzsave`) or a Rozefield account (`.rzaccount`). Play opens the game signed in. No admin rights |
-| Player, change server | Export my account (`.rzaccount`), then on the other server Create account > Bring my account from another Rozefield server |
+| Player | Unzip and start `launcher.exe`. The login window has the server at the top: the default one is already chosen; + takes an invite code (`RZ-XXXX-XXX`, shown in Hosting), a name or an address; the search button lists home-network servers. Picking another server and pressing Enter game restarts the game on that server, logged in. Create account, or Bring my account (official backup `.rzsave` / Rozefield account `.rzaccount`). No admin rights |
+| Player, change server | Export account (`.rzaccount`) in the login window, pick the other server, type the name you want there, Bring my account |
 
 A server list kept on GitHub (or any https page) works too: put `"list_url": "https://.../servers.json"` in the game's
 `rozefield_servers.json`; Hosting's `servers.json` (`/admin/host/servers.json`) gives the content.
