@@ -44,6 +44,13 @@
 #define C_MUTE RGB(122, 126, 142)
 #define C_WARN RGB(232, 140, 20)
 #define C_FIELD RGB(236, 237, 241)
+#ifdef MASTER
+#define APPNAME L"Overfield Master"
+#define APPNAME_A "Overfield Master"
+#else
+#define APPNAME L"Overfield Server"
+#define APPNAME_A "Overfield Server"
+#endif
 #define WM_DATA (WM_APP + 1)
 #define WM_TRAY (WM_APP + 2)
 #ifndef EM_SETCUEBANNER
@@ -111,7 +118,7 @@ static int derive_key(const char *pw, const char *salthex, int rounds, unsigned 
     BCryptCloseAlgorithmProvider(alg, 0); return ok;
 }
 static void conn_ini(char *p) {
-    snprintf(p, MAX_PATH, "%sOverfield Server.ini", g_dir);
+    snprintf(p, MAX_PATH, "%s" APPNAME_A ".ini", g_dir);
     if (GetFileAttributesA(p) == INVALID_FILE_ATTRIBUTES) { char old[MAX_PATH]; snprintf(old, MAX_PATH, "%sRozefield Server.ini", g_dir); MoveFileA(old, p); }
 }
 static void load_conn(void) {
@@ -126,21 +133,23 @@ static void save_conn(void) {
 }
 
 /* ---------------------------------------------------------------- HTTP to the server */
-static int http_raw(const char *method, const char *path, const char *body, int blen, char **out, int *outlen) {
+/* one admin call to any Overfield Server: remote = signed with key, else this PC's token */
+static int http_at(const char *host, int remote, const unsigned char *key, DWORD timeout,
+                   const char *method, const char *path, const char *body, int blen, char **out, int *outlen) {
     *out = NULL; if (outlen) *outlen = 0;
     struct addrinfo hints = {0}, *ai = NULL; hints.ai_family = AF_INET; hints.ai_socktype = SOCK_STREAM;
     char port[16]; snprintf(port, sizeof port, "%d", g_port);
-    if (getaddrinfo(g_remote ? g_host : "127.0.0.1", port, &hints, &ai) != 0 || !ai) return 0;
+    if (getaddrinfo(remote ? host : "127.0.0.1", port, &hints, &ai) != 0 || !ai) return 0;
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
-    DWORD to = g_http_timeout; setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
+    DWORD to = timeout; setsockopt(s, SOL_SOCKET, SO_SNDTIMEO, (char *)&to, sizeof to); setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
     int c = connect(s, ai->ai_addr, (int)ai->ai_addrlen); freeaddrinfo(ai);
     if (c != 0) { closesocket(s); return 0; }
     char hdr[700], auth[300] = "";
-    if (g_remote) {
+    if (remote) {
         unsigned char bh[32], sig[32]; char bhx[65], sigx[65]; hmac256(NULL, 0, (const unsigned char *)body, blen, bh); hexs(bh, 32, bhx);
         long long t = (long long)time(NULL); size_t ml = strlen(path) + 200; char *msg = (char *)malloc(ml);
         int n = snprintf(msg, ml, "%lld\n%s\n%s\n%s", t, method, path, bhx);
-        hmac256(g_key, 32, (const unsigned char *)msg, n, sig); hexs(sig, 32, sigx); free(msg);
+        hmac256(key, 32, (const unsigned char *)msg, n, sig); hexs(sig, 32, sigx); free(msg);
         snprintf(auth, sizeof auth, "X-Admin-Time: %lld\r\nX-Admin-Sig: %s\r\n", t, sigx);
     } else snprintf(auth, sizeof auth, "X-Admin-Token: %s\r\n", g_token);
     int hl = snprintf(hdr, sizeof hdr, "%s %s HTTP/1.0\r\nHost: rozefield\r\n%sContent-Length: %d\r\n\r\n", method, path, auth, blen);
@@ -155,6 +164,9 @@ static int http_raw(const char *method, const char *path, const char *body, int 
     int bl = len - (int)(p + 4 - b);
     memmove(b, p + 4, bl + 1);
     *out = b; if (outlen) *outlen = bl; return 1;
+}
+static int http_raw(const char *method, const char *path, const char *body, int blen, char **out, int *outlen) {
+    return http_at(g_host, g_remote, g_key, g_http_timeout, method, path, body, blen, out, outlen);
 }
 static int http(const char *method, const char *path, const char *body, int blen, char **out) {
     return http_raw(method, path, body, blen, out, NULL) == 1;
@@ -419,7 +431,7 @@ static void show_text(const wchar_t *title, const wchar_t *text) {   /* long res
 
 /* ---------------------------------------------------------------- actions */
 enum { B_NONE, B_CLOSE, B_MIN, B_START, B_STOP, B_RESTART, B_SAVEDIR, B_LOGFILE, B_IMPORT, B_MAILALL,
-       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE, B_SETUP, B_PUSH,
+       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE, B_SETUP, B_PUSH, B_MASTER,
        A_FIRST, A_RESETPW = A_FIRST, A_CLEARPW, A_RENAME, A_GM, A_MAIL, A_CHAT, A_KICK, A_BAN, A_MUTE, A_RECLAIM, A_LAST,
        F_FIRST = 50 };
 static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Rename", L"GM commands", L"Send mail", L"Chat log",
@@ -463,14 +475,14 @@ static void json_put(char *b, size_t bs, const char *k, const wchar_t *v, int bo
 #define RUNKEY L"Software\\Microsoft\\Windows\\CurrentVersion\\Run"
 static int autostart_on(void) {
     wchar_t v[MAX_PATH * 2]; DWORD sz = sizeof v;
-    if (RegGetValueW(HKEY_CURRENT_USER, RUNKEY, L"Overfield Server", RRF_RT_REG_SZ, NULL, v, &sz) == ERROR_SUCCESS) return 1;
+    if (RegGetValueW(HKEY_CURRENT_USER, RUNKEY, APPNAME, RRF_RT_REG_SZ, NULL, v, &sz) == ERROR_SUCCESS) return 1;
     sz = sizeof v; return RegGetValueW(HKEY_CURRENT_USER, RUNKEY, L"Rozefield Server", RRF_RT_REG_SZ, NULL, v, &sz) == ERROR_SUCCESS;
 }
 static void autostart_set(int on) {
     HKEY k; if (RegCreateKeyExW(HKEY_CURRENT_USER, RUNKEY, 0, NULL, 0, KEY_WRITE, NULL, &k, NULL)) return;
     if (on) { wchar_t exe[MAX_PATH], v[MAX_PATH + 32]; GetModuleFileNameW(NULL, exe, MAX_PATH); swprintf(v, MAX_PATH + 32, L"\"%ls\" --background", exe);
-              RegSetValueExW(k, L"Overfield Server", 0, REG_SZ, (BYTE *)v, (DWORD)((wcslen(v) + 1) * sizeof(wchar_t))); }
-    else RegDeleteValueW(k, L"Overfield Server");
+              RegSetValueExW(k, APPNAME, 0, REG_SZ, (BYTE *)v, (DWORD)((wcslen(v) + 1) * sizeof(wchar_t))); }
+    else RegDeleteValueW(k, APPNAME);
     RegDeleteValueW(k, L"Rozefield Server");   /* the name before the rename */
     RegCloseKey(k);
 }
@@ -1006,6 +1018,10 @@ static void do_push(void) {
     EnableWindow(g_win, FALSE); ShowWindow(d, SW_SHOW);
 }
 
+#ifdef MASTER
+#include "master.inc"   /* private build only, not in this repo */
+#endif
+
 static void do_action(int a) {
     struct pl *p = sel(); char b[8192]; int ok; wchar_t *r;
     if (a >= A_FIRST && a < A_LAST && !p) { MessageBoxW(g_win, L"Choose a player in the list first.", L"Overfield Server", MB_OK); return; }
@@ -1197,7 +1213,7 @@ static void paint(HWND h) {
     /* sidebar: the chosen player's actions, then folders */
     RECT rail = {0, 0, SB, WH}; fill(dc, rail, C_PANEL, 0); { RECT ln = {SB - 1, 0, SB, WH}; fill(dc, ln, C_LINE, 0); }
     dot(dc, 34, 40, 16, C_ACC); RECT rl = {18, 24, 50, 56}; txt(dc, f_h, RGB(255, 255, 255), rl, L"O", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-    RECT rn0 = {58, 22, SB - 8, 42}; txt(dc, f_h, C_TXT, rn0, L"Overfield Server", DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+    RECT rn0 = {58, 22, SB - 8, 42}; txt(dc, f_h, C_TXT, rn0, APPNAME, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
     RECT rn1 = {58, 42, SB - 8, 60}; txt(dc, f_small, C_MUTE, rn1, L"by RozenCrimsonvale", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     struct pl *p = sel();
     { wchar_t cap[120]; if (p) swprintf(cap, 120, L"Player: %ls", p->name); else wcscpy(cap, L"Choose a player");
@@ -1220,6 +1236,9 @@ static void paint(HWND h) {
       for (int i = 0; i < 4; i++) { RECT r = rs2[i]; if (g_hover == hv[i]) fill(dc, r, C_TILE, 10);
           RECT ri = {r.left + 10, r.top, r.left + 34, r.bottom}; txt(dc, f_icon, C_MUTE, ri, ic[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE);
           RECT rt2 = {r.left + 38, r.top, r.right, r.bottom}; txt(dc, f_body, C_MUTE, rt2, lab[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE); } }
+#ifdef MASTER
+    master_paint(dc);
+#endif
     if (g_hover == B_CLOSE) fill(dc, r_close, RGB(200, 64, 76), 8);
     if (g_hover == B_MIN) fill(dc, r_min, C_TILE, 8);
     { HPEN p = CreatePen(PS_SOLID, 2, C_TXT); HGDIOBJ o = SelectObject(dc, p);
@@ -1227,7 +1246,7 @@ static void paint(HWND h) {
       MoveToEx(dc, cx - 6, cy - 6, NULL); LineTo(dc, cx + 7, cy + 7); MoveToEx(dc, cx + 6, cy - 6, NULL); LineTo(dc, cx - 7, cy + 7);
       cx = (r_min.left + r_min.right) / 2; MoveToEx(dc, cx - 7, cy, NULL); LineTo(dc, cx + 8, cy); SelectObject(dc, o); DeleteObject(p); }
 
-    RECT rt = {X0, 22, 600, 64}; txt(dc, f_title, C_TXT, rt, L"Overfield Server", DT_LEFT | DT_SINGLELINE);
+    RECT rt = {X0, 22, 600, 64}; txt(dc, f_title, C_TXT, rt, APPNAME, DT_LEFT | DT_SINGLELINE);
     int online = 0; for (int i = 0; i < g_npl; i++) online += g_pl[i].online;
     wchar_t st[480];
     if (g_up) swprintf(st, 160, L"Running  \x00B7  %d online  \x00B7  %d accounts%ls", online, g_npl, g_proc ? L"" : L"  \x00B7  started outside this window");
@@ -1314,6 +1333,9 @@ static int hit(int x, int y) {
     if (PtInRect(&r_share, pt)) return B_SHARE;
     if (PtInRect(&r_setup, pt)) return B_SETUP;
     if (PtInRect(&r_push, pt)) return B_PUSH;
+#ifdef MASTER
+    if (master_hit(pt)) return B_MASTER;
+#endif
     if (PtInRect(&r_hosting, pt)) return B_HOSTING;
     if (PtInRect(&r_imports, pt)) return B_IMPORTS;
     if (PtInRect(&r_move, pt)) return B_MOVE;
@@ -1329,6 +1351,9 @@ static void click(int b) {
     case B_CLOSE: PostMessageW(g_win, WM_CLOSE, 0, 0); return;
     case B_MIN: ShowWindow(g_win, SW_HIDE); return;   /* to the tray: the server keeps running */
     case B_CONNECT: do_action(B_CONNECT); break;
+#ifdef MASTER
+    case B_MASTER: master_click(); break;
+#endif
     case B_START: if (!g_up) start_server(); break;
     case B_STOP: if (g_up && MessageBoxW(g_win, L"Stop the server? Everyone online is disconnected.", L"Overfield Server", MB_YESNO | MB_ICONQUESTION) == IDYES) stop_server(); break;
     case B_RESTART: if (g_up) CloseHandle(CreateThread(NULL, 0, restart_thread, NULL, 0, NULL)); break;
@@ -1474,7 +1499,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     WNDCLASSW wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = hi; wc.lpszClassName = L"RozefieldServerPanel";
     wc.hCursor = LoadCursor(NULL, IDC_ARROW); wc.hIcon = LoadIcon(NULL, IDI_APPLICATION); RegisterClassW(&wc);
     WNDCLASSW dc = {0}; dc.lpfnWndProc = DlgProc; dc.hInstance = hi; dc.lpszClassName = L"RzDlg"; dc.hCursor = LoadCursor(NULL, IDC_ARROW); RegisterClassW(&dc);
-    g_win = CreateWindowExW(WS_EX_APPWINDOW, L"RozefieldServerPanel", L"Overfield Server", WS_POPUP | WS_MINIMIZEBOX | WS_SYSMENU | WS_CLIPCHILDREN,
+    g_win = CreateWindowExW(WS_EX_APPWINDOW, L"RozefieldServerPanel", APPNAME, WS_POPUP | WS_MINIMIZEBOX | WS_SYSMENU | WS_CLIPCHILDREN,
                             (GetSystemMetrics(SM_CXSCREEN) - WW) / 2, (GetSystemMetrics(SM_CYSCREEN) - WH) / 2, WW, WH, NULL, NULL, hi, NULL);
     SetWindowRgn(g_win, CreateRoundRectRgn(0, 0, WW + 1, WH + 1, 16, 16), TRUE);
     g_find = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, X0 + 130, 114, 234, 26, g_win, NULL, hi, NULL);
@@ -1492,12 +1517,12 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     g_bg = strstr(cmd, "--background") != NULL;
     g_tray.cbSize = sizeof g_tray; g_tray.hWnd = g_win; g_tray.uID = 1; g_tray.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     g_tray.uCallbackMessage = WM_TRAY; g_tray.hIcon = LoadIconW(hi, MAKEINTRESOURCEW(1)); if (!g_tray.hIcon) g_tray.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wcscpy(g_tray.szTip, L"Overfield Server - click to open"); Shell_NotifyIconW(NIM_ADD, &g_tray);
+    wcscpy(g_tray.szTip, APPNAME L" - click to open"); Shell_NotifyIconW(NIM_ADD, &g_tray);
     if (!g_bg) { ShowWindow(g_win, show); UpdateWindow(g_win); }
     load_conn();
     { HKEY k; wchar_t v[MAX_PATH * 2]; DWORD sz = sizeof v;   /* start-with-Windows entry from before the rename -> this exe */
       if (RegGetValueW(HKEY_CURRENT_USER, RUNKEY, L"Rozefield Server", RRF_RT_REG_SZ, NULL, v, &sz) == ERROR_SUCCESS) autostart_set(1); (void)k; }
-    note(L"Overfield Server panel opened.");
+    note(APPNAME L" opened.");
     { int n = sync_screen_prefs(); wchar_t m[160];
       swprintf(m, 160, n ? L"Window settings copied from your official game (%d) - same screen, mode and refresh." : L"No official window settings found to copy.", n); note(m); }
     if (!g_remote) read_token(); else note(L"Connected to %hs (Connect to change).", g_host);

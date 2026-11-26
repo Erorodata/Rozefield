@@ -1,7 +1,7 @@
 1 24 "panel.manifest"
 1 VERSIONINFO
-FILEVERSION 1,0,0,0
-PRODUCTVERSION 1,0,0,0
+FILEVERSION 1,1,0,0
+PRODUCTVERSION 1,1,0,0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
@@ -11,8 +11,8 @@ BEGIN
       VALUE "FileDescription", "Overfield Server (by RozenCrimsonvale)"
       VALUE "ProductName", "Overfield Server"
       VALUE "OriginalFilename", "Overfield Server.exe"
-      VALUE "FileVersion", "1.0.0"
-      VALUE "ProductVersion", "1.0.0"
+      VALUE "FileVersion", "1.1.0"
+      VALUE "ProductVersion", "1.1.0"
     END
   END
   BLOCK "VarFileInfo"
