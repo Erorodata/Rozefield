@@ -38,6 +38,9 @@ def aidx(d):
         group_reward = {q['AchieveGroupID']: q.get('RewardID') for q in d.table('achievequest', 'AchieveQuest').values()}
         by_type = {}
         ach = d.table('achieve', 'Achieve')
+        for act in d.table('activityquest', 'ActivityQuest').values():   # 7-day event quests count the same way
+            for it in act.get('ActivityQuestAchieveItems', []):
+                reward.setdefault(it['AchieveID'], None)
         for aid in reward:
             t = (ach.get(aid) or {}).get('NewAchieveCondition')
             by_type.setdefault(t, []).append(aid)

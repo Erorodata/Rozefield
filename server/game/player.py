@@ -272,9 +272,9 @@ class Player:
                     rep = (d.row('character', 'Character', item_id) or {}).get('RepeatItemID')
                     info = {'itemId': item_id, 'itemTag': tag}
                     det = {'mainItem': info}
-                    if rep:
-                        self.s['items'][str(rep)] = self.count(rep) + 1
-                        det['transformedItem'] = [{'itemId': rep, 'itemTag': d.item_tag(rep), 'baseItem': {'itemId': rep, 'num': '1'}}]
+                    if rep:   # official: a repeat salvager gives 3 of its fragments (2026-11-26 capture)
+                        self.s['items'][str(rep)] = self.count(rep) + 3
+                        det['transformedItem'] = [{'itemId': rep, 'itemTag': d.item_tag(rep), 'baseItem': {'itemId': rep, 'num': '3'}}]
                         changed.append({'mainItem': self.item_info(rep)})
                     got.append(det)
                 else:

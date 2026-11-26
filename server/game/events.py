@@ -466,7 +466,7 @@ def register(H, pack, scene_player):
                 iid = (main.get('character') or {}).get('characterId', iid)
             q = (d.item(iid) or {}).get('Quality', 3)
             it['extraQuality'] = q
-            ex = gacha_extras(main, q)
+            ex = gacha_extras(main, q, p)
             it['extras'] = [{'itemId': i, 'itemTag': d.item_tag(i), 'baseItem': {'itemId': i, 'num': str(n)}} for i, n in ex]
             extra_items += ex
         if extra_items:
@@ -479,14 +479,24 @@ def register(H, pack, scene_player):
         H['GachaReq'] = gacha
 
 
-def gacha_extras(main, quality):
-    """Bonus items per recruit result. Seen on official (SR): imprint -> 112 x15 + 107 x50,
-    salvager -> 111 x12 + 107 x500. SSR and R amounts are estimates."""
+def gacha_extras(main, quality, p=None):
+    """Bonus items per recruit result, as official (captures 2026-11-24 and 2026-11-26):
+      imprint SR -> 112 x15 + 107 x50          imprint SSR -> 107 x500
+      salvager new: SR -> 107 x500, SSR -> 107 x1500
+      salvager repeat: SR -> 111 x3 + 107 x500 (111 x12 once the salvager is at 5 stars), SSR -> 111 x16 + 107 x1500
+    R results and a repeat SSR at 5 stars were never seen: estimates."""
     salvager = bool(main.get('character')) or main.get('itemTag') in ('EBagItemTag_Character', 'EBagItemTag_Card')
     if salvager:
-        return [(111, 40 if quality >= 4 else 12), (107, 2000 if quality >= 4 else 500)]
+        cid = (main.get('character') or {}).get('characterId') or main.get('itemId')
+        repeat = bool(main.get('transformedItem')) or not (main.get('character') or {}).get('level')
+        coupons = 1500 if quality >= 4 else 500
+        if not repeat:
+            return [(107, coupons)]
+        star = ((p.s['characters'].get(str(cid)) or {}).get('star', 1) if p else 1)
+        dust = (16 if star < 5 else 64) if quality >= 4 else (3 if star < 5 else 12)
+        return [(111, dust), (107, coupons)]
     if quality >= 4:
-        return [(112, 40), (107, 200)]
+        return [(107, 500)]
     if quality == 3:
         return [(112, 15), (107, 50)]
     return [(113, 5), (107, 10)]

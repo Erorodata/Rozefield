@@ -265,7 +265,7 @@ def register(H, pack):
             e = {'posterIllustrationId': pid}
             lst.append(e)
         e['status'] = 'Reward'
-        got, changed = give(ctx, [(STARSTONE, 20)])   # estimate
+        got, changed = give(ctx, [(STARSTONE, 10)])   # official: 10 Starstones (2026-11-26 capture)
         ctx.reply({'status': OK, 'posterIllustration': e, 'items': got})
         pack(ctx, changed)
     H['PosterIllustrationRewardReq'] = poster_ill
@@ -347,7 +347,13 @@ def register(H, pack):
         done = _st(ctx.p, 'badge_achieve', [])
         ids = [a for a in req.get('achieveIds', []) if a not in done]
         done += ids
-        got, changed = give(ctx, [(STARSTONE, 10 * len(ids))])   # estimate
+        # official: 1 moonstone of the achievement's map per achievement (2 ids -> 301 x2, 3 ids -> 301 x3)
+        pay = {}
+        for a in ids:
+            page = int(str(a)[3:5]) if str(a).startswith('501') and len(str(a)) == 8 else 1
+            stone = (ctx.d.row('moonstone', 'StoneAreaData', page) or {}).get('ItemID', 301)
+            pay[stone] = pay.get(stone, 0) + 1
+        got, changed = give(ctx, list(pay.items()))
         ctx.reply({'status': OK, 'achieveIds': ids, 'items': got})
         pack(ctx, changed)
     H['AbilityBadgeAchieveRewardReq'] = badge_achieve
@@ -500,7 +506,7 @@ def register(H, pack):
             return ctx.reply({'status': FAIL})
         lo, hi = (int(x) for x in (d.config('SupplyBox_Random_Time') or ['10', '30']))
         info['nextRewardTime'] = str(int(time.time()) + random.randint(lo, hi) * 60)
-        got, changed = give(ctx, [(GOLD, 300), (190, 1)])   # estimate
+        got, changed = give(ctx, [(STARSTONE, 1), (109, 40), (GOLD, 90)])   # official (2026-11-26 capture)
         ctx.reply({'status': OK, 'nextRewardTime': info['nextRewardTime'], 'items': got})
         pack(ctx, changed)
     H['SupplyBoxRewardReq'] = supply
@@ -788,7 +794,41 @@ def register(H, pack):
             pack(ctx, changed)
         H[name] = f
     act_reward('ActivityGiftRewardReq', ())
-    act_reward('ActivityQuestRewardReq', ('param', 'isProgress'))
+
+    def act_quest(ctx, req):
+        """7-day event quests (official, 2026-11-26 capture): param = the day; each claim pays the next finished,
+        unclaimed quest of that day (its items + event points 6001). isProgress: the points track reward at index param."""
+        from game.progression import astate
+        p, d = ctx.p, ctx.d
+        aid = req.get('activityId', 0)
+        act = d.row('activityquest', 'ActivityQuest', aid) or {}
+        done = _st(p, 'activity_quest_claims', {}).setdefault(str(aid), [])
+        day = int(req.get('param', 0) or 0)
+        if req.get('isProgress'):
+            row = next((x for x in (d.row('activityquest', 'ActivityQuestReward', act.get('ActivityQuestRewardID', aid)) or {})
+                        .get('ActivityQuestRewardItem', []) if x.get('Index') == day), None)
+            key = 'track:%d' % day
+            if not row or key in done or p.count(row.get('ConditionItemID', 6001)) < row.get('ConditionItemNum', 0):
+                return ctx.reply({'status': FAIL})
+            pay = [(row['RewardItemID'], row.get('RewardItemNum', 1))]
+        else:
+            cnt = astate(p)['count']
+            ach = d.table('achieve', 'Achieve')
+            it = next((x for x in act.get('ActivityQuestAchieveItems', []) if x.get('Days') == day
+                       and str(x['AchieveID']) not in done
+                       and cnt.get(str(x['AchieveID']), 0) >= int((ach.get(x['AchieveID']) or {}).get('CountParam', 1) or 1)), None)
+            if not it:
+                return ctx.reply({'status': FAIL})
+            key = str(it['AchieveID'])
+            pay = [(y['ItemID'], y['ItemNum']) for y in it.get('ActivityQuestItem', [])]
+        done.append(key)
+        got, changed = give(ctx, pay)
+        r = {'status': OK, 'param': req.get('param', 0), 'rewardId': len(done), 'rewards': got}
+        if req.get('isProgress'):
+            r['isProgress'] = True
+        ctx.reply(r)
+        pack(ctx, changed)
+    H['ActivityQuestRewardReq'] = act_quest
     act_reward('ActivityRegularRewardReq', ('param', 'poolType'))
     act_reward('ActivityInviteRewardClaimReq', ('activity_id', 'condition_id'))
     act_reward('ActivityRecallRewardClaimReq', ('activity_id', 'condition_id'))

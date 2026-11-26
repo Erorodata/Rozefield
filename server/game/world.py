@@ -209,7 +209,7 @@ def dungeon_chest(p, cfg, ds):
         return p.d.reward_items(cfg['RewardID'], p.s['level'])
     obs = observed().get(did)
     if obs:
-        return [(i, max(1, n + (random.randint(-2, 2) if i in (190, 191, 192) and n > 3 else 0))) for i, n in obs]
+        return [(i, max(1, n + (random.randint(-1, 1) if i in (190, 191, 192) and n > 3 else 0))) for i, n in obs]
     show = p.d.row('manual', 'ManualShowReward', cfg.get('ShowRewardID', 0)) or {}
     items = [x for x in show.get('ManualRewardItems', []) if x.get('ItemID')]
     gear = [x['ItemID'] for x in items if 1100000 < x['ItemID'] < 2500000]

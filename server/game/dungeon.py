@@ -170,7 +170,8 @@ def register(H, pack, enter_scene, scene_player):
             paid = p.pay([(cfg['ItemID'], cfg['ItemNum'])])
             if paid is None:
                 return ctx.reply({'status': FAIL})
-        got, changed = p.add_items(rewards_of(p, cfg))
+        from game.world import dungeon_chest   # official: a sweep pays what the final chest of a repeat clear holds
+        got, changed = p.add_items(dungeon_chest(p, cfg, dict(ds, finishTimes=max(2, ds['finishTimes'] + 1))))
         ds['finishTimes'] += 1
         Q.event(p, Q.C['DungeonPass'], did)
         ctx.reply({'status': OK, 'rewards': got})
