@@ -142,31 +142,54 @@ def _run(key):
                                  creationflags=flags)
 
 
+def _create(key, agent_id, link_port):
+    """Ask playit for a TCP tunnel to the link port. Two request shapes playit's programs use; the first that's accepted wins."""
+    bodies = [
+        ('/tunnels/create', {'name': 'Overfield', 'tunnel_type': None, 'port_type': 'tcp', 'port_count': 1,
+                             'origin': {'type': 'agent', 'data': {'agent_id': agent_id, 'local_ip': '127.0.0.1', 'local_port': link_port}},
+                             'enabled': True, 'alloc': None, 'firewall_id': None, 'proxy_protocol': None}),
+        ('/v1/tunnels/create', {'ports': {'type': 'custom-tcp', 'details': 1},
+                                'origin': {'type': 'agent', 'data': {'agent_id': agent_id, 'config': {'fields': [
+                                    {'name': 'local_ip', 'value': '127.0.0.1'}, {'name': 'local_port', 'value': str(link_port)}]}}},
+                                'enabled': True, 'alloc': None, 'name': 'Overfield', 'firewall_id': None}),
+    ]
+    errs = []
+    for path, body in bodies:
+        try:
+            _api(path, body, key)
+            log.info('playit.gg: tunnel to port %s requested', link_port)
+            return True
+        except Exception as e:
+            errs.append(str(e))
+    log.warning('playit.gg: could not make the tunnel by itself (%s). On playit.gg add a tunnel: TCP, local port %s',
+                '; '.join(errs)[:300], link_port)
+    _set(msg=f'on playit.gg add a tunnel: TCP, local port {link_port}')
+    return False
+
+
 def _tunnel(key, link_port):
     """The TCP tunnel to the link port: find it, or make it; returns its public address."""
-    for attempt in range(60):
+    warned_udp = False
+    for attempt in range(120):
         try:
             rd = _api('/v1/agents/rundata', {}, key)
         except Exception as e:
             _set(msg=f'waiting for playit ({e})'); time.sleep(5); continue
         for t in rd.get('tunnels', []):
             fields = {f['name']: f['value'] for f in (t.get('agent_config') or {}).get('fields', [])}
-            if fields.get('local_port') == str(link_port) and t.get('display_address'):
-                return t['display_address']
-        if any(str(link_port) in json.dumps(p) or 'Overfield' in p.get('name', '') for p in rd.get('pending', [])):
+            if fields.get('local_port') != str(link_port) or not t.get('display_address'):
+                continue
+            if str(t.get('port_type', 'tcp')).lower() == 'udp':
+                if not warned_udp:
+                    log.warning('playit.gg: the tunnel to port %s is UDP; the game needs TCP. On playit.gg change it to TCP '
+                                '(or "TCP + UDP")', link_port)
+                    _set(msg='the playit tunnel must be TCP'); warned_udp = True
+                continue
+            return t['display_address']
+        if any('Overfield' in p.get('name', '') for p in rd.get('pending', [])):
             time.sleep(5); continue
-        if attempt == 0 or attempt % 12 == 0:
-            try:
-                _api('/v1/tunnels/create', {
-                    'ports': {'type': 'custom-tcp', 'details': 1},
-                    'origin': {'type': 'agent', 'data': {'agent_id': None, 'config': {'fields': [
-                        {'name': 'local_ip', 'value': '127.0.0.1'}, {'name': 'local_port', 'value': str(link_port)}]}}},
-                    'enabled': True, 'alloc': None, 'name': 'Overfield', 'firewall_id': None}, key)
-                log.info('playit.gg: tunnel to port %s requested', link_port)
-            except Exception as e:
-                log.warning('playit.gg: could not make the tunnel (%s); add a TCP tunnel to local port %s on playit.gg',
-                            e, link_port)
-                _set(msg=f'add a TCP tunnel to local port {link_port} on playit.gg')
+        if attempt % 12 == 0 and not warned_udp:
+            _create(key, rd.get('agent_id'), link_port)
         time.sleep(5)
     return ''
 
