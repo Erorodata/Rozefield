@@ -27,6 +27,8 @@ class Data:
         if f not in self._raw:
             p = os.path.join(self.path, f + '.json')
             self._raw[f] = json.load(open(p, encoding='utf-8')) if os.path.exists(p) else {}
+            from game import packs   # host content packs add to / change the official tables
+            packs.apply(f, self._raw[f])
         return self._raw[f]
 
     def table(self, f, sheet):

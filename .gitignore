@@ -42,3 +42,7 @@ server/playit/
 *.lib
 *.exp
 *.obj
+# host content packs stay on the host (official pack and templates ship)
+server/packs/*
+!server/packs/official/
+!server/packs/_templates/

@@ -1,0 +1,20 @@
+{
+ "id": 90001,
+ "name": {
+  "en": "Chapter R1: A New Field",
+  "cn": "第R1章：新的原野"
+ },
+ "description": "",
+ "after_chapter": 10005,
+ "stories": [
+  {
+   "id": 9000101,
+   "first_quest": 900011,
+   "level": 1,
+   "reward": 0,
+   "review_dialogues": [
+    900011
+   ]
+  }
+ ]
+}

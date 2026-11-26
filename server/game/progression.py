@@ -15,7 +15,8 @@ from game import quests as Q
 from ofproto import pool
 
 OK, FAIL = 'StatusCode_OK', 'StatusCode_FAIL'
-EXP_BOOKS = (190, 191, 192)
+from game import packs as _packs
+EXP_BOOKS = tuple(_packs.system('progression', 'exp_books', [190, 191, 192]))
 EN = {v.name[len('EAchieveCondition_'):]: v.number for v in pool.FindEnumTypeByName('pb.EAchieveCondition').values}
 
 

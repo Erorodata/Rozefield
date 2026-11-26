@@ -161,11 +161,10 @@ def rename(ctx, req):
 # ============================================================ scenes / channels
 PUBLIC_SCENE = 9999
 # official entry point of each map when travelling there from the world map (no teleport target); same every time
-MAP_ENTRY = {1: {'x': 638, 'y': 98, 'z': 4821}, 2: {'x': -1275, 'y': 16708, 'z': 6381}, 3: {'x': -676, 'y': 5815, 'z': -64},
-             5: {'x': -3110, 'y': 20844, 'z': 700}, 1001: {'x': 3334, 'y': 1457, 'z': 3402},
-             1002: {'x': 709, 'y': 2620, 'z': 502}, 1003: {'x': 2942, 'y': 140, 'z': -4363}}
-PLAZA_SPAWN = {'x': 2415, 'y': -1, 'z': 959}   # Rota Plaza spawn point (official login position, all captures)
-TUTORIAL_SCENE = 100   # Path in a Bottle: new players stay there until the prologue is done
+from game import packs as _packs   # rules live in packs/official/systems/world.json
+MAP_ENTRY = _packs.int_keys(_packs.system('world', 'map_entry'))
+PLAZA_SPAWN = _packs.system('world', 'plaza_spawn')   # Rota Plaza spawn point (official login position, all captures)
+TUTORIAL_SCENE = _packs.system('world', 'tutorial_scene', 100)   # new players stay there until the prologue is done
 
 
 def pos_key(s, scene_id=None, channel_id=None):

@@ -1,0 +1,60 @@
+{
+ "id": "east_path",
+ "map": 1,
+ "name": {
+  "en": "East Path"
+ },
+ "npcs": [
+  {
+   "npc": 90001,
+   "pos": {
+    "x": 2500,
+    "y": 0,
+    "z": 1000
+   },
+   "rot": 180
+  }
+ ],
+ "spawns": [
+  {
+   "monster": 1001,
+   "pos": {
+    "x": 2700,
+    "y": 0,
+    "z": 1200
+   },
+   "count": 3,
+   "respawn_sec": 60
+  }
+ ],
+ "chests": [
+  {
+   "box": 0,
+   "pos": {
+    "x": 2800,
+    "y": 0,
+    "z": 1300
+   },
+   "reward": 0
+  }
+ ],
+ "triggers": [
+  {
+   "id": "bridge",
+   "pos": {
+    "x": 2900,
+    "y": 0,
+    "z": 1400
+   },
+   "radius": 300,
+   "on_enter": {
+    "quest_step": 900012
+   }
+  }
+ ],
+ "entry": {
+  "x": 2450,
+  "y": 0,
+  "z": 980
+ }
+}

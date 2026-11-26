@@ -173,7 +173,8 @@ def gear_pool(d):
     return _GEAR
 
 
-QUALITY_WEIGHTS = (30, 30, 25, 12, 3)   # quality digit 1..5; 5 is the rare drop (3%)
+from game import packs as _packs
+QUALITY_WEIGHTS = tuple(_packs.system('world', 'drop_quality_weights', [30, 30, 25, 12, 3]))  # quality digit 1..5; 5 is the rare drop (3%)
 
 
 def _gear_key(i):

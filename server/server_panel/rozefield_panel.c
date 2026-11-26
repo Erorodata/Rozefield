@@ -975,9 +975,9 @@ static void do_wizard(void) {
 /* ---------------------------------------------------------------- Push update (this PC -> the connected server PC)
  * Same parts as game/updates.py. Package RZUP1: "RZUP1\n" + {u32 path len, path, u64 size, bytes}. */
 static const char *PUSH_KEYS[] = {"code", "data", "patch", "panel", "stub"};
-static const wchar_t *PUSH_NAMES[] = {L"Server code", L"Game data (tables)", L"Game update (patch)", L"Panel app (Overfield Server.exe)", L"Login window + Rozefield link (PCSDKUI.exe, winhttp.dll)"};
-static const char *PUSH_PATHS[5][13] = {
-    {"rozefield_server.py", "ofproto.py", "requirements.txt", "game/", "tools/", "proto/", "start_server.bat", "start_server.sh", "install_linux.sh", "setup_python.bat", "allow_friends.bat", "README.md", "Hosting guide.md"},
+static const wchar_t *PUSH_NAMES[] = {L"Server code + content packs", L"Game data (tables)", L"Game update (patch)", L"Panel app (Overfield Server.exe)", L"Login window + Rozefield link (PCSDKUI.exe, winhttp.dll)"};
+static const char *PUSH_PATHS[5][14] = {
+    {"rozefield_server.py", "ofproto.py", "requirements.txt", "game/", "tools/", "proto/", "start_server.bat", "start_server.sh", "install_linux.sh", "setup_python.bat", "allow_friends.bat", "README.md", "Hosting guide.md", "packs/"},
     {"data/", "data-merged/", "data-merged.zip"}, {"patch/"}, {"Overfield Server.exe"}, {"sdk_stub/PCSDKUI.exe", "link_relay/winhttp.dll"}};
 struct pbuf { char *b; size_t n, cap; long long newest; int files; long long bytes; };
 static void pb_put(struct pbuf *p, const void *d, size_t n) {
@@ -1013,7 +1013,7 @@ static void push_tree(struct pbuf *p, const char *rel, int collect) {   /* rel e
     FindClose(h);
 }
 static void push_part(struct pbuf *p, int part, int collect) {
-    for (int i = 0; i < 13 && PUSH_PATHS[part][i]; i++) {
+    for (int i = 0; i < 14 && PUSH_PATHS[part][i]; i++) {
         const char *r = PUSH_PATHS[part][i]; size_t l = strlen(r);
         if (r[l - 1] == '/') push_tree(p, r, collect); else push_file(p, r, collect);
     }

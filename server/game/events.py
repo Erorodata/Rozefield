@@ -518,7 +518,8 @@ def _sign_info(d, p, act):
 
 
 MOON_POINT = 124
-PARTTIME_SLOTS = (521, 522, 523, None)    # official: one task from each of these groups + one more
+from game import packs as _packs
+PARTTIME_SLOTS = tuple(_packs.system('events', 'parttime_slots', [521, 522, 523, None]))   # official: one task from each of these groups + one more
 TICKET, TICKET_DAILY = 117, 6             # co-op game tickets, official list showed 6/6
 
 

@@ -1,0 +1,54 @@
+{
+ "_about": "Map entry points (scene id -> position when arriving from the world map), the login spawn, drop quality.",
+ "map_entry": {
+  "1": {
+   "x": 638,
+   "y": 98,
+   "z": 4821
+  },
+  "2": {
+   "x": -1275,
+   "y": 16708,
+   "z": 6381
+  },
+  "3": {
+   "x": -676,
+   "y": 5815,
+   "z": -64
+  },
+  "5": {
+   "x": -3110,
+   "y": 20844,
+   "z": 700
+  },
+  "1001": {
+   "x": 3334,
+   "y": 1457,
+   "z": 3402
+  },
+  "1002": {
+   "x": 709,
+   "y": 2620,
+   "z": 502
+  },
+  "1003": {
+   "x": 2942,
+   "y": 140,
+   "z": -4363
+  }
+ },
+ "plaza_spawn": {
+  "x": 2415,
+  "y": -1,
+  "z": 959
+ },
+ "tutorial_scene": 100,
+ "public_scene": 9999,
+ "drop_quality_weights": [
+  30,
+  30,
+  25,
+  12,
+  3
+ ]
+}

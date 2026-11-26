@@ -1,0 +1,53 @@
+{
+ "id": 900011,
+ "lines": [
+  {
+   "speaker": {
+    "en": "Mira"
+   },
+   "text": {
+    "en": "You came! I was starting to think nobody read my letter."
+   }
+  },
+  {
+   "speaker": {
+    "en": "Mira"
+   },
+   "text": {
+    "en": "The path east is full of Beanlings. Will you help?"
+   },
+   "choices": [
+    {
+     "text": {
+      "en": "Of course."
+     },
+     "goto": 2
+    },
+    {
+     "text": {
+      "en": "What's in it for me?"
+     },
+     "goto": 3
+    }
+   ]
+  },
+  {
+   "speaker": {
+    "en": "Mira"
+   },
+   "text": {
+    "en": "Thank you! Meet me past the bridge."
+   },
+   "end": true
+  },
+  {
+   "speaker": {
+    "en": "Mira"
+   },
+   "text": {
+    "en": "Ha! Honest at least. There's treasure past the bridge."
+   },
+   "end": true
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+{
+ "name": "Official OverField",
+ "version": "1.1.0",
+ "author": "Rozefield",
+ "order": 0,
+ "override": true,
+ "notes": "Rules that used to be written in the server code. Change them here, or better, in your own pack (later packs win)."
+}

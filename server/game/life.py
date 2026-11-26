@@ -42,7 +42,8 @@ CRAFT = {
                  spitems='LifeGatherSpellItems', spneed='NeedGatherLevel'),
 }
 # gathering tools (EWeaponType) -> (use-count condition, gains condition)
-TOOL_COND = {4: (61, 67), 5: (62, 68), 6: (63, 69), 7: (64, 70), 8: (65, 71), 15: (66, 72)}
+from game import packs as _packs   # packs/official/systems/life.json
+TOOL_COND = {k: tuple(v) for k, v in _packs.int_keys(_packs.system('life', 'tool_conditions')).items()}
 
 
 def L(p, lt):
@@ -154,9 +155,9 @@ def achieve(p, lt):
 # ------------------------------------------------------------------ handlers
 
 # ---------------------------------------------------------------- gathering limits / temporary pack
-GATHER_KEYS = {0: 'flower', 1: 'wood', 2: 'stone', 3: 'butterfly', 4: 'water', 5: 'pick'}
-GATHER_MOON = {2: 1107, 3: 1108, 5: 1104}   # Moon Points gameplay ids seen per gather type (official capture)
-MOON_CHANCE = 0.25                         # seen on 4 of 19 gathers; the server-side odds are not in the client
+GATHER_KEYS = _packs.int_keys(_packs.system('life', 'gather_keys'))
+GATHER_MOON = _packs.int_keys(_packs.system('life', 'moon_gameplay'))   # Moon Points gameplay ids seen per gather type (official capture)
+MOON_CHANCE = _packs.system('life', 'moon_chance', 0.25)                        # seen on 4 of 19 gathers; the server-side odds are not in the client
 
 
 def gather_type(reward):

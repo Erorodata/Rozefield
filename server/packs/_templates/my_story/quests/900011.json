@@ -1,0 +1,55 @@
+[
+ {
+  "id": 900011,
+  "type": "main",
+  "group": 900011,
+  "name": {
+   "en": "Someone Is Waiting"
+  },
+  "description": {
+   "en": "Talk to Mira at the plaza."
+  },
+  "start_dialogue": 900011,
+  "instant_reward": true,
+  "reward": 0,
+  "steps": [
+   {
+    "do": "talk",
+    "npc": 90001,
+    "resource": 0,
+    "text": {
+     "en": "Talk to Mira"
+    }
+   }
+  ]
+ },
+ {
+  "id": 900012,
+  "type": "main",
+  "group": 900011,
+  "name": {
+   "en": "Clear the Path"
+  },
+  "description": {
+   "en": "Defeat 3 Withered Beanlings."
+  },
+  "steps": [
+   {
+    "do": "kill",
+    "monster": 1001,
+    "count": 3,
+    "text": {
+     "en": "Defeat Withered Beanlings"
+    }
+   },
+   {
+    "do": "collect",
+    "item": 3001,
+    "count": 2,
+    "text": {
+     "en": "Collect 2 items"
+    }
+   }
+  ]
+ }
+]

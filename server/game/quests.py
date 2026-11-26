@@ -49,7 +49,8 @@ MAIN, DAILY = 1, 4
 # Stories official Global never gave out (cut "Investigator" chapter + two chapter-4 side stories). Rozefield adds them
 # back as a chapter (tools/merge_cn_config.py). New Rozefield players get them in the main story; players imported
 # from official start them from the story screen themselves and are never pushed into them.
-OPTIONAL_STORIES = set(range(1000401, 1000415)) | {1000509, 1000510}
+from game import packs as _packs
+OPTIONAL_STORIES = set(_packs.system('quests', 'optional_stories', []))   # packs/official/systems/quests.json
 _IDX = {}
 
 

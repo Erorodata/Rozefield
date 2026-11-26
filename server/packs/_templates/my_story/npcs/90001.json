@@ -1,0 +1,15 @@
+{
+ "id": 90001,
+ "name": {
+  "en": "Mira"
+ },
+ "title": {
+  "en": "Wandering Scout"
+ },
+ "functions": [
+  "talk"
+ ],
+ "talk": [
+  900011
+ ]
+}

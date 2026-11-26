@@ -14,7 +14,7 @@ import time
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PARTS = {
     'code': ('rozefield_server.py', 'ofproto.py', 'requirements.txt', 'game/', 'tools/', 'proto/', 'start_server.bat',
-             'start_server.sh', 'install_linux.sh', 'setup_python.bat', 'allow_friends.bat', 'README.md', 'Hosting guide.md'),
+             'start_server.sh', 'install_linux.sh', 'setup_python.bat', 'allow_friends.bat', 'README.md', 'Hosting guide.md', 'packs/'),
     'data': ('data/', 'data-merged/', 'data-merged.zip'),
     'patch': ('patch/',),
     'panel': ('Overfield Server.exe',),
