@@ -36,6 +36,7 @@
 #include <iphlpapi.h>
 #include <mstcpip.h>
 #include <math.h>
+#include <stdarg.h>
 #include "backup_queries.h"
 #include "msgids_known.h"
 #include "windivert.h"
@@ -219,7 +220,8 @@ static int restore_metadata(void) {   /* 1 = nothing to do or restored */
 }
 static int patch_metadata(void) {
     char f[MAX_PATH], bak[MAX_PATH]; meta_paths(f, bak);
-    FILE *in = fopen(f, "rb"); if (!in) return 0;
+    char orig[MAX_PATH + 8]; snprintf(orig, sizeof orig, "%s.orig", f);   /* a game changed for Rozefield: start from the original */
+    FILE *in = fopen(GetFileAttributesA(orig) != INVALID_FILE_ATTRIBUTES ? orig : f, "rb"); if (!in) return 0;
     fseek(in, 0, SEEK_END); long n = ftell(in); fseek(in, 0, SEEK_SET);
     unsigned char *d = (unsigned char *)malloc(n); if (!d || fread(d, 1, n, in) != (size_t)n) { fclose(in); free(d); return 0; }
     fclose(in);
@@ -1388,7 +1390,8 @@ static void start_reconnect(void) {
 #define C_TXT RGB(42, 44, 54)
 #define C_MUTE RGB(122, 126, 142)
 #define C_WARN RGB(232, 140, 20)
-enum { B_NONE, B_CLOSE, B_MIN, B_MAIN, B_RUNNING, B_SAVE, B_FOLDER, B_LOG, B_OPENDIR };
+enum { B_NONE, B_CLOSE, B_MIN, B_MAIN, B_RUNNING, B_SAVE, B_FOLDER, B_LOG, B_OPENDIR,
+       B_TAB0, B_TAB1, B_PCHANGE, B_PFOUND0, B_PFOUND1, B_PCOPY, B_PINPLACE, B_PGO, B_PUNDO };
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
 static RECT r_main = {WW - 252, WH - 92, WW - 36, WH - 32}, r_run = {WW - 618, WH - 86, WW - 444, WH - 38}, r_save = {WW - 432, WH - 86, WW - 268, WH - 38};
 static RECT r_folder = {14, WH - 128, 58, WH - 84}, r_logb = {14, WH - 74, 58, WH - 30}, r_opendir = {0};
@@ -1512,6 +1515,259 @@ static int target_pct(void) {
     }
 }
 
+
+/* ---------------------------------------------------------------- Play on Rozefield (second tab)
+ * Points an existing OverField install (Steam, the OverField launcher, or a copy) at a Rozefield server:
+ *   - login window: launcher_Data\Plugins\Win\PCSDK_release\PCSDKUI.exe -> the Rozefield login (official kept as .orig)
+ *   - StreamingAssets\Config.txt: UseCustomConfig = TRUE, RemoteServerIP = the server (original kept as .orig)
+ *   - il2cpp global-metadata.dat: the game's address lookup -> the server (or this PC), original kept as .orig
+ *   - rozefield_servers.json in the game folder: the default server for the login window's list
+ * "Make a Rozefield copy" copies the whole game first, so the official one stays as it is. Undo puts every file back.
+ * The Rozefield login comes from rozefield\PCSDKUI.exe next to this exe. */
+static int g_tab;                                  /* 0 = back up, 1 = play on Rozefield */
+static char g_pgame[MAX_PATH], g_found[2][MAX_PATH];
+static int g_pmode;                                /* 0 = make a copy first, 1 = change this game */
+static HWND g_psrv;
+static wchar_t g_pmsg[400] = L"";
+static COLORREF g_pmsgc = RGB(122, 126, 142);
+static volatile LONG g_pbusy; static volatile LONGLONG g_pdone, g_ptotal;
+static RECT r_tab0 = {WW - 420, 34, WW - 300, 70}, r_tab1 = {WW - 292, 34, WW - 110, 70};
+static RECT r_pchange = {WW - 250, 186, WW - 140, 218}, r_pfound[2] = {{124, 226, 330, 254}, {338, 226, 560, 254}};
+static RECT r_pcopy = {124, 296, 640, 336}, r_pinplace = {124, 344, 640, 384}, r_pgo = {124, 560, 470, 612}, r_pundo = {486, 560, 700, 612};
+
+static void find_launcher_install(char *out) {   /* the OverField launcher (Uninstall entry) installs into <dir>\OverField Game */
+    out[0] = 0;
+    const char *roots[] = {"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall", "Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"};
+    HKEY hives[] = {HKEY_LOCAL_MACHINE, HKEY_CURRENT_USER};
+    for (int h = 0; h < 2 && !out[0]; h++) for (int r = 0; r < 2 && !out[0]; r++) {
+        HKEY k; if (RegOpenKeyExA(hives[h], roots[r], 0, KEY_READ, &k)) continue;
+        char sub[256]; for (DWORD i = 0; !out[0]; i++) {
+            DWORD sl = sizeof sub; if (RegEnumKeyExA(k, i, sub, &sl, NULL, NULL, NULL, NULL)) break;
+            char name[256] = "", loc[MAX_PATH] = ""; DWORD n1 = sizeof name, n2 = sizeof loc;
+            RegGetValueA(k, sub, "DisplayName", RRF_RT_REG_SZ, NULL, name, &n1);
+            if (!strstr(name, "OverField") || strstr(name, "Steam")) continue;
+            if (RegGetValueA(k, sub, "InstallLocation", RRF_RT_REG_SZ, NULL, loc, &n2) == ERROR_SUCCESS && loc[0]) {
+                char p[MAX_PATH]; size_t l = strlen(loc); if (l && (loc[l - 1] == '\\' || loc[l - 1] == '"')) loc[l - 1] = 0;
+                snprintf(p, sizeof p, "%s\\OverField Game", loc[0] == '"' ? loc + 1 : loc);
+                if (has_launcher(p)) snprintf(out, MAX_PATH, "%s", p);
+            }
+        }
+        RegCloseKey(k);
+    }
+}
+static void pmsg(COLORREF c, const wchar_t *fmt, ...) {
+    va_list ap; va_start(ap, fmt); vswprintf(g_pmsg, 400, fmt, ap); va_end(ap); g_pmsgc = c;
+}
+static const char B32[] = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+static int read_code(const char *s, char *ip) {   /* RZ-XXXX-XXX: an IPv4 address in base32 */
+    if (toupper((unsigned char)s[0]) != 'R' || toupper((unsigned char)s[1]) != 'Z') return 0;
+    unsigned long long v = 0; int n = 0;
+    for (const char *p = s + 2; *p; p++) {
+        if (*p == '-' || *p == ' ') continue;
+        char ch = (char)toupper((unsigned char)*p); if (ch == 'O') ch = '0'; if (ch == 'I' || ch == 'L') ch = '1';
+        const char *q = strchr(B32, ch); if (!q || !*q) return 0; v = (v << 5) | (unsigned)(q - B32); n++;
+    }
+    if (n != 7 || v > 0xFFFFFFFFull) return 0;
+    sprintf(ip, "%u.%u.%u.%u", (unsigned)(v >> 24) & 255, (unsigned)(v >> 16) & 255, (unsigned)(v >> 8) & 255, (unsigned)v & 255); return 1;
+}
+static int keep_orig(const char *f) {   /* first change only: the file as it came becomes <f>.orig */
+    char o[MAX_PATH + 8]; snprintf(o, sizeof o, "%s.orig", f);
+    return GetFileAttributesA(o) != INVALID_FILE_ATTRIBUTES || CopyFileA(f, o, TRUE);
+}
+static char *slurp(const char *f, long *n) {
+    FILE *in = fopen(f, "rb"); if (!in) return NULL;
+    fseek(in, 0, SEEK_END); *n = ftell(in); fseek(in, 0, SEEK_SET);
+    char *d = (char *)malloc(*n + 1); if (fread(d, 1, *n, in) != (size_t)*n) { fclose(in); free(d); return NULL; }
+    fclose(in); d[*n] = 0; return d;
+}
+static int spill(const char *f, const char *d, long n) { FILE *o = fopen(f, "wb"); if (!o) return 0; int ok = fwrite(d, 1, n, o) == (size_t)n; fclose(o); return ok; }
+
+static int rz_apply(const char *dir, const char *name, const char *ip, wchar_t *err) {
+    char f[MAX_PATH], src[MAX_PATH];
+    /* 1. login window */
+    snprintf(src, sizeof src, "%srozefield\\PCSDKUI.exe", g_exedir);
+    snprintf(f, sizeof f, "%s\\launcher_Data\\Plugins\\Win\\PCSDK_release\\PCSDKUI.exe", dir);
+    if (GetFileAttributesA(src) == INVALID_FILE_ATTRIBUTES) { wcscpy(err, L"The Rozefield login (rozefield\\PCSDKUI.exe) is missing next to Rozefield Backup.exe."); return 0; }
+    if (GetFileAttributesA(f) == INVALID_FILE_ATTRIBUTES) { wcscpy(err, L"This folder has no login window (launcher_Data\\Plugins\\Win\\PCSDK_release)."); return 0; }
+    if (!keep_orig(f) || !CopyFileA(src, f, FALSE)) { wcscpy(err, L"Couldn't replace the login window. Close the game and try again."); return 0; }
+    { char ini[MAX_PATH]; snprintf(ini, sizeof ini, "%s\\launcher_Data\\Plugins\\Win\\PCSDK_release\\rozefield_sdk.ini", dir);
+      WritePrivateProfileStringA("server", "ip", ip, ini); WritePrivateProfileStringA("server", "address", name, ini); }
+    /* 2. Config.txt */
+    snprintf(f, sizeof f, "%s\\launcher_Data\\StreamingAssets\\Config.txt", dir);
+    long n; char *t = slurp(f, &n);
+    if (t && keep_orig(f)) {
+        char *o = (char *)calloc(n + 256, 1); int c = 0, r = 0;
+        for (char *line = t; *line;) {
+            char *nl = strchr(line, '\n'); size_t len = nl ? (size_t)(nl - line + 1) : strlen(line);
+            char *k = line; while (*k == ' ' || *k == '\t') k++;
+            if (!_strnicmp(k, "UseCustomConfig", 15)) { strcat(o, "UseCustomConfig = TRUE\r\n"); c = 1; }
+            else if (!_strnicmp(k, "RemoteServerIP", 14)) { sprintf(o + strlen(o), "RemoteServerIP = %s\r\n", ip); r = 1; }
+            else strncat(o, line, len);
+            line += len;
+        }
+        if (!c) strcat(o, "\r\nUseCustomConfig = TRUE\r\n");
+        if (!r) sprintf(o + strlen(o), "RemoteServerIP = %s\r\n", ip);
+        spill(f, o, (long)strlen(o)); free(o);
+    }
+    free(t);
+    /* 3. the address lookup, always from the original file */
+    snprintf(f, sizeof f, "%s\\launcher_Data\\il2cpp_data\\Metadata\\global-metadata.dat", dir);
+    char fo[MAX_PATH + 8]; snprintf(fo, sizeof fo, "%s.orig", f);
+    unsigned char *d = (unsigned char *)slurp(GetFileAttributesA(fo) != INVALID_FILE_ATTRIBUTES ? fo : f, &n);
+    if (d) {
+        const char *target = strlen(ip) <= 12 ? ip : "127.0.0.1"; uint32_t lo, ls, ldo; memcpy(&lo, d + 8, 4); memcpy(&ls, d + 12, 4); memcpy(&ldo, d + 16, 4);
+        int ok = 0;
+        for (long i = ldo; i + 12 <= n && !ok; i++) {
+            if (memcmp(d + i, HTTPDNS_IP, 12)) continue;
+            int32_t pos = (int32_t)(i - ldo);
+            for (uint32_t k = 0; k + 8 <= ls; k += 8) { uint32_t len; int32_t idx; memcpy(&len, d + lo + k, 4); memcpy(&idx, d + lo + k + 4, 4);
+                if (idx == pos && len == 12) { memcpy(d + i, target, strlen(target)); len = (uint32_t)strlen(target); memcpy(d + lo + k, &len, 4); ok = 1; break; } }
+        }
+        if (ok && keep_orig(f)) spill(f, (char *)d, n);
+        free(d);
+    }
+    /* 4. the default server for the login window */
+    snprintf(f, sizeof f, "%s\\rozefield_servers.json", dir);
+    char js[700]; snprintf(js, sizeof js, "{\"format\": \"rozefield-servers/1\", \"default\": \"%s\", \"servers\": [{\"name\": \"%s\", \"address\": \"%s\"}]}\n", name, name, name);
+    spill(f, js, (long)strlen(js));
+    return 1;
+}
+static int rz_undo(const char *dir) {
+    const char *files[] = {"\\launcher_Data\\Plugins\\Win\\PCSDK_release\\PCSDKUI.exe", "\\launcher_Data\\StreamingAssets\\Config.txt", "\\launcher_Data\\il2cpp_data\\Metadata\\global-metadata.dat"};
+    int n = 0;
+    for (int i = 0; i < 3; i++) {
+        char f[MAX_PATH], o[MAX_PATH + 8]; snprintf(f, sizeof f, "%s%s", dir, files[i]); snprintf(o, sizeof o, "%s.orig", f);
+        if (GetFileAttributesA(o) != INVALID_FILE_ATTRIBUTES && CopyFileA(o, f, FALSE)) { DeleteFileA(o); n++; }
+    }
+    char f[MAX_PATH]; snprintf(f, sizeof f, "%s\\rozefield_servers.json", dir); DeleteFileA(f);
+    return n;
+}
+static int is_patched(const char *dir) {
+    char o[MAX_PATH]; snprintf(o, sizeof o, "%s\\launcher_Data\\Plugins\\Win\\PCSDK_release\\PCSDKUI.exe.orig", dir);
+    return GetFileAttributesA(o) != INVALID_FILE_ATTRIBUTES;
+}
+
+static LONGLONG tree_size(const char *dir) {
+    char pat[MAX_PATH]; snprintf(pat, sizeof pat, "%s\\*", dir); WIN32_FIND_DATAA fd; HANDLE h = FindFirstFileA(pat, &fd); LONGLONG t = 0;
+    if (h == INVALID_HANDLE_VALUE) return 0;
+    do { if (!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, "..")) continue; char p[MAX_PATH]; snprintf(p, sizeof p, "%s\\%s", dir, fd.cFileName);
+         if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) t += tree_size(p); else t += ((LONGLONG)fd.nFileSizeHigh << 32) | fd.nFileSizeLow; } while (FindNextFileA(h, &fd));
+    FindClose(h); return t;
+}
+static int tree_copy(const char *from, const char *to) {
+    CreateDirectoryA(to, NULL);
+    char pat[MAX_PATH]; snprintf(pat, sizeof pat, "%s\\*", from); WIN32_FIND_DATAA fd; HANDLE h = FindFirstFileA(pat, &fd); int ok = 1;
+    if (h == INVALID_HANDLE_VALUE) return 0;
+    do {
+        if (!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, "..")) continue;
+        char a[MAX_PATH], b[MAX_PATH]; snprintf(a, sizeof a, "%s\\%s", from, fd.cFileName); snprintf(b, sizeof b, "%s\\%s", to, fd.cFileName);
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ok = tree_copy(a, b) && ok;
+        else { if (!CopyFileA(a, b, FALSE)) ok = 0; InterlockedExchangeAdd64(&g_pdone, ((LONGLONG)fd.nFileSizeHigh << 32) | fd.nFileSizeLow); }
+    } while (FindNextFileA(h, &fd));
+    FindClose(h); return ok;
+}
+
+static char g_pname[256], g_pip[64], g_pdest[MAX_PATH];
+static DWORD WINAPI patch_thread(LPVOID a) {
+    wchar_t err[300] = L"";
+    const char *dir = g_pgame;
+    if (g_pmode == 0) {   /* copy first */
+        g_ptotal = tree_size(g_pgame); g_pdone = 0;
+        ULARGE_INTEGER freeb; char root[4] = {g_pdest[0], ':', '\\', 0};
+        if (GetDiskFreeSpaceExA(root, &freeb, NULL, NULL) && (LONGLONG)freeb.QuadPart < g_ptotal + (200LL << 20)) {
+            pmsg(RGB(220, 60, 70), L"Not enough free space on %hs (needs %lld MB).", root, (g_ptotal >> 20) + 200); InterlockedExchange(&g_pbusy, 0); return 0;
+        }
+        pmsg(RGB(122, 126, 142), L"Copying the game to %hs\x2026", g_pdest);
+        if (!tree_copy(g_pgame, g_pdest)) { pmsg(RGB(220, 60, 70), L"Copying stopped (is the game open, or the disk full?). Try again."); InterlockedExchange(&g_pbusy, 0); return 0; }
+        rz_undo(g_pdest);   /* a copy of an already changed game starts clean */
+        dir = g_pdest;
+    }
+    if (rz_apply(dir, g_pname, g_pip, err)) {
+        pmsg(RGB(40, 160, 80), g_pmode == 0 ? L"Done. Play on Rozefield with %hs\\launcher.exe (your official game is unchanged)." : L"Done. Start %hs\\launcher.exe to play on Rozefield. Undo puts the official login back.", dir);
+        if (g_pmode == 0) ShellExecuteA(NULL, "open", dir, NULL, NULL, SW_SHOWNORMAL);
+    } else pmsg(RGB(220, 60, 70), L"%ls", err);
+    InterlockedExchange(&g_pbusy, 0); return 0;
+}
+static void patch_go(void) {
+    if (g_pbusy) return;
+    if (!g_pgame[0] || !has_launcher(g_pgame)) { pmsg(RGB(220, 60, 70), L"Choose the game folder first (the one with launcher.exe)."); return; }
+    if (find_launcher()) { pmsg(RGB(220, 60, 70), L"Close the game first."); return; }
+    wchar_t w[256]; GetWindowTextW(g_psrv, w, 256); char a[256]; WideCharToMultiByte(CP_UTF8, 0, w, -1, a, sizeof a, NULL, NULL);
+    char *b = a; while (*b == ' ') b++; char *e = b + strlen(b); while (e > b && (e[-1] == ' ' || e[-1] == '/')) *--e = 0; if (!strncmp(b, "http://", 7)) b += 7;
+    if (!*b) { pmsg(RGB(220, 60, 70), L"Type the server: invite code (RZ-XXXX-XXX), name or address."); return; }
+    char ip[64];
+    if (!read_code(b, ip)) {
+        struct addrinfo hn = {0}, *r = NULL; hn.ai_family = AF_INET;
+        if (getaddrinfo(b, NULL, &hn, &r) || !r) { pmsg(RGB(220, 60, 70), L"Can't find that server name."); return; }
+        inet_ntop(AF_INET, &((struct sockaddr_in *)r->ai_addr)->sin_addr, ip, sizeof ip); freeaddrinfo(r);
+    }
+    snprintf(g_pname, sizeof g_pname, "%s", b); snprintf(g_pip, sizeof g_pip, "%s", ip);
+    if (g_pmode == 0) {
+        char parent[MAX_PATH]; snprintf(parent, sizeof parent, "%s", g_pgame); char *sl = strrchr(parent, '\\'); if (sl) *sl = 0;
+        snprintf(g_pdest, sizeof g_pdest, "%s\\OverField Rozefield", parent);
+        if (!_stricmp(g_pdest, g_pgame)) { g_pmode = 1; }
+        else if (has_launcher(g_pdest)) {
+            wchar_t q[MAX_PATH + 200]; swprintf(q, MAX_PATH + 200, L"A Rozefield copy already exists:\n%hs\n\nYes: point that copy at this server (fast).\nNo: copy the game again over it.", g_pdest);
+            int rr = MessageBoxW(g_win, q, L"Play on Rozefield", MB_YESNOCANCEL | MB_ICONQUESTION);
+            if (rr == IDCANCEL) return;
+            if (rr == IDYES) { snprintf(g_pgame, sizeof g_pgame, "%s", g_pdest); g_pmode = 1; }
+        }
+    } else if (MessageBoxW(g_win, L"Change this game so it plays on Rozefield?\n\nIt stops logging in to the official servers until you press Undo. Make your backup with Rozefield Backup first.", L"Play on Rozefield", MB_OKCANCEL | MB_ICONQUESTION) != IDOK) return;
+    InterlockedExchange(&g_pbusy, 1); pmsg(RGB(122, 126, 142), L"Working\x2026");
+    CloseHandle(CreateThread(NULL, 0, patch_thread, NULL, 0, NULL));
+}
+static void patch_undo(void) {
+    if (g_pbusy || !g_pgame[0]) return;
+    if (find_launcher()) { pmsg(RGB(220, 60, 70), L"Close the game first."); return; }
+    int n = rz_undo(g_pgame);
+    if (n) pmsg(RGB(40, 160, 80), L"Undone: %d file%ls put back. This game uses the official servers again.", n, n == 1 ? L"" : L"s");
+    else pmsg(RGB(122, 126, 142), L"Nothing to undo in this folder.");
+}
+static void patch_browse(void) {
+    BROWSEINFOW bi = {0}; bi.hwndOwner = g_win; bi.lpszTitle = L"Choose the OverField game folder to play on Rozefield (the one with launcher.exe)";
+    bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+    LPITEMIDLIST id = SHBrowseForFolderW(&bi);
+    if (id) { wchar_t p[MAX_PATH]; if (SHGetPathFromIDListW(id, p)) WideCharToMultiByte(CP_ACP, 0, p, -1, g_pgame, MAX_PATH, NULL, NULL); CoTaskMemFree(id); }
+    if (g_pgame[0] && !has_launcher(g_pgame)) pmsg(RGB(220, 60, 70), L"launcher.exe isn't in that folder."); else g_pmsg[0] = 0;
+}
+static void set_tab(int t) {
+    g_tab = t; ShowWindow(g_psrv, t ? SW_SHOW : SW_HIDE);
+    if (t && !g_pgame[0]) { snprintf(g_pgame, sizeof g_pgame, "%s", g_game); }
+    if (t) { snprintf(g_found[0], MAX_PATH, "%s", g_game); find_launcher_install(g_found[1]); }
+}
+
+static void paint_patch(HDC dc) {
+    RECT card = {104, 132, WW - 36, WH - 36}; fill_round(dc, card, C_CARD, 22); outline_round(dc, card, C_LINE, 22);
+    RECT h1 = {124, 150, 700, 176}; txt(dc, f_h, C_TXT, h1, L"Play on Rozefield", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    RECT h2 = {340, 150, WW - 60, 176}; txt(dc, f_small, C_MUTE, h2, L"Use your own game on a Rozefield server after the shutdown, or as a copy now.", DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    /* game folder */
+    RECT gf = {124, 186, WW - 260, 218}; fill_round(dc, gf, C_TILE, 10);
+    wchar_t wg[MAX_PATH + 40]; if (g_pgame[0]) { wchar_t t[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_pgame, -1, t, MAX_PATH); swprintf(wg, MAX_PATH + 40, L"%ls%ls", t, is_patched(g_pgame) ? L"   (plays on Rozefield)" : L""); } else wcscpy(wg, L"No game folder yet - press Change");
+    RECT gt = {gf.left + 10, gf.top, gf.right - 8, gf.bottom}; txt(dc, f_body, g_pgame[0] ? C_TXT : C_MUTE, gt, wg, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_PATH_ELLIPSIS);
+    pill(dc, r_pchange, 0, g_hover == B_PCHANGE, !g_pbusy, L"Change\x2026");
+    const wchar_t *fl[] = {L"Steam", L"OverField launcher"};
+    for (int i = 0; i < 2; i++) { int ok = g_found[i][0] != 0; wchar_t lb[80]; swprintf(lb, 80, L"%ls%ls", fl[i], ok ? L"" : L" (not found)");
+        pill(dc, r_pfound[i], 0, g_hover == B_PFOUND0 + i, ok && !g_pbusy, lb); }
+    /* how */
+    RECT hw = {124, 270, 600, 292}; txt(dc, f_small, C_MUTE, hw, L"How", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    RECT rr[2] = {r_pcopy, r_pinplace}; const wchar_t *ht[] = {L"Make a Rozefield copy first  \x00B7  your official game stays as it is (needs free space)", L"Change this game  \x00B7  after 8 Feb 2027, or if you don't need official any more"};
+    for (int i = 0; i < 2; i++) { fill_round(dc, rr[i], g_pmode == i ? RGB(232, 248, 250) : C_CARD, 10); outline_round(dc, rr[i], g_pmode == i ? C_ACC : C_LINE, 10);
+        circle(dc, rr[i].left + 18, (rr[i].top + rr[i].bottom) / 2, 7, g_pmode == i ? C_ACC : C_LINE); if (g_pmode != i) circle(dc, rr[i].left + 18, (rr[i].top + rr[i].bottom) / 2, 5, C_CARD);
+        RECT t = {rr[i].left + 34, rr[i].top, rr[i].right - 8, rr[i].bottom}; txt(dc, f_small, C_TXT, t, ht[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS); }
+    RECT sv = {124, 398, 600, 420}; txt(dc, f_small, C_MUTE, sv, L"Default server (ask the server owner)", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    /* what it changes */
+    RECT wc2 = {124, 474, WW - 60, 544}; fill_round(dc, wc2, C_TILE, 12);
+    const wchar_t *wl[] = {L"Login window: the Rozefield login (official one kept as .orig)", L"The game points at the server: Config.txt and the address lookup (originals kept)", L"The Rozefield update downloads from the server the first time you start"};
+    for (int i = 0; i < 3; i++) { RECT t = {wc2.left + 34, wc2.top + 6 + i * 21, wc2.right - 10, wc2.top + 27 + i * 21}; circle(dc, wc2.left + 18, t.top + 10, 6, C_OK); tick(dc, wc2.left + 18, t.top + 10, RGB(255, 255, 255));
+        txt(dc, f_small, C_TXT, t, wl[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE); }
+    wchar_t gl[60]; if (g_pbusy && g_ptotal) swprintf(gl, 60, L"Copying %d%%", (int)(g_pdone * 100 / g_ptotal)); else wcscpy(gl, g_pbusy ? L"Working\x2026" : g_pmode == 0 ? L"Make Rozefield copy" : L"Change this game");
+    pill(dc, r_pgo, 1, g_hover == B_PGO, !g_pbusy, gl);
+    pill(dc, r_pundo, 0, g_hover == B_PUNDO, !g_pbusy && g_pgame[0] && is_patched(g_pgame), L"Undo on this game");
+    RECT ms = {124, 620, WW - 60, 680}; txt(dc, f_small, g_pmsgc, ms, g_pmsg, DT_LEFT | DT_WORDBREAK);
+    RECT nt = {124, WH - 92, WW - 60, WH - 52};
+    txt(dc, f_small, C_MUTE, nt, L"Steam may put the official login back when it updates or checks the game files: run this again. A Rozefield copy isn't affected. Back up your account first: after the change this game can't log in to official.", DT_LEFT | DT_WORDBREAK);
+}
+
 static void paint(HWND h) {
     PAINTSTRUCT ps; HDC wdc = BeginPaint(h, &ps);
     HDC dc = CreateCompatibleDC(wdc); HBITMAP bb = CreateCompatibleBitmap(wdc, WW, WH); HGDIOBJ ob = SelectObject(dc, bb);
@@ -1554,6 +1810,12 @@ static void paint(HWND h) {
     /* title (asymmetric, top-left) */
     RECT rt = {104, 34, 700, 84}; txt(dc, f_title, C_TXT, rt, L"Rozefield Backup", DT_LEFT | DT_SINGLELINE);
     RECT rs = {106, 84, 700, 108}; txt(dc, f_small, C_MUTE, rs, L"Keep your OverField account. The official servers close on 8 Feb 2027.", DT_LEFT | DT_SINGLELINE);
+    { RECT t0 = r_tab0, t1 = r_tab1;
+      fill_round(dc, t0, g_tab == 0 ? C_ACC : C_CARD, 18); if (g_tab) outline_round(dc, t0, C_LINE, 18);
+      fill_round(dc, t1, g_tab == 1 ? C_ACC : C_CARD, 18); if (!g_tab) outline_round(dc, t1, C_LINE, 18);
+      txt(dc, f_body, g_tab == 0 ? RGB(255, 255, 255) : C_TXT, t0, L"Back up", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+      txt(dc, f_body, g_tab == 1 ? RGB(255, 255, 255) : C_TXT, t1, L"Play on Rozefield", DT_CENTER | DT_VCENTER | DT_SINGLELINE); }
+    if (g_tab == 1) { paint_patch(dc); goto blit; }
 
     /* status card */
     RECT card = {104, 132, 560, 408}; fill_round(dc, card, C_CARD, 22); outline_round(dc, card, C_LINE, 22);
@@ -1666,6 +1928,7 @@ static void paint(HWND h) {
     }
     pill(dc, r_main, 1, g_hover == B_MAIN, !(g_mode == M_STARTING || g_mode == M_LOGIN || g_mode == M_FETCH) || (g_mode == M_WATCH), ml);
 
+blit:
     BitBlt(wdc, 0, 0, WW, WH, dc, 0, 0, SRCCOPY);
     SelectObject(dc, ob); DeleteObject(bb); DeleteDC(dc);
     EndPaint(h, &ps);
@@ -1693,6 +1956,20 @@ static int hit(int x, int y) {
     POINT pt = {x, y};
     if (PtInRect(&r_close, pt)) return B_CLOSE;
     if (PtInRect(&r_min, pt)) return B_MIN;
+    if (PtInRect(&r_tab0, pt)) return B_TAB0;
+    if (PtInRect(&r_tab1, pt)) return B_TAB1;
+    if (g_tab == 1) {
+        if (PtInRect(&r_pchange, pt)) return B_PCHANGE;
+        if (PtInRect(&r_pfound[0], pt)) return B_PFOUND0;
+        if (PtInRect(&r_pfound[1], pt)) return B_PFOUND1;
+        if (PtInRect(&r_pcopy, pt)) return B_PCOPY;
+        if (PtInRect(&r_pinplace, pt)) return B_PINPLACE;
+        if (PtInRect(&r_pgo, pt)) return B_PGO;
+        if (PtInRect(&r_pundo, pt)) return B_PUNDO;
+        if (PtInRect(&r_folder, pt)) return B_FOLDER;
+        if (PtInRect(&r_logb, pt)) return B_LOG;
+        return B_NONE;
+    }
     if (PtInRect(&r_main, pt)) return B_MAIN;
     if (PtInRect(&r_run, pt)) return B_RUNNING;
     if (PtInRect(&r_save, pt)) return B_SAVE;
@@ -1714,6 +1991,14 @@ static void on_click(int b) {
     case B_SAVE: do_save(0); break;
     case B_FOLDER: if (g_mode == M_IDLE) browse(); break;
     case B_LOG: ShellExecuteA(NULL, "open", g_logpath, NULL, NULL, SW_SHOWNORMAL); break;
+    case B_TAB0: set_tab(0); break;
+    case B_TAB1: set_tab(1); break;
+    case B_PCHANGE: if (!g_pbusy) patch_browse(); break;
+    case B_PFOUND0: case B_PFOUND1: if (!g_pbusy && g_found[b - B_PFOUND0][0]) { snprintf(g_pgame, sizeof g_pgame, "%s", g_found[b - B_PFOUND0]); g_pmsg[0] = 0; } break;
+    case B_PCOPY: if (!g_pbusy) g_pmode = 0; break;
+    case B_PINPLACE: if (!g_pbusy) g_pmode = 1; break;
+    case B_PGO: patch_go(); break;
+    case B_PUNDO: patch_undo(); break;
     }
     InvalidateRect(g_win, NULL, FALSE);
 }
@@ -1722,6 +2007,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     switch (m) {
     case WM_PAINT: paint(h); return 0;
     case WM_ERASEBKGND: return 1;
+    case WM_CTLCOLOREDIT: { static HBRUSH fb; if (!fb) fb = CreateSolidBrush(C_TILE); SetTextColor((HDC)w, C_TXT); SetBkColor((HDC)w, C_TILE); return (LRESULT)fb; }
     case WM_TIMER: {
         static int tk; if (tk++ % 33 == 0) g_game_running = find_launcher() != 0;
         double t = target_pct();
@@ -1788,8 +2074,12 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     g_win = CreateWindowExW(WS_EX_APPWINDOW, L"RozefieldBackup", L"Rozefield Backup", WS_POPUP | WS_MINIMIZEBOX | WS_SYSMENU,
                             (GetSystemMetrics(SM_CXSCREEN) - WW) / 2, (GetSystemMetrics(SM_CYSCREEN) - WH) / 2, WW, WH, NULL, NULL, hi, NULL);
     SetWindowRgn(g_win, CreateRoundRectRgn(0, 0, WW + 1, WH + 1, 16, 16), TRUE);
+    g_psrv = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_TABSTOP | ES_AUTOHSCROLL, 124, 424, 520, 34, g_win, NULL, hi, NULL);
+    SendMessageW(g_psrv, WM_SETFONT, (WPARAM)f_body, TRUE); SendMessageW(g_psrv, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(8, 8));
+    SendMessageW(g_psrv, 0x1501 /* EM_SETCUEBANNER */, TRUE, (LPARAM)L"Invite code RZ-XXXX-XXX, or a name like myserver.duckdns.org");
     ShowWindow(g_win, show); UpdateWindow(g_win);
     SetTimer(g_win, 1, 30, NULL);
+    if (strstr(cmd, "--play")) set_tab(1);
     ui_log("Rozefield Backup started. Game folder: %s", g_game[0] ? g_game : "(not found - use the folder button)");
     if (strstr(cmd, "--reconnect")) start_reconnect();
     else if (strstr(cmd, "--open")) start_backup();

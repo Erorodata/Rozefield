@@ -26,9 +26,12 @@
 #include <stdarg.h>
 #include <bcrypt.h>
 #include <time.h>
+#include <richedit.h>
 
 #define WW 1180
-#define WH 720
+#define WH 760
+#define SB 200          /* sidebar width */
+#define X0 (SB + 24)    /* main area */
 #define C_INK RGB(244, 246, 248)   /* OverField UI theme */
 #define C_PANEL RGB(255, 255, 255)
 #define C_LINE RGB(214, 218, 226)
@@ -47,7 +50,7 @@
 #endif
 
 static HWND g_win, g_list, g_logv, g_find, g_search;
-static HFONT f_title, f_h, f_body, f_small, f_btn, f_mono;
+static HFONT f_title, f_h, f_body, f_small, f_btn, f_mono, f_icon;
 static HBRUSH br_panel, br_field;
 static char g_dir[MAX_PATH], g_token[64];
 static int g_port = 18881;
@@ -196,6 +199,28 @@ static void put_kv(char *b, size_t bs, const char *k, const wchar_t *v) {
 }
 
 /* ---------------------------------------------------------------- server process */
+/* traffic (GET /admin/host/traffic): rates, 60 x 10 s history, per player */
+static long long t_down, t_up, t_msgs, t_today, t_dl;
+static int t_hist[60][3], t_nhist;
+struct tp { wchar_t name[64]; long long down, up, msgs; };
+static struct tp t_pl[12]; static int t_npl;
+static void parse_traffic(char *out) {
+    char *save = NULL; int np = 0;
+    for (char *line = strtok_s(out, "\n", &save); line; line = strtok_s(NULL, "\n", &save)) {
+        if (!strncmp(line, "rate|", 5)) sscanf(line + 5, "%lld|%lld|%lld|%lld|%lld", &t_down, &t_up, &t_msgs, &t_today, &t_dl);
+        else if (!strncmp(line, "hist|", 5)) {
+            int n = 0; char *q = line + 5;
+            while (*q && n < 60) { sscanf(q, "%d,%d,%d", &t_hist[n][0], &t_hist[n][1], &t_hist[n][2]); n++; q = strchr(q, ';'); if (!q) break; q++; }
+            t_nhist = n;
+        } else if (!strncmp(line, "p|", 2) && np < 12) {
+            char *f[5] = {0}; int k = 0; char *q = line;
+            while (k < 5) { f[k++] = q; char *bar = strchr(q, '|'); if (!bar) break; *bar = 0; q = bar + 1; }
+            if (k == 5) { MultiByteToWideChar(CP_UTF8, 0, f[1], -1, t_pl[np].name, 64); t_pl[np].down = atoll(f[2]); t_pl[np].up = atoll(f[3]); t_pl[np].msgs = atoll(f[4]); np++; }
+        }
+    }
+    t_npl = np;
+}
+
 static DWORD WINAPI poller(LPVOID a) {
     for (int tick = 0;; tick++) {
         char *out;
@@ -227,6 +252,7 @@ static DWORD WINAPI poller(LPVOID a) {
                 g_lognext = next;
                 free(out);
             }
+            if (tick % 2 == 0 && http("GET", "/admin/host/traffic", "", 0, &out)) { parse_traffic(out); free(out); }
             PostMessageW(g_win, WM_DATA, 1, 0);
         } else PostMessageW(g_win, WM_DATA, 0, 0);
         g_up = up;
@@ -351,9 +377,9 @@ static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Ren
 static const wchar_t *FILTERS[] = {L"All", L"Logins", L"Errors", L"Chat", L"Admin", L"HTTP", L"Player"};
 #define NFILT 7
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
-static RECT r_start = {WW - 470, WH - 70, WW - 340, WH - 26}, r_stop = {WW - 330, WH - 70, WW - 200, WH - 26}, r_restart = {WW - 190, WH - 70, WW - 36, WH - 26};
-static RECT r_savedir = {14, WH - 128, 58, WH - 84}, r_logfile = {14, WH - 74, 58, WH - 30};
-static RECT r_import = {96, WH - 70, 262, WH - 26}, r_mailall = {272, WH - 70, 430, WH - 26}, r_connect = {440, WH - 70, 600, WH - 26};
+static RECT r_start = {WW - 420, WH - 70, WW - 300, WH - 26}, r_stop = {WW - 290, WH - 70, WW - 170, WH - 26}, r_restart = {WW - 160, WH - 70, WW - 36, WH - 26};
+static RECT r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
+static RECT r_import = {X0, WH - 70, X0 + 150, WH - 26}, r_mailall = {X0 + 160, WH - 70, X0 + 300, WH - 26}, r_connect = {X0 + 310, WH - 70, X0 + 470, WH - 26};
 static RECT r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
 static RECT r_act[10], r_filt[NFILT];
 
@@ -626,12 +652,39 @@ static int line_matches(const wchar_t *l) {
     }
     return 1;
 }
+/* colour by kind: errors red, admin green, logins yellow, a player's own lines blue */
+enum { K_OTHER, K_ERR, K_ADMIN, K_LOGIN, K_PLAYER };
+static int line_kind(const wchar_t *l) {
+    if (wcsstr(l, L"WARNING") || wcsstr(l, L"ERROR") || wcsstr(l, L"Traceback") || wcsstr(l, L"failed") || wcsstr(l, L"refused") || wcsstr(l, L"rror")) return K_ERR;
+    if (wcsstr(l, L"[admin]") || wcsstr(l, L"[panel]")) return K_ADMIN;
+    if (wcsstr(l, L"login") || wcsstr(l, L"gate connection") || wcsstr(l, L"logged in") || wcsstr(l, L"imported") || wcsstr(l, L"/rozefield/register")) return K_LOGIN;
+    const wchar_t *b = wcschr(l, L' ');   /* "HH:MM:SS [Name] <- ..." */
+    if (b && b[1] == L'[' || wcsstr(l, L"[chat]")) return K_PLAYER;
+    return K_OTHER;
+}
+static void rtf_put(char **t, size_t *len, size_t *cap, const char *s) {
+    size_t n = strlen(s); if (*len + n + 1 >= *cap) { *cap = (*len + n + 1) * 2; *t = (char *)realloc(*t, *cap); }
+    memcpy(*t + *len, s, n + 1); *len += n;
+}
 static void rebuild_log(void) {
     EnterCriticalSection(&g_cs);
+    size_t rcap = 1 << 17, rlen = 0; char *rtf = (char *)malloc(rcap); rtf[0] = 0;
+    rtf_put(&rtf, &rlen, &rcap, "{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Cascadia Mono;}}"
+            "{\\colortbl;\\red60\\green64\\blue78;\\red200\\green40\\blue50;\\red28\\green136\\blue64;\\red176\\green124\\blue0;\\red30\\green96\\blue200;}"
+            "\\f0\\fs18\\sa60 ");
     size_t cap = 1 << 16, len = 0; wchar_t *t = (wchar_t *)malloc(cap * sizeof(wchar_t)); t[0] = 0;
     int from = g_nlines > 1500 ? g_nlines - 1500 : 0;
     for (int i = from; i < g_nlines; i++) {
         if (!line_matches(g_lines[i])) continue;
+        { char c[16]; snprintf(c, sizeof c, "\\cf%d ", 1 + line_kind(g_lines[i])); rtf_put(&rtf, &rlen, &rcap, c);
+          for (const wchar_t *q = g_lines[i]; *q; q++) {
+              char e[16];
+              if (*q == L'\\' || *q == L'{' || *q == L'}') snprintf(e, sizeof e, "\\%c", (char)*q);
+              else if (*q < 128) { e[0] = (char)*q; e[1] = 0; }
+              else snprintf(e, sizeof e, "\\u%d?", (int)(short)*q);
+              rtf_put(&rtf, &rlen, &rcap, e);
+          }
+          rtf_put(&rtf, &rlen, &rcap, "\\par "); }
         size_t n = wcslen(g_lines[i]);
         if (len + n + 3 >= cap) { cap = (len + n + 3) * 2; t = (wchar_t *)realloc(t, cap * sizeof(wchar_t)); }
         memcpy(t + len, g_lines[i], n * sizeof(wchar_t)); len += n; t[len++] = L'\r'; t[len++] = L'\n'; t[len] = 0;
@@ -642,7 +695,9 @@ static void rebuild_log(void) {
     int at_end = g_follow || si.nMax <= 0 || si.nPos + (int)si.nPage >= si.nMax - 2;
     int first = (int)SendMessageW(g_logv, EM_GETFIRSTVISIBLELINE, 0, 0);
     SendMessageW(g_logv, WM_SETREDRAW, FALSE, 0);
-    SetWindowTextW(g_logv, t);
+    rtf_put(&rtf, &rlen, &rcap, "}");
+    SETTEXTEX stx = {ST_DEFAULT, CP_ACP}; SendMessageW(g_logv, EM_SETTEXTEX, (WPARAM)&stx, (LPARAM)rtf); free(rtf);
+    len = (size_t)GetWindowTextLengthW(g_logv);
     if (at_end) { SendMessageW(g_logv, EM_SETSEL, (WPARAM)len, (LPARAM)len); SendMessageW(g_logv, EM_SCROLLCARET, 0, 0); }
     else SendMessageW(g_logv, EM_LINESCROLL, 0, first);   /* the reader scrolled up: stay where they are */
     SendMessageW(g_logv, WM_SETREDRAW, TRUE, 0);
@@ -675,19 +730,42 @@ static void pill(HDC dc, RECT r, int kind, int hover, int enabled, const wchar_t
     txt(dc, kind == 1 ? f_btn : f_small, kind == 1 ? RGB(255, 255, 255) : !enabled ? RGB(170, 174, 186) : kind == 2 ? C_BAD : C_TXT, r, label, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
+static void fmt_bytes(long long v, wchar_t *o, int per_sec) {
+    const wchar_t *u = per_sec ? L"/s" : L"";
+    if (v < 1024) swprintf(o, 40, L"%lld B%ls", v, u);
+    else if (v < 1024 * 1024) swprintf(o, 40, L"%.1f KB%ls", v / 1024.0, u);
+    else if (v < 1024LL * 1024 * 1024) swprintf(o, 40, L"%.1f MB%ls", v / 1048576.0, u);
+    else swprintf(o, 40, L"%.2f GB%ls", v / 1073741824.0, u);
+}
 static void paint(HWND h) {
     PAINTSTRUCT ps; HDC wdc = BeginPaint(h, &ps);
     HDC dc = CreateCompatibleDC(wdc); HBITMAP bb = CreateCompatibleBitmap(wdc, WW, WH); HGDIOBJ ob = SelectObject(dc, bb);
     RECT all = {0, 0, WW, WH}; fill(dc, all, C_INK, 0);
-    RECT rail = {0, 0, 72, WH}; fill(dc, rail, C_PANEL, 0); { RECT ln = {71, 0, 72, WH}; fill(dc, ln, C_LINE, 0); }
-    dot(dc, 36, 40, 18, C_ACC); RECT rl = {18, 22, 54, 58}; txt(dc, f_h, RGB(255, 255, 255), rl, L"R", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-    if (g_hover == B_SAVEDIR) fill(dc, r_savedir, C_TILE, 10);
-    if (g_hover == B_LOGFILE) fill(dc, r_logfile, C_TILE, 10);
-    { HPEN p = CreatePen(PS_SOLID, 2, C_MUTE); HGDIOBJ o = SelectObject(dc, p), b0 = SelectObject(dc, GetStockObject(NULL_BRUSH));
-      int x = r_savedir.left + 12, y = r_savedir.top + 13; RoundRect(dc, x, y + 3, x + 21, y + 18, 4, 4); MoveToEx(dc, x, y + 3, NULL); LineTo(dc, x, y); LineTo(dc, x + 8, y); LineTo(dc, x + 10, y + 3);
-      int lx = r_logfile.left + 13, ly = r_logfile.top + 12; Rectangle(dc, lx, ly, lx + 18, ly + 21);
-      for (int i = 0; i < 3; i++) { MoveToEx(dc, lx + 4, ly + 6 + i * 5, NULL); LineTo(dc, lx + 14, ly + 6 + i * 5); }
-      SelectObject(dc, o); SelectObject(dc, b0); DeleteObject(p); }
+    /* sidebar: the chosen player's actions, then folders */
+    RECT rail = {0, 0, SB, WH}; fill(dc, rail, C_PANEL, 0); { RECT ln = {SB - 1, 0, SB, WH}; fill(dc, ln, C_LINE, 0); }
+    dot(dc, 34, 40, 16, C_ACC); RECT rl = {18, 24, 50, 56}; txt(dc, f_h, RGB(255, 255, 255), rl, L"R", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    RECT rn0 = {58, 26, SB - 8, 54}; txt(dc, f_h, C_TXT, rn0, L"Rozefield", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    struct pl *p = sel();
+    { wchar_t cap[120]; if (p) swprintf(cap, 120, L"Player: %ls", p->name); else wcscpy(cap, L"Choose a player");
+      RECT rc = {20, 82, SB - 10, 102}; txt(dc, f_small, p ? C_TXT : C_MUTE, rc, cap, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS); }
+    static const wchar_t *ICONS[] = {L"\xE192", L"\xE785", L"\xE70F", L"\xE756", L"\xE715", L"\xE8BD", L"\xE7E8", L"\xE733", L"\xE74F", L"\xE77B"};
+    for (int i = 0; i < 10; i++) {
+        const wchar_t *lb = ACT_LABEL[i]; int danger = 0, en = p != NULL;
+        if (i == A_BAN - A_FIRST) { lb = p && p->banned ? L"Unban" : L"Ban"; danger = 1; }
+        if (i == A_MUTE - A_FIRST) lb = p && p->muted ? L"Unmute" : L"Mute";
+        if (i == A_KICK - A_FIRST) { danger = 1; en = p && p->online; }
+        if (i == A_GM - A_FIRST) en = p && p->online;
+        if (i == A_RECLAIM - A_FIRST) en = p && !p->official;
+        en = en && g_up;
+        RECT r = r_act[i]; if (en && g_hover == A_FIRST + i) fill(dc, r, RGB(232, 246, 248), 10);
+        COLORREF c = !en ? RGB(186, 189, 200) : danger ? C_BAD : C_TXT;
+        RECT ri = {r.left + 10, r.top, r.left + 34, r.bottom}; txt(dc, f_icon, c, ri, ICONS[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+        RECT rt2 = {r.left + 38, r.top, r.right - 6, r.bottom}; txt(dc, f_body, c, rt2, lb, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    }
+    { RECT rs2[] = {r_savedir, r_logfile}; const wchar_t *lab[] = {L"Save folder", L"Log file"}, *ic[] = {L"\xE8B7", L"\xE8A5"}; int hv[] = {B_SAVEDIR, B_LOGFILE};
+      for (int i = 0; i < 2; i++) { RECT r = rs2[i]; if (g_hover == hv[i]) fill(dc, r, C_TILE, 10);
+          RECT ri = {r.left + 10, r.top, r.left + 34, r.bottom}; txt(dc, f_icon, C_MUTE, ri, ic[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+          RECT rt2 = {r.left + 38, r.top, r.right, r.bottom}; txt(dc, f_body, C_MUTE, rt2, lab[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE); } }
     if (g_hover == B_CLOSE) fill(dc, r_close, RGB(200, 64, 76), 8);
     if (g_hover == B_MIN) fill(dc, r_min, C_TILE, 8);
     { HPEN p = CreatePen(PS_SOLID, 2, C_TXT); HGDIOBJ o = SelectObject(dc, p);
@@ -695,41 +773,62 @@ static void paint(HWND h) {
       MoveToEx(dc, cx - 6, cy - 6, NULL); LineTo(dc, cx + 7, cy + 7); MoveToEx(dc, cx + 6, cy - 6, NULL); LineTo(dc, cx - 7, cy + 7);
       cx = (r_min.left + r_min.right) / 2; MoveToEx(dc, cx - 7, cy, NULL); LineTo(dc, cx + 8, cy); SelectObject(dc, o); DeleteObject(p); }
 
-    RECT rt = {96, 22, 600, 64}; txt(dc, f_title, C_TXT, rt, L"Rozefield Server", DT_LEFT | DT_SINGLELINE);
+    RECT rt = {X0, 22, 600, 64}; txt(dc, f_title, C_TXT, rt, L"Rozefield Server", DT_LEFT | DT_SINGLELINE);
     int online = 0; for (int i = 0; i < g_npl; i++) online += g_pl[i].online;
     wchar_t st[480];
     if (g_up) swprintf(st, 160, L"Running  \x00B7  %d online  \x00B7  %d accounts%ls", online, g_npl, g_proc ? L"" : L"  \x00B7  started outside this window");
     else wcscpy(st, g_starting ? L"Starting\x2026" : g_remote ? L"Not reachable" : L"Stopped");
     if (g_remote) { wchar_t c[300]; swprintf(c, 300, L"  \x00B7  connected to %hs", g_host); wcscat(st, c); }
-    dot(dc, 104, 79, 5, g_up ? C_OK : g_starting ? C_WARN : C_BAD);
-    RECT rs = {116, 68, WW - 40, 92}; txt(dc, f_small, g_up ? C_OK : C_MUTE, rs, st, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    dot(dc, X0 + 8, 79, 5, g_up ? C_OK : g_starting ? C_WARN : C_BAD);
+    RECT rs = {X0 + 20, 68, WW - 40, 92}; txt(dc, f_small, g_up ? C_OK : C_MUTE, rs, st, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
     /* players panel */
-    RECT pp = {96, 106, 446, WH - 92}; fill(dc, pp, C_PANEL, 18); outline(dc, pp, C_LINE, 18);
-    RECT ph = {116, 116, 430, 140}; txt(dc, f_h, C_TXT, ph, L"Players", DT_LEFT | DT_SINGLELINE);
-    struct pl *p = sel();
-    RECT sh = {116, 378, 430, 398};
-    wchar_t sw[160]; if (p) swprintf(sw, 160, L"%ls  \x00B7  UID %d%ls", p->name, p->label, p->official ? L"  \x00B7  imported" : L""); else wcscpy(sw, L"Choose a player");
-    txt(dc, f_small, p ? C_TXT : C_MUTE, sh, sw, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
-    for (int i = 0; i < 10; i++) {
-        const wchar_t *lb = ACT_LABEL[i]; int kind = 0, en = p != NULL;
-        if (i == A_BAN - A_FIRST) { lb = p && p->banned ? L"Unban" : L"Ban"; kind = 2; }
-        if (i == A_MUTE - A_FIRST) lb = p && p->muted ? L"Unmute" : L"Mute";
-        if (i == A_KICK - A_FIRST) { kind = 2; en = p && p->online; }
-        if (i == A_GM - A_FIRST) en = p && p->online;
-        if (i == A_RECLAIM - A_FIRST) en = p && !p->official;
-        pill(dc, r_act[i], kind, g_hover == A_FIRST + i, en && g_up, lb);
-    }
-    /* log panel */
-    RECT lp = {462, 106, WW - 24, WH - 92}; fill(dc, lp, C_PANEL, 18); outline(dc, lp, C_LINE, 18);
-    RECT lh = {482, 116, 700, 140}; txt(dc, f_h, C_TXT, lh, L"Live log", DT_LEFT | DT_SINGLELINE);
+    RECT pp = {X0, 106, X0 + 380, 400}; fill(dc, pp, C_PANEL, 18); outline(dc, pp, C_LINE, 18);
+    RECT ph = {X0 + 16, 116, X0 + 120, 140}; txt(dc, f_h, C_TXT, ph, L"Players", DT_LEFT | DT_SINGLELINE);
+    /* traffic */
+    { RECT tc = {X0, 414, X0 + 380, WH - 92}; fill(dc, tc, C_PANEL, 18); outline(dc, tc, C_LINE, 18);
+      RECT th = {X0 + 16, 422, X0 + 200, 446}; txt(dc, f_h, C_TXT, th, L"Traffic", DT_LEFT | DT_SINGLELINE);
+      RECT tl = {X0 + 200, 424, X0 + 364, 446}; txt(dc, f_small, C_MUTE, tl, L"last 10 minutes", DT_RIGHT | DT_SINGLELINE);
+      RECT gr = {X0 + 16, 452, X0 + 364, 522}; fill(dc, gr, RGB(248, 249, 251), 8);
+      int mx = 1024; for (int i = 0; i < t_nhist; i++) { if (t_hist[i][0] > mx) mx = t_hist[i][0]; if (t_hist[i][1] > mx) mx = t_hist[i][1]; }
+      for (int k = 0; k < 2 && t_nhist > 1; k++) {
+          HPEN pen = CreatePen(k ? PS_DOT : PS_SOLID, k ? 1 : 2, k ? RGB(230, 0, 110) : C_ACC); HGDIOBJ o = SelectObject(dc, pen);
+          for (int i = 0; i < t_nhist; i++) {
+              int x = gr.left + 4 + (gr.right - gr.left - 8) * i / (t_nhist - 1), y = gr.bottom - 4 - (int)((long long)(gr.bottom - gr.top - 8) * t_hist[i][k] / mx);
+              if (i) LineTo(dc, x, y); else MoveToEx(dc, x, y, NULL);
+          }
+          SelectObject(dc, o); DeleteObject(pen);
+      }
+      wchar_t a[40], b[40], c2[40], d[40], m[160];
+      fmt_bytes(t_down, a, 1); fmt_bytes(t_up, b, 1); fmt_bytes(t_today, c2, 0); fmt_bytes(mx, d, 1);
+      swprintf(m, 160, L"\x2014 to players   \x00B7\x00B7 from players   (top: %ls)", d);
+      RECT lg = {X0 + 16, 524, X0 + 364, 542}; txt(dc, f_small, C_MUTE, lg, m, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+      const wchar_t *tn[] = {L"Down", L"Up", L"Msgs/s", L"Today"}; wchar_t tv[4][40]; wcscpy(tv[0], a); wcscpy(tv[1], b); swprintf(tv[2], 40, L"%lld", t_msgs); wcscpy(tv[3], c2);
+      for (int i = 0; i < 4; i++) { RECT r = {X0 + 16 + i * 88, 546, X0 + 98 + i * 88, 588}; fill(dc, r, C_TILE, 8);
+          RECT r1 = {r.left + 8, r.top + 3, r.right - 4, r.top + 20}; txt(dc, f_small, C_MUTE, r1, tn[i], DT_LEFT | DT_SINGLELINE);
+          RECT r2 = {r.left + 8, r.top + 20, r.right - 4, r.bottom - 2}; txt(dc, f_body, C_TXT, r2, tv[i], DT_LEFT | DT_SINGLELINE); }
+      int y = 594;
+      for (int i = 0; i < t_npl && y < WH - 120; i++, y += 20) {
+          wchar_t r1[40], r2[40], line[160]; fmt_bytes(t_pl[i].down, r1, 1); fmt_bytes(t_pl[i].up, r2, 1);
+          swprintf(line, 160, L"%ls \x2193  %ls \x2191  \x00B7  %lld msgs/s", r1, r2, t_pl[i].msgs);
+          RECT ra = {X0 + 16, y, X0 + 150, y + 20}; txt(dc, f_small, C_TXT, ra, t_pl[i].name, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+          RECT rb = {X0 + 150, y, X0 + 364, y + 20}; txt(dc, f_small, C_MUTE, rb, line, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+      }
+      { wchar_t r1[40], line[120]; fmt_bytes(t_dl, r1, 1); swprintf(line, 120, L"%ls", r1);
+        RECT ra = {X0 + 16, y, X0 + 220, y + 20}; txt(dc, f_small, C_TXT, ra, L"Downloads (updates, game zip)", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+        RECT rb = {X0 + 220, y, X0 + 364, y + 20}; txt(dc, f_small, C_MUTE, rb, line, DT_RIGHT | DT_VCENTER | DT_SINGLELINE); } }
+    /* log panel: tall, beside players and traffic */
+    RECT lp = {X0 + 396, 106, WW - 24, WH - 92}; fill(dc, lp, C_PANEL, 18); outline(dc, lp, C_LINE, 18);
+    RECT lh = {X0 + 412, 116, X0 + 560, 140}; txt(dc, f_h, C_TXT, lh, L"Live log", DT_LEFT | DT_SINGLELINE);
+    { const wchar_t *kl[] = {L"Login", L"Error", L"Admin", L"Player"}; COLORREF kc[] = {RGB(176, 124, 0), RGB(200, 40, 50), RGB(28, 136, 64), RGB(30, 96, 200)};
+      int x = X0 + 412; for (int i = 0; i < 4; i++) { dot(dc, x + 4, 188 - 4 + 4, 4, kc[i]); RECT r = {x + 12, 180, x + 70, 196}; txt(dc, f_small, kc[i], r, kl[i], DT_LEFT | DT_VCENTER | DT_SINGLELINE); x += 66; } }
     for (int i = 0; i < NFILT; i++) {
         RECT r = r_filt[i];
         if (i == g_filter) fill(dc, r, C_ACC, 12); else { fill(dc, r, g_hover == F_FIRST + i ? RGB(220, 240, 243) : C_TILE, 12); }
         txt(dc, f_small, i == g_filter ? RGB(255, 255, 255) : C_TXT, r, FILTERS[i], DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     }
     /* bottom bar */
-    RECT bar = {72, WH - 84, WW, WH}; fill(dc, bar, C_PANEL, 0); { RECT ln = {72, WH - 84, WW, WH - 83}; fill(dc, ln, C_LINE, 0); }
+    RECT bar = {SB, WH - 84, WW, WH}; fill(dc, bar, C_PANEL, 0); { RECT ln = {SB, WH - 84, WW, WH - 83}; fill(dc, ln, C_LINE, 0); }
     pill(dc, r_import, 0, g_hover == B_IMPORT, g_up, L"Import backup");
     pill(dc, r_mailall, 0, g_hover == B_MAILALL, g_up, L"Mail everyone");
     pill(dc, r_connect, 0, g_hover == B_CONNECT, 1, g_remote ? L"Connect (other device)" : L"Connect\x2026");
@@ -847,7 +946,7 @@ static LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l) {
         InvalidateRect(h, NULL, FALSE); return 0;
     case WM_NCHITTEST: {
         LRESULT r = DefWindowProcW(h, m, w, l);
-        if (r == HTCLIENT) { POINT pt = {(short)LOWORD(l), (short)HIWORD(l)}; ScreenToClient(h, &pt); if (pt.y < 100 && pt.x > 72 && hit(pt.x, pt.y) == B_NONE) return HTCAPTION; }
+        if (r == HTCLIENT) { POINT pt = {(short)LOWORD(l), (short)HIWORD(l)}; ScreenToClient(h, &pt); if (pt.y < 100 && pt.x > SB && hit(pt.x, pt.y) == B_NONE) return HTCAPTION; }
         return r; }
     case WM_MOUSEMOVE: {
         int b = hit((short)LOWORD(l), (short)HIWORD(l));
@@ -907,8 +1006,10 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     f_btn = CreateFontW(-18, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Bahnschrift SemiBold");
     f_mono = CreateFontW(-13, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, FIXED_PITCH, L"Cascadia Mono");
     br_panel = CreateSolidBrush(C_PANEL); br_field = CreateSolidBrush(C_FIELD);
-    for (int i = 0; i < 10; i++) { int c = i % 2, r = i / 2; r_act[i] = (RECT){116 + c * 160, 408 + r * 44, 266 + c * 160, 444 + r * 44}; }
-    for (int i = 0; i < NFILT; i++) r_filt[i] = (RECT){482 + i * 70, 148, 546 + i * 70, 174};
+    for (int i = 0; i < 10; i++) r_act[i] = (RECT){10, 108 + i * 36, SB - 10, 140 + i * 36};
+    for (int i = 0; i < NFILT; i++) r_filt[i] = (RECT){X0 + 412 + i * 68, 148, X0 + 474 + i * 68, 174};
+    f_icon = CreateFontW(-16, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Segoe MDL2 Assets");
+    LoadLibraryW(L"Msftedit.dll");
 
     WNDCLASSW wc = {0}; wc.lpfnWndProc = WndProc; wc.hInstance = hi; wc.lpszClassName = L"RozefieldServerPanel";
     wc.hCursor = LoadCursor(NULL, IDC_ARROW); wc.hIcon = LoadIcon(NULL, IDI_APPLICATION); RegisterClassW(&wc);
@@ -916,15 +1017,15 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     g_win = CreateWindowExW(WS_EX_APPWINDOW, L"RozefieldServerPanel", L"Rozefield Server", WS_POPUP | WS_MINIMIZEBOX | WS_SYSMENU | WS_CLIPCHILDREN,
                             (GetSystemMetrics(SM_CXSCREEN) - WW) / 2, (GetSystemMetrics(SM_CYSCREEN) - WH) / 2, WW, WH, NULL, NULL, hi, NULL);
     SetWindowRgn(g_win, CreateRoundRectRgn(0, 0, WW + 1, WH + 1, 16, 16), TRUE);
-    g_find = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 230, 116, 196, 26, g_win, NULL, hi, NULL);
+    g_find = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, X0 + 130, 114, 234, 26, g_win, NULL, hi, NULL);
     SendMessageW(g_find, EM_SETCUEBANNER, TRUE, (LPARAM)L"Find name or UID");
     g_list = CreateWindowExW(0, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_OWNERDRAWFIXED | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
-                             108, 150, 326, 222, g_win, NULL, hi, NULL);
-    g_search = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, WW - 196, 147, 152, 28, g_win, NULL, hi, NULL);
+                             X0 + 12, 150, 356, 240, g_win, NULL, hi, NULL);
+    g_search = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, WW - 214, 113, 172, 28, g_win, NULL, hi, NULL);
     SendMessageW(g_search, EM_SETCUEBANNER, TRUE, (LPARAM)L"Search the log");
-    g_logv = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL,
-                             482, 186, WW - 526, WH - 290, g_win, NULL, hi, NULL);
-    SendMessageW(g_logv, EM_SETLIMITTEXT, 0, 0);
+    g_logv = CreateWindowExW(0, MSFTEDIT_CLASS, L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL,
+                             X0 + 408, 204, WW - 24 - 12 - (X0 + 408), WH - 92 - 12 - 204, g_win, NULL, hi, NULL);
+    SendMessageW(g_logv, EM_EXLIMITTEXT, 0, 0x7FFFFFFF); SendMessageW(g_logv, EM_SETBKGNDCOLOR, 0, C_PANEL);
     SendMessageW(g_find, WM_SETFONT, (WPARAM)f_body, TRUE); SendMessageW(g_search, WM_SETFONT, (WPARAM)f_body, TRUE);
     SendMessageW(g_logv, WM_SETFONT, (WPARAM)f_mono, TRUE);
     SendMessageW(g_find, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(6, 6)); SendMessageW(g_search, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(6, 6));

@@ -10,3 +10,11 @@ Keep that file. After the shutdown, import it on any Rozefield server: in the Ro
 Import official backup.
 
 Nothing in your official account is changed. The backup never keeps your login token or device details.
+
+Play on Rozefield (second tab)
+Points your own OverField (Steam, the OverField launcher, or any copy) at a Rozefield server:
+1. Open the "Play on Rozefield" tab. Pick Steam / OverField launcher, or Change to choose the folder.
+2. Choose "Make a Rozefield copy first" (your official game stays as it is) or "Change this game" (after 8 Feb 2027).
+3. Type the server's invite code (RZ-XXXX-XXX) or name, then press the button.
+4. Start launcher.exe in that folder. The login window lets you pick other servers too.
+Undo on this game puts every changed file back. If Steam updates or checks the game files, run it again.

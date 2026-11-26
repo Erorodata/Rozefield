@@ -15,6 +15,7 @@ import argparse, asyncio, copy, gzip, json, logging, os, sys, time, urllib.parse
 from ofproto import ID2NAME, NAME2ID, decode, frame, from_dict, new, to_dict, unframe, msg_class
 
 log = logging.getLogger('rozefield')
+from game import traffic   # noqa: E402  (counters for the panel's Traffic card)
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -281,6 +282,8 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
             return netsvc.servers_json().encode('utf-8'), 200, 'application/json'
         if p == 'imports':
             return hostdata.imports_text().encode('utf-8'), 200, txt
+        if p == 'traffic':
+            return traffic.text().encode('utf-8'), 200, txt
         if p == 'undo_import' and method == 'POST':
             r = hostdata.undo_import(int(body.decode() or 0), lambda pid: bool(self.game and self.game.is_online(pid)))
             return r.encode('utf-8'), 200, txt
@@ -328,6 +331,7 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
                 if not chunk:
                     break
                 writer.write(chunk); left -= len(chunk)
+                traffic.record('dl', len(chunk))
                 await writer.drain()
         writer.close()
 
@@ -695,7 +699,9 @@ class Session:
         m = from_dict(name, d)
         if push:
             self.seq += 1
-        self.w.write(frame(NAME2ID[name], m.SerializeToString(), packet_id=packet_id, seq_id=self.seq if push else None))
+        fr = frame(NAME2ID[name], m.SerializeToString(), packet_id=packet_id, seq_id=self.seq if push else None)
+        self.w.write(fr)
+        traffic.record('down', len(fr), self.p.s['name'] if self.p else None, 1)
         if name != 'PlayerPingRsp':
             log.info('%s  -> %s%s', self.tag(), name, ' push' if push else '')
         if self.cfg.traffic:
@@ -722,8 +728,11 @@ class Session:
                 if not data:
                     break
                 buf += data
+                n = 0
                 for h, body in unframe(buf):
                     self.handle(h, body)
+                    n += 1
+                traffic.record('up', len(data), self.p.s['name'] if self.p else None, n)
                 await self.w.drain()
                 if self.p and self.p.dirty:
                     self.p.save()
