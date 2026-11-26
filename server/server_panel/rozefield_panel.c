@@ -369,7 +369,7 @@ static void show_text(const wchar_t *title, const wchar_t *text) {   /* long res
 
 /* ---------------------------------------------------------------- actions */
 enum { B_NONE, B_CLOSE, B_MIN, B_START, B_STOP, B_RESTART, B_SAVEDIR, B_LOGFILE, B_IMPORT, B_MAILALL,
-       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE,
+       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE,
        A_FIRST, A_RESETPW = A_FIRST, A_CLEARPW, A_RENAME, A_GM, A_MAIL, A_CHAT, A_KICK, A_BAN, A_MUTE, A_RECLAIM, A_LAST,
        F_FIRST = 50 };
 static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Rename", L"GM commands", L"Send mail", L"Chat log",
@@ -380,7 +380,7 @@ static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56,
 static RECT r_start = {WW - 420, WH - 70, WW - 300, WH - 26}, r_stop = {WW - 290, WH - 70, WW - 170, WH - 26}, r_restart = {WW - 160, WH - 70, WW - 36, WH - 26};
 static RECT r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
 static RECT r_import = {X0, WH - 70, X0 + 150, WH - 26}, r_mailall = {X0 + 160, WH - 70, X0 + 300, WH - 26}, r_connect = {X0 + 310, WH - 70, X0 + 470, WH - 26};
-static RECT r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
+static RECT r_share = {508, 26, 592, 58}, r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
 static RECT r_act[10], r_filt[NFILT];
 
 static struct pl *sel(void) { return (g_sel >= 0 && g_sel < g_npl) ? &g_pl[g_sel] : NULL; }
@@ -557,6 +557,80 @@ static void do_package(void) {
     MessageBoxW(g_win, ok ? L"Building in the background. Press Game package again to see how far it is." : r, L"Game package", MB_OK | (ok ? MB_ICONINFORMATION : MB_ICONWARNING)); free(r);
 }
 
+
+/* ---------------------------------------------------------------- Share with players */
+static HWND g_sh_edit[4], g_sh_warn; static char g_sh_msg[2000];
+static void to_clipboard(const wchar_t *t) {
+    if (!OpenClipboard(g_win)) return; EmptyClipboard();
+    size_t n = (wcslen(t) + 1) * sizeof(wchar_t); HGLOBAL h = GlobalAlloc(GMEM_MOVEABLE, n);
+    if (h) { memcpy(GlobalLock(h), t, n); GlobalUnlock(h); SetClipboardData(CF_UNICODETEXT, h); }
+    CloseClipboard();
+}
+static void share_fill(HWND d) {
+    char *js; if (!http("GET", "/admin/host/status", "", 0, &js)) { SetWindowTextW(g_sh_warn, L"The server didn't answer."); return; }
+    char code[32], lcode[32], name[256], link[512], router[300], pub[64], lan[64], pkg[400];
+    json_get(js, NULL, "invite_code", code, sizeof code); json_get(js, NULL, "lan_code", lcode, sizeof lcode);
+    json_get(js, "\"settings\"", "server_name", name, sizeof name); json_get(js, "\"settings\"", "download_link", link, sizeof link);
+    json_get(js, NULL, "router", router, sizeof router); json_get(js, NULL, "public_ip", pub, sizeof pub); json_get(js, NULL, "lan_ip", lan, sizeof lan);
+    json_get(js, NULL, "package", pkg, sizeof pkg); free(js);
+    char dl[600]; if (link[0]) snprintf(dl, sizeof dl, "%s", link); else snprintf(dl, sizeof dl, "http://%s/", name[0] ? name : pub[0] ? pub : lan);
+    const char *vals[4] = {lcode[0] ? lcode : "(unknown)", code[0] ? code : "(internet address unknown)", name[0] ? name : "not set - use Hosting", dl};
+    for (int i = 0; i < 4; i++) { wchar_t w[600]; MultiByteToWideChar(CP_UTF8, 0, vals[i], -1, w, 600); SetWindowTextW(g_sh_edit[i], w); }
+    wchar_t warn[700];
+    if (!strncmp(router, "open", 4)) swprintf(warn, 700, L"Router: %hs", router);
+    else swprintf(warn, 700, L"Internet players can't reach you yet: forward TCP 80, 18881 and 11001 to %hs in your router, or turn on UPnP there, then Check again. (Same Wi-Fi works now.)", lan);
+    if (strncmp(pkg, "done", 4) && !link[0]) wcscat(warn, L"\nThe game download needs Game package first (or a Drive link in Hosting).");
+    SetWindowTextW(g_sh_warn, warn);
+    const char *join = name[0] ? name : code;
+    snprintf(g_sh_msg, sizeof g_sh_msg,
+             "Join my OverField server (Rozefield)!\r\n"
+             "1. Download the game: %s\r\n"
+             "   (Already have OverField? Rozefield Backup > Play on Rozefield does it with your own game.)\r\n"
+             "2. Start launcher.exe in the Overfield folder.\r\n"
+             "3. In the login window press + and enter: %s - then Create account (or Bring my account).\r\n"
+             "Same Wi-Fi as me? Use %s instead, or press the search button.", dl, join, lcode);
+}
+static LRESULT CALLBACK ShareProc(HWND h, UINT m, WPARAM w, LPARAM l) {
+    switch (m) {
+    case WM_CTLCOLOREDIT: case WM_CTLCOLORSTATIC:
+        SetTextColor((HDC)w, (HWND)l == g_sh_warn ? RGB(133, 79, 11) : C_TXT); SetBkColor((HDC)w, (HWND)l == g_sh_warn ? RGB(250, 238, 218) : C_PANEL);
+        { static HBRUSH wb; if (!wb) wb = CreateSolidBrush(RGB(250, 238, 218)); return (LRESULT)((HWND)l == g_sh_warn ? wb : br_panel); }
+    case WM_ERASEBKGND: { RECT r; GetClientRect(h, &r); FillRect((HDC)w, &r, br_panel); return 1; }
+    case WM_COMMAND: {
+        int id = LOWORD(w);
+        if (id >= 100 && id < 104) { wchar_t t[600]; GetWindowTextW(g_sh_edit[id - 100], t, 600); to_clipboard(t); SetWindowTextW(GetDlgItem(h, id), L"Copied"); }
+        else if (id == 110) { wchar_t t[2000]; MultiByteToWideChar(CP_UTF8, 0, g_sh_msg, -1, t, 2000); to_clipboard(t); SetWindowTextW(GetDlgItem(h, 110), L"Copied - paste it in chat"); }
+        else if (id == 111) { SetWindowTextW(g_sh_warn, L"Asking the router\x2026"); UpdateWindow(h); char *o; if (http("POST", "/admin/host/router", "", 0, &o)) free(o); share_fill(h); }
+        else if (id == IDCANCEL) DestroyWindow(h);
+        return 0; }
+    case WM_CLOSE: DestroyWindow(h); return 0;
+    case WM_DESTROY: EnableWindow(g_win, TRUE); SetForegroundWindow(g_win); return 0;
+    }
+    return DefWindowProcW(h, m, w, l);
+}
+static void do_share(void) {
+    static int reg; if (!reg) { WNDCLASSW wc = {0}; wc.lpfnWndProc = ShareProc; wc.hInstance = GetModuleHandleW(NULL); wc.lpszClassName = L"RzShare"; wc.hCursor = LoadCursor(NULL, IDC_ARROW); RegisterClassW(&wc); reg = 1; }
+    int W = 620, H = 400; RECT pr; GetWindowRect(g_win, &pr);
+    HWND d = CreateWindowExW(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, L"RzShare", L"Share with players", WS_POPUP | WS_CAPTION | WS_SYSMENU,
+                             (pr.left + pr.right - W) / 2, (pr.top + pr.bottom - H) / 2, W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
+    const wchar_t *lab[] = {L"Same Wi-Fi (invite code)", L"Internet (invite code)", L"Fixed server name", L"Game download"};
+    for (int i = 0; i < 4; i++) {
+        int y = 18 + i * 44;
+        HWND s = CreateWindowW(L"STATIC", lab[i], WS_CHILD | WS_VISIBLE, 18, y + 6, 170, 22, d, NULL, NULL, NULL); SendMessageW(s, WM_SETFONT, (WPARAM)f_small, TRUE);
+        g_sh_edit[i] = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_READONLY | ES_AUTOHSCROLL, 190, y + 2, 300, 28, d, NULL, NULL, NULL);
+        SendMessageW(g_sh_edit[i], WM_SETFONT, (WPARAM)(i < 2 ? f_mono : f_body), TRUE);
+        HWND b = CreateWindowW(L"BUTTON", L"Copy", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 500, y, 96, 30, d, (HMENU)(INT_PTR)(100 + i), NULL, NULL); SendMessageW(b, WM_SETFONT, (WPARAM)f_small, TRUE);
+    }
+    g_sh_warn = CreateWindowW(L"STATIC", L"", WS_CHILD | WS_VISIBLE, 18, 200, W - 40, 70, d, NULL, NULL, NULL); SendMessageW(g_sh_warn, WM_SETFONT, (WPARAM)f_small, TRUE);
+    HWND b1 = CreateWindowW(L"BUTTON", L"Copy invite message", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 18, 290, 220, 34, d, (HMENU)110, NULL, NULL);
+    HWND b2 = CreateWindowW(L"BUTTON", L"Check router again", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 248, 290, 170, 34, d, (HMENU)111, NULL, NULL);
+    HWND b3 = CreateWindowW(L"BUTTON", L"Close", WS_CHILD | WS_VISIBLE | WS_TABSTOP, W - 124, 290, 96, 34, d, (HMENU)IDCANCEL, NULL, NULL);
+    HWND hint = CreateWindowW(L"STATIC", L"The invite message has the download link, the code (or fixed name) and 3 steps, ready to paste in chat.", WS_CHILD | WS_VISIBLE, 18, 332, W - 40, 22, d, NULL, NULL, NULL);
+    SendMessageW(b1, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(b2, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(b3, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(hint, WM_SETFONT, (WPARAM)f_small, TRUE);
+    share_fill(d);
+    EnableWindow(g_win, FALSE); ShowWindow(d, SW_SHOW);
+}
+
 static void do_action(int a) {
     struct pl *p = sel(); char b[8192]; int ok; wchar_t *r;
     if (a >= A_FIRST && a < A_LAST && !p) { MessageBoxW(g_win, L"Choose a player in the list first.", L"Rozefield Server", MB_OK); return; }
@@ -567,6 +641,7 @@ static void do_action(int a) {
     case B_IMPORTS: do_imports(); break;
     case B_MOVE: do_move(); break;
     case B_PACKAGE: do_package(); break;
+    case B_SHARE: do_share(); break;
     case A_RESETPW: {
         const wchar_t *lab[] = {L"New password (4+ characters)"};
         if (!ask(L"Reset password", who, 1, lab, NULL, 0)) return;
@@ -657,6 +732,7 @@ enum { K_OTHER, K_ERR, K_ADMIN, K_LOGIN, K_PLAYER };
 static int line_kind(const wchar_t *l) {
     if (wcsstr(l, L"WARNING") || wcsstr(l, L"ERROR") || wcsstr(l, L"Traceback") || wcsstr(l, L"failed") || wcsstr(l, L"refused") || wcsstr(l, L"rror")) return K_ERR;
     if (wcsstr(l, L"[admin]") || wcsstr(l, L"[panel]")) return K_ADMIN;
+    if (wcsstr(l, L" HTTP ")) return wcsstr(l, L"/rozefield/login") || wcsstr(l, L"/rozefield/register") ? K_LOGIN : K_OTHER;
     if (wcsstr(l, L"login") || wcsstr(l, L"gate connection") || wcsstr(l, L"logged in") || wcsstr(l, L"imported") || wcsstr(l, L"/rozefield/register")) return K_LOGIN;
     const wchar_t *b = wcschr(l, L' ');   /* "HH:MM:SS [Name] <- ..." */
     if (b && b[1] == L'[' || wcsstr(l, L"[chat]")) return K_PLAYER;
@@ -832,6 +908,7 @@ static void paint(HWND h) {
     pill(dc, r_import, 0, g_hover == B_IMPORT, g_up, L"Import backup");
     pill(dc, r_mailall, 0, g_hover == B_MAILALL, g_up, L"Mail everyone");
     pill(dc, r_connect, 0, g_hover == B_CONNECT, 1, g_remote ? L"Connect (other device)" : L"Connect\x2026");
+    pill(dc, r_share, 1, g_hover == B_SHARE, g_up, L"Share");
     pill(dc, r_hosting, 0, g_hover == B_HOSTING, g_up, L"Hosting");
     pill(dc, r_imports, 0, g_hover == B_IMPORTS, g_up, L"Imports");
     pill(dc, r_move, 0, g_hover == B_MOVE, g_up, L"Move server");
@@ -856,6 +933,7 @@ static int hit(int x, int y) {
     if (PtInRect(&r_import, pt)) return B_IMPORT;
     if (PtInRect(&r_mailall, pt)) return B_MAILALL;
     if (PtInRect(&r_connect, pt)) return B_CONNECT;
+    if (PtInRect(&r_share, pt)) return B_SHARE;
     if (PtInRect(&r_hosting, pt)) return B_HOSTING;
     if (PtInRect(&r_imports, pt)) return B_IMPORTS;
     if (PtInRect(&r_move, pt)) return B_MOVE;
@@ -878,7 +956,7 @@ static void click(int b) {
     case B_LOGFILE: snprintf(p, sizeof p, "%sserver.log", g_dir); ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break;
     default:
         if (b >= F_FIRST && b < F_FIRST + NFILT) { g_filter = b - F_FIRST; g_follow = 1; rebuild_log(); }
-        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_PACKAGE)) { if (g_up) do_action(b); }
+        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_SHARE)) { if (g_up) do_action(b); }
     }
     InvalidateRect(g_win, NULL, FALSE);
 }
