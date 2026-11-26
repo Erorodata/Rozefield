@@ -25,8 +25,9 @@ Every main story, side story and event storyline needs a pass on Rozefield. Use 
 | Prologue: Over Field — 01 New Companion | Done (talk, recruit, claim) | Patterns 1–3 found and fixed |
 | Prologue: Over Field — 02 First Steps | Done on a test account (Area Terminal, salvager, story reward) | Issues 29, 30 fixed |
 | Prologue: Over Field — 03 Ups and Downs | Step 2 (Double Jump via Astral Atlas) | Issue 31 fixed; step 3 "Proceed to Garden Realm" onward to check |
+| Prologue: Over Field — 03 Ups and Downs | Done | Issue 34 (accept-quest tutorial) fixed |
 | Prologue: Over Field — 04 onward | — | To check |
 | Other main chapters | — | To check |
-| Extra Chapter: Investigator (CN) | — | To check |
+| Chapter 5 (Global; Extra Chapter: Investigator on CN) | — | To check |
 | Side stories | — | To check |
 | Event storylines | — | To check |

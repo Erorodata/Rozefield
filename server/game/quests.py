@@ -251,14 +251,30 @@ def advance_main(p):
             if q and q.get('status') in (IN_PROGRESS, COMPLETED):
                 del qs[str(qid)]
         p.s['extra_story_cleanup'] = 1
+    if not p.s.get('story_accept_fix'):
+        # older builds started each new story by themselves, which leaves the "accept new quests" tutorial stuck:
+        # a story whose first quest was never touched goes back to "Accept Quest" on the story screen (once)
+        for st in x['stories'].values():
+            grp = x['by_group'].get(st.get('QuestID'), [])
+            if grp and str(grp[0]) in qs and not any(str(g) in qs for g in grp[1:]):
+                q = qs[str(grp[0])]
+                if q.get('status') == IN_PROGRESS and not any(c.get('progress') for c in q.get('conditions', [])) \
+                        and st['ID'] not in OPTIONAL_STORIES and grp[0] != x['main_order'][0]:
+                    del qs[str(grp[0])]
+        p.s['story_accept_fix'] = 1
     for qid in x['main_order']:
         if (qs.get(str(qid)) or {}).get('status') in (IN_PROGRESS, COMPLETED):
             return qs[str(qid)]
     blocked = set()
+    started_any = any(str(q) in qs for q in x['main_order'])
     for qid in x['main_order']:
         st = x['story_of'][qid]
         if (qs.get(str(qid)) or {}).get('status') == FINISH or st['ID'] in blocked:
             continue
+        if started_any and not any(str(q) in qs for q in x['by_group'].get(st.get('QuestID'), [])):
+            # official: a new story is not started for you; the story screen's "Accept Quest" (AcceptQuestReq with the
+            # story id) starts it. Only the very first story starts by itself; inside a story the next quest follows.
+            return None
         if imported and st['ID'] in OPTIONAL_STORIES and not any(
                 str(q) in qs for q in x['by_group'].get(st.get('QuestID'), [])):
             continue    # not started from the story screen: leave it alone (a started one carries on to its end)

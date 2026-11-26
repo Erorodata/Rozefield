@@ -4,6 +4,7 @@ Newest first. One entry per build bundle (`rozefield_buildN.bundle`); keep this 
 
 | Build | Date | Changes |
 |---|---|---|
+| 48 | 2026-11-26 | Story flow as official (issue 34): a new story starts only when the player presses "Accept Quest" on the story screen; untouched stories started by older builds are reset once |
 | 47 | 2026-11-26 | Sequence hidden chest as official: opened once for good, shows as found on the map's dungeon list (`isOpenSecretBox`), openable after the run ends; the "final chest opened" notice only for resource dungeons (official never sends it in Sequences) |
 | 46 | 2026-11-26 | Sequence fix (issue 15, Lakeheart Isle): dungeon entry lists its chests as official; chests along the way are separate from the final chest. Coins give 1 Yellow Star and are kept per dungeon / map; Stamina Potions restore 30 / 60 / 120 Stamina. Checked against the 21:49 capture: dye, colorants, shop buys, stamina potions, coins match official |
 | 45 | 2026-11-26 | From the 2026-11-26 official capture: Atlas boxes 5/24/34/38, Atlas achievement reward (1 moonstone each), poster handbook reward (10 Starstones), supply box (1 Starstone, 40 Feline Tokens, 90 Gold), recruit bonus items for SR/SSR new and repeat (repeat salvager gives 3 fragments), 7-day event quest rewards from the table, sweep pays the dungeon's repeat-clear chest. Limited banners no longer give imprints 11210–11450 (official: 0 in 180 pulls; the standard banner does). New `devtools/compare_capture.py` replays a capture against Rozefield and lists differences |
