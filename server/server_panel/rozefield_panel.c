@@ -109,7 +109,10 @@ static int derive_key(const char *pw, const char *salthex, int rounds, unsigned 
     int ok = !BCryptDeriveKeyPBKDF2(alg, (PUCHAR)pw, (ULONG)strlen(pw), salt, sl, rounds, out, 32, 0);
     BCryptCloseAlgorithmProvider(alg, 0); return ok;
 }
-static void conn_ini(char *p) { snprintf(p, MAX_PATH, "%sOverfield Server.ini", g_dir); }
+static void conn_ini(char *p) {
+    snprintf(p, MAX_PATH, "%sOverfield Server.ini", g_dir);
+    if (GetFileAttributesA(p) == INVALID_FILE_ATTRIBUTES) { char old[MAX_PATH]; snprintf(old, MAX_PATH, "%sRozefield Server.ini", g_dir); MoveFileA(old, p); }
+}
 static void load_conn(void) {
     char p[MAX_PATH], k[80]; conn_ini(p);
     GetPrivateProfileStringA("connect", "host", "", g_host, sizeof g_host, p);
@@ -414,13 +417,15 @@ static void json_put(char *b, size_t bs, const char *k, const wchar_t *v, int bo
 #define RUNKEY L"Software\\Microsoft\\Windows\\CurrentVersion\\Run"
 static int autostart_on(void) {
     wchar_t v[MAX_PATH * 2]; DWORD sz = sizeof v;
-    return RegGetValueW(HKEY_CURRENT_USER, RUNKEY, L"Overfield Server", RRF_RT_REG_SZ, NULL, v, &sz) == ERROR_SUCCESS;
+    if (RegGetValueW(HKEY_CURRENT_USER, RUNKEY, L"Overfield Server", RRF_RT_REG_SZ, NULL, v, &sz) == ERROR_SUCCESS) return 1;
+    sz = sizeof v; return RegGetValueW(HKEY_CURRENT_USER, RUNKEY, L"Rozefield Server", RRF_RT_REG_SZ, NULL, v, &sz) == ERROR_SUCCESS;
 }
 static void autostart_set(int on) {
     HKEY k; if (RegCreateKeyExW(HKEY_CURRENT_USER, RUNKEY, 0, NULL, 0, KEY_WRITE, NULL, &k, NULL)) return;
     if (on) { wchar_t exe[MAX_PATH], v[MAX_PATH + 32]; GetModuleFileNameW(NULL, exe, MAX_PATH); swprintf(v, MAX_PATH + 32, L"\"%ls\" --background", exe);
               RegSetValueExW(k, L"Overfield Server", 0, REG_SZ, (BYTE *)v, (DWORD)((wcslen(v) + 1) * sizeof(wchar_t))); }
     else RegDeleteValueW(k, L"Overfield Server");
+    RegDeleteValueW(k, L"Rozefield Server");   /* the name before the rename */
     RegCloseKey(k);
 }
 
@@ -1028,8 +1033,9 @@ static void paint(HWND h) {
     RECT all = {0, 0, WW, WH}; fill(dc, all, C_INK, 0);
     /* sidebar: the chosen player's actions, then folders */
     RECT rail = {0, 0, SB, WH}; fill(dc, rail, C_PANEL, 0); { RECT ln = {SB - 1, 0, SB, WH}; fill(dc, ln, C_LINE, 0); }
-    dot(dc, 34, 40, 16, C_ACC); RECT rl = {18, 24, 50, 56}; txt(dc, f_h, RGB(255, 255, 255), rl, L"R", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-    RECT rn0 = {58, 26, SB - 8, 54}; txt(dc, f_h, C_TXT, rn0, L"Rozefield", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    dot(dc, 34, 40, 16, C_ACC); RECT rl = {18, 24, 50, 56}; txt(dc, f_h, RGB(255, 255, 255), rl, L"O", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    RECT rn0 = {58, 22, SB - 8, 42}; txt(dc, f_h, C_TXT, rn0, L"Overfield Server", DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+    RECT rn1 = {58, 42, SB - 8, 60}; txt(dc, f_small, C_MUTE, rn1, L"by RozenCrimsonvale", DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     struct pl *p = sel();
     { wchar_t cap[120]; if (p) swprintf(cap, 120, L"Player: %ls", p->name); else wcscpy(cap, L"Choose a player");
       RECT rc = {20, 82, SB - 10, 102}; txt(dc, f_small, p ? C_TXT : C_MUTE, rc, cap, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS); }
