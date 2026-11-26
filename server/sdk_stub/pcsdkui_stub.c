@@ -16,7 +16,7 @@
 #include <time.h>
 #include <ctype.h>
 
-static char g_dir[MAX_PATH];
+static char g_dir[MAX_PATH], g_game[MAX_PATH];   /* g_dir: this exe; g_game: the game folder (launcher.exe) */
 static FILE *g_log;
 static char g_pipe[256] = "\\\\.\\pipe\\quickpc";
 
@@ -119,7 +119,7 @@ static char *read_all(const char *path, DWORD *len) {
     DWORD sz = GetFileSize(f, NULL), got = 0; char *b = (char *)malloc(sz + 1); ReadFile(f, b, sz, &got, NULL); CloseHandle(f); b[got] = 0; if (len) *len = got; return b;
 }
 static void load_servers(void) {
-    char p[MAX_PATH], def[256] = ""; snprintf(p, sizeof p, "%srozefield_servers.json", g_dir);
+    char p[MAX_PATH], def[256] = ""; snprintf(p, sizeof p, "%srozefield_servers.json", g_game);
     char *js = read_all(p, NULL);
     if (js) {
         str_after(js, "default", def, sizeof def);
@@ -133,7 +133,7 @@ static void load_servers(void) {
     for (int i = 0; i < n; i++) { char k[16], v[400]; snprintf(k, sizeof k, "s%d", i); GetPrivateProfileStringA("servers", k, "", v, sizeof v, g_ini);
                                   char *bar = strchr(v, '|'); if (bar) { *bar = 0; add_srv(v, bar + 1); } }
     /* the running game's server (Config.txt) */
-    char cfg[MAX_PATH]; snprintf(cfg, sizeof cfg, "%slauncher_Data\\StreamingAssets\\Config.txt", g_dir);
+    char cfg[MAX_PATH]; snprintf(cfg, sizeof cfg, "%slauncher_Data\\StreamingAssets\\Config.txt", g_game);
     char *t = read_all(cfg, NULL); g_game_ip[0] = 0;
     if (t) { char *q = strstr(t, "RemoteServerIP"); if (q && (q = strchr(q, '='))) { q++; while (*q == ' ') q++; int i = 0; while (*q && *q != '\r' && *q != '\n' && *q != ' ' && i < 63) g_game_ip[i++] = *q++; g_game_ip[i] = 0; }
              if (!strstr(t, "UseCustomConfig = TRUE") && !strstr(t, "UseCustomConfig=TRUE")) g_game_ip[0] = 0; free(t); }
@@ -567,7 +567,7 @@ static void write_file(const char *f, const char *d, DWORD n) {
     HANDLE h = CreateFileA(f, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL); DWORD w; if (h != INVALID_HANDLE_VALUE) { WriteFile(h, d, n, &w, NULL); CloseHandle(h); }
 }
 static void point_config(const char *ip) {   /* Config.txt: UseCustomConfig = TRUE, RemoteServerIP = ip */
-    char f[MAX_PATH], o[MAX_PATH]; snprintf(f, sizeof f, "%slauncher_Data\\StreamingAssets\\Config.txt", g_dir); snprintf(o, sizeof o, "%s.orig", f);
+    char f[MAX_PATH], o[MAX_PATH]; snprintf(f, sizeof f, "%slauncher_Data\\StreamingAssets\\Config.txt", g_game); snprintf(o, sizeof o, "%s.orig", f);
     DWORD len; char *t = read_all(f, &len); if (!t) return;
     if (GetFileAttributesA(o) == INVALID_FILE_ATTRIBUTES) CopyFileA(f, o, TRUE);
     size_t cap = len + 256; char *n = (char *)calloc(cap, 1); char *save = NULL; int c = 0, i = 0;
@@ -583,7 +583,7 @@ static void point_config(const char *ip) {   /* Config.txt: UseCustomConfig = TR
 }
 static void point_lookup(const char *ip) {   /* the game's address lookup (HTTPDNS): the server itself if it fits, else this PC */
     const char *target = strlen(ip) <= 12 ? ip : "127.0.0.1";
-    char f[MAX_PATH], o[MAX_PATH]; snprintf(f, sizeof f, "%slauncher_Data\\il2cpp_data\\Metadata\\global-metadata.dat", g_dir); snprintf(o, sizeof o, "%s.orig", f);
+    char f[MAX_PATH], o[MAX_PATH]; snprintf(f, sizeof f, "%slauncher_Data\\il2cpp_data\\Metadata\\global-metadata.dat", g_game); snprintf(o, sizeof o, "%s.orig", f);
     int have_orig = GetFileAttributesA(o) != INVALID_FILE_ATTRIBUTES;
     DWORD len; char *d = read_all(have_orig ? o : f, &len); if (!d) return;
     unsigned lo = *(unsigned *)(d + 8), ls = *(unsigned *)(d + 12), ldo = *(unsigned *)(d + 16);
@@ -607,9 +607,9 @@ static void switch_and_restart(const char *ip) {
     if (g) { TerminateProcess(g, 0); WaitForSingleObject(g, 15000); CloseHandle(g); }
     Sleep(500);
     point_lookup(ip);
-    char game[MAX_PATH]; snprintf(game, sizeof game, "%slauncher.exe", g_dir);
+    char game[MAX_PATH]; snprintf(game, sizeof game, "%slauncher.exe", g_game);
     STARTUPINFOA si = {sizeof si}; PROCESS_INFORMATION pi;
-    if (CreateProcessA(game, NULL, NULL, NULL, FALSE, 0, NULL, g_dir, &si, &pi)) { CloseHandle(pi.hThread); CloseHandle(pi.hProcess); }
+    if (CreateProcessA(game, NULL, NULL, NULL, FALSE, 0, NULL, g_game, &si, &pi)) { CloseHandle(pi.hThread); CloseHandle(pi.hProcess); }
     logf_("switched server to %s and restarted the game", ip);
 }
 
@@ -625,6 +625,10 @@ static DWORD parent_pid(void) {
 int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     GetModuleFileNameA(NULL, g_dir, MAX_PATH);
     char *sl = strrchr(g_dir, '\\'); if (sl) sl[1] = 0;
+    /* the game starts this from launcher_Data\Plugins\Win\PCSDK_release\ ; the game folder is four levels up */
+    snprintf(g_game, sizeof g_game, "%s", g_dir);
+    { char low[MAX_PATH]; snprintf(low, sizeof low, "%s", g_dir); _strlwr(low);
+      char *q = strstr(low, "launcher_data\\plugins\\"); if (q) g_game[q - low] = 0; }
     char path[MAX_PATH * 2];
     snprintf(path, sizeof path, "%srozefield_sdk.log", g_dir); g_log = fopen(path, "a");
     logf_("started: %s", cmd);
