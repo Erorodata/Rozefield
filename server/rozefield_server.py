@@ -894,6 +894,14 @@ async def main():
     logging.getLogger().addHandler(admin.RING)
     from game import hostdata
     hostdata.apply_incoming(log.info)   # a server export imported from the panel switches in here
+    try:   # the panel finds a server left running from an earlier start by this file
+        os.makedirs(os.path.join(HERE, 'save'), exist_ok=True)
+        pidf = os.path.join(HERE, 'save', 'server.pid')
+        open(pidf, 'w').write(str(os.getpid()))
+        import atexit
+        atexit.register(lambda: os.path.exists(pidf) and open(pidf).read().strip() == str(os.getpid()) and os.remove(pidf))
+    except OSError:
+        pass
     ensure_game_data(a.res_dir or [])
     cfg = Config(a)
     http = HTTP(cfg)

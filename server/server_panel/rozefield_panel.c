@@ -352,6 +352,24 @@ static int firewall_open(HWND owner) {
 }
 static DWORD WINAPI start_thread(LPVOID a) {
     if (g_up) { note(L"The server is already running."); g_starting = 0; return 0; }
+    if (g_proc && WaitForSingleObject(g_proc, 0) == WAIT_TIMEOUT) { note(L"The server is still starting - give it a moment."); g_starting = 0; return 0; }
+    if (!g_remote) {   /* a server left running from an earlier start (not answering this panel): stop it first */
+        char pp[MAX_PATH]; snprintf(pp, sizeof pp, "%ssave\\server.pid", g_dir);
+        FILE *pf = fopen(pp, "rb"); DWORD pid = 0;
+        if (pf) { if (fscanf(pf, "%lu", &pid) != 1) pid = 0; fclose(pf); }
+        if (pid) {
+            HANDLE old = OpenProcess(PROCESS_TERMINATE | PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE, FALSE, pid);
+            if (old) {
+                wchar_t img[MAX_PATH] = L""; DWORD n = MAX_PATH; QueryFullProcessImageNameW(old, 0, img, &n);
+                const wchar_t *b = wcsrchr(img, L'\\'); b = b ? b + 1 : img;
+                if (!_wcsnicmp(b, L"python", 6) || !_wcsnicmp(b, L"py.exe", 6)) {
+                    note(L"Stopping a server left running from an earlier start...");
+                    TerminateProcess(old, 0); WaitForSingleObject(old, 5000);
+                }
+                CloseHandle(old);
+            }
+        }
+    }
     note(L"Starting the server...");
     if (!g_remote) { int fw = firewall_open(g_win);
         if (fw == 1) note(L"Windows Firewall now lets players in (TCP 18880).");
