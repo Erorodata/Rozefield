@@ -22,17 +22,20 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 START = time.time()
 
 
+def have_game_data():
+    return any(os.path.exists(os.path.join(HERE, d, 'item.json')) for d in ('data-merged', 'data')) or \
+        os.path.exists(os.path.join(HERE, 'data-merged.zip'))
+
+
 def ensure_game_data(res_dirs):
     """A fresh Overfield Server has no game tables (they belong to the game and aren't shared): build them once from
     the Overfield game folder next to the server (tools/extract_config.py, needs UnityPy)."""
     import subprocess
-    if any(os.path.exists(os.path.join(HERE, d, 'item.json')) for d in ('data-merged', 'data')) or \
-            os.path.exists(os.path.join(HERE, 'data-merged.zip')):
+    if have_game_data():
         return
     yoo = next((d for d in res_dirs if os.path.isdir(os.path.join(d, 'DefaultPackage'))), None)
     if not yoo:
-        log.error('No game data yet, and no game folder to build it from: put the Overfield folder next to the Server '
-                  'folder (or set game_path.txt), then start again.')
+        log.warning('No game data yet, and no game folder here to build it from.')
         return
     log.info('First start: building the game data from %s (a minute or two)...', yoo)
     try:
@@ -344,8 +347,8 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
                 return f'ERR|{e}'.encode('utf-8'), 200, txt
             log.info('[admin] %s: %s', p, msg)
             self.warn_restart('The server restarts in 1 minute for an update. Your progress is saved.')
-            loop.call_later(60, restart_self)
-            return f'OK|{msg}. Players were told; the server restarts in 1 minute.'.encode('utf-8'), 200, txt
+            loop.call_later(60 if self.game else 2, restart_self)
+            return (f'OK|{msg}. ' + ("Players were told; the server restarts in 1 minute." if self.game else "The server restarts now.")).encode('utf-8'), 200, txt
         if p == 'restart' and method == 'POST':
             loop.call_later(1.0, restart_self)
             return b'OK|restarting', 200, txt
@@ -883,6 +886,9 @@ async def main():
     ensure_game_data(a.res_dir or [])
     cfg = Config(a)
     http = HTTP(cfg)
+    if not have_game_data():
+        await wait_for_game_data(a, http, admin)
+        return
     game = Server(cfg, a)
     http.game = game
     http.admin_token = admin.token()   # for Overfield Server.exe (control panel)
@@ -910,6 +916,25 @@ async def main():
     netsvc.start([80, a.http_port, a.gate_port] if a.dns_port else [a.http_port, a.gate_port], http.info)
     log.info('Rozefield up: dispatch port %s, gate port %s, address %s', a.http_port, a.gate_port, a.public_ip)
     await asyncio.gather(*(s.serve_forever() for s in servers))
+
+
+async def wait_for_game_data(a, http, admin):
+    """No game tables and no game folder (a server PC without the game): run only the control part, so the panel on
+    the main PC can send the game data (Push update > Game data) or a whole server (Move server). The update then
+    restarts the server, which starts normally."""
+    http.admin_token = admin.token()
+    for line in ('WAITING FOR GAME DATA - players can\'t join yet. Do one of these:',
+                 '  1. On the main PC: Connect to this server, then Push update with "Game data" ticked',
+                 '  2. Copy the data-merged folder from the main PC\'s Server folder into this Server folder, then Start',
+                 '  3. Put the OverField game folder next to this Server folder (or its path in game_path.txt), then Start'):
+        log.warning(line)
+    from game import hostcfg
+    if not hostcfg.salt_info():
+        log.warning('  For 1, first set an admin password on this PC: Hosting > Admin password')
+    server = await asyncio.start_server(http.handle, a.bind, a.http_port)
+    from game import netsvc
+    netsvc.start([a.http_port], http.info)
+    await server.serve_forever()
 
 
 if __name__ == '__main__':
