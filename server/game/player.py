@@ -293,6 +293,11 @@ class Player:
             self.s['unlock_functions'].append(item_id)
         if tag == 'EBagItemTag_PlayerExp':
             self.add_exp(n)
+        if tag == 'EBagItemTag_Expression':             # chat emoticon: official ChatUnLockExpressionNotice
+            ex = self.s.setdefault('unlocks', {}).setdefault('expressions', [])
+            if item_id not in ex:
+                ex.append(item_id)
+                self.__dict__.setdefault('_new_expressions', []).append(item_id)
         self.s['items'][str(item_id)] = self.count(item_id) + n
         self.dirty = True
         got.append({'mainItem': self.item_info(item_id, n)})
@@ -393,6 +398,7 @@ class Player:
 
     def add_exp(self, n):
         self.s['exp'] += n
+        self.__dict__['_exp_changed'] = True            # -> PlayerLevelExpNotice (quests.flush), as official
         while True:
             row = self.d.row('level', 'PlayerLevel', self.s['level'])
             if not row or self.s['exp'] < row.get('NeedExp', 10 ** 9) or not self.d.row('level', 'PlayerLevel', self.s['level'] + 1):

@@ -115,6 +115,8 @@ def life_event(p, lt, ctype, key=None):
         if n < e.get('CompleteLimit', 1):
             st['ach'][str(aid)] = n + 1
             st['prof'] += e.get('Proficiency', 0)
+            if e.get('Proficiency'):
+                p.__dict__.setdefault('_prof_changed', {})[lt] = st['prof']   # -> LifeProficiencyNotice (official)
     Q.event(p, ctype, key)
     p.dirty = True
 

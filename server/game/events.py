@@ -320,7 +320,7 @@ def register(H, pack, scene_player):
         seasons.setdefault('9000001', {})
         seasons.setdefault(str(cur), {})
         info = {k: {'seasonId': int(k), 'dungeonInfo': v} if v else {} for k, v in seasons.items()}
-        ctx.reply({'status': OK, 'abyssInfo': {'seasonInfo': info, 'inProgressSeasonId': cur}})
+        ctx.reply({'status': OK, 'abyssInfo': {'seasonInfo': info}, 'inProgressSeasonId': cur})   # official: top level
     H['AbyssInfoReq'] = abyss_info
 
     def abyss_season_of(d, dungeon_id):

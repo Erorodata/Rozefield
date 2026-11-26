@@ -41,6 +41,9 @@ def aidx(d):
         for act in d.table('activityquest', 'ActivityQuest').values():   # 7-day event quests count the same way
             for it in act.get('ActivityQuestAchieveItems', []):
                 reward.setdefault(it['AchieveID'], None)
+        for row in d.table('character', 'CharacterAchieve').values():   # character badge achievements count the same way
+            for it in row.get('AchieveInfo', []):
+                reward.setdefault(it['AchieveID'], None)
         for aid in reward:
             t = (ach.get(aid) or {}).get('NewAchieveCondition')
             by_type.setdefault(t, []).append(aid)
@@ -59,6 +62,10 @@ def astate(p):
             a['rewarded'] += [i for i in g.get('rewardedAchieveIdLst', []) if i not in a['rewarded']]
             for f in g.get('finishAchieveLst', []):
                 a['finish'][str(f['achieveId'])] = f.get('finishTime', '0')
+        for body in p.s.get('records', {}).get('GetCharacterAchievementListReq', {}).values():   # archived character badges
+            for x in body.get('characterAchievementLst', []):
+                k = str(x['achieveId'])
+                a['count'][k] = max(a['count'].get(k, 0), int(x.get('count', 0)))
         for body in p.s.get('records', {}).get('GetAchieveGroupListReq', {}).values():
             a['groups'] = body.get('rewardedGroupIdLst', [])
         p.dirty = True
@@ -105,6 +112,31 @@ def group_info(p, gid):
             'finishAchieveLst': [{'achieveId': i, 'finishTime': a['finish'][str(i)]} for i in aids if str(i) in a['finish']]}
 
 
+def char_ach_info(p, cid):
+    """Character achievement screen: counts, badge ids claimed, reward indices claimed (archived + here)."""
+    a = astate(p)
+    row = p.d.row('character', 'CharacterAchieve', (p.d.row('character', 'Character', cid) or {}).get('CharacterAchieveID', cid)) or {}
+    aids = [x['AchieveID'] for x in row.get('AchieveInfo', [])]
+    arch = p.s.get('records', {}).get('GetCharacterAchievementListReq', {})
+    body = next((b for b in arch.values() if b.get('characterId') == cid), {})
+    misc = p.s.setdefault('misc', {})
+    badges = misc.setdefault('char_badge', {}).setdefault(str(cid), [])
+    idx = misc.setdefault('char_achieve', {}).setdefault(str(cid), [])
+    for x in body.get('characterAchievementLst', []):   # archived official counts (never lowered)
+        k = str(x['achieveId'])
+        if int(x.get('count', 0)) > a['count'].get(k, 0):
+            a['count'][k] = int(x.get('count', 0))
+    for v in body.get('rewardedIdLst', []):
+        if v not in badges:
+            badges.append(v)
+    for v in body.get('hasRewardedIds', []):
+        if v not in idx:
+            idx.append(v)
+    badges.sort(); idx.sort()
+    counts = [{'achieveId': i, 'count': str(a['count'][str(i)])} for i in aids if a['count'].get(str(i))]
+    return counts, badges, idx
+
+
 # ------------------------------------------------------------------ helpers
 def ch_of(p, cid):
     return p.s['characters'].get(str(cid))
@@ -114,6 +146,36 @@ def level_rows(p, ch):
     c = p.d.row('character', 'Character', ch['characterId']) or {}
     lv = p.d.row('character', 'Level', c.get('GrowthLevelID', 1)) or {}
     return {r['Level']: r for r in lv.get('LevelInfo', [])}
+
+
+def team_exp(ctx, n):
+    """Character EXP for the team after a battle (official TeamCharExpUpdateNotice: every team member, level + exp;
+    a member at its level cap stays there with exp 0)."""
+    p = ctx.p
+    out = []
+    for slot in ('char1', 'char2', 'char3'):
+        ch = ch_of(p, (p.s.get('team') or {}).get(slot))
+        if not ch:
+            continue
+        rows = level_rows(p, ch)
+        lvl, cap = ch.get('level', 1), ch.get('maxLevel', 20)
+        exp = ch.get('exp', 0) + (n if lvl < cap else 0)
+        while lvl < cap and exp >= (rows.get(lvl) or {}).get('NeedExp', 10 ** 12) and \
+                (rows.get(lvl + 1) or {}).get('NeedPlayerLevel', 1) <= p.s['level']:
+            exp -= rows[lvl]['NeedExp']
+            lvl += 1
+        if lvl >= cap:
+            exp = 0
+        if lvl != ch.get('level', 1):
+            ach_event(p, 'CharacterLv', ch['characterId'], absolute=lvl)
+        ch['level'], ch['exp'] = lvl, exp
+        e = {'characterId': ch['characterId'], 'level': lvl}
+        if exp:
+            e['exp'] = exp
+        out.append(e)
+    if out:
+        p.dirty = True
+        ctx.push('TeamCharExpUpdateNotice', {'status': OK, 'charLevels': out})
 
 
 def register(H, pack, enter_scene, PUBLIC_SCENE):

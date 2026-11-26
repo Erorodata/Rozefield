@@ -1,0 +1,8 @@
+{
+ "_about": "Character EXP per team member after a battle (official TeamCharExpUpdateNotice).",
+ "team_exp": {
+  "encounter": 300,
+  "flag_battle": 337
+ },
+ "_sources": "capture 2026-11-26: encounter 1001 +300 each, assault battle 110040 +337 each"
+}

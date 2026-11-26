@@ -47,6 +47,12 @@ def observed():
 _BOX_ITEMS = None
 
 
+def _secs(t):
+    """Chest refresh times: imported official values are milliseconds, Rozefield's own are seconds."""
+    t = int(t or 0)
+    return t // 1000 if t > 10 ** 11 else t
+
+
 def box_items():
     """Official contents of dungeon chests along the way (boxId -> [[item, n], ...]), from captures."""
     global _BOX_ITEMS
@@ -151,10 +157,10 @@ def scene_fields(p, sid):
     for b in lay.get('treasureBoxes', []):
         st = w['boxes'].get(str(b['index']))
         e = {'index': b['index'], 'boxId': b['boxId'], 'type': b.get('type', 'ETreasureBoxType_Normal')}
-        if st and (not st.get('refresh') or st['refresh'] > now):
+        if st and (not st.get('refresh') or _secs(st['refresh']) > now):
             e['state'] = 'TreasureBoxState_Open'
             if st.get('refresh'):
-                e['nextRefreshTime'] = str(st['refresh'])
+                e['nextRefreshTime'] = str(_secs(st['refresh']) * 1000)   # official: milliseconds
         boxes.append(e)
     if boxes:
         out['treasureBoxes'] = boxes
@@ -163,6 +169,7 @@ def scene_fields(p, sid):
             out[k] = w[k]
     ids = {fid for fid, q in map_flags(p.d).get(int(sid), []) if flag_shown(p, q)}
     ids |= set(w['flagIds'])          # anything the player's own save already has
+    ids -= set(w.get('flags_removed', []))   # battles won on Rozefield (official removes the marker)
     if ids:
         out['flagIds'] = sorted(ids)
     for k in ('chairInfoList', 'vehicleInfoList', 'campFires'):
@@ -172,7 +179,7 @@ def scene_fields(p, sid):
     out['gatherLimits'] = scene_gather_limits(p, sid)
     dt = p.d.table('dungeon', 'Dungeon')   # official sends each map only its own dungeons (by WorldID)
     mine = {int(k): v for k, v in p.s.get('dungeons', {}).items()}
-    ds = [dict({k: x for k, x in v.items() if k != 'openedBoxes'}, monsters=v.get('monsters', [0])) for v in mine.values()
+    ds = [dict({k: x for k, x in v.items() if k not in ('openedBoxes', 'tasks')}, monsters=v.get('monsters', [0])) for v in mine.values()
           if (dt.get(int(v.get('dungeonId', 0))) or {}).get('WorldID') == int(sid)]
     if ds and str(sid) != '9999':
         out['dungeons'] = ds
@@ -219,8 +226,7 @@ def roll_gear(d, n, world_level=None):
 def dungeon_chest(p, cfg, ds):
     """Contents of a dungeon's final chest."""
     did = str(cfg['ID'])
-    if ds['finishTimes'] == 1 and cfg.get('RewardID'):          # first clear: the dungeon's own reward pool
-        return p.d.reward_items(cfg['RewardID'], p.s['level'])
+    # (RewardID is the dungeon's task reward, paid by DungeonTaskFinishRewardReq, not chest contents)
     obs = observed().get(did)
     if obs:
         return [(i, max(1, n + (random.randint(-1, 1) if i in (190, 191, 192) and n > 3 else 0))) for i, n in obs]
@@ -300,6 +306,8 @@ def register(H, pack, scene_player):
                 ctx.reply({'status': OK, 'items': items})
                 pack(ctx, changed)
                 Q.event(p, Q.C['OpenBox'])
+                from game.dungeon import task_event, TASK_CHEST
+                task_event(ctx, TASK_CHEST)
                 return
             if ctx.__dict__.get('dungeon_box_open'):
                 return ctx.reply({'status': FAIL})
@@ -337,7 +345,7 @@ def register(H, pack, scene_player):
         w = W(p, sid)
         box = next((b for b in layout().get(str(sid), {}).get('treasureBoxes', []) if b['index'] == idx), None)
         st = w['boxes'].get(str(idx))
-        if st and (not st.get('refresh') or st['refresh'] > time.time()):
+        if st and (not st.get('refresh') or _secs(st['refresh']) > time.time()):
             return ctx.reply({'status': FAIL})
         cfg = (p.d.row('treasurebox', 'TreasureBox', box['boxId']) or {}) if box else {}
         refresh = 0
@@ -346,7 +354,9 @@ def register(H, pack, scene_player):
         except Exception:
             coll = {}
         if box and box['boxId'] in coll:
-            refresh = int(time.time()) + 3 * 86400
+            # official: the chest's own RefreshTime (field chests 14400 s = 4 h, seen on 8 chests); 0 = never
+            secs = (coll[box['boxId']].get('RefreshTime') or [0])[0]
+            refresh = int(time.time()) + secs if secs else 0
         w['boxes'][str(idx)] = {'refresh': refresh}
         p.dirty = True
         big = cfg.get('NewTreasureBoxRewardShowType', 1) >= 3
@@ -356,7 +366,10 @@ def register(H, pack, scene_player):
         items, changed = give(ctx, items)
         if random.random() < 0.5:         # field chest Moon Points (official id 1120)
             _moon(ctx, 1120, 5)
-        ctx.reply({'status': OK, 'items': items})
+        rsp = {'status': OK, 'items': items}
+        if refresh:
+            rsp['nextRefreshTime'] = str(refresh * 1000)   # official: milliseconds
+        ctx.reply(rsp)
         pack(ctx, changed)
         Q.event(p, Q.C['OpenBox'])
         Q.event(p, Q.C['OpenBox0'])
@@ -383,6 +396,8 @@ def register(H, pack, scene_player):
             p.dirty = True
             ctx.reply({'status': OK, 'encounter': {'battleId': eid, 'state': 'Finish'}, 'dynamicTreasureBoxBaseInfo': dyn_box(ctx)})
             _moon(ctx, 1119, 5)
+            from game.progression import team_exp
+            team_exp(ctx, _packs.system('battle', 'team_exp', {}).get('encounter', 300))
             Q.event(p, Q.C['FinishEncounter'])
             Q.event(p, Q.C['FinishTheEncounter'], eid)
             return
@@ -465,6 +480,17 @@ def register(H, pack, scene_player):
             Q.reported(p, bid)
         rsp['battle_data'] = f or {'battleId': bid}
         ctx.reply(rsp)
+        if req.get('battle_state') == 'Finish' and first:
+            # official: the battle's map marker (flag id = battle id / 10) goes away when it is first won,
+            # and the team gets character EXP
+            fid = bid // 10
+            if p.d.row('flag', 'Flag', fid):
+                rem = w.setdefault('flags_removed', [])
+                if fid not in rem:
+                    rem.append(fid)
+                ctx.push('FlagUnLockRemoveNotice', {'status': OK, 'flagIds': [fid]})
+            from game.progression import team_exp
+            team_exp(ctx, _packs.system('battle', 'team_exp', {}).get('flag_battle', 337))
     H['FlagBattleStateUpdateReq'] = flag
 
     def area_unlock(ctx, req):

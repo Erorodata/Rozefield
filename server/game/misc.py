@@ -377,10 +377,11 @@ def register(H, pack):
         cid, idx = req.get('characterId'), req.get('rewardIndex')
         cfg = d.row('character', 'CharacterAchieveReward', (d.row('character', 'Character', cid) or {}).get('AchieveRewardID', cid)) or {}
         row = next((x for x in cfg.get('AchieveRewardInfo', []) if x.get('Num') == idx or x.get('UIIndex') == idx), None)
-        done = _st(p, 'char_achieve', {}).setdefault(str(cid), [])
-        if not row or idx in done:
+        from game.progression import char_ach_info
+        _c, badges, done = char_ach_info(p, cid)
+        if not row or idx in done or len(badges) < int(row.get('UnlockItemCount', 0) or 0):
             return ctx.reply({'status': FAIL})
-        done.append(idx)
+        done.append(idx); done.sort()
         got, changed = give(ctx, [(row.get('RewardItemID'), row.get('RewardItemCount', 1))])
         ctx.reply({'status': OK, 'items': got, 'rewardedIndexLst': done, 'characterId': cid})
         pack(ctx, changed)
@@ -391,12 +392,14 @@ def register(H, pack):
         cid, aid = req.get('characterId'), req.get('achievementId')
         cfg = d.row('character', 'CharacterAchieve', (d.row('character', 'Character', cid) or {}).get('CharacterAchieveID', cid)) or {}
         row = next((x for x in cfg.get('AchieveInfo', []) if x.get('AchieveID') == aid), None)
-        done = _st(p, 'char_badge', {}).setdefault(str(cid), [])
-        if not row or aid in done:
+        from game.progression import char_ach_info, astate
+        counts, done, _i = char_ach_info(p, cid)
+        need = int((d.table('achieve', 'Achieve').get(aid) or {}).get('CountParam', 1) or 1)
+        if not row or aid in done or astate(p)['count'].get(str(aid), 0) < need:
             return ctx.reply({'status': FAIL})
-        done.append(aid)
+        done.append(aid); done.sort()
         got, changed = give(ctx, [(row.get('ItemID'), row.get('ItemCount', 1))])
-        ctx.reply({'status': OK, 'updateItems': got, 'achieves': [], 'rewardedAchievementIdLst': done})
+        ctx.reply({'status': OK, 'updateItems': got, 'achieves': counts, 'rewardedAchievementIdLst': done})
         pack(ctx, changed)
     H['GetCharacterAchievementBadgeAwardReq'] = char_badge_award
     H['GetCharacterAchievementUnlockPaymentReq'] = lambda ctx, req: ctx.reply(
@@ -415,7 +418,22 @@ def register(H, pack):
             pack(ctx, changed)
         return f
     H['DungeonStarRewardReq'] = dungeon_bonus('dungeon_star')
-    H['DungeonTaskFinishRewardReq'] = dungeon_bonus('dungeon_task')
+
+    def dungeon_task_reward(ctx, req):
+        """All the dungeon's tasks done -> its RewardID pool (official: Lakeheart Isle = 200 player EXP, 60 Starstones,
+        1000 Gold, exactly pool 3010641)."""
+        from game.dungeon import dstate
+        p = ctx.p
+        did = req.get('dungeon_id', 0)
+        cfg = p.d.row('dungeon', 'Dungeon', did) or {}
+        ds = dstate(p, did)
+        if not ds.get('allTaskFinished') or ds.get('taskFinishReward') == 'Reward':
+            return ctx.reply({'status': FAIL})
+        ds['taskFinishReward'] = 'Reward'
+        got, changed = give(ctx, p.d.reward_items(cfg['RewardID'], p.s['level']) if cfg.get('RewardID') else [(STARSTONE, 10)])
+        ctx.reply({'status': OK, 'rewards': got})
+        pack(ctx, changed)
+    H['DungeonTaskFinishRewardReq'] = dungeon_task_reward
 
     def area_entry(p, aid):
         return _st(p, 'area_levels', {}).setdefault(str(aid), {'areaId': aid, 'areaState': 'AreaState_Unlock', 'level': 1})
@@ -485,8 +503,10 @@ def register(H, pack):
         i = req.get('coinIndex', 0)
         did = ctx.__dict__.get('dungeon_id')
         if did:
-            from game.dungeon import dstate
+            from game.dungeon import dstate, task_event, TASK_COIN
             done = dstate(p, did).setdefault('coins', [])
+            if i not in done:
+                task_event(ctx, TASK_COIN)
         else:
             done = _st(p, 'coins_by_scene', {}).setdefault(str(p.s.get('scene_id')), [])
         if i in done:

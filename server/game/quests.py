@@ -397,6 +397,8 @@ def login(p):
         if q.get('status') == IN_PROGRESS and q.get('questId'):
             _check_state_conditions(p, q)
     p.__dict__.pop('_qchanged', None)   # main data carries everything at login
+    for k in ('_exp_changed', '_new_expressions', '_prof_changed'):
+        p.__dict__.pop(k, None)
     p.__dict__.pop('_achanged', None)
 
 
@@ -411,6 +413,13 @@ def flush(ctx):
     for q in list(p.s['quests'].values()):   # "own item X", "reach level N", "be in scene S": re-check after anything changed
         if q.get('status') == IN_PROGRESS and q.get('questId'):
             _check_state_conditions(p, q)
+    if p.__dict__.pop('_exp_changed', None):
+        ctx.push('PlayerLevelExpNotice', {'status': 'StatusCode_OK', 'level': p.s.get('level', 1), 'exp': p.s.get('exp', 0)})
+    ex = p.__dict__.pop('_new_expressions', None)
+    if ex:
+        ctx.push('ChatUnLockExpressionNotice', {'status': 'StatusCode_OK', 'expressionId': ex})
+    for lt, v in (p.__dict__.pop('_prof_changed', None) or {}).items():
+        ctx.push('LifeProficiencyNotice', {'status': 'StatusCode_OK', 'lifeProficiency': {'lifeType': lt, 'proficiencyValue': v}})
     ch = p.__dict__.pop('_qchanged', None)
     pk = p.__dict__.pop('_qpack', None)
     if pk:

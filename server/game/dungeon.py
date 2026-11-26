@@ -88,6 +88,52 @@ def dungeon_boxes(p, did):
     return out
 
 
+TASK_COIN, TASK_KILL_TYPE, TASK_KILL, TASK_CHEST = 34, 41, 42, 167   # EAchieveCondition of dungeon tasks
+
+
+def dungeon_tasks(p, did):
+    """The dungeon's task list (DungeonQuest of Dungeon.DengeonQuestID): [(achieve row, active)]."""
+    cfg = p.d.row('dungeon', 'Dungeon', did) or {}
+    q = p.d.row('dungeon', 'DungeonQuest', cfg.get('DengeonQuestID', 0)) or {}
+    ach = p.d.table('achieve', 'Achieve')
+    return [(ach.get(i['AchieveConditionID']) or {'ID': i['AchieveConditionID']}, i.get('Active', False))
+            for i in q.get('DungeonQuestGroupInfo', [])]
+
+
+def task_list(ds):
+    return [{'achieveId': int(k), 'count': str(v)} for k, v in (ds.get('tasks') or {}).items()]
+
+
+def task_event(ctx, ctype, key=None):
+    """Dungeon tasks (official, Lakeheart Isle capture): find the Yellow Stars, open the chests along the way,
+    defeat a kind of monster, defeat the boss. Each step is an AchieveNotice; all done -> allTaskFinished."""
+    p = ctx.p
+    did = ctx.__dict__.get('dungeon_id')
+    if not did:
+        return
+    ds = dstate(p, did)
+    tasks = ds.setdefault('tasks', {})
+    changed = []
+    for a, _ in dungeon_tasks(p, did):
+        if a.get('NewAchieveCondition') != ctype:
+            continue
+        par = a.get('Param') or []
+        if len(par) > 1 and key is not None and par[1] != key and ctype != TASK_CHEST:
+            continue
+        need = int(a.get('CountParam', 1) or 1)
+        cur = tasks.get(str(a['ID']), 0)
+        if cur >= need:
+            continue
+        tasks[str(a['ID'])] = cur + 1
+        changed.append({'achieveId': a['ID'], 'count': str(cur + 1)})
+    if changed:
+        rows = dungeon_tasks(p, did)
+        if rows and all(tasks.get(str(a['ID']), 0) >= int(a.get('CountParam', 1) or 1) for a, _ in rows):
+            ds['allTaskFinished'] = True
+        p.dirty = True
+        ctx.push('AchieveNotice', {'status': OK, 'achieves': changed})
+
+
 def is_final_box(p, did, box_id):
     """The run's reward chest: reward type 2 in the table, or a resource dungeon's single chest ('3'+id)."""
     cfg = p.d.row('treasurebox', 'TreasureBox', box_id) or {}
@@ -126,7 +172,7 @@ def register(H, pack, enter_scene, scene_player):
         if req.get('Rot'):
             ds['rot'] = req['Rot']
         p.dirty = True
-        ctx.reply({'status': OK, 'team': team, 'dungeon_data': dict({k: v for k, v in ds.items() if k != 'openedBoxes'}, monsters=[0]),
+        ctx.reply({'status': OK, 'team': team, 'dungeon_data': dict({k: v for k, v in ds.items() if k not in ('openedBoxes', 'tasks')}, monsters=[0]),
                    'treasureBoxes': dungeon_boxes(p, did)})   # official: every dungeon entry lists its chests
     H['DungeonEnterReq'] = enter
     H['DungeonRepeatEnterReq'] = lambda ctx, req: enter(ctx, req, repeat=True)
@@ -152,12 +198,13 @@ def register(H, pack, enter_scene, scene_player):
         ds = dstate(p, did)          # rewards: the final chest (world.box_open, loc DUNGEON), as on the official server
         ds['finishTimes'] += 1
         ds['lastFinishTime'] = str(ctx.__dict__.get('dungeon_time', 0))
-        ds['allTaskFinished'] = True
+        if not dungeon_tasks(p, did):       # dungeons without tasks count as all done
+            ds['allTaskFinished'] = True
         ret = ctx.__dict__.get('dungeon_return') or (p.s['scene_id'], None, None, None)
         Q.event(p, Q.C['DungeonPass'], did)
         Q.reported(p, did)
         p.dirty = True
-        ctx.reply({'status': OK, 'scene_id': ret[0], 'dungeon_data': dict(ds, monsters=[0])})
+        ctx.reply({'status': OK, 'scene_id': ret[0], 'dungeon_data': dict({k: v for k, v in ds.items() if k not in ('openedBoxes', 'tasks')}, monsters=[0])})
         if req.get('is_success', True):
             try:
                 from game.events import moon_reward
@@ -184,7 +231,11 @@ def register(H, pack, enter_scene, scene_player):
 
     def view(ctx, req):
         did = req.get('dungeon_id', 0)
-        ctx.reply({'status': OK, 'dungeon_data': dict({k: v for k, v in dstate(ctx.p, did).items() if k != 'openedBoxes'}, monsters=[0])})
+        ds = dstate(ctx.p, did)
+        rsp = {'status': OK, 'dungeon_data': dict({k: v for k, v in ds.items() if k not in ('openedBoxes', 'tasks')}, monsters=[0])}
+        if ds.get('tasks'):
+            rsp['taskDataLst'] = task_list(ds)          # official: the dungeon's task progress
+        ctx.reply(rsp)
     H['DungeonViewReq'] = view
 
     def sweep(ctx, req):
@@ -230,7 +281,12 @@ def register(H, pack, enter_scene, scene_player):
                 drops[idx] = items
                 rsp['dropItem'] = {'index': idx, 'items': [{'mainItem': p.item_info(i, n)} for i, n in items]}
                 ctx.__dict__['kills_since_drop'] = 0
+        if req.get('monsterIndex'):
+            rsp['monsterIndex'] = req['monsterIndex']    # official echoes it
         ctx.reply(rsp)
+        if ctx.__dict__.get('dungeon_id'):
+            task_event(ctx, TASK_KILL, mid)
+            task_event(ctx, TASK_KILL_TYPE, m.get('NewTag'))
         if not ctx.__dict__.get('dungeon_id') and random.random() < 0.25:   # field kill Moon Points (official id 1101)
             try:
                 from game.events import moon_reward

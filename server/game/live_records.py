@@ -45,10 +45,11 @@ def register(H, server_brief):
 
     def char_ach(ctx, req):
         r = base(ctx, 'GetCharacterAchievementListReq', req)
+        from game.progression import char_ach_info
         cid = req.get('characterId', 0)
-        done = ctx.p.s.get('misc', {}).get('char_achieve', {}).get(str(cid), [])
-        r['characterId'] = cid
-        r['rewardedIdLst'] = _add(list(r.get('rewardedIdLst', [])), done)
+        counts, badges, idx = char_ach_info(ctx.p, cid)
+        r.update({'status': OK, 'characterId': cid, 'characterAchievementLst': counts,
+                  'hasRewardedIds': idx, 'rewardedIdLst': badges})
         ctx.reply(r)
     H['GetCharacterAchievementListReq'] = char_ach
 

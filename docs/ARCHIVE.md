@@ -147,6 +147,27 @@ Other banners: Cowgirl Witch (rerun, SSR Millia, displayed adventurer guaranteed
 | Gold x10000 | 16% |
 | Heartfelt Chocolate x1, Dye x1 | 18% each |
 
+## 2e. Official mechanics seen in captures (2026-11-24 to 11-26)
+
+Each row is what the official server did; Rozefield follows it.
+
+| Area | Official behaviour |
+|---|---|
+| Astral Atlas | Box rewards are decided by the server; each box costs its moonstone. Page 1: box 31 = Double Jump, 5 / 24 / 34 / 38 = items 120000003 / 100002113 / 100001001 / 110010701. Each Atlas achievement pays 1 moonstone |
+| Recruit extras | Imprint SR: 15 × 112 + 50 × 107; imprint SSR: 500 × 107. New salvager SR: 500 × 107, SSR: 1500 × 107. Repeat salvager SR: 3 × 111 (12 at 5 stars) + 500 × 107, SSR: 16 × 111 + 1500 × 107, plus 3 fragments. Limited banners never give imprints 11210–11450 |
+| 7-day event | Quest param = day; a claim pays the next finished, unclaimed quest of that day; track rewards by index |
+| Supply box | 1 × 102, 20–40 × 109, 90–96 × 101; next box in 10–30 min |
+| Stamina potions | Restore the amount in the item's RelateID |
+| Sequences | Entry lists the chests. Chests along the way are separate from the final chest. Hidden chest: once per account, then shown as found. "Final chest opened" notice only in resource dungeons. Tasks (coins, kills, boss kills, chests along the way) are announced step by step and pay the dungeon's reward pool. Coins: 1 × 106, kept per dungeon. Sweep pays the repeat-clear chest |
+| Stories | A new story starts only when the player presses "Accept Quest"; inside a story the next quest follows by itself |
+| Rifts | Times in ms; captain is the first member; Stamina cost from the table (captain / member) |
+| Battle EXP | Each team member gets 300 per encounter, 337 per flag battle; 0 at the level cap |
+| Flag battles | First win removes the flag from the map |
+| Field chests | Refresh after 4 h (table RefreshTime); times sent in ms |
+| Notices | Level / EXP after any EXP gain; life skill proficiency after gathering; new chat emoji after getting one |
+| Character achievements | The screen sends counts, claimed badges and claimed reward steps separately; a reward step needs as many badges as the table says |
+| Abyss | The info reply carries the current season id at the top level |
+
 ## 3. Login SDK protocol (from qgpc_log.txt, Apr 14 – Nov 23 2026)
 
 The game talks to `PCSDKUI.exe` over a named pipe. Messages observed:
