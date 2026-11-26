@@ -10,10 +10,11 @@ Overall = average of the areas; area = average of its rows (done 1, partial 0.5,
 """
 import json, os, sys, time
 from xml.sax.saxutils import escape
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 ROOT = os.path.dirname(HERE)
 DOCS = os.path.join(ROOT, 'docs')
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.dirname(HERE))   # devtools package
 
 GREEN, YELLOW, RED, GREY = '#4caf37', '#e8b20e', '#e5484d', '#2a2d36'
 BG, FG, DIM, LINE = '#0d0e12', '#eceef2', '#9aa0ab', '#2a2d36'
@@ -122,7 +123,7 @@ def svg(cfg, m, areas):
     y += 26
     text(pad, y, 'Overall = average of the areas; each area = average of its rows (done 1, in progress 0.5, blocked / not yet 0; bars = fraction).', 15, DIM)
     y += 24
-    text(pad, y, cfg['subtitle'] + '  Updated ' + time.strftime('%Y-%m-%d') + ' by tools/progress.py.', 15, DIM)
+    text(pad, y, cfg['subtitle'] + '  Updated ' + time.strftime('%Y-%m-%d') + ' by devtools/progress.py.', 15, DIM)
     y += 34
     x = pad
     for col, lab in ((GREEN, 'done'), (YELLOW, 'in progress / partial'), (RED, 'blocked'), (GREY, 'not yet')):
@@ -177,7 +178,7 @@ def svg(cfg, m, areas):
 
 def markdown(cfg, m, areas, overall):
     out = [f'# {cfg["title"]}: {overall * 100:.2f}%', '', '![progress](progress.png)', '',
-           f'_{cfg["subtitle"]} Updated {time.strftime("%Y-%m-%d")}; regenerate with `py server/tools/progress.py`._', '']
+           f'_{cfg["subtitle"]} Updated {time.strftime("%Y-%m-%d")}; regenerate with `py devtools/progress.py`._', '']
     mark = {'done': '[x]', 'partial': '[~]', 'blocked': '[!]', 'open': '[ ]', 'bar': '[~]'}
     for name, rows in areas:
         v = sum(r[1] for r in rows) / len(rows)
@@ -230,7 +231,7 @@ def readme(cfg, m, areas, overall):
         ex = len([c for c in qc if c != 'none'])
         out += [f'**Quest steps with a rule:** {ex:,} / {len(qc):,} (`{bar(ex / len(qc))}` {ex / len(qc) * 100:.1f}%)', '']
     out += ['![Rozefield progress chart](docs/progress.png)', '',
-            f'_Updated {time.strftime("%Y-%m-%d")} by `py server/tools/progress.py` from [docs/checklist.json](docs/checklist.json)._', '',
+            f'_Updated {time.strftime("%Y-%m-%d")} by `py devtools/progress.py` from [docs/checklist.json](docs/checklist.json)._', '',
             '## About', '',
             'Rozefield preserves OverField: the archived client and a private server that runs it after the official shutdown.', '',
             '- [Archive notes: client build, endpoints, protocol, captures](docs/ARCHIVE.md)',

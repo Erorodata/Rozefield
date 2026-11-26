@@ -8,7 +8,7 @@ areas, collections, dungeons) into that Rozefield save.
     py tools/import_world.py capture_decoded.json [--save save/accounts/<pid>.json]
 """
 import argparse, json, os, sys
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 
 
 def main():

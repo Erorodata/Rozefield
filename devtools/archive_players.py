@@ -6,8 +6,9 @@ Per player id: names seen, profile (OtherPlayerInfo / friend list), last scene l
 weapons), chat lines, and their garden furniture if you visited it.
 """
 import argparse, json, os, sys
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.dirname(HERE))   # devtools package
 from tools.make_save import streams  # noqa: E402
 from ofproto import decode, to_dict  # noqa: E402
 

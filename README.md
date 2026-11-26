@@ -107,7 +107,7 @@ OverField preservation: run the game on your own server after the official one c
 
 ![Rozefield progress chart](docs/progress.png)
 
-_Updated 2026-11-26 by `py server/tools/progress.py` from [docs/checklist.json](docs/checklist.json)._
+_Updated 2026-11-26 by `py devtools/progress.py` from [docs/checklist.json](docs/checklist.json)._
 
 ## About
 

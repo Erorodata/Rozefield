@@ -2,7 +2,7 @@
 
 ![progress](progress.png)
 
-_OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-26; regenerate with `py server/tools/progress.py`._
+_OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-26; regenerate with `py devtools/progress.py`._
 
 ## Preservation & archive (93.8%)
 

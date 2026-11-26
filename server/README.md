@@ -25,17 +25,16 @@ and the server replays a full captured login (session 4) correctly in a local te
 | `proto/overfield.desc` | FileDescriptorSet: 154 files (net: `enum`, `common`, `player`; plus 151 config-table schemas) |
 | `proto/net/*.proto`, `proto/config/*.proto` | readable .proto text (msg ids in comments) |
 | `tools/make_save.py` | build `save/save.json` from your own pcaps (your account — keep private) |
-| `tools/re/` | the extraction scripts (literal xrefs → descriptor reassembly → ids) |
 | `sdk_stub/` | offline PCSDKUI.exe replacement (source + build) and `rozefield_sdk.ini` |
-| `setup_client.ps1` | switch the game to this server / `-Revert` |
+| `link_relay/` | `winhttp.dll`, the Rozefield link that goes in a player's game folder |
 | `start_server.bat` | run the server on Windows |
 
 ## Use (Windows)
 1. Install Python 3 (python.org, tick "Add to PATH").
 2. Build a save from your captures: `py tools\make_save.py <capture.pcapng>... -o save\save.json`
    and put your SDK uid in `rozefield_sdk.ini`.
-3. Admin PowerShell: `powershell -ExecutionPolicy Bypass -File setup_client.ps1`
-4. Run `start_server.bat`, then start the game. Watch `server.log`; every message is also logged to `traffic.jsonl`.
+3. Run `start_server.bat` (or press Start in Overfield Server), then start the game. Watch `server.log`.
+   Dev tools (CN patch builder, capture decoding, the README generator) live in the repo's `devtools/` folder.
 
 ## What works / what doesn't yet
 * Login, main data, login pushes, every request seen in the captures (replayed), pings, scene channel change.
@@ -74,28 +73,9 @@ Build the stub: `python -m ziglang cc -target x86_64-windows-gnu -O2 -Wl,--subsy
 A server list kept on GitHub (or any https page) works too: put `"list_url": "https://.../servers.json"` in the game's
 `rozefield_servers.json`; Hosting's `servers.json` (`/admin/host/servers.json`) gives the content.
 
-## Play with friends the old way (setup_client.ps1, still works)
-
-The server answers every player with the address they reached it on, so players on the host PC, the LAN and the
-internet can play together at the same time. Co-op (Pop Balloons, Aerial Adventure: all 10 layouts each, team
-invites), online Gomoku, chat, plazas, friends and the wish list work across PCs.
-
-| Step | Who | What |
-|---|---|---|
-| 1 | Host | `start_server.bat` as usual |
-| 2 | Host | `allow_friends.bat` (as Administrator) once: opens TCP 80, 18881, 11001 and shows your LAN and internet address |
-| 3 | Host | For internet play: forward TCP 80, 18881 and 11001 on the router to this PC |
-| 4 | Host | `make_friend_kit.bat`, then send `Rozefield_friend_kit.zip` and a copy of the game folder (without `_archive`) |
-| 5 | Friend | Unzip the kit; in an Administrator terminal: `powershell -ExecutionPolicy Bypass -File setup_client.ps1 -Game "<game folder>" -ServerIP <host address>` |
-| 6 | Friend | Start `launcher.exe`; the first start downloads the Rozefield update from the host; create an account and play |
-
-`setup_client.ps1` points the login window, `Config.txt` and the game's own server lookup at the host (no Python
-needed). The lookup address must fit in 12 characters; for a longer one add `-LookupName rozefield` (it also adds
-`<host address> rozefield` to the hosts file). Undo with `-Revert`.
-
 ## Saving player accounts before the official shutdown (backup / import)
 
-**Easiest:** give players `backup_tool\Overfield Backup.exe` (single file, nothing to install). They press
+**Easiest:** give players `Overfield Backup.exe` (the Overfield Backup download) (single file, nothing to install). They press
 **1. Open OverField (Official)**, log in as usual, open the menus in the checklist, and close the game: the backup
 (`backups\<name>_<date>.rzsave`) is saved automatically (or press **2. Save backup**). Later, in the Rozefield login
 window, **Import backup (.rzsave)...** uploads it and the account appears under their in-game name. Re-importing the
@@ -105,15 +85,4 @@ different account is refused.
 The backup never keeps the login token or device details (account SDK id, device id and model, analytics id,
 log-server token, the game's client logs); the server also drops them from older backups when importing.
 
-Script version of the same:
-
-**Players (while the official server is still online):** run `export_my_data.bat`, then start OverField normally and log
-in. The tool relays your game's connection to the official server unchanged and records what the server sends about
-your account (it sends nothing of its own and does not save your login token). Open the menus it lists (achievements,
-life skills, manual, plaza...) so those are saved too, close the game, press Ctrl+C. You get
-`exports\<name>_<date>.rzsave`. Config.txt is put back as soon as the game has connected; if the window was closed
-early, running the .bat again restores everything.
-
-**Server host:** drag `.rzsave` files onto `import_player.bat` (or `py tools\import_player.py file.rzsave [--name X]`).
-The player then types their in-game name in the Rozefield login box and continues where they left off. Any other name
-starts a fresh account.
+Host side by command line: `py tools\import_player.py file.rzsave [--name X]` (the login window's Bring my account does the same).

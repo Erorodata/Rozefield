@@ -1,10 +1,10 @@
 @echo off
 rem Builds Rozefield_friend_kit.zip: what a friend needs (besides a copy of the game folder) to play on this server.
-cd /d "%~dp0"
+cd /d "%~dp0..\server"
 set KIT=%~dp0Rozefield_friend_kit
 if exist "%KIT%" rmdir /s /q "%KIT%"
 mkdir "%KIT%\sdk_stub"
-copy /y setup_client.ps1 "%KIT%\" >nul
+copy /y ..\devtools\setup_client.ps1 "%KIT%\" >nul
 copy /y sdk_stub\PCSDKUI.exe "%KIT%\sdk_stub\" >nul
 copy /y sdk_stub\rozefield_sdk.ini "%KIT%\sdk_stub\" >nul
 (

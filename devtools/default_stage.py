@@ -9,8 +9,9 @@ Clearing the dates of every event row means none ever matches, so the default st
 merge_cn_config.py applies the same change (clear_event_themes) when it rebuilds the bundle.
 """
 import os, sys
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.dirname(HERE))   # devtools package
 
 
 def clear_event_themes(g):

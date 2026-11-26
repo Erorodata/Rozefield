@@ -10,9 +10,10 @@ Writes patch/ (served by rozefield_server.py):
 The Global client then downloads the new files through its own updater. Nothing in the game folder is edited.
 """
 import argparse, collections, glob, json, os, sys
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 sys.path.insert(0, HERE)
-from tools import yoo  # noqa: E402
+sys.path.insert(1, os.path.dirname(HERE))   # devtools package
+from devtools import yoo  # noqa: E402
 
 CONFIG_BUNDLE = 'assets_development_excel_scripts_pbstaticconfigure_resbundle_pbstaticconfigure.bundle'
 
@@ -87,7 +88,7 @@ def main():
         else:
             skipped['bundle not downloaded in the CN client'] += len(ca[name] - gpaths)
     clone &= set(take)
-    from tools import bundlefix
+    from devtools import bundlefix
     print(f'{len(take)} bundles ({len(clone)} renamed copies); reading internal names...')
     cab_map = {}
     for n in clone:
@@ -143,7 +144,7 @@ def main():
     open(os.path.join(md, 'PackageManifest_DefaultPackage.version'), 'w').write(ver)
     for f in os.listdir(md):
         files[f] = os.path.join(md, f)
-    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # paths inside the server folder are kept relative
+    here = HERE   # paths inside the server folder are kept relative
     files = {k: (os.path.relpath(os.path.abspath(v), here) if os.path.abspath(v).startswith(here + os.sep) else v) for k, v in files.items()}
     json.dump(files, open(os.path.join(a.out, 'files.json'), 'w', encoding='utf-8'), indent=0, ensure_ascii=False)
     json.dump({'version': ver, 'base': gver, 'cn': cver}, open(os.path.join(a.out, 'patch.json'), 'w'))

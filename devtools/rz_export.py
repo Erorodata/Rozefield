@@ -13,8 +13,9 @@ What it changes on your PC while running (all restored when you close it):
 It never sends anything of its own to the official server; it only listens. Your login token is not saved.
 """
 import argparse, asyncio, base64, json, os, shutil, sys, time, urllib.request, zipfile
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.dirname(HERE))   # devtools package
 from ofproto import ID2NAME, decode, to_dict  # noqa: E402
 
 OFFICIAL_DISPATCH = 'dsp-global-of.inutan.com'

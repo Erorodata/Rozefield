@@ -9,8 +9,9 @@
 Also writes <global data dir>-merged/ with the merged JSON for the server.
 """
 import json, os, sys
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.dirname(HERE))   # devtools package
 
 SKIP_FILES = {'exploration'}
 CONFIG_OVERRIDES = {k: '500000' for k in ('HomeItemPointMax', 'PublicHomeItemPointMax', 'PrivateHomeItemPointMax',
@@ -153,7 +154,7 @@ def main():
         if base == 'story':
             n += add_story_chapters(g)
         if base == 'scene':   # Rozefield: plaza always on the default stage (no seasonal event decoration)
-            from tools.default_stage import clear_event_themes
+            from devtools.default_stage import clear_event_themes
             n += clear_event_themes(g)
         if base.startswith('string_'):
             n += add_chapter_name(g, base.split('_', 1)[1])

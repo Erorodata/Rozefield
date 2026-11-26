@@ -18,9 +18,10 @@ server/patch_src/
 server/export_game_path.txt
 server/exports/
 server/backups/
-server/backup_tool/backups/
-server/backup_tool/recording.tmp
-server/backup_tool/RozefieldBackup.ini
+backup/backups/
+backup/recording.tmp
+backup/*.ini
+backup/*.log
 *.pdb
 
 # dev-only knowledge graph (graphify), never shipped
@@ -28,8 +29,8 @@ graphify-out/
 .graphifyignore
 server/save/admin_token.txt
 
-# backup window pictures, extracted from your own game install (tools/extract_backup_assets.py)
-server/backup_tool/assets/
+# backup window pictures, extracted from your own game install (devtools/extract_backup_assets.py)
+backup/assets/
 
 # private tools, never shipped
 server/server_panel/master.inc
@@ -37,3 +38,7 @@ server/server_panel/master.rc
 server/server_panel/Overfield Master.exe
 graphify-out/
 server/playit/
+# build leftovers
+*.lib
+*.exp
+*.obj

@@ -6,8 +6,9 @@ so it covers any account. Bodies for archive keys come from the official client'
     py tools/gen_backup_queries.py
 """
 import json, os, sys
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.dirname(HERE))   # devtools package
 from ofproto import from_dict, NAME2ID, pool  # noqa: E402
 
 
@@ -21,7 +22,7 @@ def enum(name):
 
 
 # GetArchiveInfoReq keys seen from the official client (tutorial and settings flags; same for every player)
-ARCHIVE_KEYS = json.load(open(os.path.join(HERE, 'tools', 'archive_keys.json'), encoding='utf-8'))
+ARCHIVE_KEYS = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'archive_keys.json'), encoding='utf-8'))
 
 
 def build():
@@ -82,7 +83,7 @@ def main():
     for i, (n, b) in enumerate(Q):
         out.append('    {%d, %d, Q%d},' % (NAME2ID[n], len(from_dict(n, b).SerializeToString()), i))
     out.append('};\n#define NQUERY ((int)(sizeof QUERIES / sizeof QUERIES[0]))')
-    open(os.path.join(HERE, 'backup_tool', 'backup_queries.h'), 'w', encoding='utf-8').write('\n'.join(out) + '\n')
+    open(os.path.join(os.path.dirname(HERE), 'backup', 'backup_queries.h'), 'w', encoding='utf-8').write('\n'.join(out) + '\n')
     print(len(Q), 'look-ups')
 
 

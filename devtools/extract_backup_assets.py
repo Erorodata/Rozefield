@@ -8,8 +8,9 @@ Writes backup_tool\\assets\\icon_<name>.png and map_<scene>.png. The backup wind
 import os
 import sys
 
-HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'server')   # the server folder (dev tools live in devtools/)
 sys.path.insert(0, HERE)
+sys.path.insert(1, os.path.dirname(HERE))   # devtools package
 
 MAIN = 'Assets/ResBundle/UI/UI_Root_Main/Processed/'
 ICONS = {   # checklist item -> phone menu icon (UI_Root_Main sprite)
@@ -30,7 +31,7 @@ MAPS = {s: 'shijie_01_xiaotu_%s' % s for s in ('01', '02', '03', '04', '05', '06
 
 
 def bundle_file(yoodir, b):
-    from tools.build_cn_patch import cache_path, builtin_path
+    from devtools.build_cn_patch import cache_path, builtin_path
     p = cache_path(yoodir, b['hash'])
     if os.path.exists(p):
         return p
@@ -39,12 +40,12 @@ def bundle_file(yoodir, b):
 
 def main():
     import UnityPy
-    from tools.build_cn_patch import latest
+    from devtools.build_cn_patch import latest
     game = sys.argv[1] if len(sys.argv) > 1 else r'H:\SteamLibrary\steamapps\common\OverField'
     yoodir = os.path.join(game, 'launcher_Data', 'yoo')
     m, _ = latest(yoodir)
     by_path = {a['path']: m.bundles[a['bundle']] for a in m.assets}
-    out = os.path.join(HERE, 'backup_tool', 'assets')
+    out = os.path.join(os.path.dirname(HERE), 'backup', 'assets')
     os.makedirs(out, exist_ok=True)
     wanted = {MAIN + h + '.png': 'icon_' + k for k, h in ICONS.items()}
     for s, nm in MAPS.items():   # English pictures (US atlas) if this install has them, else the default ones

@@ -1,7 +1,7 @@
 @echo off
 rem Rozefield - save YOUR OverField account before the official servers close.
 rem Run this, then start OverField and log in normally. Your data is written to the "exports" folder.
-cd /d "%~dp0"
+cd /d "%~dp0..\server"
 chcp 65001 >nul
 set PY=python
 where py >nul 2>nul && set PY=py -3
@@ -25,8 +25,8 @@ if not exist "%GAME%\launcher.exe" (
   pause & exit /b 1
 )
 echo %GAME%>export_game_path.txt
-%PY% tools\rz_export.py --game "%GAME%" %*
-%PY% tools\rz_export.py --game "%GAME%" --restore
+%PY% ..\devtools\rz_export.py --game "%GAME%" %*
+%PY% ..\devtools\rz_export.py --game "%GAME%" --restore
 echo.
 echo Send the .rzsave file in the "exports" folder to your Rozefield server host (or keep it safe).
 pause

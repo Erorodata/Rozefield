@@ -1,7 +1,7 @@
 @echo off
 rem Rozefield - import a player's .rzsave (from export_my_data.bat) as their own account.
 rem Drag one or more .rzsave files onto this file. The player then logs in with their in-game name.
-cd /d "%~dp0"
+cd /d "%~dp0..\server"
 set PY=python
 where py >nul 2>nul && set PY=py -3
 py -3.12 -c "1" >nul 2>nul && set PY=py -3.12

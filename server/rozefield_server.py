@@ -875,7 +875,7 @@ async def main():
     ap.add_argument('--res-version', default='2026-11-23-15-53-19')
     ap.add_argument('--res-dir', action='append', help='folder(s) holding PackageManifest_* files to serve')
     ap.add_argument('--all-banners', action='store_true', help='show recruit banners whose dates have passed')
-    ap.add_argument('--traffic-log', default=os.path.join(HERE, 'traffic.jsonl'))
+    ap.add_argument('--traffic-log', default='', help='dev only: write every game message to this file (e.g. traffic.jsonl)')
     ap.add_argument('--set-admin-password', metavar='PASSWORD', help='set the password the control panel uses from another device, then exit')
     a = ap.parse_args()
     if a.set_admin_password:
