@@ -19,10 +19,6 @@ FILE = os.path.join(HERE, 'save', 'server_settings.json')
 ROUNDS = 100000
 DEFAULTS = {
     'display_name': 'Rozefield',      # shown in the launcher's server list and on the download page
-    'name_provider': 'none',          # none | duckdns | url
-    'server_name': '',                # the fixed name players use, e.g. myserver.duckdns.org
-    'duckdns_token': '',
-    'update_url': '',                 # own domain: a dynamic-DNS update URL, {ip} is replaced by the public address
     'upnp': True,                     # open the router ports automatically
     'download_link': '',              # e.g. a Google Drive link to Rozefield.zip (tried before this server)
     'public_list': False,             # offer servers.json for a server list on GitHub
@@ -41,7 +37,7 @@ def load():
     except Exception:
         s = {}
     out = dict(DEFAULTS)
-    out.update({k: v for k, v in s.items()})
+    out.update({k: v for k, v in s.items() if k in DEFAULTS or k == 'admin'})   # old keys (e.g. DuckDNS) dropped
     return out
 
 
@@ -58,8 +54,6 @@ def public_view(s=None):
     s = dict(s or load())
     adm = s.pop('admin', None)
     s['admin_password_set'] = bool(adm)
-    if s.get('duckdns_token'):
-        s['duckdns_token'] = '(set)'
     return s
 
 
@@ -67,8 +61,6 @@ def update(changes):
     s = load()
     for k, v in changes.items():
         if k not in DEFAULTS:
-            continue
-        if k == 'duckdns_token' and v == '(set)':
             continue
         if isinstance(DEFAULTS[k], bool):
             v = str(v).lower() in ('1', 'true', 'yes', 'on')

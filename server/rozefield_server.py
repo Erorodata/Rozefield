@@ -238,7 +238,7 @@ class HTTP:
             acc = len(json.load(open(os.path.join(HERE, 'save', 'accounts', '_registry.json'), encoding='utf-8'))['by_uid'])
         except Exception:
             pass
-        return {'format': 'rozefield-info/1', 'name': s.get('display_name', 'Rozefield'), 'server_name': s.get('server_name', ''),
+        return {'format': 'rozefield-info/1', 'name': s.get('display_name', 'Rozefield'),
                 'online': len(self.game.sessions) if self.game else 0, 'accounts': acc,
                 'version': (self.patch or {}).get('version', self.cfg.res_version), 'lan_ip': netsvc.STATUS.get('lan_ip', ''),
                 'http_port': self.cfg.http_port, 'gate_port': self.cfg.gate_port, 'link_port': self.cfg.link_port,
@@ -274,7 +274,7 @@ class HTTP:
         if not btns:
             btns.append('<p class="m">The game package isn\'t ready yet. Ask the server owner.</p>')
         from game import netsvc
-        addr = s.get('server_name') or netsvc.invite_code(netsvc.STATUS.get('public_ip', '')) if (s.get('server_name') or netsvc.STATUS.get('public_ip')) else ''
+        addr = s.get('tunnel_address') or (netsvc.invite_code(netsvc.STATUS['public_ip']) if netsvc.STATUS.get('public_ip') else '')
         server_line = f'<p>Server: <b>{html.escape(addr)}</b> (already set in the download)</p>' if addr else ''
         return f'''<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{name}</title><style>body{{margin:0;background:#F4F6F8;color:#2A2C36;font-family:"Segoe UI",system-ui,sans-serif}}
@@ -296,7 +296,7 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
         q = urllib.parse.parse_qs(u.query)
         if p == 'status':
             i = self.info()
-            st = dict(i, uptime=int(time.time() - START), name_status=netsvc.STATUS['name'], router=netsvc.STATUS['router'],
+            st = dict(i, uptime=int(time.time() - START), router=netsvc.STATUS['router'],
                       public_ip=netsvc.STATUS['public_ip'], package=hostdata.package_status(),
                       settings=hostcfg.public_view(), local=local, playit=__import__('game.playit', fromlist=['STATE']).STATE)
             return json.dumps(st, ensure_ascii=False).encode('utf-8'), 200, 'application/json'
@@ -309,7 +309,6 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
                 hostcfg.update(json.loads(body.decode('utf-8')))
             except Exception as e:
                 return f'ERR|{e}'.encode(), 200, txt
-            loop.run_in_executor(None, netsvc.update_name)
             return b'OK|saved', 200, txt
         if p == 'password' and method == 'POST':
             if not local:
@@ -319,11 +318,8 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
             except ValueError as e:
                 return f'ERR|{e}'.encode(), 200, txt
             return b'OK|admin password set', 200, txt
-        if p == 'name' and method == 'POST':
-            r = await loop.run_in_executor(None, netsvc.update_name)
-            return f'OK|{r}'.encode('utf-8'), 200, txt
         if p == 'router' and method == 'POST':
-            r = await loop.run_in_executor(None, netsvc.open_ports, [80, self.cfg.http_port, self.cfg.gate_port])
+            r = await loop.run_in_executor(None, netsvc.open_ports, [self.cfg.link_port, 80, self.cfg.http_port, self.cfg.gate_port])
             netsvc.STATUS['router'] = r
             return f'OK|{r}'.encode('utf-8'), 200, txt
         if p == 'servers.json':
@@ -342,7 +338,7 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
             return (await loop.run_in_executor(None, hostdata.stage_import, body)).encode('utf-8'), 200, txt
         if p == 'package' and method == 'POST':
             s = hostcfg.load()
-            addr = s.get('tunnel_address') or s.get('server_name') or netsvc.STATUS.get('public_ip') or netsvc.STATUS.get('lan_ip') or '127.0.0.1'
+            addr = s.get('tunnel_address') or netsvc.STATUS.get('public_ip') or netsvc.STATUS.get('lan_ip') or '127.0.0.1'
             return hostdata.build_package({'name': s.get('display_name', 'Rozefield'), 'address': addr}).encode('utf-8'), 200, txt
         if p == 'package':
             return hostdata.package_status().encode('utf-8'), 200, txt

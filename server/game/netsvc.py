@@ -1,4 +1,4 @@
-"""Network helpers for hosting: public address, the fixed server name (DuckDNS or an own-domain update URL), opening
+"""Network helpers for hosting: public address, opening
 router ports (UPnP), and answering launchers that look for servers on the home network.
 
 Everything runs in background threads and only reports status; a failure never stops the game server.
@@ -17,7 +17,7 @@ from game import hostcfg
 
 log = logging.getLogger('rozefield')
 DISCOVERY_PORT = 18882
-STATUS = {'public_ip': '', 'name': 'off', 'router': 'off', 'lan_ip': ''}
+STATUS = {'public_ip': '', 'router': 'off', 'lan_ip': ''}
 
 
 B32 = '0123456789ABCDEFGHJKMNPQRSTVWXYZ'
@@ -61,37 +61,10 @@ def public_ip():
     return ''
 
 
-# ---------------------------------------------------------------- fixed server name
-def update_name(s=None):
-    s = s or hostcfg.load()
-    prov, name = s.get('name_provider', 'none'), s.get('server_name', '').strip()
-    if prov == 'none' or not name:
-        STATUS['name'] = 'off'
-        return STATUS['name']
-    ip = STATUS['public_ip'] = public_ip() or STATUS['public_ip']
-    try:
-        if prov == 'duckdns':
-            sub = name.split('.duckdns.org')[0]
-            q = urllib.parse.urlencode({'domains': sub, 'token': s.get('duckdns_token', ''), 'ip': ip})
-            r = _get('https://www.duckdns.org/update?' + q)
-            STATUS['name'] = f'{name} -> {ip}' if r.startswith('OK') else f'DuckDNS refused the update ({r[:40]}) - check the name and token'
-        elif prov == 'url':
-            url = s.get('update_url', '')
-            if not url:
-                STATUS['name'] = 'no update URL set'
-            else:
-                r = _get(url.replace('{ip}', ip))
-                STATUS['name'] = f'{name} -> {ip} (provider said: {r[:40]})'
-    except Exception as e:
-        STATUS['name'] = f'could not update {name}: {e.__class__.__name__}'
-    log.info('server name: %s', STATUS['name'])
-    return STATUS['name']
-
-
 def servers_json(s=None):
     """Content for a server-list file (e.g. servers.json in a GitHub repo) that launchers can read."""
     s = s or hostcfg.load()
-    addr = s.get('server_name') or STATUS['public_ip'] or lan_ip()
+    addr = s.get('tunnel_address') or STATUS['public_ip'] or lan_ip()
     return json.dumps({'format': 'rozefield-servers/1', 'servers': [{'name': s.get('display_name', 'Rozefield'), 'address': addr}]},
                       ensure_ascii=False, indent=1)
 
@@ -196,7 +169,4 @@ def start(ports, info):
         if s.get('upnp', True):
             STATUS['router'] = open_ports(ports)
             log.info('router ports: %s', STATUS['router'])
-        while True:
-            update_name()
-            time.sleep(600)
     threading.Thread(target=loop, daemon=True).start()

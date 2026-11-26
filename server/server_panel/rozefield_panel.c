@@ -545,37 +545,32 @@ static void do_connect(void) {
 
 static void do_hosting(void) {
     char *js; if (!http("GET", "/admin/host/status", "", 0, &js)) { MessageBoxW(g_win, L"The server didn't answer.", L"Hosting", MB_OK); return; }
-    static const char *keys[] = {"display_name", "server_name", "name_provider", "duckdns_token", "update_url", "download_link", "upnp", "lan_discovery"};
-    wchar_t cur[8][600]; char v[1200];
-    for (int i = 0; i < 8; i++) { json_get(js, "\"settings\"", keys[i], v, sizeof v); if (i >= 6) strcpy(v, strcmp(v, "false") ? "yes" : "no"); MultiByteToWideChar(CP_UTF8, 0, v, -1, cur[i], 600); }
-    char ns[300], rt[300], pub[64], lan[64]; json_get(js, NULL, "name_status", ns, sizeof ns); json_get(js, NULL, "router", rt, sizeof rt);
-    json_get(js, NULL, "public_ip", pub, sizeof pub); json_get(js, NULL, "lan_ip", lan, sizeof lan);
-    char code[32], lcode[32]; json_get(js, NULL, "invite_code", code, sizeof code); json_get(js, NULL, "lan_code", lcode, sizeof lcode); free(js);
-    wchar_t intro[900]; swprintf(intro, 900, L"Invite code %hs (internet)  \x00B7  %hs (home network)  \x00B7  name: %hs\nRouter: %hs",
-                                 code[0] ? code : "unknown", lcode, ns, rt); (void)pub; (void)lan;
-    const wchar_t *lab[] = {L"Display name (shown in the launcher and on the download page)", L"Fixed server name players use (e.g. myserver.duckdns.org)",
-                            L"Name service: none, duckdns, or url (own domain)", L"DuckDNS token (from duckdns.org)", L"Own domain: dynamic-DNS update URL ({ip} = this server's address)",
-                            L"Download link for Rozefield.zip (e.g. Google Drive), tried before this server", L"Open router ports automatically (yes / no)",
-                            L"Answer launchers on the home network (yes / no)", L"Start with Windows, in the tray (yes / no)", L"New admin password for connecting from another device (empty = keep)"};
-    const wchar_t *init[10]; for (int i = 0; i < 8; i++) init[i] = cur[i];
-    init[8] = g_remote ? L"(only on that device)" : autostart_on() ? L"yes" : L"no"; init[9] = L"";
-    int n = g_remote ? 8 : 10;
-    if (!ask(L"Hosting", intro, n, lab, init, 4 | (1 << (8 + 9)))) return;
+    static const char *keys[] = {"display_name", "tunnel_address", "download_link", "tunnel", "upnp", "lan_discovery"};
+    wchar_t cur[6][600]; char v[1200];
+    for (int i = 0; i < 6; i++) { json_get(js, "\"settings\"", keys[i], v, sizeof v); if (i >= 4) strcpy(v, strcmp(v, "false") ? "yes" : "no"); MultiByteToWideChar(CP_UTF8, 0, v, -1, cur[i], 600); }
+    char rt[300], lcode[32]; json_get(js, NULL, "router", rt, sizeof rt); json_get(js, NULL, "lan_code", lcode, sizeof lcode); free(js);
+    wchar_t intro[900]; swprintf(intro, 900, L"Home network code %hs\nRouter: %hs", lcode, rt);
+    const wchar_t *lab[] = {L"Display name (shown in the login window and on the download page)", L"Internet address (playit.gg, filled in by itself)",
+                            L"Download link for Rozefield.zip (e.g. Google Drive), tried before this server", L"Players from anywhere through playit.gg (auto / off)", L"Open router ports automatically (yes / no)",
+                            L"Answer players searching the home network (yes / no)", L"Start with Windows, in the tray (yes / no)", L"New admin password for connecting from another device (empty = keep)"};
+    const wchar_t *init[8]; for (int i = 0; i < 6; i++) init[i] = cur[i];
+    init[6] = g_remote ? L"(only on that device)" : autostart_on() ? L"yes" : L"no"; init[7] = L"";
+    int n = g_remote ? 6 : 8;
+    if (!ask(L"Hosting", intro, n, lab, init, 4 | (1 << (8 + 7)))) return;
     char b[8192] = "{";
-    for (int i = 0; i < 8; i++) json_put(b, sizeof b, keys[i], g_dlg_out[i], i >= 6);
+    for (int i = 0; i < 6; i++) json_put(b, sizeof b, keys[i], g_dlg_out[i], i >= 4);
     strcat(b, "}");
     int ok; wchar_t *r = host_call("POST", "/admin/host/settings", b, (int)strlen(b), &ok);
     wchar_t msg[2000]; swprintf(msg, 2000, L"Settings: %ls", r); free(r);
     if (!g_remote) {
-        int on = g_dlg_out[8][0] == L'y' || g_dlg_out[8][0] == L'Y'; autostart_set(on);
+        int on = g_dlg_out[6][0] == L'y' || g_dlg_out[6][0] == L'Y'; autostart_set(on);
         wcscat(msg, on ? L"\nStarts with Windows: on (in the tray)." : L"\nStarts with Windows: off.");
-        if (g_dlg_out[9][0]) {
-            char pw[512]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[9], -1, pw, sizeof pw, NULL, NULL);
+        if (g_dlg_out[7][0]) {
+            char pw[512]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[7], -1, pw, sizeof pw, NULL, NULL);
             int ok2; wchar_t *r2 = host_call("POST", "/admin/host/password", pw, (int)strlen(pw), &ok2); SecureZeroMemory(pw, sizeof pw);
             wcscat(msg, L"\nAdmin password: "); wcscat(msg, r2); free(r2);
         }
     }
-    wchar_t *r3 = host_call("POST", "/admin/host/name", "", 0, &ok); wcscat(msg, L"\nServer name: "); wcsncat(msg, r3, 400); free(r3);
     MessageBoxW(g_win, msg, L"Hosting", MB_OK | MB_ICONINFORMATION);
 }
 
@@ -662,12 +657,12 @@ static void share_fill(HWND d) {
     char code[32], lcode[32], name[256], link[512], router[300], pub[64], lan[64], pkg[400], tun[300];
     json_get(js, NULL, "invite_code", code, sizeof code); json_get(js, NULL, "lan_code", lcode, sizeof lcode);
     json_get(js, "\"settings\"", "tunnel_address", tun, sizeof tun);
-    json_get(js, "\"settings\"", "server_name", name, sizeof name); json_get(js, "\"settings\"", "download_link", link, sizeof link);
+    name[0] = 0; json_get(js, "\"settings\"", "download_link", link, sizeof link);
     json_get(js, NULL, "router", router, sizeof router); json_get(js, NULL, "public_ip", pub, sizeof pub); json_get(js, NULL, "lan_ip", lan, sizeof lan);
     json_get(js, NULL, "package", pkg, sizeof pkg); free(js);
     char dl[600]; if (link[0]) snprintf(dl, sizeof dl, "%s", link); else snprintf(dl, sizeof dl, "http://%s/", tun[0] ? tun : name[0] ? name : pub[0] ? pub : lan);
-    const char *vals[4] = {lcode[0] ? lcode : "(unknown)", tun[0] ? tun : code[0] ? code : "(internet address unknown)", name[0] ? name : "not set - use Hosting", dl};
-    for (int i = 0; i < 4; i++) { wchar_t w[600]; MultiByteToWideChar(CP_UTF8, 0, vals[i], -1, w, 600); SetWindowTextW(g_sh_edit[i], w); }
+    const char *vals[3] = {lcode[0] ? lcode : "(unknown)", tun[0] ? tun : code[0] ? code : "(internet address unknown)", dl};
+    for (int i = 0; i < 3; i++) { wchar_t w[600]; MultiByteToWideChar(CP_UTF8, 0, vals[i], -1, w, 600); SetWindowTextW(g_sh_edit[i], w); }
     wchar_t warn[700];
     if (tun[0]) swprintf(warn, 700, L"Internet: through playit.gg (%hs) - works with any router or internet provider.", tun);
     else if (!strncmp(router, "open", 4)) swprintf(warn, 700, L"Router: %hs", router);
@@ -700,7 +695,7 @@ static LRESULT CALLBACK ShareProc(HWND h, UINT m, WPARAM w, LPARAM l) {
     case WM_ERASEBKGND: { RECT r; GetClientRect(h, &r); FillRect((HDC)w, &r, br_panel); return 1; }
     case WM_COMMAND: {
         int id = LOWORD(w);
-        if (id >= 100 && id < 104) { wchar_t t[600]; GetWindowTextW(g_sh_edit[id - 100], t, 600); to_clipboard(t); SetWindowTextW(GetDlgItem(h, id), L"Copied"); }
+        if (id >= 100 && id < 103) { wchar_t t[600]; GetWindowTextW(g_sh_edit[id - 100], t, 600); to_clipboard(t); SetWindowTextW(GetDlgItem(h, id), L"Copied"); }
         else if (id == 110) { wchar_t t[2000]; MultiByteToWideChar(CP_UTF8, 0, g_sh_msg, -1, t, 2000); to_clipboard(t); SetWindowTextW(GetDlgItem(h, 110), L"Copied - paste it in chat"); }
         else if (id == 112) { do_playit(h); share_fill(h); }
         else if (id == 111) { SetWindowTextW(g_sh_warn, L"Asking the router\x2026"); UpdateWindow(h); char *o; if (http("POST", "/admin/host/router", "", 0, &o)) free(o); share_fill(h); }
@@ -716,8 +711,8 @@ static void do_share(void) {
     int W = 720, H = 400; RECT pr; GetWindowRect(g_win, &pr);
     HWND d = CreateWindowExW(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, L"RzShare", L"Share with players", WS_POPUP | WS_CAPTION | WS_SYSMENU,
                              (pr.left + pr.right - W) / 2, (pr.top + pr.bottom - H) / 2, W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
-    const wchar_t *lab[] = {L"Same Wi-Fi (invite code)", L"Internet (anywhere)", L"Fixed server name", L"Game download"};
-    for (int i = 0; i < 4; i++) {
+    const wchar_t *lab[] = {L"Same Wi-Fi (invite code)", L"Internet (anywhere)", L"Game download"};
+    for (int i = 0; i < 3; i++) {
         int y = 18 + i * 44;
         HWND s = CreateWindowW(L"STATIC", lab[i], WS_CHILD | WS_VISIBLE, 18, y + 6, 170, 22, d, NULL, NULL, NULL); SendMessageW(s, WM_SETFONT, (WPARAM)f_small, TRUE);
         g_sh_edit[i] = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_READONLY | ES_AUTOHSCROLL, 190, y + 2, 300, 28, d, NULL, NULL, NULL);
@@ -956,7 +951,7 @@ static void do_wizard(void) {
 static const char *PUSH_KEYS[] = {"code", "data", "patch", "panel", "stub"};
 static const wchar_t *PUSH_NAMES[] = {L"Server code", L"Game data (tables)", L"Game update (patch)", L"Panel app (Overfield Server.exe)", L"Login window + Rozefield link (PCSDKUI.exe, winhttp.dll)"};
 static const char *PUSH_PATHS[5][13] = {
-    {"rozefield_server.py", "ofproto.py", "requirements.txt", "game/", "tools/", "proto/", "start_server.bat", "start_server.sh", "install_linux.sh", "setup_python.bat", "allow_friends.bat", "README.md", "DuckDNS guide.md"},
+    {"rozefield_server.py", "ofproto.py", "requirements.txt", "game/", "tools/", "proto/", "start_server.bat", "start_server.sh", "install_linux.sh", "setup_python.bat", "allow_friends.bat", "README.md", "Hosting guide.md"},
     {"data/", "data-merged/", "data-merged.zip"}, {"patch/"}, {"Overfield Server.exe"}, {"sdk_stub/PCSDKUI.exe", "link_relay/winhttp.dll"}};
 struct pbuf { char *b; size_t n, cap; long long newest; int files; long long bytes; };
 static void pb_put(struct pbuf *p, const void *d, size_t n) {

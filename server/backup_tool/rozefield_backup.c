@@ -2154,7 +2154,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     SetWindowRgn(g_win, CreateRoundRectRgn(0, 0, WW + 1, WH + 1, 16, 16), TRUE);
     g_psrv = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_TABSTOP | ES_AUTOHSCROLL, 124, 436, 520, 34, g_win, NULL, hi, NULL);
     SendMessageW(g_psrv, WM_SETFONT, (WPARAM)f_body, TRUE); SendMessageW(g_psrv, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELONG(8, 8));
-    SendMessageW(g_psrv, 0x1501 /* EM_SETCUEBANNER */, TRUE, (LPARAM)L"Invite code RZ-XXXX-XXX, or a name like myserver.duckdns.org");
+    SendMessageW(g_psrv, 0x1501 /* EM_SETCUEBANNER */, TRUE, (LPARAM)L"Invite code RZ-XXXX-XXX, or an address like word-word.gl.at.ply.gg:12345");
     ShowWindow(g_win, show); UpdateWindow(g_win);
     SetTimer(g_win, 1, 30, NULL);
     if (strstr(cmd, "--play")) set_tab(1);

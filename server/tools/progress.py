@@ -235,7 +235,7 @@ def readme(cfg, m, areas, overall):
             'Rozefield preserves OverField: the archived client and a private server that runs it after the official shutdown.', '',
             '- [Archive notes: client build, endpoints, protocol, captures](docs/ARCHIVE.md)',
             '- [Server: setup, login window, backup / import, GM commands](server/README.md)',
-            '- [Host your own server with a DuckDNS name](docs/HOSTING_DUCKDNS.md)',
+            '- [Host your own server](docs/HOSTING.md)',
             '- [Checklist (plain)](docs/PROGRESS.md)', '']
     return '\n'.join(out)
 
