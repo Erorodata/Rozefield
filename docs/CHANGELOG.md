@@ -1,0 +1,15 @@
+# Change log
+
+Newest first. One entry per build bundle (`rozefield_buildN.bundle`); keep this file updated with every change.
+
+| Build | Date | Changes |
+|---|---|---|
+| 43 | 2026-11-26 | Docs: [NOT_BUILT.md](NOT_BUILT.md) (everything not built or estimated), capture checklist with what each capture already covers, issues 29–33, story check progress, this change log |
+| 42 | 2026-11-26 | Double Jump tutorial fixed: Astral Atlas box costs its moonstone and pays its unlock (page 1 box 31 = Double Jump); "own item / level / map" quest steps re-checked after every action; repair at login for boxes activated on older builds; quest updates only sent on real changes; UTF-8 log; panel asks before stopping an older server copy holding the ports |
+| 41 | 2026-11-26 | Content packs: rules that were written in the code moved to `server/packs/official/systems/*.json`; host packs (quests, story, NPCs, dialogue, areas, tables) merged into the game tables; templates in `server/packs/_templates`; packs sent with Push update |
+| 40 | 2026-11-26 | Panel: Delete player (test accounts; save kept in `save/deleted`) and Assign ID (friends, requests and private chats follow) |
+| 39 | 2026-11-26 | Panel stops a server left running from an earlier start (pid file); no second Start while one is starting |
+| 38 | 2026-11-26 | Server starts even when the game started first: the link port serves HTTP and game connections itself |
+| 37 | 2026-11-26 | Prologue: "Access Area Terminal" completes on any terminal visit; first recruit brings a new salvager |
+| 36 | 2026-11-26 | playit.gg: tries both tunnel-create formats; warns about a UDP tunnel (the game needs TCP) |
+| 35 | 2026-11-26 | Clean layout: `server/` holds only what runs; dev tools in `devtools/`; Backup app in `backup/`. Builds before this are in the git history |

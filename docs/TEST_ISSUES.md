@@ -53,6 +53,11 @@ Status: **Fixed** = fixed and confirmed in game · **Fixed, retest** = fixed on 
 | 17 | Dialogue plays and starts over | At the end of a dialogue the game reports the step by its own condition id | Step accepted by condition id | Fixed |
 | 18 | Story "Claim reward": no popup, claimed only after reopening | Reply carried the story id, which is not in the quest table | Reply carries the story's last quest | Fixed |
 | 19 | Story step "Eliminate Ashen Creatures": battle marker missing on the map, story does not continue | Story battle markers were never sent | Markers for story battles show while that step is in progress and update live | Fixed |
+| 29 | Prologue "Access Area Terminal" step never completes | The step only counted on the very first terminal unlock, with no scene check | Any terminal visit counts; the step reads the number of terminals opened in its scene | Fixed, retest |
+| 30 | Tutorial "add a salvager" but no new salvager to add | The first recruit could give a copy of the starter salvager | While you own fewer than 2 salvagers, a recruit with no new salvager swaps its last result for one you don't have | Fixed, retest |
+| 31 | Prologue "Unlock Double Jump via Astral Atlas" never completes | The Atlas box paid 2000 Gold (a guess) instead of Double Jump, took no moonstone, and "own item" steps were only checked at login | Box costs its moonstone; page 1 box 31 gives Double Jump (official accounts activate it first, and nothing else in the game gives it); "own item / level / map" steps re-checked after every action; accounts that activated it on an older build get Double Jump at next login | Fixed, retest |
+| 32 | Start fails: "no port could be opened"; the game still connects, to an older server | A server copy from an older build (no pid file) kept running in the background | Start finds an older copy and asks before stopping it | Fixed, retest |
+| 33 | `start_errors.log` filled with "UnicodeEncodeError" | Chinese tutorial names in the log could not be written to a cp1252 console | Log output is UTF-8 | Fixed |
 
 All storylines still need a full pass; see [STORY_CHECKLIST.md](STORY_CHECKLIST.md).
 Values still estimated (no official answer recorded) are listed in [OFFICIAL_CAPTURE_CHECKLIST.md](OFFICIAL_CAPTURE_CHECKLIST.md).
