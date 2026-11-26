@@ -870,11 +870,35 @@ static void copy_records_private(FILE *in, FILE *o) {
     }
 }
 
+/* where backups go (UTF-8): [backup] folder in the ini, else "backups" next to the exe */
+static void backup_dir(char *dir) {
+    char ini[MAX_PATH]; ini_path(ini);
+    GetPrivateProfileStringA("backup", "folder", "", dir, MAX_PATH, ini);
+    if (!dir[0]) { wchar_t w[MAX_PATH], e[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_exedir, -1, e, MAX_PATH); swprintf(w, MAX_PATH, L"%lsbackups", e);
+                   WideCharToMultiByte(CP_UTF8, 0, w, -1, dir, MAX_PATH, NULL, NULL); }
+}
+static void backup_dir_choose(void) {
+    BROWSEINFOW bi = {0}; bi.hwndOwner = g_win; bi.lpszTitle = L"Where should your backups be saved? (a USB stick or cloud folder keeps them safe)";
+    bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+    LPITEMIDLIST id = SHBrowseForFolderW(&bi);
+    if (id) {
+        wchar_t p[MAX_PATH];
+        if (SHGetPathFromIDListW(id, p)) { char u[MAX_PATH], ini[MAX_PATH]; WideCharToMultiByte(CP_UTF8, 0, p, -1, u, MAX_PATH, NULL, NULL);
+            ini_path(ini); WritePrivateProfileStringA("backup", "folder", u, ini); ui_log("Backups will be saved in %s", u); }
+        CoTaskMemFree(id);
+    }
+}
+static void backup_dir_open(void) {
+    char d[MAX_PATH]; backup_dir(d); wchar_t w[MAX_PATH]; MultiByteToWideChar(CP_UTF8, 0, d, -1, w, MAX_PATH);
+    CreateDirectoryW(w, NULL); ShellExecuteW(NULL, L"open", w, NULL, NULL, SW_SHOWNORMAL);
+}
+
 static int save_backup(char *out, int outsz) {
     if (!g_frames || !g_player[0]) return 0;
     EnterCriticalSection(&g_cs);
     fflush(g_tmp);
-    char dir[MAX_PATH]; snprintf(dir, sizeof dir, "%sbackups", g_exedir); CreateDirectoryA(dir, NULL);
+    char dir[MAX_PATH]; backup_dir(dir);
+    { wchar_t wd[MAX_PATH]; MultiByteToWideChar(CP_UTF8, 0, dir, -1, wd, MAX_PATH); CreateDirectoryW(wd, NULL); }
     SYSTEMTIME st; GetLocalTime(&st);
     char safe[128]; int j = 0;
     for (unsigned char *c = (unsigned char *)g_player; *c && j < 100; c++) if (*c >= 0x80 || isalnum(*c) || *c == '-' || *c == '_') safe[j++] = *c;
@@ -985,7 +1009,7 @@ static void do_save(int quiet) {
     ui_log("Backup saved: %s", path);
     g_saved_once = 1; MultiByteToWideChar(CP_UTF8, 0, path, -1, g_savedpath, MAX_PATH);
     wchar_t w[MAX_PATH + 200], wp[MAX_PATH]; MultiByteToWideChar(CP_UTF8, 0, path, -1, wp, MAX_PATH);
-    swprintf(w, MAX_PATH + 200, L"Backup saved:\n%ls\n\nKeep this file. Import it in the Rozefield login window (\"Import backup\").", wp);
+    swprintf(w, MAX_PATH + 200, L"Backup saved:\n%ls\n\nKeep this file safe. After the shutdown, on a Rozefield server: login window > Bring my account.", wp);
     MessageBoxW(g_win, w, L"Overfield Backup", MB_OK | MB_ICONINFORMATION);
     char sel[MAX_PATH + 16]; snprintf(sel, sizeof sel, "/select,\"%s\"", path);
     ShellExecuteA(NULL, "open", "explorer.exe", sel, NULL, SW_SHOWNORMAL);
@@ -1393,10 +1417,11 @@ static void start_reconnect(void) {
 #define C_TXT RGB(42, 44, 54)
 #define C_MUTE RGB(122, 126, 142)
 #define C_WARN RGB(232, 140, 20)
-enum { B_NONE, B_CLOSE, B_MIN, B_MAIN, B_RUNNING, B_SAVE, B_FOLDER, B_LOG, B_OPENDIR,
+enum { B_NONE, B_CLOSE, B_MIN, B_MAIN, B_RUNNING, B_SAVE, B_FOLDER, B_LOG, B_OPENDIR, B_BKCHANGE, B_BKOPEN,
        B_TAB0, B_TAB1, B_PCHANGE, B_PFOUND0, B_PFOUND1, B_PCOPY, B_PINPLACE, B_PGO, B_PUNDO, B_PDEST };
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
 static RECT r_main = {WW - 252, WH - 92, WW - 36, WH - 32}, r_run = {WW - 618, WH - 86, WW - 444, WH - 38}, r_save = {WW - 432, WH - 86, WW - 268, WH - 38};
+static RECT r_bkchange = {WW - 790, WH - 36, WW - 730, WH - 14}, r_bkopen = {WW - 724, WH - 36, WW - 676, WH - 14};
 static RECT r_folder = {14, WH - 128, 58, WH - 84}, r_logb = {14, WH - 74, 58, WH - 30}, r_opendir = {0};
 static HFONT f_title, f_big, f_h, f_body, f_small, f_btn, f_pct;
 static HBITMAP g_bg; static int g_bgw, g_bgh;
@@ -1940,7 +1965,12 @@ static void paint(HWND h) {
     RECT rlog = {104, WH - 92, WW - 640, WH - 64}; txt(dc, f_body, C_TXT, rlog, g_lastlog, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
     wchar_t gf[MAX_PATH + 32]; wchar_t wg[MAX_PATH]; MultiByteToWideChar(CP_ACP, 0, g_game, -1, wg, MAX_PATH);
     swprintf(gf, MAX_PATH + 32, L"Game folder: %ls", g_game[0] ? wg : L"not found - use the folder button");
-    RECT rgf = {104, WH - 60, WW - 640, WH - 36}; txt(dc, f_small, C_MUTE, rgf, gf, DT_LEFT | DT_SINGLELINE | DT_PATH_ELLIPSIS);
+    RECT rgf = {104, WH - 60, WW - 640, WH - 38}; txt(dc, f_small, C_MUTE, rgf, gf, DT_LEFT | DT_SINGLELINE | DT_PATH_ELLIPSIS);
+    { char bd[MAX_PATH]; backup_dir(bd); wchar_t wb[MAX_PATH], line[MAX_PATH + 40]; MultiByteToWideChar(CP_UTF8, 0, bd, -1, wb, MAX_PATH);
+      swprintf(line, MAX_PATH + 40, L"Backups go to: %ls", wb);
+      RECT rb = {104, WH - 36, WW - 796, WH - 14}; txt(dc, f_small, C_TXT, rb, line, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_PATH_ELLIPSIS);
+      txt(dc, f_small, g_hover == B_BKCHANGE ? C_ACC : RGB(14, 150, 165), r_bkchange, L"Change", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+      txt(dc, f_small, g_hover == B_BKOPEN ? C_ACC : RGB(14, 150, 165), r_bkopen, L"Open", DT_CENTER | DT_VCENTER | DT_SINGLELINE); }
     int busy = g_mode == M_STARTING || g_mode == M_LOGIN || g_mode == M_FETCH || g_mode == M_WATCH;
     pill(dc, r_run, 0, g_hover == B_RUNNING, !busy, g_mode == M_WATCH ? L"Watching\x2026" : L"Use running game");
     pill(dc, r_save, 0, g_hover == B_SAVE, g_player[0] != 0, L"Save backup now");
@@ -1998,6 +2028,8 @@ static int hit(int x, int y) {
         if (PtInRect(&r_logb, pt)) return B_LOG;
         return B_NONE;
     }
+    if (PtInRect(&r_bkchange, pt)) return B_BKCHANGE;
+    if (PtInRect(&r_bkopen, pt)) return B_BKOPEN;
     if (PtInRect(&r_main, pt)) return B_MAIN;
     if (PtInRect(&r_run, pt)) return B_RUNNING;
     if (PtInRect(&r_save, pt)) return B_SAVE;
@@ -2020,6 +2052,8 @@ static void on_click(int b) {
     case B_FOLDER: if (g_mode == M_IDLE) browse(); break;
     case B_LOG: ShellExecuteA(NULL, "open", g_logpath, NULL, NULL, SW_SHOWNORMAL); break;
     case B_TAB0: set_tab(0); break;
+    case B_BKCHANGE: backup_dir_choose(); break;
+    case B_BKOPEN: backup_dir_open(); break;
     case B_TAB1: set_tab(1); break;
     case B_PCHANGE: if (!g_pbusy) patch_browse(); break;
     case B_PFOUND0: case B_PFOUND1: if (!g_pbusy && g_found[b - B_PFOUND0][0]) { snprintf(g_pgame, sizeof g_pgame, "%s", g_found[b - B_PFOUND0]); g_pmsg[0] = 0; } break;
