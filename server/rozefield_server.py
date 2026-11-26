@@ -92,6 +92,8 @@ class HTTP:
     def ip_for(self, writer):
         """Address the client should use: --public-ip if given, else the address this client reached us on
         (so players on this PC, the LAN and the internet all get a working address at the same time)."""
+        if getattr(writer, 'rz_link', False):
+            return '127.0.0.1'   # through the Rozefield link: it serves 127.0.0.1 on the player's PC
         if self.cfg.host_ip not in ('', 'auto'):
             return self.cfg.host_ip
         try:
@@ -409,7 +411,8 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
             from game import admin
             from game import hostcfg
             peer = (writer.get_extra_info('peername') or ('',))[0]
-            local = peer in ('127.0.0.1', '::1') and hdr.get('x-admin-token') == getattr(self, 'admin_token', None)
+            local = peer in ('127.0.0.1', '::1') and not getattr(writer, 'rz_link', False) and \
+                hdr.get('x-admin-token') == getattr(self, 'admin_token', None)
             ctype = 'text/plain; charset=utf-8'
             if u.path == '/admin/salt':   # public: lets the panel on another device derive its signing key
                 out, code = hostcfg.salt_info().encode(), 200
@@ -900,13 +903,21 @@ async def main():
     game = Server(cfg, a)
     http.game = game
     http.admin_token = admin.token()   # for Overfield Server.exe (control panel)
-    servers = [await asyncio.start_server(http.handle, a.bind, a.http_port),
-               await asyncio.start_server(lambda r, w: Session(game, r, w).run(), a.bind, a.gate_port)]
+    gate_handle = lambda r, w: Session(game, r, w).run()
+    servers = []
+    for what, handle, port in (('dispatch', http.handle, a.http_port), ('game', gate_handle, a.gate_port)):
+        try:
+            servers.append(await asyncio.start_server(handle, a.bind, port))
+        except OSError as e:   # e.g. the game on this PC was started first and its Rozefield link holds the port
+            log.warning('%s port %s is taken (%s): players come in through the link port %s instead', what, port,
+                        e.strerror or e, a.link_port)
     from game import link
     if a.link_port:
-        ls = await link.start(a.bind, a.link_port, a.http_port, a.gate_port)
+        ls = await link.start(a.bind, a.link_port, http.handle, gate_handle)
         if ls:
             servers.append(ls)
+    if not servers:
+        raise SystemExit('no port could be opened')
     if a.dns_port:
         try:
             servers.append(await asyncio.start_server(http.handle, a.bind, a.dns_port))
@@ -948,10 +959,14 @@ async def wait_for_game_data(a, http, admin):
     from game import hostcfg
     if not hostcfg.salt_info():
         log.warning('  For 1, first set an admin password on this PC: Hosting > Admin password')
-    servers = [await asyncio.start_server(http.handle, a.bind, a.http_port)]
+    servers = []
+    try:
+        servers.append(await asyncio.start_server(http.handle, a.bind, a.http_port))
+    except OSError as e:
+        log.warning('dispatch port %s is taken (%s): using the link port only', a.http_port, e.strerror or e)
     from game import link, netsvc
     if a.link_port:
-        ls = await link.start(a.bind, a.link_port, a.http_port, a.gate_port)
+        ls = await link.start(a.bind, a.link_port, http.handle, None)
         if ls:
             servers.append(ls)
     netsvc.start(([a.link_port] if a.link_port else []) + [a.http_port], http.info)

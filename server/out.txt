@@ -1,0 +1,10 @@
+16:59:04 dispatch port 18991 is taken (error while attempting to bind on address ('0.0.0.0', 18991): [errno 98] address already in use): players come in through the link port 18990 instead
+16:59:04 game port 11991 is taken (error while attempting to bind on address ('0.0.0.0', 11991): [errno 98] address already in use): players come in through the link port 18990 instead
+16:59:04 link port 18990: one port for players from anywhere (router or playit.gg tunnel to this port)
+16:59:04 Type GM commands here, e.g.  <name> /all outfits   or  list
+16:59:04 Rozefield up: dispatch port 18991, gate port 11991, address auto
+16:59:08 router ports: router did not answer (UPnP off or not supported) - forward the ports by hand
+16:59:13 HTTP GET /dispatch/region_info host=localhost:18990 body=b''
+16:59:13 HTTP GET /rozefield/info host=None body=b''
+16:59:13 gate connection from ('127.0.0.1', 39992)
+16:59:15 gate connection closed ('127.0.0.1', 39992)

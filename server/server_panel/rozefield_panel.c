@@ -141,10 +141,18 @@ static int http_at(const char *host, int remote, const unsigned char *key, DWORD
     /* host may carry a port (a playit.gg address: name:port, which reaches the server's link port) */
     char port[16], hn[256]; snprintf(port, sizeof port, "%d", g_port); snprintf(hn, sizeof hn, "%s", remote ? host : "127.0.0.1");
     { char *c = strrchr(hn, ':'); if (c && atoi(c + 1) > 0) { snprintf(port, sizeof port, "%d", atoi(c + 1)); *c = 0; } }
+    /* this PC: the link port first (the game's Rozefield link may hold 18881 when the game started first) */
+    if (!remote) snprintf(port, sizeof port, "18880");
     if (getaddrinfo(hn, port, &hints, &ai) != 0 || !ai) return 0;
     SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
     DWORD to = timeout; setsockopt(s, SOL_SOCKET, SO_SNDTIMEO, (char *)&to, sizeof to); setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
     int c = connect(s, ai->ai_addr, (int)ai->ai_addrlen); freeaddrinfo(ai);
+    if (c != 0 && !remote) {   /* an older server without the link port */
+        closesocket(s); snprintf(port, sizeof port, "%d", g_port); ai = NULL;
+        if (getaddrinfo(hn, port, &hints, &ai) != 0 || !ai) return 0;
+        s = socket(AF_INET, SOCK_STREAM, 0); setsockopt(s, SOL_SOCKET, SO_SNDTIMEO, (char *)&to, sizeof to); setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&to, sizeof to);
+        c = connect(s, ai->ai_addr, (int)ai->ai_addrlen); freeaddrinfo(ai);
+    }
     if (c != 0) { closesocket(s); return 0; }
     char hdr[700], auth[300] = "";
     if (remote) {
