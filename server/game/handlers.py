@@ -856,6 +856,11 @@ def gacha(ctx, req):
     pools = [x['FreeGachaPoolID'] for x in (d.row('gacha', 'Pool', info.get('Method1ID', gid)) or {}).get('Items', [])]
     tiers = {pid: _pool_items(ctx, pid) for pid in pools}
     limited = info.get('BigGuaranteePoolID')
+    if limited and limited not in (400, 500):   # official: limited banners never give the newer imprints (180 pulls, 2026-11-26)
+        lo, hi = (_packs.system('gacha', 'limited_banner_excludes', [11210, 11450]) + [0, 0])[:2]
+        for t in (100, 200):
+            if tiers.get(t):
+                tiers[t] = [i for i in tiers[t] if not lo <= i <= hi] or tiers[t]
     st = gacha_state(p, gid)
     results = []
     got_sr = False

@@ -1,0 +1,10 @@
+{
+ "_about": "Recruit rules seen on official.",
+ "limited_banner_excludes": [
+  11210,
+  11450
+ ],
+ "_sources": {
+  "limited_banner_excludes": "capture 2026-11-26: 180 pulls on limited banner 103006 never gave imprints 11210-11450; the standard banner 3017 did (2026-11-24)"
+ }
+}
