@@ -8,13 +8,6 @@ Kept up to date with every build; the capture rows that would fix each line are 
 
 | Feature | What happens now | Capture row |
 |---|---|---|
-| Join a friend's exploration break | Always refused | 7 |
-| Month card daily reward | Always refused | 25 |
-| Room decor | Accepted, not saved | 26 |
-| Place a moon spot | Accepted, nothing kept | 27 |
-| Collect a voice region | Accepted, nothing kept | 27 |
-| Clap, pop an emoji, sit in a vehicle | Works for you, other players don't see it | 28 |
-| Event sandbag hits, Koi item use, wish text upload | Accepted, nothing counted | 19 |
 | Photo share: buy an upload slot, copy an outfit dye | Accepted, nothing happens | 29 |
 | Sequence dungeon 11106 | Game closes about 25 s after entering (issue 15) | — |
 | New story content made with Overfield Builder | Server side ready (content packs); the game-side files (dialogue, NPC spots, areas) need the Builder | — |
@@ -27,7 +20,7 @@ Kept up to date with every build; the capture rows that would fix each line are 
 | Astral Atlas page reward / achievement reward | Starstone | 2, 3 |
 | Area level-up | Starstone | 4 |
 | Exploration reward | The area's listed items, guessed amounts | 5 |
-| Exploration break (interval) reward | Gold, EXP book, Starstone | 6 |
+| Rift (exploration break) reward | Stamina: captain / member counts from the game table (`ExploreInterval`) | 6, 7 |
 | Poster / treasure handbook rewards | Starstone | 8, 9 |
 | Sequence star / task rewards | Starstone, Gold | 10 |
 | Field coins, digging, supply box | Gold, Starstone | 11 |
@@ -39,14 +32,16 @@ Kept up to date with every build; the capture rows that would fix each line are 
 | Event rewards | From tables where present | 18 |
 | Wish Stone income, Moon Points per activity | 5 / 25 as seen | 20, 21 |
 
-## Built from the game's tables, never compared with official
+## Built from the game's tables / protocol, never compared with official
 
-Restaurant mini-game, co-op invite / dismiss, beacon ready, Boss Rush, Abyss quest rewards.
+Rifts with friends (start, quick finish, join, rewards), moon spots, voice regions, room decor, pop emoji, clap (high five), vehicle seats, event sandbag hits, wish text, restaurant mini-game, co-op invite / dismiss, beacon ready, Boss Rush, Abyss quest rewards.
 
 ## Not planned
 
 | Feature | Why |
 |---|---|
 | Shop top-up / payment | Real money |
+| Month card daily reward | Only exists after a real-money purchase |
+| Koi event item use | Counts real-money payments |
 | Report a player | Not used on a private server |
 | GM code redeem | Replaced by the server owner's codes (`save/codes.json`) |

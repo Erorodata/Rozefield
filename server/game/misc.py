@@ -206,42 +206,7 @@ def register(H, pack):
     H['ExploreCollectRewardReq'] = ex_reward
 
     # ------------------------------------------------ interval (team exploration with friends, solo here)
-    def iv(p):
-        return _st(p, 'interval', {})
-
-    def iv_start(ctx, req):
-        d = ctx.d
-        cfg = next(iter(d.table('explore', 'ExploreInterval').values()), {})
-        st = iv(ctx.p)
-        st.update(exploreId=cfg.get('ID', 101), finish=int(time.time()) + cfg.get('Time', 14400))
-        ctx.p.dirty = True
-        ctx.reply({'status': OK, 'exploreId': st['exploreId'], 'finishTime': str(st['finish'])})
-    H['IntervalStartReq'] = iv_start
-
-    def iv_quick(ctx, req):
-        p, d = ctx.p, ctx.d
-        st = iv(p)
-        cfg = d.row('explore', 'ExploreInterval', st.get('exploreId', 101)) or {}
-        paid = p.pay([(cfg.get('QuickNeedItem', STARSTONE), cfg.get('QuickNeedItemCount', 10))])
-        if paid is None or not st:
-            return ctx.reply({'status': FAIL})
-        st['finish'] = int(time.time())
-        ctx.reply({'status': OK, 'exploreId': st['exploreId'], 'finishTime': str(st['finish'])})
-        pack(ctx, paid)
-    H['IntervalQuickReq'] = iv_quick
-
-    def iv_reward(ctx, req):
-        p = ctx.p
-        st = iv(p)
-        if not st or st.get('finish', 1e12) > time.time():
-            return ctx.reply({'status': FAIL})
-        eid = st.get('exploreId', 101)
-        p.s['misc']['interval'] = {}
-        got, changed = give(ctx, [(GOLD, 5000), (191, 3), (STARSTONE, 20)])   # estimate
-        ctx.reply({'status': OK, 'friendId': req.get('friendId', 0), 'exploreId': eid, 'rewards': got})
-        pack(ctx, changed)
-    H['IntervalRewardReq'] = iv_reward
-    H['IntervalJoinReq'] = lambda ctx, req: ctx.reply({'status': FAIL})
+    # rifts (IntervalStart / Quick / Join / Reward): game/extras.py
 
     # ------------------------------------------------ handbook / collection rewards
     def reward_pool(ctx, pool):
@@ -561,12 +526,7 @@ def register(H, pack):
             done.append(mid)
         ctx.reply({'status': OK, 'info': {'moonId': mid, 'interacted': True}})
     H['EmotionMoonInteractReq'] = emotion_moon
-    ack('PlaceMoonSpotReq')
-    ack('CollectVoiceRegionReq', ('voiceId',))
-    ack('SceneSitVehicleReq', ('chairId', 'seatId', 'isSit'), lambda ctx, req: {'playerId': ctx.p.s['player_id']})
     ack('PlayMusicNoteReq', ('music_note_id',), lambda ctx, req: {'player_id': ctx.p.s['player_id'], 'start_time': _ms()})
-    ack('ClapReq', ('movementId', 'isCancel'))
-    ack('PopEmojiReq')
     ack('CollapseFailReq')
 
     def action_study(ctx, req):
@@ -833,14 +793,12 @@ def register(H, pack):
     act_reward('ActivityInviteRewardClaimReq', ('activity_id', 'condition_id'))
     act_reward('ActivityRecallRewardClaimReq', ('activity_id', 'condition_id'))
     act_reward('ActivitySandbagRewardReq', ('activity_id', 'seq_list'))
-    ack('ActivitySandbagHitReq', ('activity_id', 'npc_id', 'hit_count'))
-    ack('ActivityUploadWishTxtReq', ('txt', 'activity_id'))
     ack('ActivityKoiUseItemReq', ('num', 'activity_id'), lambda ctx, req: {'codes': []})
     H['MonthCardRewardReq'] = lambda ctx, req: ctx.reply({'status': FAIL})
 
     # ------------------------------------------------ plain acknowledgements / features needing other players
     for n, echo in (('ClientLogAuthReq', ()), ('ClientLogMessageReq', ()), ('ReportReq', ()), ('UnfreezePlayerActionReq', ()),
-                    ('SetRoomDecorReq', ()), ('UploadFGBytesReq', ()), ('PhotoSharePaymentAddUploadGridReq', ()),
+                    ('UploadFGBytesReq', ()), ('PhotoSharePaymentAddUploadGridReq', ()),
                     ('PhotoShareCopyFashionDyeReq', ()), ('OperatePhotoShareReq', ('code',)), ('GenericSceneAReq', ('generic_msg_id', 'params', 'param_map')),
                     ('ChangePhotoShareTitleReq', ('title', 'tag1', 'tag2')), ('MPPlayRoomEventReq', ()), ('MPPlayRoomReadyReq', ()),
                     ('MPBeaconPlayerReadyReq', ()), ('GomokuOnlinePlayerLeaveReq', ()), ('GomokuOnlinePlayerWatchReq', ()),

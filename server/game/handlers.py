@@ -302,6 +302,8 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
         data['placedCharacters'] = placed_characters(owner)
     elif scene_id == PUBLIC_SCENE:
         data['sceneGardenData'] = {}    # official: a public channel sends an empty garden, which clears the last plaza's decorations
+    from game import extras as _ex
+    _ex.add_scene(ctx, data, owner)   # moon spots, voice regions, room decor
     if before_push:
         before_push(channel_id, chan_label)
     ctx.push('SceneDataNotice', {'status': OK, 'data': data})
@@ -1470,6 +1472,10 @@ _world.register(H, pack, scene_player)
 # everything else: purchases, temp pack, exploration, collection rewards, codes, Boss Rush, mini-games, acks
 from game import misc as _misc  # noqa: E402
 _misc.register(H, pack)
+
+# rifts with friends, moon spots, voice regions, room decor, emoji / clap / vehicle seen by others, event sandbag + wish text
+from game import extras as _extras  # noqa: E402
+_extras.register(H, pack)
 
 # Game Hall co-op games (balloons, floating platforms), playable solo or with others on this server
 from game import coop as _coop  # noqa: E402

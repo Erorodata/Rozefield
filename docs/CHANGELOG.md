@@ -4,6 +4,7 @@ Newest first. One entry per build bundle (`rozefield_buildN.bundle`); keep this 
 
 | Build | Date | Changes |
 |---|---|---|
+| 44 | 2026-11-26 | Gameplay: rifts with friends (start, quick finish, friends join, captain / member Stamina from the table, 48 h to claim), moon spots shown to the whole channel, voice regions kept per map, room decor kept and shown to visitors, pop emoji / clap high five / vehicle seats seen by others, event sandbag hits and wish text kept. Capture script records only the game's ports; `extract_all.bat` cuts big captures down |
 | 43 | 2026-11-26 | Docs: [NOT_BUILT.md](NOT_BUILT.md) (everything not built or estimated), capture checklist with what each capture already covers, issues 29–33, story check progress, this change log |
 | 42 | 2026-11-26 | Double Jump tutorial fixed: Astral Atlas box costs its moonstone and pays its unlock (page 1 box 31 = Double Jump); "own item / level / map" quest steps re-checked after every action; repair at login for boxes activated on older builds; quest updates only sent on real changes; UTF-8 log; panel asks before stopping an older server copy holding the ports |
 | 41 | 2026-11-26 | Content packs: rules that were written in the code moved to `server/packs/official/systems/*.json`; host packs (quests, story, NPCs, dialogue, areas, tables) merged into the game tables; templates in `server/packs/_templates`; packs sent with Push update |
