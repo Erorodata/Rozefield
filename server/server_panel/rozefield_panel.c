@@ -485,10 +485,10 @@ static void show_text(const wchar_t *title, const wchar_t *text) {   /* long res
 /* ---------------------------------------------------------------- actions */
 enum { B_NONE, B_CLOSE, B_MIN, B_START, B_STOP, B_RESTART, B_SAVEDIR, B_LOGFILE, B_IMPORT, B_MAILALL,
        B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE, B_SETUP, B_PUSH, B_MASTER,
-       A_FIRST, A_RESETPW = A_FIRST, A_CLEARPW, A_RENAME, A_GM, A_MAIL, A_CHAT, A_KICK, A_BAN, A_MUTE, A_RECLAIM, A_LAST,
+       A_FIRST, A_RESETPW = A_FIRST, A_CLEARPW, A_RENAME, A_GM, A_MAIL, A_CHAT, A_KICK, A_BAN, A_MUTE, A_RECLAIM, A_ASSIGN, A_DELETE, A_LAST,
        F_FIRST = 50 };
 static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Rename", L"GM commands", L"Send mail", L"Chat log",
-                                     L"Kick", L"Ban", L"Mute", L"Reclaim old ID"};
+                                     L"Kick", L"Ban", L"Mute", L"Reclaim old ID", L"Assign ID", L"Delete player"};
 static const wchar_t *FILTERS[] = {L"All", L"Logins", L"Errors", L"Chat", L"Admin", L"HTTP", L"Player"};
 #define NFILT 7
 static RECT r_close = {WW - 52, 10, WW - 12, 46}, r_min = {WW - 96, 10, WW - 56, 46};
@@ -496,7 +496,7 @@ static RECT r_start = {WW - 420, WH - 70, WW - 300, WH - 26}, r_stop = {WW - 290
 static RECT r_push = {12, WH - 196, SB - 12, WH - 164}, r_setup = {12, WH - 158, SB - 12, WH - 126}, r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
 static RECT r_import = {X0, WH - 70, X0 + 150, WH - 26}, r_mailall = {X0 + 160, WH - 70, X0 + 300, WH - 26}, r_connect = {X0 + 310, WH - 70, X0 + 470, WH - 26};
 static RECT r_share = {508, 26, 592, 58}, r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
-static RECT r_act[10], r_filt[NFILT];
+static RECT r_act[12], r_filt[NFILT];
 
 static struct pl *sel(void) { return (g_sel >= 0 && g_sel < g_npl) ? &g_pl[g_sel] : NULL; }
 
@@ -1147,6 +1147,14 @@ static void do_action(int a) {
         if (!ask(L"Reclaim old ID", L"For a player who never backed up: their new account takes their old official id, so friends who imported see them again. Progress stays as it is now.", 1, lab, NULL, 0)) return;
         char idu[64]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[0], -1, idu, sizeof idu, NULL, NULL);
         snprintf(b, sizeof b, "reclaim\npid=%d\nofficial=%s", p->pid, idu); r = act(b, &ok); result(L"Reclaim old ID", r, ok); break; }
+    case A_ASSIGN: {
+        const wchar_t *lab[] = {L"New ID (the UID shown in game; any number no one else has)"};
+        if (!ask(L"Assign ID", L"The player must be logged out. Their friends, friend requests and private chats on this server move to the new ID.", 1, lab, NULL, 0)) return;
+        char idu[64]; WideCharToMultiByte(CP_UTF8, 0, g_dlg_out[0], -1, idu, sizeof idu, NULL, NULL);
+        snprintf(b, sizeof b, "assignid\npid=%d\nnew=%s", p->pid, idu); r = act(b, &ok); result(L"Assign ID", r, ok); break; }
+    case A_DELETE:
+        if (MessageBoxW(g_win, L"Delete this player? Their character is removed from the server and from everyone's friend list. Logging in with the same account again makes a fresh character.\n\nThe save is kept in save\\deleted in case you need it back.", who, MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) != IDYES) return;
+        snprintf(b, sizeof b, "delete\npid=%d", p->pid); r = act(b, &ok); result(L"Delete player", r, ok); break;
     case B_IMPORT: {
         wchar_t fn[MAX_PATH] = L""; OPENFILENAMEW of = {0}; of.lStructSize = sizeof of; of.hwndOwner = g_win;
         of.lpstrFilter = L"OverField backup (*.rzsave)\0*.rzsave\0All files\0*.*\0"; of.lpstrFile = fn; of.nMaxFile = MAX_PATH; of.Flags = OFN_FILEMUSTEXIST;
@@ -1287,14 +1295,15 @@ static void paint(HWND h) {
     struct pl *p = sel();
     { wchar_t cap[120]; if (p) swprintf(cap, 120, L"Player: %ls", p->name); else wcscpy(cap, L"Choose a player");
       RECT rc = {20, 82, SB - 10, 102}; txt(dc, f_small, p ? C_TXT : C_MUTE, rc, cap, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS); }
-    static const wchar_t *ICONS[] = {L"\xE192", L"\xE785", L"\xE70F", L"\xE756", L"\xE715", L"\xE8BD", L"\xE7E8", L"\xE733", L"\xE74F", L"\xE77B"};
-    for (int i = 0; i < 10; i++) {
+    static const wchar_t *ICONS[] = {L"\xE192", L"\xE785", L"\xE70F", L"\xE756", L"\xE715", L"\xE8BD", L"\xE7E8", L"\xE733", L"\xE74F", L"\xE77B", L"\xE8AC", L"\xE74D"};
+    for (int i = 0; i < 12; i++) {
         const wchar_t *lb = ACT_LABEL[i]; int danger = 0, en = p != NULL;
         if (i == A_BAN - A_FIRST) { lb = p && p->banned ? L"Unban" : L"Ban"; danger = 1; }
         if (i == A_MUTE - A_FIRST) lb = p && p->muted ? L"Unmute" : L"Mute";
         if (i == A_KICK - A_FIRST) { danger = 1; en = p && p->online; }
         if (i == A_GM - A_FIRST) en = p && p->online;
         if (i == A_RECLAIM - A_FIRST) en = p && !p->official;
+        if (i == A_DELETE - A_FIRST) danger = 1;
         en = en && g_up;
         RECT r = r_act[i]; if (en && g_hover == A_FIRST + i) fill(dc, r, RGB(232, 246, 248), 10);
         COLORREF c = !en ? RGB(186, 189, 200) : danger ? C_BAD : C_TXT;
@@ -1409,7 +1418,7 @@ static int hit(int x, int y) {
     if (PtInRect(&r_imports, pt)) return B_IMPORTS;
     if (PtInRect(&r_move, pt)) return B_MOVE;
     if (PtInRect(&r_package, pt)) return B_PACKAGE;
-    for (int i = 0; i < 10; i++) if (PtInRect(&r_act[i], pt)) return A_FIRST + i;
+    for (int i = 0; i < 12; i++) if (PtInRect(&r_act[i], pt)) return A_FIRST + i;
     for (int i = 0; i < NFILT; i++) if (PtInRect(&r_filt[i], pt)) return F_FIRST + i;
     return B_NONE;
 }
@@ -1560,7 +1569,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     f_btn = CreateFontW(-18, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Bahnschrift SemiBold");
     f_mono = CreateFontW(-13, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, FIXED_PITCH, L"Cascadia Mono");
     br_panel = CreateSolidBrush(C_PANEL); br_field = CreateSolidBrush(C_FIELD);
-    for (int i = 0; i < 10; i++) r_act[i] = (RECT){10, 108 + i * 36, SB - 10, 140 + i * 36};
+    for (int i = 0; i < 12; i++) r_act[i] = (RECT){10, 108 + i * 36, SB - 10, 140 + i * 36};
     for (int i = 0; i < NFILT; i++) r_filt[i] = (RECT){X0 + 412 + i * 68, 148, X0 + 474 + i * 68, 174};
     f_icon = CreateFontW(-16, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, 0, 0, CLEARTYPE_QUALITY, 0, L"Segoe MDL2 Assets");
     LoadLibraryW(L"Msftedit.dll");

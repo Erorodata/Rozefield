@@ -170,6 +170,10 @@ def _do(server, act, kv):
         rows = [c for c in CHAT if not pid or c[1] == pid][-300:]
         return 'OK|' + ('\n'.join(f'{time.strftime("%H:%M", time.localtime(t))} [{ch}] {n}: {tx}' for t, p, n, ch, tx in rows)
                         or '(no chat this session)')
+    if act == 'delete':
+        return _delete(server, pid, uid, log)
+    if act == 'assignid':
+        return _assign(server, pid, int(kv.get('new', 0) or 0), log)
     if act == 'reclaim':
         return _reclaim(server, pid, int(kv.get('official', 0) or 0), log)
     if act == 'stop':
@@ -220,3 +224,135 @@ def _reclaim(server, pid, off, log):
     reg['by_uid'][uid] = off; _save_registry(reg)
     log.info('[admin] %s reclaimed official id %s (%s)', uid, off, st['name'])
     return f'OK|Done: now {st["name"]} (id {off}, UID {st["player_label"]}). Friends who imported see them again.'
+
+
+def _remap(o, old, new):
+    """Every reference to player `old` inside a save (dict keys like "123" or "9999:123", and number values) -> `new`."""
+    so, sn = str(old), str(new)
+    if isinstance(o, dict):
+        out = {}
+        for k, v in o.items():
+            if isinstance(k, str):
+                if k == so:
+                    k = sn
+                elif k.endswith(':' + so):
+                    k = k[:-len(so)] + sn
+            out[k] = _remap(v, old, new)
+        return out
+    if isinstance(o, list):
+        return [_remap(v, old, new) for v in o]
+    if o == old and isinstance(o, int) and not isinstance(o, bool):
+        return new
+    return o
+
+
+# Parts of OTHER players' saves that point at someone: friends, requests, blocks, profiles, hearts, private chats.
+_LINKS = (('social',), ('events', 'intimacy'), ('misc', 'private_chat'))
+
+
+def _relink(server, old, new, log):
+    """Point every other account's friends/requests/chats at the new id (new=None: drop them)."""
+    n = 0
+    for p2, _, _ in _accounts(server):
+        if p2 in (old, new):
+            continue
+
+        def fix(st):
+            hit = False
+            for path in _LINKS:
+                box = st
+                for k in path[:-1]:
+                    box = box.get(k) if isinstance(box, dict) else None
+                if not isinstance(box, dict) or path[-1] not in box:
+                    continue
+                before = json.dumps(box[path[-1]], sort_keys=True)
+                if new is None:
+                    box[path[-1]] = _drop(box[path[-1]], old)
+                else:
+                    box[path[-1]] = _remap(box[path[-1]], old, new)
+                hit = hit or json.dumps(box[path[-1]], sort_keys=True) != before
+            if hit:
+                fix.hit = True
+        fix.hit = False
+        _edit(server, p2, fix)
+        n += fix.hit
+    return n
+
+
+def _drop(o, old):
+    so = str(old)
+    if isinstance(o, dict):
+        return {k: _drop(v, old) for k, v in o.items() if k != so}
+    if isinstance(o, list):
+        return [_drop(v, old) for v in o if v != old]
+    return o
+
+
+def _delete(server, pid, uid, log):
+    """Test accounts: the save is moved to save/deleted (not destroyed). Logging in with that account again starts fresh."""
+    from game.player import _registry, _save_registry, _lock
+    from rozefield_server import _pw_load, PW_FILE
+    path = os.path.join(ACC, f'{pid}.json')
+    if not pid or not os.path.exists(path):
+        return 'ERR|Account not found.'
+    if pid in server.sessions:
+        server.sessions[pid].w.close()
+        return 'ERR|They were online, so they have been kicked. Press Delete again in a few seconds.'
+    st = json.load(open(path, encoding='utf-8'))
+    gone = os.path.join(HERE, 'save', 'deleted'); os.makedirs(gone, exist_ok=True)
+    with _lock:
+        reg = _registry()
+        for u, p in list(reg['by_uid'].items()):
+            if p == pid:
+                reg['by_uid'].pop(u)
+        _save_registry(reg)
+        os.replace(path, os.path.join(gone, f'{pid}_{time.strftime("%Y%m%d_%H%M%S")}.json'))
+    if uid:
+        d = _pw_load()
+        if d.pop(uid, None) is not None:
+            json.dump(d, open(PW_FILE, 'w', encoding='utf-8'))
+        if server.login_keys.pop(uid, None):
+            server.save_login_keys()
+    n = _relink(server, pid, None, log)
+    log.info('[admin] deleted account %s (%s); removed from %d other account(s)', pid, st.get('name'), n)
+    return (f'OK|Deleted {st.get("name")} (id {pid}). Logging in with that account again makes a fresh character. '
+            f'The old save is kept in save\\deleted in case you need it back.')
+
+
+def _assign(server, pid, new, log):
+    """Give a player another id (the UID shown in game). Friends, requests and chats on this server follow them."""
+    from game.player import _registry, _save_registry, _lock
+    path = os.path.join(ACC, f'{pid}.json')
+    if not pid or not os.path.exists(path):
+        return 'ERR|Account not found.'
+    if not (1 <= new <= 2147483647):
+        return 'ERR|Type a number from 1 to 2147483647.'
+    if new == pid:
+        return 'ERR|That is already their id.'
+    if pid in server.sessions:
+        return 'ERR|Ask the player to log out first (or Kick them).'
+    if os.path.exists(os.path.join(ACC, f'{new}.json')) or any(
+            new in (p2, o.get('player_label'), o.get('official_player_id')) for p2, _, o in _accounts(server) if p2 != pid):
+        return f'ERR|Id {new} is taken by another player.'
+    with _lock:
+        reg = _registry()
+        if new in reg['by_uid'].values():
+            return f'ERR|Id {new} is taken by another player.'
+        st = json.load(open(path, encoding='utf-8'))
+        for k in ('player_id', 'channel_id'):
+            if st.get(k) == pid:
+                st[k] = new
+        st['player_label'] = new           # the UID shown in game (imported accounts showed their official one)
+        for k in ('pos_by_scene',):        # own garden positions are keyed "9999:<id>"
+            if isinstance(st.get(k), dict):
+                st[k] = {(kk[:-len(str(pid))] + str(new) if isinstance(kk, str) and kk.endswith(':' + str(pid)) else kk): v
+                         for kk, v in st[k].items()}
+        json.dump(st, open(os.path.join(ACC, f'{new}.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+        os.replace(path, path + f'.moved_to_{new}')
+        for u, p in list(reg['by_uid'].items()):
+            if p == pid:
+                reg['by_uid'][u] = new
+        _save_registry(reg)
+    n = _relink(server, pid, new, log)
+    log.info('[admin] %s (%s) now has id %s; %d other account(s) updated', pid, st.get('name'), new, n)
+    return f'OK|{st.get("name")} now has id {new}. Friends, requests and chats moved with them ({n} other account(s) updated).'
