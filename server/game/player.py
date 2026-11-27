@@ -117,6 +117,11 @@ class Player:
         if not s.get('phone_case'):
             s['phone_case'] = 7000            # default phone case
             self.dirty = True
+        for o in (s.get('outfits') or {}).values():   # QOL: ensure slot 0 (original) + slot 1 (dyeable) exist
+            sc = o.setdefault('dyeSchemes', [{'schemeIndex': 0, 'isUnLock': True}])
+            if not any(x.get('schemeIndex', 0) == 1 for x in sc):
+                sc.append({'schemeIndex': 1, 'isUnLock': True})
+                self.dirty = True
         if 'chapters' not in s:  # saves made before story chapters were tracked: a story's reward is claimed once its quest is Finish
             s['chapters'] = {}
             chap = {sid: c['ID'] for c in self.d.table('story', 'StoryChapter').values() for sid in c.get('StoryList', [])}
@@ -292,6 +297,10 @@ class Player:
                     entry = {'mainItem': {'itemId': item_id, 'itemTag': tag, 'character': ch}}
                     got.append(entry)
                     changed.append(entry)          # PackNotice must carry new characters so the client adds them right away
+                    c = d.row('character', 'Character', item_id) or {}
+                    for f in (c.get('HairID'), c.get('ClothID'), c.get('HatID'), c.get('OrnamentID')):
+                        if f and str(f) in self.s['outfits']:
+                            changed.append({'mainItem': self.item_full_info(f)})
             return got, changed
         if tag in INSTANCE_TAGS:
             for _ in range(n):
@@ -396,9 +405,10 @@ class Player:
               'outfitPresets': [{'presetIndex': i, 'hair': c.get('HairID', 0), 'clothes': c.get('ClothID', 0), 'outfitHideInfo': {}}
                                 for i in range(3)],
               'characterAppearance': {}, 'characterSkillList': []}
-        for f in (c.get('HairID'), c.get('ClothID')):
+        for f in (c.get('HairID'), c.get('ClothID'), c.get('HatID'), c.get('OrnamentID')):
             if f:
-                self.s['outfits'].setdefault(str(f), {'outfitId': f, 'dyeSchemes': [{'isUnLock': True}]})
+                # QOL: slot 0 stays original outfit colors (selectable, protected from dyeing); slot 1 is unlocked for custom dye
+                self.s['outfits'].setdefault(str(f), {'outfitId': f, 'dyeSchemes': [{'schemeIndex': 0, 'isUnLock': True}, {'schemeIndex': 1, 'isUnLock': True}]})
                 self.s['items'][str(f)] = max(1, self.count(f))
         if c.get('DefaultWeaponID'):
             w = self.new_instance('EBagItemTag_Weapon', c['DefaultWeaponID'])

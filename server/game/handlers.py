@@ -192,7 +192,7 @@ def scene_player(p):
         w = s['weapons'].get(str(ep.get('weapon', 0)), {})
         sc = {'char_id': cid, 'charLv': ch.get('level', 1), 'charStar': ch.get('star', 1), 'charBreakLv': ch.get('maxLevel', 20),
               'characterAppearance': ch.get('characterAppearance', {}),
-              'outfitPreset': scene_outfit(op),
+              'outfitPreset': scene_outfit(op, s.get('outfits')),
               'weaponId': w.get('weaponId', 0), 'weaponStar': w.get('star', 1)}
         pos = s.get('pos_by_scene', {}).get(pos_key(s))   # only a position on this map (never another map's)
         if pos:
@@ -207,23 +207,32 @@ DYE_OF = {'hat': 'hatDyeScheme', 'hair': 'hairDyeScheme', 'clothes': 'clothDyeSc
 DYE_IDX = {'hat': 'hatDyeSchemeIndex', 'hair': 'hairDyeSchemeIndex', 'clothes': 'clothesDyeSchemeIndex', 'ornament': 'ornamentDyeSchemeIndex'}
 
 
-def scene_outfit(op):
-    """SceneCharacterOutfitPreset as official sends it: every worn piece with its dye scheme, plus hideInfo
+def scene_outfit(op, outfits=None):
+    """SceneCharacterOutfitPreset as official sends it: every worn piece with its actual saved dye scheme, plus hideInfo
     (the plaza's HomeCharacterOutfit.ParseFrom throws on a preset without them)."""
     out = {'hideInfo': op.get('outfitHideInfo') or op.get('hideInfo') or {}}
+    outfits = outfits or {}
+
+    def _scheme(oid, idx):
+        o = outfits.get(str(oid)) or {}
+        sc = next((dict(x) for x in o.get('dyeSchemes', []) if x.get('schemeIndex', 0) == idx), None)
+        if sc is None:
+            sc = {'isUnLock': True}
+            if idx:
+                sc['schemeIndex'] = idx
+        else:
+            sc.setdefault('isUnLock', True)
+            if idx:
+                sc['schemeIndex'] = idx
+        return sc
+
     for k, v in op.items():
         if k in DYE_OF and v:
             out[k] = v
-            sc = {'isUnLock': True}
-            if op.get(DYE_IDX[k]):
-                sc['schemeIndex'] = op[DYE_IDX[k]]
-            out[DYE_OF[k]] = sc
+            out[DYE_OF[k]] = _scheme(v, op.get(DYE_IDX[k], 0))
         elif k.startswith('pend') and not k.endswith('Index') and not k.endswith('Scheme') and v:
             out[k] = v
-            sc = {'isUnLock': True}
-            if op.get(k + 'DyeSchemeIndex'):
-                sc['schemeIndex'] = op[k + 'DyeSchemeIndex']
-            out[k + 'DyeScheme'] = sc
+            out[k + 'DyeScheme'] = _scheme(v, op.get(k + 'DyeSchemeIndex', 0))
     return out
 
 
@@ -237,7 +246,7 @@ def placed_characters(owner):
         ch = s['characters'].get(str(cid)) or {}
         op = ch['outfitPresets'][ch.get('inUseOutfitPresetIndex', 0)] if ch.get('outfitPresets') else {}
         e = {'character_id': cid, 'furniture_id': str(where['furniture_id']),
-             'outfitPreset': where.get('outfit') or scene_outfit(op)}
+             'outfitPreset': scene_outfit(op, s.get('outfits'))}
         if where.get('seat_id'):
             e['seat_id'] = where['seat_id']
         out.append(e)
@@ -398,15 +407,45 @@ def chat(ctx, req):
         ctx.server.broadcast(ctx, 'ChatMsgNotice', note, include_self=False)
 
 
+GM_ITEMS = {
+    'gold': 101, 'starstone': 102, 'rhombite': 102, 'ticket': 104, 'crystal': 107,
+    'feline': 109, 'vitality': 10, 'stamina': 10, 'energy': 11, 'moon': 124, 'wish': 125,
+}
+
+
+def _gm_iid(tok):
+    return GM_ITEMS.get(tok.lower()) or int(tok)
+
+
 def gm_command(ctx, text):
     a = text.split()
     cmd = a[0].lower()
     p = ctx.p
     try:
         if cmd == '/give' and len(a) >= 2:
-            iid, n = int(a[1]), int(a[2]) if len(a) > 2 else 1
+            iid, n = _gm_iid(a[1]), int(a[2]) if len(a) > 2 else 1
             got, changed = p.add_item(iid, n); pack(ctx, changed); p.save()
             return f'gave {n} x {iid} ({ctx.d.item_tag(iid)})'
+        if cmd == '/take' and len(a) >= 2:
+            iid, n = _gm_iid(a[1]), int(a[2]) if len(a) > 2 else 1
+            have = p.count(iid)
+            rm = min(have, max(0, n))
+            if rm:
+                changed = p.remove_item(iid, rm) or []
+                pack(ctx, changed); p.save()
+            return f'removed {rm} x {iid} (now {p.count(iid)})'
+        if cmd == '/set' and len(a) >= 3:
+            iid, want = _gm_iid(a[1]), max(0, int(a[2]))
+            have = p.count(iid)
+            changed = []
+            if want > have:
+                changed = p.add_item(iid, want - have)[1]
+            elif want < have:
+                changed = p.remove_item(iid, have - want) or []
+            if changed:
+                pack(ctx, changed)
+            p.save()
+            return f'set {iid} to {p.count(iid)}'
         if cmd == '/currency':
             n = int(a[1]) if len(a) > 1 else 10000
             ch = []
@@ -442,7 +481,7 @@ def gm_command(ctx, text):
             return 'character added (relog to see it)'
     except Exception as e:
         return f'error: {e}'
-    return 'commands: /give <itemId> [n], /all <materials|outfits|consumables|furniture|everything> [n], /currency [n], /level <n>, /char <characterId>'
+    return 'commands: /give <itemId|name> [n], /take <itemId|name> [n], /set <itemId|name> <n>, /all <materials|outfits|consumables|furniture|everything> [n], /currency [n], /level <n>, /char <characterId>'
 
 
 ALL_GROUPS = {
@@ -1382,6 +1421,9 @@ def colorant_select(ctx, req):
 def outfit_dye(ctx, req):
     p = ctx.p
     oid = req.get('outfitId', 0)
+    si = req.get('schemeIndex', 0)
+    if si == 0:   # QOL: dye slot 0 is reserved for the original outfit colors (selectable, cannot be dyed over)
+        return ctx.reply({'status': FAIL})
     # official: every dye uses 1 of the colorant picked for this outfit (OutfitColorantSelectReq), then a PackNotice
     colorant = p.s.get('dye_colorant', {}).get(str(oid)) or 401
     paid = p.remove_item(colorant, 1)
@@ -1389,7 +1431,7 @@ def outfit_dye(ctx, req):
         return ctx.reply({'status': FAIL})
     col = req.get('specifyColor') or {'red': random.randint(0, 255), 'green': random.randint(0, 255), 'blue': random.randint(0, 255)}
     col = dict(col, pos=req.get('pos', 0))
-    p.s.setdefault('dye_pending', {})[str(oid)] = {'schemeIndex': req.get('schemeIndex', 0), 'color': col}
+    p.s.setdefault('dye_pending', {})[str(oid)] = {'schemeIndex': si, 'color': col}
     p.s['dye_total'] = p.s.get('dye_total', 0) + 1
     p.dirty = True
     ctx.reply({'status': OK, 'outfitId': oid, 'posColor': col, 'totalGuaranteeDyeNum': p.s['dye_total']})
@@ -1401,11 +1443,11 @@ def outfit_dye_save(ctx, req):
     p = ctx.p
     oid = str(req.get('outfitId', 0))
     pend = p.s.setdefault('dye_pending', {}).pop(oid, None)
-    si = req.get('schemeIndex', 0)
+    si = req.get('schemeIndex', pend['schemeIndex'] if pend else 0)
     col = pend['color'] if pend else {'pos': req.get('pos', 0)}
-    if pend and req.get('isSaveDyeResult', True):
+    if pend and si != 0 and req.get('isSaveDyeResult', True):
         o = p.s['outfits'].setdefault(oid, {'outfitId': int(oid)})
-        schemes = o.setdefault('dyeSchemes', [])
+        schemes = o.setdefault('dyeSchemes', [{'schemeIndex': 0, 'isUnLock': True}])
         sc = next((x for x in schemes if x.get('schemeIndex', 0) == si), None)
         if sc is None:
             sc = {'schemeIndex': si, 'isUnLock': True}

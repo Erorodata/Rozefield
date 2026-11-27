@@ -189,7 +189,8 @@ def finish(p, q, gained=None):
     items = quest_rewards(p, q)
     q['status'] = FINISH
     for c in q.get('conditions', []):
-        c['status'] = FINISH
+        if c.get('status') in (COMPLETED, FINISH) or c.get('progress', 0) >= _need(p, c.get('conditionId', 0)):
+            c['status'] = FINISH
     q['completeCount'] = q.get('completeCount', 0) + 1
     _changed(p, q)
     got, changed = p.add_items(items) if items else ([], [])

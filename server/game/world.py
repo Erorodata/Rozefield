@@ -168,7 +168,9 @@ def scene_fields(p, sid):
         if k in seen_idx or not k.isdigit():
             continue
         if not st.get('refresh') or _secs(st['refresh']) > now:
-            e = {'index': int(k), 'state': 'TreasureBoxState_Open'}
+            e = {'index': int(k), 'type': st.get('type', 'ETreasureBoxType_Normal'), 'state': 'TreasureBoxState_Open'}
+            if st.get('boxId'):
+                e['boxId'] = st['boxId']
             if st.get('refresh'):
                 e['nextRefreshTime'] = str(_secs(st['refresh']) * 1000)
             boxes.append(e)
@@ -435,12 +437,15 @@ def register(H, pack, scene_player):
             r = {'riddleId': rid}
             w['riddles'].append(r)
         rsp = {'status': OK, 'riddle_data': r}
-        if req.get('battle_state') == 'Finish' and req.get('is_win') and not r.get('isWin'):
+        if req.get('battle_state') == 'Finish' and req.get('is_win'):
+            first = not r.get('isWin')
             r['isWin'] = True
-            rsp['dynamicTreasureBoxBaseInfo'] = dyn_box(ctx)
-            from game.progression import ach_event
-            ach_event(p, 'Riddle0')
-            ach_event(p, 'Riddle12', rid)
+            r['state'] = 'Finish'                              # official (2026-11-27 capture): client waits for state='Finish'
+            rsp['dynamicTreasureBoxBaseInfo'] = dyn_box(ctx, box_id=2002)   # official capture: boxId 2002 present box
+            if first:
+                from game.progression import ach_event
+                ach_event(p, 'Riddle0')
+                ach_event(p, 'Riddle12', rid)
         p.dirty = True
         ctx.reply(rsp)
         Q.reported(p, rid)
@@ -477,7 +482,8 @@ def register(H, pack, scene_player):
         w = W(p, p.s['scene_id'])
         f = next((x for x in w['flags'] if x.get('battleId') == bid), None)
         rsp = {'status': OK}
-        if req.get('battle_state') == 'Finish':
+        is_scenic = req.get('mission_type') == 'EMissionType_ScenicSpot'
+        if req.get('battle_state') == 'Finish' or is_scenic:
             first = f is None or f.get('state') != 'Finish'
             if f is None:
                 f = {'battleId': bid}
@@ -486,14 +492,14 @@ def register(H, pack, scene_player):
             f['finishTimes'] = f.get('finishTimes', 0) + 1
             if req.get('mission_type'):
                 f['type'] = req['mission_type']
-            if first:
+            if first and not is_scenic:
                 rsp['dynamicTreasureBoxBaseInfo'] = dyn_box(ctx)
             p.dirty = True
             Q.event(p, Q.C['FinishMission'], bid)
             Q.reported(p, bid)
         rsp['battle_data'] = f or {'battleId': bid}
         ctx.reply(rsp)
-        if req.get('battle_state') == 'Finish' and first:
+        if req.get('battle_state') == 'Finish' and first and not is_scenic:
             # official: the battle's map marker (flag id = battle id / 10) goes away when it is first won,
             # and the team gets character EXP
             fid = bid // 10

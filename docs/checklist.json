@@ -151,8 +151,8 @@
         ],
         [
           "Recruit result screen (animation, can't leave)",
-          "partial",
-          "results now carry the official bonus items + quality; needs in-game check"
+          "done",
+          "confirmed in Build 51 play-test; results carry official bonus items + quality"
         ],
         [
           "Quest engine: main story, story rewards, daily, delegate",
@@ -215,8 +215,8 @@
         ],
         [
           "Events: Pass, Gashapon, 7-day sign-in (official flow)",
-          "partial",
-          "from the 2026-11-24 capture; needs in-game check"
+          "done",
+          "confirmed in Build 51 play-test (Event menu clean, table-driven rewards)"
         ],
         [
           "Wishing tree and Wish Stone exchange",

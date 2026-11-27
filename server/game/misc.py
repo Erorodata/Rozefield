@@ -347,10 +347,18 @@ def register(H, pack):
         done = _st(ctx.p, 'badge_achieve', [])
         ids = [a for a in req.get('achieveIds', []) if a not in done]
         done += ids
-        # official: 1 moonstone of the achievement's map per achievement (2 ids -> 301 x2, 3 ids -> 301 x3)
+        # official: 1 moonstone of the achievement's map per achievement (look up in StoneRewardQuestData -> StoneAreaData)
+        aid_to_page = {}
+        for row in ctx.d.table('moonstone', 'StoneRewardQuestData').values():
+            pg = int(row.get('ID', 100)) // 100
+            for g in row.get('StoneRewardQuestDataGroupInfo', []):
+                if g.get('AchieveConditionID'):
+                    aid_to_page[g['AchieveConditionID']] = pg
         pay = {}
         for a in ids:
-            page = int(str(a)[3:5]) if str(a).startswith('501') and len(str(a)) == 8 else 1
+            page = aid_to_page.get(a)
+            if page is None:
+                page = int(str(a)[3:5]) if str(a).startswith('501') and len(str(a)) == 8 else 1
             stone = (ctx.d.row('moonstone', 'StoneAreaData', page) or {}).get('ItemID', 301)
             pay[stone] = pay.get(stone, 0) + 1
         got, changed = give(ctx, list(pay.items()))
