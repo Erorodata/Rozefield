@@ -31,6 +31,8 @@ BALLOON_LAYOUTS = {10010101: 129, 10010102: 125, 10010103: 72, 10010104: 106, 10
                    10010107: 82, 10010108: 84, 10010109: 96, 10010110: 63}
 BALLOON_SECONDS = 46
 REWARD = 150   # official: 150 x item 121 per round
+from game import packs as _packs
+MIN_PLAYERS = int(_packs.system('coop', 'min_players', 2) or 2)   # reduced from official 3 to 2
 
 
 def _later(delay, fn):
@@ -201,9 +203,10 @@ def register(H, pack, scene_player):
         b_out = beacon(t, ready=False if act != 'MPBeaconAction_CALL_IN' else None)
         ctx.reply({'status': OK, 'beacon': b_out, 'team_id': t['id']})
         if act == 'MPBeaconAction_CALL_IN':
-            b2 = dict(beacon(t), can_start=True)
+            can = len(t['called']) >= MIN_PLAYERS
+            b2 = dict(beacon(t), can_start=can)
             push_all(ctx, t, 'MPTeamBeaconNotice', {'status': OK, 'beacon': b2, 'team_id': t['id']})
-            push_all(ctx, t, 'MPBeaconCanStartNotice', {'status': OK, 'team_id': t['id'], 'can_start': True})
+            push_all(ctx, t, 'MPBeaconCanStartNotice', {'status': OK, 'team_id': t['id'], 'can_start': can})
         else:
             # official (2026-11-27 capture): every beacon move/place pushes MPTeamBeaconNotice (not SceneMPBeaconNotice)
             push_all(ctx, t, 'MPTeamBeaconNotice', {'status': OK, 'beacon': b_out, 'team_id': t['id']})
@@ -222,7 +225,9 @@ def register(H, pack, scene_player):
         else:
             t['called'].discard(pid)
         ctx.reply({'status': OK})
-        push_all(ctx, t, 'MPTeamBeaconNotice', {'status': OK, 'beacon': dict(beacon(t), can_start=True), 'team_id': t['id']})
+        can = len(t['called']) >= MIN_PLAYERS
+        push_all(ctx, t, 'MPTeamBeaconNotice', {'status': OK, 'beacon': dict(beacon(t), can_start=can), 'team_id': t['id']})
+        push_all(ctx, t, 'MPBeaconCanStartNotice', {'status': OK, 'team_id': t['id'], 'can_start': can})
         push_all(ctx, t, 'MPTeamMemberNotice', {'status': OK, 'team_id': t['id'], 'members': detail(ctx, t)['members']})
     H['MPBeaconPlayerReadyReq'] = walk_in
 
@@ -230,7 +235,7 @@ def register(H, pack, scene_player):
     def start(ctx, req):
         p, d = ctx.p, ctx.d
         t = team_of(ctx)
-        if not t:
+        if not t or len(t['members']) < MIN_PLAYERS:
             return ctx.reply({'status': FAIL})
         cost = [TICKET, 1]
         mode_row = d.row('teamgameplay', 'Mode', t['mode']) or {}
