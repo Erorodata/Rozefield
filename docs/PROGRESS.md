@@ -1,8 +1,10 @@
-# Rozefield progress: 83.29%
+# Rozefield progress: 84.99%
 
 ![progress](progress.png)
 
-_OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-26; regenerate with `py devtools/progress.py`._
+**Before (2026-11-26):** 83.29% → **After (2026-11-28):** 84.99% (`+1.70%`)
+
+_OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-28; regenerate with `py devtools/progress.py`._
 
 ## Preservation & archive (93.8%)
 
@@ -31,51 +33,51 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (60.2%)
+## Gameplay (67.0%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
-- [~] Character level up, level break, star up, skill up: costs from the game tables; needs in-game check
-- [~] Profile, outfit / gear presets, pets, visit a friend's garden: needs in-game check
-- [~] Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset: needs in-game check
+- [~] Character level up, level break, star up, skill up [`test`]: costs from the game tables; needs in-game check
+- [~] Profile, outfit / gear presets, pets, visit a friend's garden [`retest`]: needs in-game check
+- [~] Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset [`retest`]: needs in-game check
 - [x] Food buffs and item use
 - [x] Channels, scenes, fields, friends' gardens
-- [~] Chat and GM console: world and channel history kept across logins and restarts: needs in-game check
-- [~] Umbrella / badge / tool appearance: needs in-game check
-- [~] Garden plaza: lift, presets, 500,000 limit: needs in-game check
+- [~] Chat and GM console: world and channel history kept across logins and restarts [`retest`]: needs in-game check
+- [~] Umbrella / badge / tool appearance [`test`]: needs in-game check
+- [x] Garden plaza: lift, presets, 500,000 limit: confirmed in play-test
 - [x] Recruit banners and pulls
-- [~] Recruit result screen (animation, can't leave): results now carry the official bonus items + quality; needs in-game check
-- [~] Quest engine: main story, story rewards, daily, delegate
+- [x] Recruit result screen (animation, can't leave): confirmed in Build 51 play-test; results carry official bonus items + quality
+- [~] Quest engine: main story, story rewards, daily, delegate [`retest`]
 - [x] Quest steps with an event rule (100.00% 1,265/1,265)
 - [x] Main story quests cleared by an automated new account (100.00% 648/648)
-- [~] Achievements: view archived progress
-- [~] Achievements: earn and claim: counted from play, claim + group rewards; needs in-game check
-- [~] Dye: each dye uses 1 colorant as official; needs in-game check
-- [~] Scrap (disassemble)
-- [~] Life skills: cooking, sewing, making, handicraft, fishing: recipes, success chance, levels, skills, handbook rewards; needs in-game check
-- [~] Gathering tools (net, axe, hammer, gloves, bottle): gather rewards + tool progress; needs in-game check
+- [~] Achievements: view archived progress [`test`]
+- [~] Achievements: earn and claim [`retest`]: counted from play, claim + group rewards; needs in-game check
+- [~] Dye [`retest`]: each dye uses 1 colorant as official; needs in-game check
+- [~] Scrap (disassemble) [`test`]
+- [~] Life skills: cooking, sewing, making, handicraft, fishing [`test`]: recipes, success chance, levels, skills, handbook rewards; needs in-game check
+- [x] Gathering tools (net, axe, hammer, gloves, bottle): confirmed in play-test
 - [x] Dungeons (story, resource), vitality, sweep, monster drops: official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed
-- [~] Field treasure chests, encounters, riddles, challenges, moons: 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated
-- [~] Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server): from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check
-- [~] Perform (instruments, emotes)
-- [~] Events: Pass, Gashapon, 7-day sign-in (official flow): from the 2026-11-24 capture; needs in-game check
-- [~] Wishing tree and Wish Stone exchange: from the capture; Wish Stone income is estimated
-- [~] Abyss: info, teams, team switch, best time: from the capture
-- [~] Group emotes, dice, friend gifts (friendship points): from the capture
-- [~] Energy / vitality purchases (official prices): needs in-game check
-- [~] Exploration (send a team out), team exploration: reward amounts estimated
-- [~] Handbook, imprint, treasure, badge, character achievement rewards: table rewards where the game has them, else estimated
-- [~] Field extras: coins, digging, supply box, campfire, sitting, clap, music notes: needs in-game check
+- [~] Field treasure chests, encounters, riddles, challenges, moons [`retest / captured`]: 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated
+- [~] Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server) [`retest / captured`]: from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check
+- [x] Perform (instruments, emotes)
+- [x] Events: Pass, Gashapon, 7-day sign-in (official flow): confirmed in Build 51 play-test (Event menu clean, table-driven rewards)
+- [~] Wishing tree and Wish Stone exchange [`captured`]: from the capture; Wish Stone income is estimated
+- [~] Abyss: info, teams, team switch, best time [`retest`]: from the capture
+- [~] Group emotes, dice, friend gifts (friendship points) [`test`]: from the capture
+- [~] Energy / vitality purchases (official prices) [`test`]: needs in-game check
+- [~] Exploration (send a team out), team exploration [`captured`]: reward amounts estimated
+- [~] Handbook, imprint, treasure, badge, character achievement rewards [`retest / captured`]: table rewards where the game has them, else estimated
+- [~] Field extras: coins, digging, supply box, campfire, sitting, clap, music notes [`test / captured`]: needs in-game check
 - [x] Redemption codes (server owner sets them in save/codes.json)
-- [~] Boss Rush (solo), Abyss quest rewards: needs in-game check
-- [~] Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear: needs in-game check
-- [~] Multiplayer: other players in the same scene, movement, emotes, group emotes, chat (nearby, world, private), sitting: tested with 2 local clients; needs in-game check
-- [~] Part-time tasks, Moon Points to Wish Stones (official step prices), co-op ticket refill (6 a day): Moon Points per activity: 5 / 25 as seen
-- [~] Online Gomoku (2 players): reward amounts estimated
-- [~] Photo wall (upload, browse, like, favourite, delete): pictures served back to the game (full and thumbnail); needs in-game check
-- [~] Rankings: Abyss, Boss Rush (everyone on this server)
-- [~] Restaurant mini-game (buy, merge, sell, serve, quests): built from the game tables; no official capture
-- [~] Field gear drops follow world level, 3% rare top quality: estimate
-- [~] Overfield Backup: background start, follows a Steam restart, log file: needs a live run
+- [~] Boss Rush (solo), Abyss quest rewards [`test`]: needs in-game check
+- [~] Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear [`test / captured`]: needs in-game check
+- [~] Multiplayer: other players in the same scene, movement, emotes, group emotes, chat (nearby, world, private), sitting [`test`]: tested with 2 local clients; needs in-game check
+- [~] Part-time tasks, Moon Points to Wish Stones (official step prices), co-op ticket refill (6 a day) [`captured`]: Moon Points per activity: 5 / 25 as seen
+- [~] Online Gomoku (2 players) [`captured`]: reward amounts estimated
+- [~] Photo wall (upload, browse, like, favourite, delete) [`retest`]: pictures served back to the game (full and thumbnail); needs in-game check
+- [~] Rankings: Abyss, Boss Rush (everyone on this server) [`test`]
+- [~] Restaurant mini-game (buy, merge, sell, serve, quests) [`captured`]: built from the game tables; no official capture
+- [x] Field gear drops follow world level (official WL 0-5 gold & Epic+ scaling): official WL 0-5 gold (+0% to +125%) & Epic+ (+0% to +80%) scaling in packs/official/systems/world.json
+- [~] Overfield Backup: background start, follows a Steam restart, log file [`test`]: needs a live run
 
-Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.
+Legend: `[x]` done, `[~]` in progress (`test` / `retest` / `captured`), `[!]` blocked, `[ ]` not yet.
