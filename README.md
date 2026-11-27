@@ -138,3 +138,5 @@ Rozefield preserves OverField: the archived client and a private server that run
 | **Co-op** | Minimum players reduced (3 → 2) | Pop Balloons and Aerial Adventure can start with 2 players instead of 3. |
 | **Shops** | All Fishing Rods on Chang's Store | All 10 Fishing Rods moved from Sherry to Chang's Lifestyle Store with official currencies (unpriced rods in Feline Tokens to encourage co-op). |
 | **New Players** | First recruit 100% guarantees Shiika | New accounts always receive Shiika (`102001`) on their first recruit, matching the prologue story. |
+| **Co-op** | Snakes & Ladders in Rota Plaza (`/sl`) | Play a 30-tile Snakes & Ladders match in Rota Plaza using the in-game Special Dice (`item 2020`, moving by the exact rolled face 1–6); awards 10,000 Feline Tokens to the winner and 5,000 to each participant. |
+| **Rota Plaza** | Park-area invisible wall removed | Disabled the plaza perimeter invisible wall (`包围盒v1`) in the Rozefield resource patch so players can explore freely behind the park area. |

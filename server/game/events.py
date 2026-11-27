@@ -389,14 +389,21 @@ def register(H, pack, scene_player):
     H['MultipleActionAcceptReq'] = multi_accept
 
     def dice(ctx, req):
-        """The throw (with pips) spends one Dice (item 2020); the follow-up report without pips is just acknowledged."""
+        """The throw (with pips) spends one Dice (item 2020); the follow-up report without pips is just acknowledged.
+        If the player is in a Snakes & Ladders match, the rolled pips value drives board movement and the dice is not consumed."""
         p = ctx.p
+        pips = req.get('pips')
+        in_sl = False
+        if pips:
+            from game import snakes_ladders
+            in_sl = snakes_ladders.on_dice_throw(ctx, pips, pack)
         paid = []
-        if req.get('pips') and p.count(2020) > 0:
+        if pips and not in_sl and p.count(2020) > 0:
             paid = p.pay([(2020, 1)]) or []
         ctx.reply({'status': OK})
         if paid:
             pack(ctx, paid)
+        if pips:
             Q.event(p, Q.C['UseInteractiveItemNum'])   # dice: an interaction item
     H['ThrowDiceReq'] = dice
 

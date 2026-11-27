@@ -367,6 +367,11 @@ def sit(ctx, req):
 def chat(ctx, req):
     text = req.get('text', '')
     ctx.reply({'status': OK, 'text': text})
+    # Snakes & Ladders plaza minigame commands (/sl ...) are open to all players
+    if text.strip().lower().startswith('/sl'):
+        from game import snakes_ladders
+        if snakes_ladders.handle_command(ctx, text, pack):
+            return
     # GM commands are not taken from in-game chat (anyone could type them): use the server panel (GM commands) or
     # the server console instead; a line starting with "/" is ordinary chat
     s = ctx.p.s
