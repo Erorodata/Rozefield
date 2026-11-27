@@ -1,6 +1,10 @@
 {
   "title": "Rozefield progress",
   "subtitle": "OverField preservation: run the game on your own server after the official one closes.",
+  "previous": {
+    "date": "2026-11-26",
+    "overall": 83.29
+  },
   "story_autorun": {
     "reached": 648,
     "note": "new account, automated run with the level raised by GM when a story needs it: all 648 main-story quests finish"
@@ -110,17 +114,20 @@
         [
           "Character level up, level break, star up, skill up",
           "partial",
-          "costs from the game tables; needs in-game check"
+          "costs from the game tables; needs in-game check",
+          "test"
         ],
         [
           "Profile, outfit / gear presets, pets, visit a friend's garden",
           "partial",
-          "needs in-game check"
+          "needs in-game check",
+          "retest"
         ],
         [
           "Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset",
           "partial",
-          "needs in-game check"
+          "needs in-game check",
+          "retest"
         ],
         [
           "Food buffs and item use",
@@ -133,12 +140,14 @@
         [
           "Chat and GM console: world and channel history kept across logins and restarts",
           "partial",
-          "needs in-game check"
+          "needs in-game check",
+          "retest"
         ],
         [
           "Umbrella / badge / tool appearance",
           "partial",
-          "needs in-game check"
+          "needs in-game check",
+          "test"
         ],
         [
           "Garden plaza: lift, presets, 500,000 limit",
@@ -156,7 +165,9 @@
         ],
         [
           "Quest engine: main story, story rewards, daily, delegate",
-          "partial"
+          "partial",
+          "",
+          "retest"
         ],
         [
           "@quest_steps",
@@ -168,26 +179,33 @@
         ],
         [
           "Achievements: view archived progress",
-          "partial"
+          "partial",
+          "",
+          "test"
         ],
         [
           "Achievements: earn and claim",
           "partial",
-          "counted from play, claim + group rewards; needs in-game check"
+          "counted from play, claim + group rewards; needs in-game check",
+          "retest"
         ],
         [
           "Dye",
           "partial",
-          "each dye uses 1 colorant as official; needs in-game check"
+          "each dye uses 1 colorant as official; needs in-game check",
+          "retest"
         ],
         [
           "Scrap (disassemble)",
-          "partial"
+          "partial",
+          "",
+          "test"
         ],
         [
           "Life skills: cooking, sewing, making, handicraft, fishing",
           "partial",
-          "recipes, success chance, levels, skills, handbook rewards; needs in-game check"
+          "recipes, success chance, levels, skills, handbook rewards; needs in-game check",
+          "test"
         ],
         [
           "Gathering tools (net, axe, hammer, gloves, bottle)",
@@ -202,12 +220,14 @@
         [
           "Field treasure chests, encounters, riddles, challenges, moons",
           "partial",
-          "1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated"
+          "1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated",
+          "retest / captured"
         ],
         [
           "Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server)",
           "partial",
-          "from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check"
+          "from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check",
+          "retest / captured"
         ],
         [
           "Perform (instruments, emotes)",
@@ -221,37 +241,44 @@
         [
           "Wishing tree and Wish Stone exchange",
           "partial",
-          "from the capture; Wish Stone income is estimated"
+          "from the capture; Wish Stone income is estimated",
+          "captured"
         ],
         [
           "Abyss: info, teams, team switch, best time",
           "partial",
-          "from the capture"
+          "from the capture",
+          "retest"
         ],
         [
           "Group emotes, dice, friend gifts (friendship points)",
           "partial",
-          "from the capture"
+          "from the capture",
+          "test"
         ],
         [
           "Energy / vitality purchases (official prices)",
           "partial",
-          "needs in-game check"
+          "needs in-game check",
+          "test"
         ],
         [
           "Exploration (send a team out), team exploration",
           "partial",
-          "reward amounts estimated"
+          "reward amounts estimated",
+          "captured"
         ],
         [
           "Handbook, imprint, treasure, badge, character achievement rewards",
           "partial",
-          "table rewards where the game has them, else estimated"
+          "table rewards where the game has them, else estimated",
+          "retest / captured"
         ],
         [
           "Field extras: coins, digging, supply box, campfire, sitting, clap, music notes",
           "partial",
-          "needs in-game check"
+          "needs in-game check",
+          "test / captured"
         ],
         [
           "Redemption codes (server owner sets them in save/codes.json)",
@@ -260,42 +287,50 @@
         [
           "Boss Rush (solo), Abyss quest rewards",
           "partial",
-          "needs in-game check"
+          "needs in-game check",
+          "test"
         ],
         [
           "Gomoku vs AI reward, pet release, gift-bag bulk open, lock gear",
           "partial",
-          "needs in-game check"
+          "needs in-game check",
+          "test / captured"
         ],
         [
           "Multiplayer: other players in the same scene, movement, emotes, group emotes, chat (nearby, world, private), sitting",
           "partial",
-          "tested with 2 local clients; needs in-game check"
+          "tested with 2 local clients; needs in-game check",
+          "test"
         ],
         [
           "Part-time tasks, Moon Points to Wish Stones (official step prices), co-op ticket refill (6 a day)",
           "partial",
-          "Moon Points per activity: 5 / 25 as seen"
+          "Moon Points per activity: 5 / 25 as seen",
+          "captured"
         ],
         [
           "Online Gomoku (2 players)",
           "partial",
-          "reward amounts estimated"
+          "reward amounts estimated",
+          "captured"
         ],
         [
           "Photo wall (upload, browse, like, favourite, delete)",
           "partial",
-          "pictures served back to the game (full and thumbnail); needs in-game check"
+          "pictures served back to the game (full and thumbnail); needs in-game check",
+          "retest"
         ],
         [
           "Rankings: Abyss, Boss Rush (everyone on this server)",
           "partial",
-          ""
+          "",
+          "test"
         ],
         [
           "Restaurant mini-game (buy, merge, sell, serve, quests)",
           "partial",
-          "built from the game tables; no official capture"
+          "built from the game tables; no official capture",
+          "captured"
         ],
         [
           "Field gear drops follow world level (official WL 0-5 gold & Epic+ scaling)",
@@ -305,7 +340,8 @@
         [
           "Overfield Backup: background start, follows a Steam restart, log file",
           "partial",
-          "needs a live run"
+          "needs a live run",
+          "test"
         ]
       ]
     }

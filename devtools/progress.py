@@ -66,7 +66,7 @@ def measure():
 
 
 def rows_of(cfg, m):
-    """-> areas: [(name, [(label, value 0..1, color, right_text, note)])]"""
+    """-> areas: [(name, [(label, value 0..1, color, right_text, note, kind, stage)])]"""
     qc = m['quest_cells']
     ex, rep = qc.count('exact'), qc.count('reported')
     auto = cfg['story_autorun']
@@ -82,13 +82,14 @@ def rows_of(cfg, m):
         for r in area['rows']:
             label, st = r[0], r[1]
             note = r[2] if len(r) > 2 else ''
+            stage = r[3] if len(r) > 3 else ('done' if st == 'done' else '')
             if st == 'bar':
                 lab, a, b = bars[label]
                 v = a / b if b else 0
-                rows.append((lab, v, GREEN if v >= 0.999 else YELLOW, f'{v * 100:.2f}% {a:,}/{b:,}', note, 'bar'))
+                rows.append((lab, v, GREEN if v >= 0.999 else YELLOW, f'{v * 100:.2f}% {a:,}/{b:,}', note, 'bar', 'done' if v >= 0.999 else 'in progress'))
             else:
                 v, col, txt = STATE[st]
-                rows.append((label, v, col, txt, note, st))
+                rows.append((label, v, col, txt, note, st, stage))
         out.append((area['name'], rows))
     return out
 
@@ -138,7 +139,7 @@ def svg(cfg, m, areas):
         y += 14
         parts.append(f'<line x1="{pad}" y1="{y}" x2="{W - pad}" y2="{y}" stroke="{LINE}"/>')
         y += 14
-        for label, val, col, right, note, kind in rows:
+        for label, val, col, right, note, kind, stage in rows:
             y += 29
             text(pad, y, label, 17)
             if note and kind != 'bar':
@@ -147,7 +148,8 @@ def svg(cfg, m, areas):
                 segbar(700, y - 12, 460, val, col)
             else:
                 parts.append(f'<rect x="700" y="{y - 13}" width="14" height="14" rx="2" fill="{col}"/>')
-            text(W - pad, y, right, 16, DIM if kind != 'bar' else FG, anchor='end', mono=True)
+            rtxt = stage if (name == 'Gameplay' and stage and kind != 'bar' and kind != 'done') else right
+            text(W - pad, y, rtxt, 16, DIM if kind != 'bar' else FG, anchor='end', mono=True)
     # quest step grid
     qc = m['quest_cells']
     if qc:
@@ -176,19 +178,33 @@ def svg(cfg, m, areas):
             f'<rect width="{W}" height="{H}" fill="{BG}"/>' + ''.join(parts) + '</svg>'), overall
 
 
+def _prev_line(cfg, overall):
+    prev = cfg.get('previous')
+    if not prev:
+        return ''
+    now_pct = round(overall * 100, 2)
+    diff = now_pct - float(prev['overall'])
+    sign = '+' if diff >= 0 else ''
+    return f'**Before ({prev["date"]}):** {prev["overall"]:.2f}% → **After ({time.strftime("%Y-%m-%d")}):** {now_pct:.2f}% (`{sign}{diff:.2f}%`)'
+
+
 def markdown(cfg, m, areas, overall):
-    out = [f'# {cfg["title"]}: {overall * 100:.2f}%', '', '![progress](progress.png)', '',
-           f'_{cfg["subtitle"]} Updated {time.strftime("%Y-%m-%d")}; regenerate with `py devtools/progress.py`._', '']
+    out = [f'# {cfg["title"]}: {overall * 100:.2f}%', '', '![progress](progress.png)', '']
+    pl = _prev_line(cfg, overall)
+    if pl:
+        out += [pl, '']
+    out += [f'_{cfg["subtitle"]} Updated {time.strftime("%Y-%m-%d")}; regenerate with `py devtools/progress.py`._', '']
     mark = {'done': '[x]', 'partial': '[~]', 'blocked': '[!]', 'open': '[ ]', 'bar': '[~]'}
     for name, rows in areas:
         v = sum(r[1] for r in rows) / len(rows)
         out += [f'## {name} ({v * 100:.1f}%)', '']
-        for label, val, col, right, note, kind in rows:
+        for label, val, col, right, note, kind, stage in rows:
             m_ = '[x]' if kind == 'bar' and val >= 0.999 else mark[kind]
             extra = f' ({right})' if kind == 'bar' else ''
-            out.append(f'- {m_} {label}{extra}' + (f': {note}' if note else ''))
+            st_tag = f' [`{stage}`]' if name == 'Gameplay' and stage and kind != 'done' and kind != 'bar' else ''
+            out.append(f'- {m_} {label}{extra}{st_tag}' + (f': {note}' if note else ''))
         out.append('')
-    out += ['Legend: `[x]` done, `[~]` in progress, `[!]` blocked, `[ ]` not yet.', '']
+    out += ['Legend: `[x]` done, `[~]` in progress (`test` / `retest` / `captured`), `[!]` blocked, `[ ]` not yet.', '']
     if m['seen_missing']:
         out += ['Requests seen in play that still get an empty answer: ' + ', '.join(f'`{r}`' for r in m['seen_missing']), '']
     return '\n'.join(out)
@@ -205,8 +221,11 @@ def bar(v, n=30):
 def readme(cfg, m, areas, overall):
     """Front page of the repo: the progress chart drawn in text (shows even where images are blocked)."""
     area_vals = [sum(r[1] for r in rows) / len(rows) for _, rows in areas]
-    out = [f'# {cfg["title"]} — {overall * 100:.2f}%', '', f'`{bar(overall, 40)}` **{overall * 100:.2f}%**', '',
-           cfg['subtitle'], '', '## The three parts', '',
+    pl = _prev_line(cfg, overall)
+    out = [f'# {cfg["title"]} — {overall * 100:.2f}%', '', f'`{bar(overall, 40)}` **{overall * 100:.2f}%**', '']
+    if pl:
+        out += [pl, '']
+    out += [cfg['subtitle'], '', '## The three parts', '',
            '| Part | What it is | Get it |', '|---|---|---|',
            '| **Overfield** | The game. Not shared here (it belongs to its makers): use your own copy (Steam or the OverField launcher) '
            'and point it at a server with Overfield Backup, or the game package your server owner gives you | your own install |',
@@ -217,14 +236,23 @@ def readme(cfg, m, areas, overall):
            '| Area | Progress | |', '|---|---|---:|']
     for (name, _), v in zip(areas, area_vals):
         out.append(f'| {name} | `{bar(v)}` | **{v * 100:.1f}%** |')
-    out += ['', '🟩 done · 🟨 in progress · 🟥 blocked · ⬛ not yet', '']
+    out += ['', '🟩 done · 🟨 in progress (`test` / `retest` / `captured`) · 🟥 blocked · ⬛ not yet', '']
     for (name, rows), v in zip(areas, area_vals):
-        out += [f'## {name} — {v * 100:.1f}%', '', '| | Item | Status |', '|---|---|---|']
-        for label, val, col, right, note, kind in rows:
-            if kind == 'bar':
-                out.append(f'| {"🟩" if val >= 0.999 else "🟨"} | {label} | `{bar(val, 20)}` {right} |')
-            else:
-                out.append(f'| {SQ[kind]} | {label} | {right}{" — " + note if note else ""} |')
+        if name == 'Gameplay':
+            out += [f'## {name} — {v * 100:.1f}%', '', '| | Item | Stage | Status |', '|---|---|---|---|']
+            for label, val, col, right, note, kind, stage in rows:
+                if kind == 'bar':
+                    out.append(f'| {"🟩" if val >= 0.999 else "🟨"} | {label} | `done` | `{bar(val, 20)}` {right} |')
+                else:
+                    st_cell = f'`{stage}`' if stage else f'`{right}`'
+                    out.append(f'| {SQ[kind]} | {label} | {st_cell} | {right}{" — " + note if note else ""} |')
+        else:
+            out += [f'## {name} — {v * 100:.1f}%', '', '| | Item | Status |', '|---|---|---|']
+            for label, val, col, right, note, kind, stage in rows:
+                if kind == 'bar':
+                    out.append(f'| {"🟩" if val >= 0.999 else "🟨"} | {label} | `{bar(val, 20)}` {right} |')
+                else:
+                    out.append(f'| {SQ[kind]} | {label} | {right}{" — " + note if note else ""} |')
         out.append('')
     qc = m['quest_cells']
     if qc:
