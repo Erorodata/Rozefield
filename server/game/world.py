@@ -207,7 +207,14 @@ def gear_pool(d):
 
 
 from game import packs as _packs
-QUALITY_WEIGHTS = tuple(_packs.system('world', 'drop_quality_weights', [30, 30, 25, 12, 3]))  # quality digit 1..5; 5 is the rare drop (3%)
+QUALITY_WEIGHTS = tuple(_packs.system('world', 'drop_quality_weights', [30, 30, 25, 12, 3]))  # base weights at World Level 0
+WORLD_LEVELS = _packs.int_keys(_packs.system('world', 'world_levels', {}))
+
+
+def world_level_cfg(wl):
+    """Official World Level 0-5 scaling (gold_mult, epic_bonus_pct, max_gear_lv) from world.json."""
+    wl = max(0, min(5, int(wl or 0)))
+    return WORLD_LEVELS.get(wl) or {'gold_mult': 1.0 + 0.25 * wl, 'epic_bonus_pct': 0, 'max_gear_lv': 39 + wl * 12}
 
 
 def _gear_key(i):
@@ -217,17 +224,21 @@ def _gear_key(i):
 
 
 def roll_gear(d, n, world_level=None):
-    """Field / chest gear. The gear tier follows the world level (official drops at world level 5 were tier 5);
-    quality is weighted, with the top quality as a rare 3% drop."""
+    """Field / chest gear. Tier follows world level; Epic+ (quality 4-5) rate scales by official World Level bonus
+    (+0% / +19% / +36% / +52% / +67% / +80% for WL 0-5)."""
     g = gear_pool(d)
     out = []
+    wl = 0 if world_level is None else max(0, min(5, int(world_level)))
+    bonus = 1.0 + world_level_cfg(wl).get('epic_bonus_pct', 0) / 100.0
+    weights = (QUALITY_WEIGHTS[0], QUALITY_WEIGHTS[1], QUALITY_WEIGHTS[2],
+               QUALITY_WEIGHTS[3] * bonus, QUALITY_WEIGHTS[4] * bonus)
     for _ in range(n):
         pool = g['weapon'] if random.random() < 0.35 else g['armor']
         if not pool:
             continue
-        if world_level:
-            tier = max(1, min(10, world_level + random.choice((-1, 0, 0, 1))))
-            q = random.choices((1, 2, 3, 4, 5), weights=QUALITY_WEIGHTS)[0]
+        if world_level is not None:
+            tier = max(1, min(10, max(1, wl) + random.choice((-1, 0, 0, 1))))
+            q = random.choices((1, 2, 3, 4, 5), weights=weights)[0]
             pick = [i for i in pool if _gear_key(i) == (q, tier)] or [i for i in pool if _gear_key(i)[1] == tier] or pool
             out.append((random.choice(pick), 1))
         else:
@@ -371,11 +382,13 @@ def register(H, pack, scene_player):
             refresh = int(time.time()) + secs if secs else 0
         w['boxes'][str(idx)] = {'refresh': refresh}
         p.dirty = True
+        wl = p.s.get('world_level', 0)
+        gmult = world_level_cfg(wl).get('gold_mult', 1.0)
         big = cfg.get('NewTreasureBoxRewardShowType', 1) >= 3
         if big:
-            items = roll_gear(p.d, 2, p.s.get('world_level', 1)) + [(102, 20), (GOLD, random.randint(400, 800))]
+            items = roll_gear(p.d, 2, wl) + [(102, 20), (GOLD, int(random.randint(400, 800) * gmult))]
         else:
-            items = [(GOLD, random.randint(80, 200)), (190, 1)]
+            items = [(GOLD, int(random.randint(80, 200) * gmult)), (190, 1)]
         items, changed = give(ctx, items)
         if random.random() < 0.5:         # field chest Moon Points (official id 1120)
             _moon(ctx, 1120, 5)

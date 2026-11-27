@@ -23,8 +23,7 @@ Kept up to date with every build; the capture rows that would fix each line are 
 | Treasure handbook rewards | Starstone | 9 |
 | Sequence star / task rewards | Starstone, Gold | 10 |
 | Digging | Gold, Starstone | 11 |
-| Field chest amounts | Approximated | 12 |
-| Gear drops by world level | 3% rare top quality | 13 |
+| Field chest amounts | Approximated (gold scales by official WL 0–5: +0% to +125%) | 12 |
 | Gomoku (AI and online) | Gold | 14, 15 |
 | Mini-game rewards | Starstone | 16 |
 | Recruit bonus items for R, and a repeat SSR at 5 stars | Estimate | 17 |

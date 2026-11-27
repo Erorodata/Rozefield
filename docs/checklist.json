@@ -142,8 +142,8 @@
         ],
         [
           "Garden plaza: lift, presets, 500,000 limit",
-          "partial",
-          "needs in-game check"
+          "done",
+          "confirmed in play-test"
         ],
         [
           "Recruit banners and pulls",
@@ -191,8 +191,8 @@
         ],
         [
           "Gathering tools (net, axe, hammer, gloves, bottle)",
-          "partial",
-          "gather rewards + tool progress; needs in-game check"
+          "done",
+          "confirmed in play-test"
         ],
         [
           "Dungeons (story, resource), vitality, sweep, monster drops",
@@ -211,7 +211,7 @@
         ],
         [
           "Perform (instruments, emotes)",
-          "partial"
+          "done"
         ],
         [
           "Events: Pass, Gashapon, 7-day sign-in (official flow)",
@@ -298,9 +298,9 @@
           "built from the game tables; no official capture"
         ],
         [
-          "Field gear drops follow world level, 3% rare top quality",
-          "partial",
-          "estimate"
+          "Field gear drops follow world level (official WL 0-5 gold & Epic+ scaling)",
+          "done",
+          "official WL 0-5 gold (+0% to +125%) & Epic+ (+0% to +80%) scaling in packs/official/systems/world.json"
         ],
         [
           "Overfield Backup: background start, follows a Steam restart, log file",
