@@ -748,7 +748,15 @@ def buff_list(p):
 def shop_grids(ctx, shop_id):
     info = ctx.d.row('shop', 'Info', shop_id)
     grid = ctx.d.row('shop', 'Grid', (info or {}).get('GridID', shop_id))
-    return (grid or {}).get('Items', [])
+    items = list((grid or {}).get('Items', []))
+    rm = set((_packs.system('shops', 'remove_grids', {}) or {}).get(str(shop_id), []))
+    if rm:
+        items = [g for g in items if g.get('GridID') not in rm]
+    add = (_packs.system('shops', 'add_grids', {}) or {}).get(str(shop_id), [])
+    if add:
+        have = {g.get('GridID') for g in items}
+        items += [g for g in add if g.get('GridID') not in have]
+    return items
 
 
 def shop_period(g):
@@ -767,7 +775,8 @@ def shop_period(g):
 def shop_pool_entry(ctx, sid, g):
     """The pool item a grid shows. Official: poolIndex is the pool item's own Index (not the grid's); a pool with
     several items shows one of them, picked for the current refresh period, within the player's level and dates."""
-    pool = ctx.d.row('shop', 'Pool', g['ShopPoolID']) or {'Items': []}
+    extra = (_packs.system('shops', 'extra_pools', {}) or {}).get(str(g['ShopPoolID']))
+    pool = extra or ctx.d.row('shop', 'Pool', g['ShopPoolID']) or {'Items': []}
     lv, now = ctx.p.s.get('level', 1), time.strftime('%Y-%m-%d %H:%M:%S')
     ok = [x for x in pool['Items'] if x.get('MinLevel', 1) <= lv <= x.get('MaxLevel', 999)
           and x.get('OpeningTime', '') <= now and (not x.get('ClosingTime') or now <= x['ClosingTime'])] or pool['Items']
@@ -933,13 +942,11 @@ def gacha(ctx, req):
             got_sr = True
         results.append(pick)
         st['records'].append({'gachaId': gid, 'itemId': pick, 'gachaTime': str(int(time.time()))})
-    # a new player's first recruit always brings a new salvager: the tutorial right after asks to deploy a second one
+    # a new player's first recruit always guarantees Shiika (102001) so the story & team tutorial match official
     owned = {int(c) for c in p.s['characters']}
-    if len(owned) < 2 and not any(d.item_tag(x) == 'EBagItemTag_Card' and x not in owned for x in results):
-        fresh = [x for pid in (300, 400) for x in tiers.get(pid, []) if d.item_tag(x) == 'EBagItemTag_Card' and x not in owned]
-        if fresh:
-            results[-1] = random.choice(fresh)
-            st['records'][-1]['itemId'] = results[-1]
+    if len(owned) < 2 and 102001 not in owned:
+        results[-1] = 102001
+        st['records'][-1]['itemId'] = 102001
     got, changed = p.add_items([(x, 1) for x in results])
     p.dirty = True
     Q.event(p, Q.C['Gacha'], n=len(results))

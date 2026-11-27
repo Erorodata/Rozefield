@@ -1,0 +1,25 @@
+{
+ "_about": "Shop overrides: remove Fishing Rod from Sherry (15000) and sell all 10 Fishing Rods (1006001-1006010) on Chang's Lifestyle Store (16000) with official currencies (unpriced rods in Feline Tokens 109).",
+ "remove_grids": {
+  "15000": [1]
+ },
+ "add_grids": {
+  "16000": [
+   {"GridID": 12, "ShopPoolID": 15001, "BuyMaxCount": 1},
+   {"GridID": 13, "ShopPoolID": 19205, "BuyMaxCount": 1},
+   {"GridID": 14, "ShopPoolID": 19206, "BuyMaxCount": 1},
+   {"GridID": 15, "ShopPoolID": 16054, "BuyMaxCount": 1},
+   {"GridID": 16, "ShopPoolID": 20405, "BuyMaxCount": 1},
+   {"GridID": 17, "ShopPoolID": 20406, "BuyMaxCount": 1},
+   {"GridID": 18, "ShopPoolID": 16057, "BuyMaxCount": 1},
+   {"GridID": 19, "ShopPoolID": 16058, "BuyMaxCount": 1},
+   {"GridID": 20, "ShopPoolID": 20609, "BuyMaxCount": 1},
+   {"GridID": 21, "ShopPoolID": 1018, "BuyMaxCount": 1}
+  ]
+ },
+ "extra_pools": {
+  "16054": {"ID": 16054, "Items": [{"Index": 1, "ItemID": 1006004, "ItemNum": 1, "ShopCurrencyItem": [{"CurrencyID": 109, "Price": 5000}]}]},
+  "16057": {"ID": 16057, "Items": [{"Index": 1, "ItemID": 1006007, "ItemNum": 1, "ShopCurrencyItem": [{"CurrencyID": 109, "Price": 8000}]}]},
+  "16058": {"ID": 16058, "Items": [{"Index": 1, "ItemID": 1006008, "ItemNum": 1, "ShopCurrencyItem": [{"CurrencyID": 109, "Price": 12000}]}]}
+ }
+}

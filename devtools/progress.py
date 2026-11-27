@@ -290,7 +290,8 @@ def readme(cfg, m, areas, overall):
             '| **Field Drops** | Direct-to-bag monster material drops | Field monster material drops go straight into your normal bag instead of waiting in temporary storage. |',
             '| **Outfits & Dye** | Protected original dye slot (Slot 0) | Every outfit keeps Slot 0 for its original colors (selectable anytime, cannot be dyed over) with Slot 1 unlocked by default for custom dyeing. |',
             '| **Co-op** | Minimum players reduced (3 → 2) | Pop Balloons and Aerial Adventure can start with 2 players instead of 3. |',
-            '| **New Players** | First recruit guarantees a new salvager | Prevents duplicate starter pulls on the first recruit so the team tutorial never gets stuck. |', '']
+            '| **Shops** | All Fishing Rods on Chang\'s Store | All 10 Fishing Rods moved from Sherry to Chang\'s Lifestyle Store with official currencies (unpriced rods in Feline Tokens to encourage co-op). |',
+            '| **New Players** | First recruit 100% guarantees Shiika | New accounts always receive Shiika (`102001`) on their first recruit, matching the prologue story. |', '']
     return '\n'.join(out)
 
 
