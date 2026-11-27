@@ -1170,6 +1170,9 @@ def char_appearance(ctx, req):
     ap.update(req.get('appearance', {}))
     for k in [k for k, v in ap.items() if not v]:
         ap.pop(k)
+    umb_ch = p.sync_umbrella_tool(ch)
+    if isinstance(umb_ch, list) and umb_ch:
+        pack(ctx, umb_ch)
     p.dirty = True
     ctx.reply({'status': OK, 'charId': cid, 'appearance': ap})
 

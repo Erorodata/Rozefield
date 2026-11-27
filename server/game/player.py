@@ -152,6 +152,7 @@ class Player:
                 changed |= bool(merge_world_files(p.s, log.info))
                 changed |= p.migrate_furniture_bag()
                 changed |= bool(backfill_placed(p.s, log.info))
+                changed |= bool(p.sync_all_umbrella_tools())
                 if changed:
                     p.save()
             except Exception:
@@ -160,6 +161,7 @@ class Player:
         p = cls(data, cls.new_state(data, uid, pid, name), path)
         p.s['furniture_bag_v2'] = True
         p.grant_initial()
+        p.sync_all_umbrella_tools()
         p.save()
         return p
 
@@ -204,6 +206,30 @@ class Player:
         json.dump(self.s, open(tmp, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
         os.replace(tmp, self.path)
         self.dirty = False
+
+    def sync_umbrella_tool(self, ch):
+        """Sync a character's Shovel tool slot (shovelInstanceId) to match their selected Skin Umbrella.
+        Uses tool ID = 1070000 + umbrellaId (NewWeaponType=22, unused Shovel slot) so Bug Net stays untouched."""
+        ap = ch.setdefault('characterAppearance', {})
+        umb_id = int(ap.get('umbrellaId') or self.d.config_int('Player_Default_Umbrella_ItemID', 4000) or 4000)
+        tool_id = 1070000 + umb_id
+        inst_id = next((int(w['instanceId']) for w in self.s['weapons'].values() if int(w.get('weaponId', 0)) == tool_id), 0)
+        changed = []
+        if not inst_id:
+            _, changed = self.add_item(tool_id, 1)
+            inst_id = next((int(w['instanceId']) for w in self.s['weapons'].values() if int(w.get('weaponId', 0)) == tool_id), 0)
+        if inst_id and int(ap.get('shovelInstanceId', 0)) != inst_id:
+            ap['shovelInstanceId'] = inst_id
+            self.dirty = True
+            return changed or True
+        return changed
+
+    def sync_all_umbrella_tools(self):
+        any_ch = False
+        for ch in self.s.get('characters', {}).values():
+            if self.sync_umbrella_tool(ch):
+                any_ch = True
+        return any_ch
 
     # ------------------------------------------------------------ items
     def _next_iid(self):

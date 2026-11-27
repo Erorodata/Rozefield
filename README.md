@@ -140,3 +140,4 @@ Rozefield preserves OverField: the archived client and a private server that run
 | **New Players** | First recruit 100% guarantees Shiika | New accounts always receive Shiika (`102001`) on their first recruit, matching the prologue story. |
 | **Co-op** | Snakes & Ladders in Rota Plaza (`/sl`) | Play a 30-tile Snakes & Ladders match in Rota Plaza using the in-game Special Dice (`item 2020`, moving by the exact rolled face 1–6); awards 10,000 Feline Tokens to the winner and 5,000 to each participant. |
 | **Rota Plaza** | Park-area invisible wall removed | Disabled the plaza perimeter invisible wall (`包围盒v1`) in the Rozefield resource patch so players can explore freely behind the park area. |
+| **Tools** | Umbrella Tool (temporary Shovel slot) | Uses the unused Shovel tool slot (`NewWeaponType = 22`) with the Bug Net over-the-shoulder idle pose so Bug Net stays intact; automatically mirrors whichever Umbrella you pick in **Fitting Room → Skin → Umbrella**. |

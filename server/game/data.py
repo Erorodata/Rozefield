@@ -60,6 +60,8 @@ class Data:
         return self.row('item', 'Item', item_id)
 
     def item_tag(self, item_id):
+        if 1070000 <= int(item_id) < 1080000:
+            return 'EBagItemTag_Weapon'   # Rozefield Shovel-slot Umbrella Tool (1070000 + umbrella_id)
         r = self.item(item_id)
         return self._tags.get((r or {}).get('NewBagItemTag', 0), 'EBagItemTag_None')
 

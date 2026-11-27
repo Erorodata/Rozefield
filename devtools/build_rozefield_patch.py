@@ -115,17 +115,87 @@ def apply_coop_min_players(g, min_players):
     return n
 
 
+def apply_umbrella_weapons(g, umbrellas):
+    """Add Shovel-slot (NewWeaponType=22) Umbrella Tools (1070000 + umbrella_id) using Bug Net idle/swing."""
+    rows = g.get('Weapon', {}).get('datas', [])
+    existing = {int(r.get('ID', 0)) for r in rows}
+    added = 0
+    for u in umbrellas:
+        uid = int(u.get('ID', 0))
+        asset = u.get('AssetFullName')
+        if not uid or not asset:
+            continue
+        tid = 1070000 + uid
+        if tid in existing:
+            continue
+        rows.append({
+            'ID': tid,
+            'ItemID': tid,
+            'Durability': 100,
+            'WeaponPropertyID': 1001001,
+            'BaseScore': 1,
+            'RollSpellGroupID': 100400,
+            'NormalSpellID': 1004000,   # Bug Net over-the-shoulder idle holding pose
+            'AssetFullName': asset,
+            'NewWeaponSystemType': 6,
+            'NewStrikeCorrectionType': 4,
+            'NewWeaponType': 22,        # Temporary Shovel tool slot (keeps Bug Net 7 intact)
+        })
+        existing.add(tid)
+        added += 1
+    return added
+
+
+def apply_umbrella_items(g, umbrellas):
+    """Add matching Item rows (1070000 + umbrella_id) with each umbrella's icon & name."""
+    rows = g.get('Item', {}).get('datas', [])
+    existing = {int(r.get('ID', 0)) for r in rows}
+    added = 0
+    for u in umbrellas:
+        uid = int(u.get('ID', 0))
+        if not uid:
+            continue
+        tid = 1070000 + uid
+        if tid in existing:
+            continue
+        rows.append({
+            'ID': tid,
+            'TextID': uid,
+            'IconID': uid,
+            'RelateID': tid,
+            'Quality': 3,
+            'NewBagItemTag': 2,         # EBagItemTag_Weapon
+        })
+        existing.add(tid)
+        added += 1
+    return added
+
+
 def patch_config_bundle(src_bytes, shops_cfg, min_players):
     env = UnityPy.load(src_bytes)
     report = {}
-    for p, obj in env.container.items():
-        base = os.path.basename(p)
-        if base == 'scene.bytes':
-            report['scene_themes_off'] = _patch_table(obj, 'protocol.AllSceneDatas', clear_event_themes)
-        elif base == 'shop.bytes':
-            report['shop'] = _patch_table(obj, 'protocol.AllShopDatas', lambda g: apply_shop_overrides(g, shops_cfg))
-        elif base == 'teamgameplay.bytes':
-            report['coop_min_updated'] = _patch_table(obj, 'protocol.AllTeamGameplayDatas', lambda g: apply_coop_min_players(g, min_players))
+    by_base = {os.path.basename(p): obj for p, obj in env.container.items()}
+
+    # Read umbrella list first so weapon.bytes & item.bytes can register all 240 Shovel-slot Umbrella Tools
+    umbrellas = []
+    if 'umbrella.bytes' in by_base:
+        t = by_base['umbrella.bytes'].read()
+        cls = message_factory.GetMessageClass(pool.FindMessageTypeByName('protocol.AllUmbrellaDatas'))
+        m = cls()
+        m.ParseFromString(t.m_Script.encode('utf-8', 'surrogateescape'))
+        ug = json_format.MessageToDict(m, preserving_proto_field_name=True)
+        umbrellas = ug.get('Umbrella', {}).get('datas', [])
+
+    if 'scene.bytes' in by_base:
+        report['scene_themes_off'] = _patch_table(by_base['scene.bytes'], 'protocol.AllSceneDatas', clear_event_themes)
+    if 'shop.bytes' in by_base:
+        report['shop'] = _patch_table(by_base['shop.bytes'], 'protocol.AllShopDatas', lambda g: apply_shop_overrides(g, shops_cfg))
+    if 'teamgameplay.bytes' in by_base:
+        report['coop_min_updated'] = _patch_table(by_base['teamgameplay.bytes'], 'protocol.AllTeamGameplayDatas', lambda g: apply_coop_min_players(g, min_players))
+    if umbrellas and 'weapon.bytes' in by_base:
+        report['umbrella_weapons_added'] = _patch_table(by_base['weapon.bytes'], 'protocol.AllWeaponDatas', lambda g: apply_umbrella_weapons(g, umbrellas))
+    if umbrellas and 'item.bytes' in by_base:
+        report['umbrella_items_added'] = _patch_table(by_base['item.bytes'], 'protocol.AllItemDatas', lambda g: apply_umbrella_items(g, umbrellas))
     return env.file.save(packer='lz4'), report
 
 
@@ -215,6 +285,7 @@ def build_patch(patch_dir, new_version='2026-11-28-07-45-00-rz-park'):
         'plaza park invisible wall off (包围盒v1)',
         'Chang store fishing rods & Sherry cleanup (shop config)',
         'Co-op min players 2 (teamgameplay config)',
+        'Umbrella Tool in temporary Shovel slot 22 (weapon + item config)',
     ]
     open(patch_meta_path, 'w', encoding='utf-8').write(json.dumps(meta, ensure_ascii=False))
 
