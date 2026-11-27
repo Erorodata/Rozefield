@@ -2,7 +2,13 @@
 
 ![progress](progress.png)
 
-**Before (2026-11-26):** 83.29% → **After (2026-11-28):** 84.99% (`+1.70%`)
+| Area | Before (2026-11-26) | Now (2026-11-28) | Done / Total |
+|---|---:|---:|---:|
+| **Preservation & archive** | 93.8% | **93.8%** | 7 / 8 |
+| **Server & connection** | 91.7% | **91.7%** | 5 / 6 |
+| **Content (Global + CN)** | 87.5% | **87.5%** | 3 / 4 |
+| **Gameplay** | 60.2% | **67.0% (+6.8%)** | 15 / 44 |
+| **Overall** | **83.29%** | **84.99% (+1.70%)** | **32 items left** |
 
 _OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-28; regenerate with `py devtools/progress.py`._
 

@@ -3,7 +3,13 @@
   "subtitle": "OverField preservation: run the game on your own server after the official one closes.",
   "previous": {
     "date": "2026-11-26",
-    "overall": 83.29
+    "overall": 83.29,
+    "areas": {
+      "Preservation & archive": 93.8,
+      "Server & connection": 91.7,
+      "Content (Global + CN)": 87.5,
+      "Gameplay": 60.2
+    }
   },
   "story_autorun": {
     "reached": 648,

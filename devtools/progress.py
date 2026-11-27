@@ -178,21 +178,36 @@ def svg(cfg, m, areas):
             f'<rect width="{W}" height="{H}" fill="{BG}"/>' + ''.join(parts) + '</svg>'), overall
 
 
-def _prev_line(cfg, overall):
+def _prev_table(cfg, areas, overall):
     prev = cfg.get('previous')
     if not prev:
-        return ''
+        return []
+    pdate = prev['date']
+    ndate = time.strftime('%Y-%m-%d')
+    pareas = prev.get('areas') or {}
+    lines = [f'| Area | Before ({pdate}) | Now ({ndate}) | Done / Total |', '|---|---:|---:|---:|']
+    total_done = total_rows = 0
+    for name, rows in areas:
+        v = round(sum(r[1] for r in rows) / len(rows) * 100, 1)
+        done_n = sum(1 for r in rows if r[1] >= 0.999)
+        total_done += done_n; total_rows += len(rows)
+        pv = pareas.get(name, v)
+        diff = round(v - pv, 1)
+        dtxt = f' (+{diff:.1f}%)' if diff > 0 else (f' ({diff:.1f}%)' if diff < 0 else '')
+        lines.append(f'| **{name}** | {pv:.1f}% | **{v:.1f}%{dtxt}** | {done_n} / {len(rows)} |')
     now_pct = round(overall * 100, 2)
-    diff = now_pct - float(prev['overall'])
-    sign = '+' if diff >= 0 else ''
-    return f'**Before ({prev["date"]}):** {prev["overall"]:.2f}% → **After ({time.strftime("%Y-%m-%d")}):** {now_pct:.2f}% (`{sign}{diff:.2f}%`)'
+    odiff = round(now_pct - float(prev['overall']), 2)
+    odtxt = f' (+{odiff:.2f}%)' if odiff > 0 else (f' ({odiff:.2f}%)' if odiff < 0 else '')
+    left = total_rows - total_done
+    lines.append(f'| **Overall** | **{prev["overall"]:.2f}%** | **{now_pct:.2f}%{odtxt}** | **{left} items left** |')
+    return lines
 
 
 def markdown(cfg, m, areas, overall):
     out = [f'# {cfg["title"]}: {overall * 100:.2f}%', '', '![progress](progress.png)', '']
-    pl = _prev_line(cfg, overall)
-    if pl:
-        out += [pl, '']
+    pt = _prev_table(cfg, areas, overall)
+    if pt:
+        out += pt + ['']
     out += [f'_{cfg["subtitle"]} Updated {time.strftime("%Y-%m-%d")}; regenerate with `py devtools/progress.py`._', '']
     mark = {'done': '[x]', 'partial': '[~]', 'blocked': '[!]', 'open': '[ ]', 'bar': '[~]'}
     for name, rows in areas:
@@ -221,10 +236,10 @@ def bar(v, n=30):
 def readme(cfg, m, areas, overall):
     """Front page of the repo: the progress chart drawn in text (shows even where images are blocked)."""
     area_vals = [sum(r[1] for r in rows) / len(rows) for _, rows in areas]
-    pl = _prev_line(cfg, overall)
+    pt = _prev_table(cfg, areas, overall)
     out = [f'# {cfg["title"]} — {overall * 100:.2f}%', '', f'`{bar(overall, 40)}` **{overall * 100:.2f}%**', '']
-    if pl:
-        out += [pl, '']
+    if pt:
+        out += pt + ['']
     out += [cfg['subtitle'], '', '## The three parts', '',
            '| Part | What it is | Get it |', '|---|---|---|',
            '| **Overfield** | The game. Not shared here (it belongs to its makers): use your own copy (Steam or the OverField launcher) '
