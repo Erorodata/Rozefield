@@ -805,14 +805,15 @@ def register(H, pack):
     H['GamePlayRewardReq'] = play_reward
 
     # ------------------------------------------------ activities without their own system yet
-    def act_reward(name, echo):
+    def act_reward(name, echo, lookup=None):
         def f(ctx, req):
             key = '%s:%s' % (name, json.dumps(req, sort_keys=True))
             done = _st(ctx.p, 'activity_claims', [])
             if key in done:
                 return ctx.reply({'status': FAIL})
             done.append(key)
-            got, changed = give(ctx, [(STARSTONE, 20)])   # estimate
+            pay = (lookup(ctx.d, req) if lookup else None) or [(STARSTONE, 20)]   # table reward when available, else estimate
+            got, changed = give(ctx, pay)
             r = {'status': OK, 'rewards': got}
             for k in echo:
                 if k in req:
@@ -820,7 +821,34 @@ def register(H, pack):
             ctx.reply(r)
             pack(ctx, changed)
         H[name] = f
-    act_reward('ActivityGiftRewardReq', ())
+
+    def _gift_pay(d, req):
+        row = d.row('activitygift', 'ActivityGift', req.get('activityId', 0)) or {}
+        param = req.get('param', 0)
+        it = next((x for x in row.get('ActivityGiftItem', []) if x.get('AchieveID') == param), None)
+        return [(y['ItemID'], y.get('ItemNum', 1)) for y in (it or {}).get('AActivityGiftRewardItem', [])]
+
+    def _regular_pay(d, req):
+        """Official (2026-11-27 capture): activityId 4008, param 80400801, poolType 1 -> DailyPoolID 40081 -> 170 x6, 180 x6, 191 x2."""
+        act = d.row('activityregular', 'ActivityRegular', req.get('activityId', 0)) or {}
+        param = req.get('param', 0)
+        pools = [act.get(k) for k in ('DailyPoolID', 'RandomPoolID', 'PoolID', 'DailyRefreshPoolID') if act.get(k)]
+        for pid in pools:
+            pool = d.row('activityregular', 'ActivityRegularPool', pid) or {}
+            it = next((x for x in pool.get('ActivityRegularPoolItem', []) if x.get('AchieveID') == param), None)
+            if it:
+                return [(y['ItemID'], y.get('ItemNum', 1)) for y in it.get('ActivityRegularPoolRewardItem', [])]
+        return None
+
+    def _invite_pay(d, req):
+        cid = req.get('condition_id', 0)
+        for pool in d.table('activityinvite', 'ActivityInviteQuest').values():
+            it = next((x for x in pool.get('ActivityInviteQuestPoolItem', []) if x.get('AchieveID') == cid), None)
+            if it:
+                return [(y['ItemID'], y.get('ItemNum', 1)) for y in it.get('ActivityInvitePoolRewardItem', [])]
+        return None
+
+    act_reward('ActivityGiftRewardReq', (), _gift_pay)
 
     def act_quest(ctx, req):
         """7-day event quests (official, 2026-11-26 capture): param = the day; each claim pays the next finished,
@@ -856,8 +884,8 @@ def register(H, pack):
         ctx.reply(r)
         pack(ctx, changed)
     H['ActivityQuestRewardReq'] = act_quest
-    act_reward('ActivityRegularRewardReq', ('param', 'poolType'))
-    act_reward('ActivityInviteRewardClaimReq', ('activity_id', 'condition_id'))
+    act_reward('ActivityRegularRewardReq', ('param', 'poolType'), _regular_pay)
+    act_reward('ActivityInviteRewardClaimReq', ('activity_id', 'condition_id'), _invite_pay)
     act_reward('ActivityRecallRewardClaimReq', ('activity_id', 'condition_id'))
     act_reward('ActivitySandbagRewardReq', ('activity_id', 'seq_list'))
     ack('ActivityKoiUseItemReq', ('num', 'activity_id'), lambda ctx, req: {'codes': []})

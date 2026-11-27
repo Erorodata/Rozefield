@@ -136,9 +136,12 @@ def register(H, pack, scene_player):
             t = team_of(ctx)
             pid = ctx.p.s['player_id']
             tid = t['id'] if t else 0
+            dismissed = False
+            members = list(t['members']) if t else []
             if t:
                 if kind == 'dismiss' or pid == t['leader'] and kind == 'quit':
-                    for m in t['members']:
+                    dismissed = True
+                    for m in members:
                         s = ctx.server.sessions.get(m)
                         if s and s.p:
                             s.p.s.pop('mp_team', None)
@@ -150,6 +153,8 @@ def register(H, pack, scene_player):
             if kind != 'dismiss':
                 r['team_id'] = tid
             ctx.reply(r)
+            if dismissed and tid:                        # official: MPTeamDismissNotice to all team members
+                push_all(ctx, {'members': members}, 'MPTeamDismissNotice', {'status': OK, 'team_id': tid})
         return f
     H['MPTeamDismissReq'] = leave('dismiss')
     H['MPTeamQuitReq'] = leave('quit')
@@ -193,13 +198,15 @@ def register(H, pack, scene_player):
         else:
             b['status'] = 'MPBeaconStatus_PLACED'
             t['called'] = set()
-        ctx.reply({'status': OK, 'beacon': beacon(t, ready=False if act != 'MPBeaconAction_CALL_IN' else None), 'team_id': t['id']})
-        ctx.server.broadcast(ctx, 'SceneMPBeaconNotice', {'status': OK, 'beacons': {str(t['id']): {k: v for k, v in beacon(t).items()
-                                                                                   if k not in ('channel_label', 'scene_id')}}})
+        b_out = beacon(t, ready=False if act != 'MPBeaconAction_CALL_IN' else None)
+        ctx.reply({'status': OK, 'beacon': b_out, 'team_id': t['id']})
         if act == 'MPBeaconAction_CALL_IN':
             b2 = dict(beacon(t), can_start=True)
             push_all(ctx, t, 'MPTeamBeaconNotice', {'status': OK, 'beacon': b2, 'team_id': t['id']})
             push_all(ctx, t, 'MPBeaconCanStartNotice', {'status': OK, 'team_id': t['id'], 'can_start': True})
+        else:
+            # official (2026-11-27 capture): every beacon move/place pushes MPTeamBeaconNotice (not SceneMPBeaconNotice)
+            push_all(ctx, t, 'MPTeamBeaconNotice', {'status': OK, 'beacon': b_out, 'team_id': t['id']})
     H['MPBeaconActionReq'] = beacon_action
     def walk_in(ctx, req):
         """Another player steps into a calling-in beacon: they join that team and are marked ready."""

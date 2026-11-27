@@ -155,7 +155,7 @@ def rename(ctx, req):
     if req.get('birthday'):
         ctx.p.s['birthday'] = req['birthday']
     ctx.p.dirty = True
-    ctx.reply({'status': OK, 'nickName': ctx.p.s['name']})
+    ctx.reply({'status': OK, 'nickName': ctx.p.s['name'], 'items': []})
 
 
 # ============================================================ scenes / channels
@@ -1255,6 +1255,7 @@ def _record_default(ctx, name, req):
         r['currentGroupAchieveInfo'] = {'groupId': req.get('groupId', 0)}
     elif name == 'GetArchiveInfoReq':
         r['key'] = req.get('key', '')
+        r['value'] = ''
     elif name == 'GetCharacterAchievementListReq':
         r['characterId'] = req.get('characterId', 0)
     elif name in ('GenericSceneBReq', 'GenericGameBReq'):

@@ -519,10 +519,27 @@ def register(H, pack, scene_player):
         got, changed = p.add_items([(MOON, 5)])
         ctx.reply({'status': OK, 'moonId': mid, 'rewards': got})
         pack(ctx, changed)
-        _moon_update(ctx)
     H['CollectMoonReq'] = moon
-    H['GetCollectMoonInfoReq'] = lambda ctx, req: ctx.reply(
-        {'status': OK, 'sceneId': req.get('sceneId', 0), 'collectedMoonIds': W(ctx.p, req.get('sceneId', 0))['moons']})
+
+    def moon_info(ctx, req):
+        sid = req.get('sceneId', 0)
+        r = {'status': OK, 'sceneId': sid, 'collectedMoonIds': W(ctx.p, sid)['moons']}
+        # official: emotionMoons carries the scene's emotion moons (from archive + any interacted on Rozefield)
+        rec = (ctx.p.s.get('records', {}).get('GetCollectMoonInfoReq') or {}).get(
+            json.dumps({'sceneId': sid}, sort_keys=True, ensure_ascii=False)) or {}
+        em = [dict(x) for x in rec.get('emotionMoons', [])]
+        done = set(ctx.p.s.get('misc', {}).get('emotion_moons', []))
+        seen_ids = {x.get('moonId') for x in em}
+        for x in em:
+            if x.get('moonId') in done:
+                x['interacted'] = True
+        for mid in sorted(done):
+            if mid not in seen_ids and sid and str(mid).startswith(str(sid)):
+                em.append({'moonId': mid, 'interacted': True})
+        if em:
+            r['emotionMoons'] = em
+        ctx.reply(r)
+    H['GetCollectMoonInfoReq'] = moon_info
 
     # ---- field drops (PickupReq): the official server rolled 3-5 pieces of gear, sometimes a material
     def pickup(ctx, req):

@@ -235,6 +235,8 @@ def register(H, pack, enter_scene, scene_player):
         rsp = {'status': OK, 'dungeon_data': dict({k: v for k, v in ds.items() if k not in ('openedBoxes', 'tasks')}, monsters=[0])}
         if ds.get('tasks'):
             rsp['taskDataLst'] = task_list(ds)          # official: the dungeon's task progress
+        elif (ds.get('enterTimes') or ds.get('finishTimes')) and dungeon_tasks(ctx.p, did):
+            rsp['taskDataLst'] = [{'achieveId': a['ID'], 'count': '0'} for a, _ in dungeon_tasks(ctx.p, did)]
         ctx.reply(rsp)
     H['DungeonViewReq'] = view
 

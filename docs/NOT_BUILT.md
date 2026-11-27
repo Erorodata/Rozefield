@@ -15,7 +15,7 @@ Kept up to date with every build; the capture rows that would fix each line are 
 
 | Feature | Estimate now | Capture row |
 |---|---|---|
-| Astral Atlas boxes (page 1 boxes 5, 24, 31, 34, 38 are official) | 2000 Gold | 1 |
+| Astral Atlas boxes (page 1 boxes 5, 24, 28, 29, 31, 34, 35, 38, 39, 40 and page 2 boxes 1, 4 are official) | 2000 Gold | 1 |
 | Astral Atlas page reward | Starstone | 2 |
 | Area level-up | Starstone | 4 |
 | Exploration reward | The area's listed items, guessed amounts | 5 |
@@ -28,7 +28,7 @@ Kept up to date with every build; the capture rows that would fix each line are 
 | Gomoku (AI and online) | Gold | 14, 15 |
 | Mini-game rewards | Starstone | 16 |
 | Recruit bonus items for R, and a repeat SSR at 5 stars | Estimate | 17 |
-| Event rewards (gift, regular, invite, recall, sandbag) | 20 Starstones | 18 |
+| Event rewards (recall, sandbag; regular, invite and gift now read from game tables) | 20 Starstones | 18 |
 | Wish Stone income, Moon Points per activity | 5 / 25 as seen | 20, 21 |
 
 ## Built from the game's tables / protocol, never compared with official

@@ -444,6 +444,8 @@ def register(H, pack, scene_player):
     orig_gacha = H.get('GachaReq')
 
     def gacha(ctx, req):
+        p, d = ctx.p, ctx.d
+        owned_posters = {int(v.get('posterId', 0)) for v in p.s.get('posters', {}).values()}
         out = []
         real = ctx.reply
         ctx.reply = lambda m: out.append(m)
@@ -454,7 +456,6 @@ def register(H, pack, scene_player):
         if not out:
             return
         m = out[0]
-        p, d = ctx.p, ctx.d
         extra_items = []
         for it in m.get('items', []):
             main = it.get('mainItem', {})
@@ -462,6 +463,9 @@ def register(H, pack, scene_player):
             if main.get('itemTag') == 'EBagItemTag_Poster':
                 iid = (main.get('poster') or {}).get('posterId', iid)
                 main['itemId'] = iid          # official recruit results name the imprint, not the bag instance
+                if iid and iid not in owned_posters:
+                    main['isNew'] = True
+                    owned_posters.add(iid)
             elif main.get('itemTag') == 'EBagItemTag_Character' or main.get('character'):
                 iid = (main.get('character') or {}).get('characterId', iid)
             q = (d.item(iid) or {}).get('Quality', 3)
@@ -480,8 +484,8 @@ def register(H, pack, scene_player):
 
 
 def gacha_extras(main, quality, p=None):
-    """Bonus items per recruit result, as official (captures 2026-11-24 and 2026-11-26):
-      imprint SR -> 112 x15 + 107 x50          imprint SSR -> 107 x500
+    """Bonus items per recruit result, as official (captures 2026-11-24 to 2026-11-27):
+      imprint SR -> 112 x15 + 107 x50          imprint SSR new -> 107 x500, repeat -> 111 x20 + 107 x500
       salvager new: SR -> 107 x500, SSR -> 107 x1500
       salvager repeat: SR -> 111 x3 + 107 x500 (111 x12 once the salvager is at 5 stars), SSR -> 111 x16 + 107 x1500
     R results and a repeat SSR at 5 stars were never seen: estimates."""
@@ -496,7 +500,7 @@ def gacha_extras(main, quality, p=None):
         dust = (16 if star < 5 else 64) if quality >= 4 else (3 if star < 5 else 12)
         return [(111, dust), (107, coupons)]
     if quality >= 4:
-        return [(107, 500)]
+        return [(107, 500)] if main.get('isNew') else [(111, 20), (107, 500)]
     if quality == 3:
         return [(112, 15), (107, 50)]
     return [(113, 5), (107, 10)]
