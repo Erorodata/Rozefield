@@ -392,7 +392,10 @@ a.b{{background:#13B5C5;color:#fff}}a.s{{border:1px solid #D6DAE2;color:#2A2C36}
                     break
                 writer.write(chunk); left -= len(chunk)
                 traffic.record('dl', len(chunk))
-                await writer.drain()
+                try:
+                    await writer.drain()
+                except (ConnectionResetError, BrokenPipeError, OSError):
+                    return
         writer.close()
 
     async def handle(self, reader, writer):

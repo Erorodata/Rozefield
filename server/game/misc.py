@@ -807,7 +807,11 @@ def register(H, pack):
     # ------------------------------------------------ activities without their own system yet
     def act_reward(name, echo, lookup=None):
         def f(ctx, req):
-            key = '%s:%s' % (name, json.dumps(req, sort_keys=True))
+            # daily regular pools (poolType == 1) reset every day; one-time rewards stay once per account
+            day = ''
+            if name == 'ActivityRegularRewardReq' and req.get('poolType') == 1:
+                day = ':' + time.strftime('%Y-%m-%d', time.gmtime(time.time() + 4 * 3600))
+            key = '%s%s:%s' % (name, day, json.dumps(req, sort_keys=True))
             done = _st(ctx.p, 'activity_claims', [])
             if key in done:
                 return ctx.reply({'status': FAIL})

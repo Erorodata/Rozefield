@@ -108,6 +108,15 @@ class Player:
             s['mail_keep'] = sorted(set(s.get('mail_keep', [])) | {have['mail_id']})
             s['farewell_mail'] = True
             self.dirty = True
+        if not s.get('head'):
+            s['head'] = 41101                 # Fei starter avatar (unlocked by default)
+            self.dirty = True
+        if not s.get('phone_background'):
+            s['phone_background'] = 8000      # default phone wallpaper
+            self.dirty = True
+        if not s.get('phone_case'):
+            s['phone_case'] = 7000            # default phone case
+            self.dirty = True
         if 'chapters' not in s:  # saves made before story chapters were tracked: a story's reward is claimed once its quest is Finish
             s['chapters'] = {}
             chap = {sid: c['ID'] for c in self.d.table('story', 'StoryChapter').values() for sid in c.get('StoryList', [])}
@@ -154,8 +163,8 @@ class Player:
         now = int(time.time())
         return {
             'version': 1, 'uid': str(uid), 'player_id': pid, 'player_label': pid, 'name': name or f'Salvager{pid % 100000}',
-            'create_time': now, 'last_login': 0, 'level': 1, 'exp': 0, 'world_level': 1, 'head': 0, 'sign': '',
-            'phone_background': 0, 'phone_case': 0, 'birthday': '', 'sex': 0,
+            'create_time': now, 'last_login': 0, 'level': 1, 'exp': 0, 'world_level': 1, 'head': 41101, 'sign': '',
+            'phone_background': 8000, 'phone_case': 7000, 'birthday': '', 'sex': 0,
             'unlock_functions': [], 'characters': {}, 'team': {},
             'items': {},                     # stackable item id -> count
             'weapons': {}, 'armors': {}, 'posters': {}, 'pets': {}, 'outfits': {}, 'inscriptions': {},
@@ -175,6 +184,7 @@ class Player:
         if ids:
             self.s['team'] = {'char1': int(ids[0])}
         self.add_items(d.reward_items(d.config_int('InitialReward', 600)))
+        self.add_items([(41101, 1), (8000, 1), (7000, 1)])   # Fei avatar, default phone wallpaper and case
         umb = d.config_int('Player_Default_Umbrella_ItemID', 0)
         if umb:
             self.add_item(umb, 1)
@@ -279,7 +289,9 @@ class Player:
                     got.append(det)
                 else:
                     ch = self.add_character(item_id)
-                    got.append({'mainItem': {'itemId': item_id, 'itemTag': tag, 'character': ch}})
+                    entry = {'mainItem': {'itemId': item_id, 'itemTag': tag, 'character': ch}}
+                    got.append(entry)
+                    changed.append(entry)          # PackNotice must carry new characters so the client adds them right away
             return got, changed
         if tag in INSTANCE_TAGS:
             for _ in range(n):

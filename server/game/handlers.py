@@ -483,6 +483,11 @@ def outfit(ctx, req):
     ctx.reply({'status': OK, 'charId': req.get('charId'), 'preset': pre})
     Q.event(ctx.p, Q.C['WearingFashing0'])
     ctx.server.broadcast_scene_player(ctx)
+    cid = req.get('charId')
+    if cid in ctx.p.s.get('placed_characters', []):   # keep placed plaza NPC in sync with the character's new outfit
+        entry = next((e for e in placed_characters(ctx.p) if e['character_id'] == cid), None)
+        if entry:
+            ctx.server.broadcast(ctx, 'GardenPlaceCharacterNotice', {'status': OK, 'character': entry})
 
 
 @handler('CharacterEquipUpdateReq')

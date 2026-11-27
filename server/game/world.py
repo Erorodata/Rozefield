@@ -154,7 +154,9 @@ def scene_fields(p, sid):
     out = {}
     boxes = []
     now = int(time.time())
+    seen_idx = set()
     for b in lay.get('treasureBoxes', []):
+        seen_idx.add(str(b['index']))
         st = w['boxes'].get(str(b['index']))
         e = {'index': b['index'], 'boxId': b['boxId'], 'type': b.get('type', 'ETreasureBoxType_Normal')}
         if st and (not st.get('refresh') or _secs(st['refresh']) > now):
@@ -162,6 +164,14 @@ def scene_fields(p, sid):
             if st.get('refresh'):
                 e['nextRefreshTime'] = str(_secs(st['refresh']) * 1000)   # official: milliseconds
         boxes.append(e)
+    for k, st in w['boxes'].items():
+        if k in seen_idx or not k.isdigit():
+            continue
+        if not st.get('refresh') or _secs(st['refresh']) > now:
+            e = {'index': int(k), 'state': 'TreasureBoxState_Open'}
+            if st.get('refresh'):
+                e['nextRefreshTime'] = str(_secs(st['refresh']) * 1000)
+            boxes.append(e)
     if boxes:
         out['treasureBoxes'] = boxes
     for k in ('riddles', 'flags', 'challenges', 'areas', 'collections', 'flagIds'):
@@ -360,9 +370,10 @@ def register(H, pack, scene_player):
         w['boxes'][str(idx)] = {'refresh': refresh}
         p.dirty = True
         big = cfg.get('NewTreasureBoxRewardShowType', 1) >= 3
-        items = [(GOLD, random.randint(300, 600) if big else random.randint(80, 200)), (190, random.randint(2, 4) if big else 1)]
         if big:
-            items += roll_gear(p.d, 1, p.s.get('world_level', 1)) + [(102, 10)]
+            items = roll_gear(p.d, 2, p.s.get('world_level', 1)) + [(102, 20), (GOLD, random.randint(400, 800))]
+        else:
+            items = [(GOLD, random.randint(80, 200)), (190, 1)]
         items, changed = give(ctx, items)
         if random.random() < 0.5:         # field chest Moon Points (official id 1120)
             _moon(ctx, 1120, 5)
@@ -442,14 +453,16 @@ def register(H, pack, scene_player):
         c = next((x for x in w['challenges'] if x.get('challengeId') == cid), None)
         rsp = {'status': OK}
         if req.get('battle_state') == 'Finish':
-            first = c is None
+            first = c is None or c.get('state') != 'Finish'
             if c is None:
                 c = {'challengeId': cid}
                 w['challenges'].append(c)
+            c['state'] = 'Finish'                                  # official: client waits for state='Finish' to end the challenge
+            c['star'] = max(int(c.get('star', 0) or 0), 3)
             if req.get('use_time') and (not c.get('useTime') or req['use_time'] < c['useTime']):
                 c['useTime'] = req['use_time']
+            rsp['dynamicTreasureBoxBaseInfo'] = dyn_box(ctx, box_id=2002)   # official capture: boxId 2002 on finish
             if first:
-                rsp['dynamicTreasureBoxBaseInfo'] = dyn_box(ctx)
                 from game.progression import ach_event
                 ach_event(p, 'Challenge12', cid)
             p.dirty = True

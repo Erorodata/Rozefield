@@ -39,6 +39,9 @@ def _activities(d, kind):
     now = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time() + 8 * 3600))
     live = [r for r in rows if (not r.get('OpeningTime') or r['OpeningTime'] <= now) and (not r.get('ClosingTime') or now <= r['ClosingTime'])]
     if live:
+        # singleton seasonal events (Battle Pass = 3, Turntable = 6): keep only the latest active season to avoid duplicates
+        if kind in (3, 6) and len(live) > 1:
+            live = sorted(live, key=lambda r: r.get('OpeningTime', ''))[-1:]
         return live
     dated = sorted([r for r in rows if r.get('OpeningTime')], key=lambda r: r['OpeningTime'])
     return dated[-1:] or rows[:1]
