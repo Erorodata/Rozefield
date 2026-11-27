@@ -126,19 +126,14 @@ Rozefield preserves OverField: the archived client and a private server that run
 - [Host your own server](docs/HOSTING.md)
 - [Checklist (plain)](docs/PROGRESS.md)
 
-## New features & QOL added
+## New features & QOL added (Gameplay)
 
 | Area | Feature / QOL | What it does |
 |---|---|---|
-| **Login & Accounts** | In-game account picker & server switcher | Create or pick accounts and switch servers directly inside the game login window (no separate launcher). |
-| **Account Preservation** | Official backup & ID-safe import | Save your official account with `Overfield Backup` and import it into any Rozefield server while keeping your original ID without clashing with new players. |
 | **Social** | No friend limit | Friend list cap removed on Rozefield. |
-| **Content** | Global + CN merged & translated | CN-only tables, 1,120 CN assets, and English translations delivered automatically through the game's own updater. |
+| **Content** | Global + CN merged & translated | CN-only tables, 1,120 CN assets, and English translations available in-game. |
 | **Plaza** | 500,000 decor limit | Expanded garden plaza decoration limit to 500,000. |
 | **Field Drops** | Direct-to-bag monster material drops | Field monster material drops go straight into your normal bag instead of waiting in temporary storage. |
 | **Outfits & Dye** | Protected original dye slot (Slot 0) | Every outfit keeps Slot 0 for its original colors (selectable anytime, cannot be dyed over) with Slot 1 unlocked by default for custom dyeing. |
 | **Co-op** | Minimum players reduced (3 → 2) | Pop Balloons and Aerial Adventure can start with 2 players instead of 3. |
 | **New Players** | First recruit guarantees a new salvager | Prevents duplicate starter pulls on the first recruit so the team tutorial never gets stuck. |
-| **Hosting** | Built-in `playit.gg` internet play | One-click online hosting from `Overfield Server` without manual router port forwarding or DDNS setup. |
-| **Admin & GM** | Server panel, GM commands & codes | Live log, account management, custom redemption codes (`save/codes.json`), and GM commands (`/give`, `/set`, `/take`, `/currency`, `/all`, `/level`, `/char`). |
-| **Modding** | Content packs (`server/packs/`) | Standardized JSON templates to add custom quests, stories, NPCs, dialogue, areas, and rule overrides without editing server code. |
