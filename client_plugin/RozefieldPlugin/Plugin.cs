@@ -7,7 +7,7 @@ using Inutan;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.2.0")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.3.0")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -19,19 +19,19 @@ namespace RozefieldPlugin
             _harmony = new Harmony("com.rozefield.plugin");
             _harmony.PatchAll(typeof(FashionChairVehiclePatch));
             _harmony.PatchAll(typeof(Es3IsolationPatch));
-            Log.LogInfo("RozefieldPlugin 0.2.0 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
+            Log.LogInfo("RozefieldPlugin 0.3.0 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
         }
     }
 
     /// <summary>
-    /// Allows Friendship's Weight (IsCanSit=1 fashion chair pendant, item 4645001) to stay
-    /// interactive even when a player is on/using a Vehicle, without modifying normal chair
-    /// or vehicle physics.
+    /// Allows Friendship's Weight (IsCanSit=1 fashion chair pendant, item 4645001) to coexist
+    /// with Vehicles without modifying normal chair or vehicle physics.
     /// </summary>
     [HarmonyPatch]
     internal static class FashionChairVehiclePatch
     {
-        private static bool _loggedOnce;
+        private static bool _loggedChair;
+        private static bool _loggedCharis;
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ChairSystem), nameof(ChairSystem.SetFashionChairInteraction))]
@@ -40,12 +40,45 @@ namespace RozefieldPlugin
             if (!enabled)
             {
                 enabled = true;
-                if (!_loggedOnce)
+                if (!_loggedChair)
                 {
-                    _loggedOnce = true;
-                    Plugin.Log.LogInfo("Kept Friendship's Weight fashion chair interaction enabled (bypassed vehicle/state disable).");
+                    _loggedChair = true;
+                    Plugin.Log.LogInfo("Kept ChairSystem.SetFashionChairInteraction enabled.");
                 }
             }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(CharacterEntity), nameof(CharacterEntity.SetFashionCharis))]
+        private static void KeepCharacterFashionChairsEnabled(ref bool enable)
+        {
+            if (!enable)
+            {
+                enable = true;
+                if (!_loggedCharis)
+                {
+                    _loggedCharis = true;
+                    Plugin.Log.LogInfo("Kept CharacterEntity.SetFashionCharis enabled.");
+                }
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIMainSystem), nameof(UIMainSystem.Set_Life_ToolQuickSelectItem))]
+        private static void LogQuickSelect(eWeaponType weaponType)
+        {
+            if (weaponType == eWeaponType.Vehicle || weaponType == eWeaponType.Shovel)
+            {
+                Plugin.Log.LogInfo($"[ToolQuickSelect] weaponType={weaponType}");
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
+        private static void LogChangeGatherWeapon(bool isEquip, EquipItemModel model)
+        {
+            var id = model != null ? model.ItemID : 0;
+            Plugin.Log.LogInfo($"[ChangeGatherWeapon] isEquip={isEquip}, itemId={id}");
         }
     }
 
@@ -75,6 +108,18 @@ namespace RozefieldPlugin
             return path;
         }
 
+        private static void RedirectStaticFields()
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(ES3System.PathFolder))
+                    ES3System.PathFolder = Redirect(ES3System.PathFolder);
+                if (!string.IsNullOrEmpty(ES3System.PathFolderBackup))
+                    ES3System.PathFolderBackup = Redirect(ES3System.PathFolderBackup);
+            }
+            catch { }
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(ES3System), nameof(ES3System.GetPathFolder))]
         private static void PostGetPathFolder(ref string __result) => __result = Redirect(__result);
@@ -90,6 +135,10 @@ namespace RozefieldPlugin
         [HarmonyPostfix]
         [HarmonyPatch(typeof(ES3System), nameof(ES3System.GetES3FilePathLocal))]
         private static void PostGetES3FilePathLocal(ref string __result) => __result = Redirect(__result);
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(ES3System), nameof(ES3System.DeleteES3Data), new[] { typeof(bool) })]
+        private static void PreDeleteES3Data() => RedirectStaticFields();
 
         [HarmonyFinalizer]
         [HarmonyPatch(typeof(ES3System), nameof(ES3System.DeleteES3Data), new[] { typeof(bool) })]
