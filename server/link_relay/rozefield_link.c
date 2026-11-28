@@ -280,6 +280,9 @@ BOOL WINAPI DllMain(HINSTANCE h, DWORD why, LPVOID r) {
     const char *base = strrchr(exe, '\\'); base = base ? base + 1 : exe;
     if (_stricmp(base, "launcher.exe")) return TRUE;
     GetModuleFileNameA(h, g_game, MAX_PATH); char *sl = strrchr(g_game, '\\'); if (sl) sl[1] = 0;
+    /* optional BepInEx / Unity Doorstop chain: if doorstop.dll sits next to winhttp.dll, load it before UnityMain */
+    char ds[MAX_PATH]; snprintf(ds, sizeof ds, "%sdoorstop.dll", g_game);
+    if (GetFileAttributesA(ds) != INVALID_FILE_ATTRIBUTES) LoadLibraryA(ds);
     snprintf(g_ini, sizeof g_ini, "%slauncher_Data\\Plugins\\Win\\PCSDK_release\\rozefield_sdk.ini", g_game);
     snprintf(g_cache, sizeof g_cache, "%slauncher_Data\\Plugins\\Win\\PCSDK_release\\rozefield_link\\", g_game);
     snprintf(g_logp, sizeof g_logp, "%slauncher_Data\\Plugins\\Win\\PCSDK_release\\rozefield_link.log", g_game);
