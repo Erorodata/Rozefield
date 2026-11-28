@@ -9,7 +9,7 @@ using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.5.0")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.5.1")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -21,7 +21,7 @@ namespace RozefieldPlugin
             _harmony = new Harmony("com.rozefield.plugin");
             _harmony.PatchAll(typeof(FashionChairVehiclePatch));
             _harmony.PatchAll(typeof(Es3IsolationPatch));
-            Log.LogInfo("RozefieldPlugin 0.5.0 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
+            Log.LogInfo("RozefieldPlugin 0.5.1 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
         }
     }
 
@@ -108,6 +108,38 @@ namespace RozefieldPlugin
         [HarmonyFinalizer]
         [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClick))]
         private static void PostSelectItemBtn() => ExitBypass();
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClickNext))]
+        private static void PreSelectItemBtnNext() => EnterBypass();
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClickNext))]
+        private static void PostSelectItemBtnNext() => ExitBypass();
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.TrySaveFashionSuit))]
+        private static void PreTrySaveSuit() => EnterBypass();
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.TrySaveFashionSuit))]
+        private static void PostTrySaveSuit() => ExitBypass();
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.SaveFashionSuit))]
+        private static void PreSaveSuit() => EnterBypass();
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.SaveFashionSuit))]
+        private static void PostSaveSuit() => ExitBypass();
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.FashionSuitSwitch))]
+        private static void PreSuitSwitch() => EnterBypass();
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.FashionSuitSwitch))]
+        private static void PostSuitSwitch() => ExitBypass();
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
