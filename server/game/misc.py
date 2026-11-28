@@ -329,6 +329,11 @@ def register(H, pack):
         rw = (packs.system('atlas', 'box_rewards', {}) or {}).get(f'{page}:{b}')
         pay = [tuple(x) for x in rw] if rw else [(GOLD, 2000)]   # estimate for boxes not known yet
         got, changed = give(ctx, pay)
+        # Ensure any unlocked ability/function item is persisted and synced
+        for iid, _ in pay:
+            if p.d.item_tag(iid) == 'EBagItemTag_UnlockItem' and iid not in p.s['unlock_functions']:
+                p.s['unlock_functions'].append(iid)
+        p.dirty = True
         ctx.reply({'status': OK, 'page': page, 'boxId': b, 'items': got})
         pack(ctx, changed)
     H['AbilityBadgePageBoxActiveReq'] = badge_box

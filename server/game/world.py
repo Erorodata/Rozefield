@@ -377,10 +377,17 @@ def register(H, pack, scene_player):
         except Exception:
             coll = {}
         if box and box['boxId'] in coll:
-            # official: the chest's own RefreshTime (field chests 14400 s = 4 h, seen on 8 chests); 0 = never
+            # official: the chest's own RefreshTime (field chests 14400 s = 4 h); 0 = one-time permanent
             secs = (coll[box['boxId']].get('RefreshTime') or [0])[0]
             refresh = int(time.time()) + secs if secs else 0
-        w['boxes'][str(idx)] = {'refresh': refresh}
+        else:
+            # unindexed field chest: default 4 h countdown so claimed status -> inactive -> active at 0
+            refresh = int(time.time()) + 14400
+        w['boxes'][str(idx)] = {
+            'refresh': refresh,
+            'boxId': box['boxId'] if box else 0,
+            'type': (box or {}).get('type', 'ETreasureBoxType_Normal'),
+        }
         p.dirty = True
         wl = p.s.get('world_level', 0)
         gmult = world_level_cfg(wl).get('gold_mult', 1.0)

@@ -210,7 +210,8 @@ def apply_umbrella_tool_expression(g):
 
 
 def apply_umbrella_tool_string(g):
-    """Rename Tools bar Shovel label (StringExpression ID 2008) from 'Shovel' to 'Umbrella'."""
+    """Rename Tools bar Shovel label (StringExpression ID 2008) from 'Shovel' to 'Umbrella',
+    and update any Fishing Rod text referencing Sherry -> Chang."""
     n = 0
     for r in g.get('StringExpression', {}).get('datas', []):
         if int(r.get('ID', 0)) == 2008:
@@ -219,6 +220,33 @@ def apply_umbrella_tool_string(g):
                 txt[0] = 'Umbrella'
                 r['Text'] = txt
                 n += 1
+    for tbl in g.values():
+        if not isinstance(tbl, dict) or 'datas' not in tbl:
+            continue
+        for r in tbl['datas']:
+            txts = r.get('Text')
+            if not isinstance(txts, list):
+                continue
+            for i, t in enumerate(txts):
+                if isinstance(t, str) and 'sherry' in t.lower() and ('fishing rod' in t.lower() or 'fishingrod' in t.lower()):
+                    nt = t.replace("Sherry's General Store", "Chang's Lifestyle Store").replace("Sherry's", "Chang's").replace('Sherry', 'Chang')
+                    if nt != t:
+                        txts[i] = nt
+                        n += 1
+    return n
+
+
+def apply_remove_outfit_gender(g):
+    """QOL: remove gender & character restrictions (NewSexType / OnlyCharacterID) on outfits."""
+    n = 0
+    for r in g.get('FashionInfo', {}).get('datas', []):
+        changed = False
+        if r.pop('NewSexType', None):
+            changed = True
+        if r.pop('OnlyCharacterID', None):
+            changed = True
+        if changed:
+            n += 1
     return n
 
 
@@ -255,6 +283,8 @@ def patch_config_bundle(src_bytes, shops_cfg, min_players):
         report['umbrella_tool_icon'] = _patch_table(by_base['expression.bytes'], 'protocol.AllExpressionDatas', apply_umbrella_tool_expression)
     if 'string_english.bytes' in by_base:
         report['umbrella_tool_label'] = _patch_table(by_base['string_english.bytes'], 'protocol.AllStringDatas', apply_umbrella_tool_string)
+    if 'fashion.bytes' in by_base:
+        report['outfit_gender_unlocked'] = _patch_table(by_base['fashion.bytes'], 'protocol.AllFashionDatas', apply_remove_outfit_gender)
     return env.file.save(packer='lz4'), report
 
 
