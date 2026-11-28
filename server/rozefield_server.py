@@ -894,9 +894,23 @@ async def main():
             st.reconfigure(encoding='utf-8', errors='replace')
         except Exception:
             pass
+    os.makedirs(os.path.join(HERE, 'logs'), exist_ok=True)
+    class _DailyLogHandler(logging.FileHandler):
+        def __init__(self, log_dir):
+            self._dir = log_dir
+            self._day = time.strftime('%Y-%m-%d')
+            super().__init__(os.path.join(log_dir, f'server_{self._day}.log'), encoding='utf-8')
+        def emit(self, record):
+            today = time.strftime('%Y-%m-%d')
+            if today != self._day:
+                self._day = today
+                self.baseFilename = os.path.abspath(os.path.join(self._dir, f'server_{today}.log'))
+                if self.stream:
+                    self.stream.close(); self.stream = None
+            super().emit(record)
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s', datefmt='%H:%M:%S',
                         handlers=[logging.StreamHandler(sys.stdout),
-                                  logging.FileHandler(os.path.join(HERE, 'server.log'), encoding='utf-8')])
+                                  _DailyLogHandler(os.path.join(HERE, 'logs'))])
     from game import admin
     admin.RING.setFormatter(logging.Formatter('%(asctime)s %(message)s', '%H:%M:%S'))
     logging.getLogger().addHandler(admin.RING)

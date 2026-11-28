@@ -164,10 +164,19 @@ def areas_unlocked(p, scene=None):
 def _maybe_complete(p, q):
     if q.get('status') != IN_PROGRESS:
         return
-    if all(c.get('status') in (COMPLETED, FINISH) for c in q.get('conditions', [])):
+    conds = q.get('conditions', [])
+    done_ids = {c.get('conditionId') for c in conds if c.get('status') in (COMPLETED, FINISH)}
+    cfg = idx(p.d)['quests'].get(q['questId']) or {}
+    csg = p.d.row('quest', 'ConditionSetGroup', cfg.get('ConditionSetGroupID')) or {}
+    sets = [s.get('AchieveConditionID') or [] for s in csg.get('QuestConditionSet', []) if s.get('AchieveConditionID')]
+    if sets:
+        # Multiple QuestConditionSet entries are OR branches (e.g. main vs optional); IDs inside one set are AND
+        ok = any(all(cid in done_ids for cid in grp) for grp in sets)
+    else:
+        ok = bool(conds) and all(c.get('status') in (COMPLETED, FINISH) for c in conds)
+    if ok:
         q['status'] = COMPLETED
         _changed(p, q)
-        cfg = idx(p.d)['quests'].get(q['questId']) or {}
         if cfg.get('IsImmedReward'):
             finish(p, q)
 

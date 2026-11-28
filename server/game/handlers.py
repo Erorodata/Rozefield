@@ -324,7 +324,19 @@ def enter_scene(ctx, scene_id, label=None, target_label=None, before_push=None):
 
 @handler('ChangeSceneChannelReq')
 def change_scene(ctx, req):
+    p = ctx.p
+    cur_sid = p.s.get('scene_id', PUBLIC_SCENE)
     sid = req.get('scene_id') or PUBLIC_SCENE
+    # Lock warping to Rota Plaza during the new-player tutorial stage (scene 100) until tutorial quest finishes
+    if cur_sid == TUTORIAL_SCENE and sid == PUBLIC_SCENE:
+        init_q = p.d.config_int('InitialQuest', 100011)
+        iq = p.s.get('quests', {}).get(str(init_q))
+        if iq and iq.get('status') == 'QuestStatus_InProgress':
+            return ctx.reply({'status': FAIL})
+    # Exiting the tutorial stage guarantees at least Level 2 (375 EXP for Lv1->2)
+    if cur_sid == TUTORIAL_SCENE and sid != TUTORIAL_SCENE and p.s.get('level', 1) < 2:
+        p.add_exp(375)
+        p.dirty = True
     key = pos_key(ctx.p.s, sid, ctx.p.s['player_id'] if sid == PUBLIC_SCENE else None)
     if sid == PUBLIC_SCENE:
         # plaza: switching channel / plaza keeps your position; coming from anywhere else is a fresh spawn
@@ -366,6 +378,9 @@ def sit(ctx, req):
 @handler('SendChatMsgReq')
 def chat(ctx, req):
     text = req.get('text', '')
+    # Lock chat for new players while inside the tutorial stage (scene 100)
+    if ctx.p.s.get('scene_id') == TUTORIAL_SCENE:
+        return ctx.reply({'status': FAIL})
     ctx.reply({'status': OK, 'text': text})
     # Snakes & Ladders plaza minigame commands (/sl ...) are open to all players
     if text.strip().lower().startswith('/sl'):

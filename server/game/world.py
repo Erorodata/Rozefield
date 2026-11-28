@@ -539,6 +539,9 @@ def register(H, pack, scene_player):
         if a is None:
             a = {'areaId': aid, 'areaState': 'Unlock', 'level': 1}
             w['areas'].append(a)
+            term_exp = int(_packs.system('world', 'area_terminal_exp', 100) or 100)
+            if term_exp > 0:
+                p.add_exp(term_exp)
             p.dirty = True
         # every visit counts, so a terminal opened before the quest asked for it still completes "Access Area Terminal"
         sid = p.s['scene_id']

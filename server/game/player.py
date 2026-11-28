@@ -365,7 +365,7 @@ class Player:
                     got.append(entry)
                     changed.append(entry)          # PackNotice must carry new characters so the client adds them right away
                     c = d.row('character', 'Character', item_id) or {}
-                    for f in (c.get('HairID'), c.get('ClothID'), c.get('HatID'), c.get('OrnamentID')):
+                    for f in self._char_default_outfits(c):
                         if f and str(f) in self.s['outfits']:
                             changed.append({'mainItem': self.item_full_info(f)})
             return got, changed
@@ -484,15 +484,29 @@ class Player:
         return {'itemId': iid, 'itemTag': tag, key: inst}
 
     # ------------------------------------------------------------ characters
+    @staticmethod
+    def _char_default_outfits(c):
+        out = []
+        for k in ('HairID', 'ClothID', 'HatID', 'OrnamentID'):
+            v = c.get(k)
+            if v:
+                out.append(int(v))
+        for v in (c.get('OrnID') or []):
+            if v and int(v) not in out:
+                out.append(int(v))
+        return out
+
     def add_character(self, cid):
         d = self.d
         c = d.row('character', 'Character', cid) or {}
+        orns = [int(v) for v in (c.get('OrnID') or []) if v]
         ch = {'characterId': cid, 'level': 1, 'maxLevel': 20, 'star': 1,
               'equipmentPresets': [{'presetIndex': i} for i in range(3)],
-              'outfitPresets': [{'presetIndex': i, 'hair': c.get('HairID', 0), 'clothes': c.get('ClothID', 0), 'outfitHideInfo': {}}
+              'outfitPresets': [{'presetIndex': i, 'hair': c.get('HairID', 0), 'clothes': c.get('ClothID', 0),
+                                 'hat': c.get('HatID', 0), 'ornament': orns[0] if orns else 0, 'outfitHideInfo': {}}
                                 for i in range(3)],
               'characterAppearance': {}, 'characterSkillList': []}
-        for f in (c.get('HairID'), c.get('ClothID'), c.get('HatID'), c.get('OrnamentID')):
+        for f in self._char_default_outfits(c):
             if f:
                 # QOL: slot 0 stays original outfit colors (selectable, protected from dyeing); slot 1 is unlocked for custom dye
                 self.s['outfits'].setdefault(str(f), {'outfitId': f, 'dyeSchemes': [{'schemeIndex': 0, 'isUnLock': True}, {'schemeIndex': 1, 'isUnLock': True}]})
