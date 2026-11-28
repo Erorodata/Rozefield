@@ -63,3 +63,11 @@ This document explains the architectural direction, reasoning, and technical cho
   2. Adding a true dedicated `NewWeaponType` slot for the Umbrella Tool without borrowing the Shovel slot.
 - **Critical proxy rule (`winhttp.dll` → `doorstop.dll` chain):** The Rozefield client already uses `winhttp.dll` as its SDK/login proxy, and Windows maps `System32\version.dll` early via system DLLs (bypassing a local `version.dll`). Therefore, `server/link_relay/rozefield_link.c` now optionally chain-loads `doorstop.dll` right inside `DllMain` when present next to `winhttp.dll` (zero overhead when absent). Rename BepInEx's `winhttp.dll` to `doorstop.dll` so both Rozefield login and BepInEx 6 load cleanly together.
 - **Workflow:** First launch generates `BepInEx/interop/` from `GameAssembly.dll`, after which small surgical Harmony hooks can be compiled with `.NET SDK` without corrupting base game binaries or mechanics.
+
+---
+
+## 5. GitHub Progress Table Date-Rollover Rules (`README.md`)
+When updating the `Rozefield progress` table in `README.md` on a push:
+1. **Same day** (`new_date == current_date`): Keep `Before` unchanged; only update `Now` (or `On-going` if in 3-column mode).
+2. **Next day (`+1 day`)**: Show 3 date columns: **`Before` | `Latest` | `On-going`** (previous `Before` stays, yesterday's `Now` becomes `Latest`, today becomes `On-going`).
+3. **Gap of 2+ days (`>= +2 days`)**: Collapse back to 2 date columns — the previous `Now` (or `On-going`) becomes the new **`Before`**, and the new date becomes **`Now`**.
