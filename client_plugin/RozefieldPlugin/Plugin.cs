@@ -9,7 +9,7 @@ using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.6.0")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.7.0")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -18,11 +18,13 @@ namespace RozefieldPlugin
         public override void Load()
         {
             Log = base.Log;
+            KeyMappingManager.Init(Config);
             _harmony = new Harmony("com.rozefield.plugin");
             _harmony.PatchAll(typeof(FashionChairVehiclePatch));
             _harmony.PatchAll(typeof(Es3IsolationPatch));
             _harmony.PatchAll(typeof(ChatLevelGatePatch));
-            Log.LogInfo("RozefieldPlugin 0.6.0 loaded: Friendship's Weight + Vehicle, ES3 isolation & Lv2 Chat gate active.");
+            _harmony.PatchAll(typeof(KeyMappingInputPatch));
+            Log.LogInfo("RozefieldPlugin 0.7.0 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat gate & Key Mapping active.");
         }
     }
 
@@ -317,9 +319,14 @@ namespace RozefieldPlugin
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(UIMainSystem), nameof(UIMainSystem.OnChatButtonClick))]
-        private static bool GateChatClick()
-        {
-            return _captainLevel >= 2;
-        }
+        private static bool GateChatClick() => _captainLevel >= 2;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIMainSystem), nameof(UIMainSystem.ShowChatView))]
+        private static bool GateShowChatView() => _captainLevel >= 2;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIChatSystem), nameof(UIChatSystem.Open))]
+        private static bool GateChatSystemOpen() => _captainLevel >= 2;
     }
 }
