@@ -625,10 +625,39 @@ def register(H, pack):
     H['ItemSweepReq'] = item_sweep
 
     def dye_unlock(ctx, req):
-        st = _st(ctx.p, 'dye_slots', {}).setdefault(str(req.get('outfitId')), [])
-        if req.get('index') not in st:
-            st.append(req.get('index'))
+        p = ctx.p
+        oid = int(req.get('outfitId', 0))
+        idx = int(req.get('index', 0))
+        max_slots = 11   # 1 Default (slot 0) + 10 Dye slots (1..10)
+        if not oid or idx <= 0 or idx >= max_slots:
+            return ctx.reply({'status': FAIL})
+        o = p.s['outfits'].setdefault(str(oid), {
+            'outfitId': oid,
+            'dyeSchemes': [{'schemeIndex': 0, 'isUnLock': True}, {'schemeIndex': 1, 'isUnLock': True}],
+        })
+        schemes = o.setdefault('dyeSchemes', [{'schemeIndex': 0, 'isUnLock': True}])
+        cur = next((x for x in schemes if x.get('schemeIndex', 0) == idx), None)
+        if cur and cur.get('isUnLock'):
+            return ctx.reply({'status': OK})
+        # Charge official Fashion_ColoringPlan_Price (default 102:100 = 100 Starstones)
+        cid, price = 102, 100
+        raw = p.d.config('Fashion_ColoringPlan_Price')
+        if raw and ':' in str(raw[0]):
+            try:
+                a, b = str(raw[0]).split(':', 1)
+                cid, price = int(a), int(b)
+            except Exception:
+                pass
+        paid = p.pay([(cid, price)]) if price > 0 else []
+        if paid is None:
+            return ctx.reply({'status': FAIL})
+        if cur is None:
+            schemes.append({'schemeIndex': idx, 'isUnLock': True})
+        else:
+            cur['isUnLock'] = True
+        p.dirty = True
         ctx.reply({'status': OK})
+        pack(ctx, (paid or []) + [{'mainItem': p.item_full_info(oid)}])
     H['OutfitDyeUnlockIndexReq'] = dye_unlock
 
     def random_color(ctx, req):

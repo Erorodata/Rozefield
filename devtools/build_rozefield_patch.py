@@ -188,6 +188,40 @@ def apply_missing_rod_icons(g):
     return n
 
 
+def apply_dye_slot_count(g):
+    """Set Fashion_ColoringPlan_Count = 11 (1 Default slot 0 + 10 Dye slots 1..10)."""
+    n = 0
+    for r in g.get('Config', {}).get('datas', []):
+        if r.get('Key') == 'Fashion_ColoringPlan_Count':
+            if r.get('Values') != ['11']:
+                r['Values'] = ['11']
+                n += 1
+    return n
+
+
+def apply_umbrella_tool_expression(g):
+    """Switch Tools bar Shovel entry (ID 2008, NewExpressionType=3) icon to Umbrella (IconID 4000)."""
+    n = 0
+    for r in g.get('Expression', {}).get('datas', []):
+        if int(r.get('ID', 0)) == 2008 and int(r.get('IconID', 0)) != 4000:
+            r['IconID'] = 4000
+            n += 1
+    return n
+
+
+def apply_umbrella_tool_string(g):
+    """Rename Tools bar Shovel label (StringExpression ID 2008) from 'Shovel' to 'Umbrella'."""
+    n = 0
+    for r in g.get('StringExpression', {}).get('datas', []):
+        if int(r.get('ID', 0)) == 2008:
+            txt = r.get('Text', [])
+            if txt and txt[0] != 'Umbrella':
+                txt[0] = 'Umbrella'
+                r['Text'] = txt
+                n += 1
+    return n
+
+
 def patch_config_bundle(src_bytes, shops_cfg, min_players):
     env = UnityPy.load(src_bytes)
     report = {}
@@ -215,6 +249,12 @@ def patch_config_bundle(src_bytes, shops_cfg, min_players):
         report['umbrella_items_added'] = _patch_table(by_base['item.bytes'], 'protocol.AllItemDatas', lambda g: apply_umbrella_items(g, umbrellas))
     if 'ui.bytes' in by_base:
         report['rod_icons_fixed'] = _patch_table(by_base['ui.bytes'], 'protocol.AllUIDatas', apply_missing_rod_icons)
+    if 'globalconfig.bytes' in by_base:
+        report['dye_slots_11'] = _patch_table(by_base['globalconfig.bytes'], 'protocol.AllGlobalConfigDatas', apply_dye_slot_count)
+    if 'expression.bytes' in by_base:
+        report['umbrella_tool_icon'] = _patch_table(by_base['expression.bytes'], 'protocol.AllExpressionDatas', apply_umbrella_tool_expression)
+    if 'string_english.bytes' in by_base:
+        report['umbrella_tool_label'] = _patch_table(by_base['string_english.bytes'], 'protocol.AllStringDatas', apply_umbrella_tool_string)
     return env.file.save(packer='lz4'), report
 
 

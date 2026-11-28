@@ -376,7 +376,27 @@ class Player:
                 got.append({'mainItem': info}); changed.append({'mainItem': info})
             return got, changed
         if tag == 'EBagItemTag_Fashion':
-            self.s['outfits'].setdefault(str(item_id), {'outfitId': item_id, 'dyeSchemes': [{'isUnLock': True}]})
+            key = str(item_id)
+            existed = key in self.s['outfits']
+            o = self.s['outfits'].setdefault(key, {
+                'outfitId': item_id,
+                'dyeSchemes': [{'schemeIndex': 0, 'isUnLock': True}, {'schemeIndex': 1, 'isUnLock': True}],
+            })
+            # Duplicate / crafted outfit unlocks the next locked dye slot (up to 10 dye + 1 default = 11 slots)
+            dupes = n if existed else max(0, n - 1)
+            if dupes > 0:
+                schemes = o.setdefault('dyeSchemes', [{'schemeIndex': 0, 'isUnLock': True}, {'schemeIndex': 1, 'isUnLock': True}])
+                unlocked = {x.get('schemeIndex', 0) for x in schemes if x.get('isUnLock')}
+                for _ in range(dupes):
+                    nxt = next((i for i in range(1, 11) if i not in unlocked), None)
+                    if nxt is None:
+                        break
+                    cur = next((x for x in schemes if x.get('schemeIndex', 0) == nxt), None)
+                    if cur is None:
+                        schemes.append({'schemeIndex': nxt, 'isUnLock': True})
+                    else:
+                        cur['isUnLock'] = True
+                    unlocked.add(nxt)
         if tag == 'EBagItemTag_UnlockItem' and item_id not in self.s['unlock_functions']:
             self.s['unlock_functions'].append(item_id)
         if tag == 'EBagItemTag_PlayerExp':
