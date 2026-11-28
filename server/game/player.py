@@ -402,6 +402,9 @@ class Player:
                     entry = {'mainItem': {'itemId': item_id, 'itemTag': tag, 'character': ch}}
                     got.append(entry)
                     changed.append(entry)          # PackNotice must carry new characters so the client adds them right away
+                    wid = (ch.get('equipmentPresets') or [{}])[0].get('weapon')
+                    if wid and str(wid) in self.s['weapons']:
+                        changed.append({'mainItem': self.instance_info('EBagItemTag_Weapon', self.s['weapons'][str(wid)])})
                     c = d.row('character', 'Character', item_id) or {}
                     for f in self._char_default_outfits(c):
                         if f and str(f) in self.s['outfits']:

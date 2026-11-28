@@ -521,8 +521,11 @@ def register(H, pack, scene_player):
             if first and not is_scenic:
                 rsp['dynamicTreasureBoxBaseInfo'] = dyn_box(ctx)
             p.dirty = True
-            Q.event(p, Q.C['FinishMission'], bid)
-            Q.reported(p, bid)
+            if is_scenic:
+                Q.event(p, 96, p.s.get('scene_id', 0))   # CollectScenic12 (Star Sigil / scenic spots; never triggers combat FinishMission)
+            else:
+                Q.event(p, Q.C['FinishMission'], bid)
+                Q.reported(p, bid)
         rsp['battle_data'] = f or {'battleId': bid}
         ctx.reply(rsp)
         if req.get('battle_state') == 'Finish' and first and not is_scenic:

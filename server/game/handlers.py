@@ -531,8 +531,13 @@ def outfit(ctx, req):
     ch = char(ctx, req.get('charId'))
     if not ch:
         return ctx.reply({'status': FAIL})
-    pre = req.get('preset', {})
-    i = pre.get('presetIndex', 0)
+    raw = req.get('preset') or {}
+    i = raw.get('presetIndex', 0)
+    # Build a clean preset dict so removed outfit pieces (omitted by proto3 as 0) are explicitly cleared
+    pre = {'presetIndex': i, 'outfitHideInfo': raw.get('outfitHideInfo') or {}}
+    for k, v in raw.items():
+        if k not in ('presetIndex', 'outfitHideInfo') and v:
+            pre[k] = v
     while len(ch['outfitPresets']) <= i:
         ch['outfitPresets'].append({'presetIndex': len(ch['outfitPresets'])})
     ch['outfitPresets'][i] = pre

@@ -9,7 +9,7 @@ using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.9.3")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.9.4")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -33,7 +33,9 @@ namespace RozefieldPlugin
             SafePatch(typeof(ChatLevelGatePatch));
             SafePatch(typeof(KeyMappingInputPatch));
             SafePatch(typeof(ParasolEtiquettePatch));
-            Log.LogInfo("RozefieldPlugin 0.9.3 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat gate, Key Mapping & Parasol Etiquette active.");
+            SafePatch(typeof(ProfileSignPrefillPatch));
+            SafePatch(typeof(TutorialMapLockPatch));
+            Log.LogInfo("RozefieldPlugin 0.9.4 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat/Map gate, Key Mapping, Bio Pre-fill & Parasol Etiquette active.");
         }
     }
 
@@ -271,6 +273,7 @@ namespace RozefieldPlugin
     internal static class ChatLevelGatePatch
     {
         private static int _captainLevel = 1;
+        internal static int CaptainLevel => _captainLevel;
         private static UI_Main_ViewCtrl _mainCtrl;
         private static bool _updating;
 
