@@ -495,7 +495,7 @@ static void show_text(const wchar_t *title, const wchar_t *text) {   /* long res
 
 /* ---------------------------------------------------------------- actions */
 enum { B_NONE, B_CLOSE, B_MIN, B_START, B_STOP, B_RESTART, B_SAVEDIR, B_LOGFILE, B_IMPORT, B_MAILALL,
-       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE, B_SETUP, B_PUSH, B_MASTER,
+       B_CONNECT, B_HOSTING, B_IMPORTS, B_MOVE, B_PACKAGE, B_SHARE, B_SETUP, B_PUSH, B_DELETED, B_MASTER,
        A_FIRST, A_RESETPW = A_FIRST, A_CLEARPW, A_RENAME, A_GM, A_MAIL, A_CHAT, A_KICK, A_BAN, A_MUTE, A_RECLAIM, A_ASSIGN, A_DELETE, A_LAST,
        F_FIRST = 50 };
 static const wchar_t *ACT_LABEL[] = {L"Reset password", L"Clear password", L"Rename", L"GM commands", L"Send mail", L"Chat log",
@@ -507,6 +507,7 @@ static RECT r_start = {WW - 420, WH - 70, WW - 300, WH - 26}, r_stop = {WW - 290
 static RECT r_push = {12, WH - 196, SB - 12, WH - 164}, r_setup = {12, WH - 158, SB - 12, WH - 126}, r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
 static RECT r_import = {X0, WH - 70, X0 + 150, WH - 26}, r_mailall = {X0 + 160, WH - 70, X0 + 300, WH - 26}, r_connect = {X0 + 310, WH - 70, X0 + 470, WH - 26};
 static RECT r_share = {508, 26, 592, 58}, r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
+static RECT r_deleted = {X0 + 244, 114, X0 + 366, 138};
 static RECT r_act[12], r_filt[NFILT];
 
 static struct pl *sel(void) { return (g_sel >= 0 && g_sel < g_npl) ? &g_pl[g_sel] : NULL; }
@@ -1098,6 +1099,157 @@ static void do_push(void) {
     EnableWindow(g_win, FALSE); ShowWindow(d, SW_SHOW);
 }
 
+/* ---------------------------------------------------------------- deleted player library */
+struct del_entry { char file[160], uid[80], date[32], status[24]; wchar_t name[64]; int pid, level, chars, stars; };
+static struct del_entry g_del[512];
+static int g_ndel, g_del_map[512], g_del_shown;
+static HWND g_dl_win, g_dl_search, g_dl_list, g_dl_info, g_dl_head;
+
+static void del_update_info(void) {
+    int s = (int)SendMessageW(g_dl_list, LB_GETCURSEL, 0, 0);
+    if (s < 0 || s >= g_del_shown) {
+        SetWindowTextW(g_dl_info, g_ndel ? L"Select an archived player above to restore or permanently purge." : L"No deleted saves in save\\deleted.");
+        return;
+    }
+    struct del_entry *e = &g_del[g_del_map[s]];
+    wchar_t b[320];
+    swprintf(b, 320, L"Selected: %ls  (UID %d, Lv %d, %d chars, %d Starstones, login: %hs)  [%hs]",
+             e->name, e->pid, e->level, e->chars, e->stars, e->uid, e->status);
+    SetWindowTextW(g_dl_info, b);
+}
+
+static void del_filter(void) {
+    wchar_t q[80] = L""; GetWindowTextW(g_dl_search, q, 80); _wcslwr(q);
+    SendMessageW(g_dl_list, WM_SETREDRAW, FALSE, 0);
+    SendMessageW(g_dl_list, LB_RESETCONTENT, 0, 0);
+    g_del_shown = 0;
+    for (int i = 0; i < g_ndel; i++) {
+        struct del_entry *e = &g_del[i];
+        wchar_t nm[64]; wcsncpy(nm, e->name, 63); nm[63] = 0; _wcslwr(nm);
+        wchar_t idw[32]; swprintf(idw, 32, L"%d", e->pid);
+        if (q[0] && !wcsstr(nm, q) && !wcsstr(idw, q)) continue;
+        wchar_t row[260];
+        swprintf(row, 260, L"%-18.18ls  %-10d  Lv %-3d  %-19hs  %2d ch  %hs",
+                 e->name, e->pid, e->level, e->date, e->chars, e->status);
+        SendMessageW(g_dl_list, LB_ADDSTRING, 0, (LPARAM)row);
+        g_del_map[g_del_shown++] = i;
+    }
+    SendMessageW(g_dl_list, WM_SETREDRAW, TRUE, 0);
+    if (g_del_shown > 0) SendMessageW(g_dl_list, LB_SETCURSEL, 0, 0);
+    wchar_t hdr[120]; swprintf(hdr, 120, L"Deleted Player Library  (%d archived save%ls in save\\deleted)", g_ndel, g_ndel == 1 ? L"" : L"s");
+    SetWindowTextW(g_dl_head, hdr);
+    del_update_info();
+}
+
+static void del_reload(void) {
+    int ok; wchar_t *r = act("deleted_list", &ok);
+    g_ndel = 0;
+    if (ok && r && r[0]) {
+        char *utf = (char *)malloc(wcslen(r) * 4 + 4);
+        WideCharToMultiByte(CP_UTF8, 0, r, -1, utf, (int)(wcslen(r) * 4 + 4), NULL, NULL);
+        char *sv = NULL;
+        for (char *ln = strtok_s(utf, "\n", &sv); ln && g_ndel < 512; ln = strtok_s(NULL, "\n", &sv)) {
+            char *f[9] = {0}; int k = 0; char *p = ln;
+            while (k < 9 && p) { f[k++] = p; char *bar = strchr(p, '|'); if (bar) { *bar = 0; p = bar + 1; } else p = NULL; }
+            if (k < 9) continue;
+            struct del_entry *e = &g_del[g_ndel++];
+            memset(e, 0, sizeof *e);
+            strncpy(e->file, f[0], sizeof e->file - 1);
+            e->pid = atoi(f[1]);
+            strncpy(e->uid, f[2], sizeof e->uid - 1);
+            MultiByteToWideChar(CP_UTF8, 0, f[3], -1, e->name, 63);
+            e->level = atoi(f[4]);
+            strncpy(e->date, f[5], sizeof e->date - 1);
+            e->chars = atoi(f[6]);
+            e->stars = atoi(f[7]);
+            strncpy(e->status, f[8], sizeof e->status - 1);
+        }
+        free(utf);
+    }
+    free(r);
+    del_filter();
+}
+
+static LRESULT CALLBACK DelLibProc(HWND h, UINT m, WPARAM w, LPARAM l) {
+    switch (m) {
+    case WM_CTLCOLORSTATIC: case WM_CTLCOLORBTN: SetTextColor((HDC)w, C_TXT); SetBkColor((HDC)w, C_PANEL); return (LRESULT)br_panel;
+    case WM_ERASEBKGND: { RECT r; GetClientRect(h, &r); FillRect((HDC)w, &r, br_panel); return 1; }
+    case WM_COMMAND: {
+        int id = LOWORD(w), code = HIWORD(w);
+        if (id == 300 && code == EN_CHANGE) { del_filter(); return 0; }
+        if (id == 301 && code == LBN_SELCHANGE) { del_update_info(); return 0; }
+        if (id == 302) { del_reload(); return 0; }
+        if (id == 303) {
+            if (!g_ndel) return 0;
+            if (MessageBoxW(h, L"Permanently delete ALL archived saves in save\\deleted?\n\nThis cannot be undone.", L"Purge all deleted saves", MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) != IDYES) return 0;
+            int ok; wchar_t *r = act("deleted_purge_all\ndays=0", &ok);
+            MessageBoxW(h, r, L"Purge all", MB_OK | (ok ? MB_ICONINFORMATION : MB_ICONWARNING)); free(r);
+            del_reload(); return 0;
+        }
+        if (id == 304 || id == 305 || id == 307) {
+            int s = (int)SendMessageW(g_dl_list, LB_GETCURSEL, 0, 0);
+            if (s < 0 || s >= g_del_shown) { MessageBoxW(h, L"Select a deleted player first.", L"Deleted Player Library", MB_OK); return 0; }
+            struct del_entry *e = &g_del[g_del_map[s]];
+            char b[512]; int ok; wchar_t *r;
+            if (id == 307) {
+                wchar_t msg[200]; swprintf(msg, 200, L"Permanently delete %ls (UID %d)?\n\nThis cannot be undone.", e->name, e->pid);
+                if (MessageBoxW(h, msg, L"Purge save", MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) != IDYES) return 0;
+                snprintf(b, sizeof b, "deleted_purge\nfile=%s", e->file);
+                r = act(b, &ok); MessageBoxW(h, r, L"Purge", MB_OK | (ok ? MB_ICONINFORMATION : MB_ICONWARNING)); free(r);
+            } else {
+                snprintf(b, sizeof b, "deleted_restore\nfile=%s\nnew_id=%d", e->file, id == 305 ? 1 : 0);
+                r = act(b, &ok); MessageBoxW(h, r, L"Restore account", MB_OK | (ok ? MB_ICONINFORMATION : MB_ICONWARNING)); free(r);
+            }
+            del_reload(); return 0;
+        }
+        if (id == 306) {
+            char p[MAX_PATH + 32]; snprintf(p, sizeof p, "%ssave\\deleted", g_dir);
+            ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); return 0;
+        }
+        if (id == IDCANCEL) { DestroyWindow(h); return 0; }
+        return 0;
+    }
+    case WM_CLOSE: DestroyWindow(h); return 0;
+    case WM_DESTROY: g_dl_win = NULL; EnableWindow(g_win, TRUE); SetForegroundWindow(g_win); return 0;
+    }
+    return DefWindowProcW(h, m, w, l);
+}
+
+static void do_deleted_lib(void) {
+    static int reg; if (!reg) { WNDCLASSW wc = {0}; wc.lpfnWndProc = DelLibProc; wc.hInstance = GetModuleHandleW(NULL); wc.lpszClassName = L"RzDelLib"; wc.hCursor = LoadCursor(NULL, IDC_ARROW); RegisterClassW(&wc); reg = 1; }
+    int W = 760, H = 470; RECT pr; GetWindowRect(g_win, &pr);
+    HWND d = CreateWindowExW(WS_EX_DLGMODALFRAME | WS_EX_TOPMOST, L"RzDelLib", L"Deleted Player Library", WS_POPUP | WS_CAPTION | WS_SYSMENU,
+                             (pr.left + pr.right - W) / 2, (pr.top + pr.bottom - H) / 2, W, H, g_win, NULL, GetModuleHandleW(NULL), NULL);
+    g_dl_win = d;
+    g_dl_head = CreateWindowW(L"STATIC", L"Deleted Player Library", WS_CHILD | WS_VISIBLE, 18, 14, W - 40, 24, d, NULL, NULL, NULL);
+    SendMessageW(g_dl_head, WM_SETFONT, (WPARAM)f_h, TRUE);
+    HWND sl = CreateWindowW(L"STATIC", L"Search:", WS_CHILD | WS_VISIBLE, 18, 48, 56, 24, d, NULL, NULL, NULL);
+    SendMessageW(sl, WM_SETFONT, (WPARAM)f_small, TRUE);
+    g_dl_search = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL, 76, 44, 340, 26, d, (HMENU)300, NULL, NULL);
+    SendMessageW(g_dl_search, WM_SETFONT, (WPARAM)f_body, TRUE);
+    SendMessageW(g_dl_search, EM_SETCUEBANNER, TRUE, (LPARAM)L"Filter by name or UID...");
+    HWND br = CreateWindowW(L"BUTTON", L"Refresh", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 428, 43, 96, 28, d, (HMENU)302, NULL, NULL);
+    HWND bp = CreateWindowW(L"BUTTON", L"Purge All", WS_CHILD | WS_VISIBLE | WS_TABSTOP, W - 134, 43, 112, 28, d, (HMENU)303, NULL, NULL);
+    SendMessageW(br, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(bp, WM_SETFONT, (WPARAM)f_small, TRUE);
+    HWND col = CreateWindowW(L"STATIC", L"Player Name         UID         Lv      Deleted Date         Chars  Status", WS_CHILD | WS_VISIBLE, 22, 80, W - 44, 18, d, NULL, NULL, NULL);
+    SendMessageW(col, WM_SETFONT, (WPARAM)f_mono, TRUE);
+    g_dl_list = CreateWindowExW(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
+                                18, 100, W - 40, 236, d, (HMENU)301, NULL, NULL);
+    SendMessageW(g_dl_list, WM_SETFONT, (WPARAM)f_mono, TRUE);
+    g_dl_info = CreateWindowW(L"STATIC", L"", WS_CHILD | WS_VISIBLE, 18, 344, W - 40, 24, d, NULL, NULL, NULL);
+    SendMessageW(g_dl_info, WM_SETFONT, (WPARAM)f_small, TRUE);
+    HWND b1 = CreateWindowW(L"BUTTON", L"Restore Account", WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 18, 378, 150, 34, d, (HMENU)304, NULL, NULL);
+    HWND b2 = CreateWindowW(L"BUTTON", L"Restore w/ New ID", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 178, 378, 160, 34, d, (HMENU)305, NULL, NULL);
+    HWND b3 = CreateWindowW(L"BUTTON", L"Open Folder", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 348, 378, 120, 34, d, (HMENU)306, NULL, NULL);
+    HWND b4 = CreateWindowW(L"BUTTON", L"Purge", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 478, 378, 100, 34, d, (HMENU)307, NULL, NULL);
+    HWND b5 = CreateWindowW(L"BUTTON", L"Close", WS_CHILD | WS_VISIBLE | WS_TABSTOP, W - 118, 378, 96, 34, d, (HMENU)IDCANCEL, NULL, NULL);
+    SendMessageW(b1, WM_SETFONT, (WPARAM)f_body, TRUE); SendMessageW(b2, WM_SETFONT, (WPARAM)f_small, TRUE);
+    SendMessageW(b3, WM_SETFONT, (WPARAM)f_small, TRUE); SendMessageW(b4, WM_SETFONT, (WPARAM)f_small, TRUE);
+    SendMessageW(b5, WM_SETFONT, (WPARAM)f_small, TRUE);
+    del_reload();
+    EnableWindow(g_win, FALSE); ShowWindow(d, SW_SHOW);
+}
+
 #ifdef MASTER
 #include "master.inc"   /* private build only, not in this repo */
 #endif
@@ -1115,6 +1267,7 @@ static void do_action(int a) {
     case B_SHARE: do_share(); break;
     case B_SETUP: do_wizard(); break;
     case B_PUSH: do_push(); break;
+    case B_DELETED: do_deleted_lib(); break;
     case A_RESETPW: {
         const wchar_t *lab[] = {L"New password (4+ characters)"};
         if (!ask(L"Reset password", who, 1, lab, NULL, 0)) return;
@@ -1347,6 +1500,8 @@ static void paint(HWND h) {
     /* players panel */
     RECT pp = {X0, 106, X0 + 380, 400}; fill(dc, pp, C_PANEL, 18); outline(dc, pp, C_LINE, 18);
     RECT ph = {X0 + 16, 116, X0 + 120, 140}; txt(dc, f_h, C_TXT, ph, L"Players", DT_LEFT | DT_SINGLELINE);
+    fill(dc, r_deleted, g_hover == B_DELETED && g_up ? RGB(220, 240, 243) : C_TILE, 10);
+    txt(dc, f_small, g_up ? C_TXT : C_MUTE, r_deleted, L"Deleted library", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     /* traffic */
     { RECT tc = {X0, 414, X0 + 380, WH - 92}; fill(dc, tc, C_PANEL, 18); outline(dc, tc, C_LINE, 18);
       RECT th = {X0 + 16, 422, X0 + 200, 446}; txt(dc, f_h, C_TXT, th, L"Traffic", DT_LEFT | DT_SINGLELINE);
@@ -1422,6 +1577,7 @@ static int hit(int x, int y) {
     if (PtInRect(&r_share, pt)) return B_SHARE;
     if (PtInRect(&r_setup, pt)) return B_SETUP;
     if (PtInRect(&r_push, pt)) return B_PUSH;
+    if (PtInRect(&r_deleted, pt)) return B_DELETED;
 #ifdef MASTER
     if (master_hit(pt)) return B_MASTER;
 #endif
@@ -1447,10 +1603,14 @@ static void click(int b) {
     case B_STOP: if (g_up && MessageBoxW(g_win, L"Stop the server? Everyone online is disconnected.", L"Overfield Server", MB_YESNO | MB_ICONQUESTION) == IDYES) stop_server(); break;
     case B_RESTART: if (g_up) CloseHandle(CreateThread(NULL, 0, restart_thread, NULL, 0, NULL)); break;
     case B_SAVEDIR: snprintf(p, sizeof p, "%ssave\\accounts", g_dir); ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break;
-    case B_LOGFILE: snprintf(p, sizeof p, "%sserver.log", g_dir); ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break;
+    case B_LOGFILE: {
+        time_t now = time(NULL); struct tm tm; localtime_s(&tm, &now);
+        snprintf(p, sizeof p, "%slogs\\server_%04d-%02d-%02d.log", g_dir, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+        if (GetFileAttributesA(p) == INVALID_FILE_ATTRIBUTES) snprintf(p, sizeof p, "%slogs", g_dir);
+        ShellExecuteA(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL); break; }
     default:
         if (b >= F_FIRST && b < F_FIRST + NFILT) { g_filter = b - F_FIRST; g_follow = 1; rebuild_log(); }
-        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_PUSH)) { if (g_up) do_action(b); }
+        else if ((b >= A_FIRST && b < A_LAST) || b == B_IMPORT || b == B_MAILALL || (b >= B_HOSTING && b <= B_DELETED)) { if (g_up) do_action(b); }
     }
     InvalidateRect(g_win, NULL, FALSE);
 }

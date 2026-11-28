@@ -188,6 +188,14 @@ def _do(server, act, kv):
                 pass
         asyncio.get_event_loop().call_later(0.5, os._exit, 0)
         return 'OK|Stopping.'
+    if act == 'deleted_list':
+        return _deleted_list()
+    if act == 'deleted_restore':
+        return _deleted_restore(server, kv.get('file', ''), kv.get('new_id', '0') == '1', log)
+    if act == 'deleted_purge':
+        return _deleted_purge(kv.get('file', ''), log)
+    if act == 'deleted_purge_all':
+        return _deleted_purge_all(int(kv.get('days', 0) or 0), log)
     return 'ERR|unknown action ' + act
 
 
@@ -317,6 +325,96 @@ def _delete(server, pid, uid, log):
     log.info('[admin] deleted account %s (%s); removed from %d other account(s)', pid, st.get('name'), n)
     return (f'OK|Deleted {st.get("name")} (id {pid}). Logging in with that account again makes a fresh character. '
             f'The old save is kept in save\\deleted in case you need it back.')
+
+
+def _deleted_dir():
+    d = os.path.join(HERE, 'save', 'deleted')
+    os.makedirs(d, exist_ok=True)
+    return d
+
+
+def _deleted_list():
+    """Return OK|\\n-separated lines: file|pid|uid|name|level|date|chars|starstones|status."""
+    gone = _deleted_dir()
+    rows = []
+    for fn in sorted(os.listdir(gone), reverse=True):
+        if not fn.endswith('.json'):
+            continue
+        fp = os.path.join(gone, fn)
+        try:
+            st = json.load(open(fp, encoding='utf-8'))
+        except Exception:
+            continue
+        pid = int(st.get('player_id', 0) or 0)
+        uid = str(st.get('uid') or '').replace('|', '/')
+        name = str(st.get('name') or '(unnamed)').replace('|', '/')
+        lv = int(st.get('level', 1) or 1)
+        chars = len(st.get('characters') or {})
+        stars = int((st.get('items') or {}).get('102', 0) or 0)
+        mt = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(fp)))
+        status = 'ID Used' if pid and os.path.exists(os.path.join(ACC, f'{pid}.json')) else 'Free'
+        rows.append('|'.join(str(x) for x in (fn, pid, uid, name, lv, mt, chars, stars, status)))
+    return 'OK|' + '\n'.join(rows)
+
+
+def _deleted_restore(server, filename, new_id, log):
+    from game.player import _registry, _save_registry, _lock, new_local_id
+    fn = os.path.basename(filename or '')
+    fp = os.path.join(_deleted_dir(), fn)
+    if not fn.endswith('.json') or not os.path.exists(fp):
+        return 'ERR|Deleted save file not found.'
+    st = json.load(open(fp, encoding='utf-8'))
+    old_pid = int(st.get('player_id', 0) or 0)
+    with _lock:
+        reg = _registry()
+        if new_id:
+            target_pid = new_local_id(reg)
+            for k in ('player_id', 'player_label', 'channel_id'):
+                if st.get(k) == old_pid or not st.get(k):
+                    st[k] = target_pid
+        else:
+            target_pid = old_pid or new_local_id(reg)
+            if os.path.exists(os.path.join(ACC, f'{target_pid}.json')):
+                return f'ERR|ID {target_pid} is already in use. Click "Restore w/ New ID" instead.'
+        uid = str(st.get('uid') or f'restored_{target_pid}')
+        if uid in reg['by_uid'] and reg['by_uid'][uid] != target_pid:
+            uid = f'{uid}_r{target_pid % 10000}'
+            st['uid'] = uid
+        os.makedirs(ACC, exist_ok=True)
+        dst = os.path.join(ACC, f'{target_pid}.json')
+        json.dump(st, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
+        reg['by_uid'][uid] = target_pid
+        _save_registry(reg)
+        os.remove(fp)
+    log.info('[admin] restored deleted account %s -> id %s (uid %s)', fn, target_pid, uid)
+    return f'OK|Restored {st.get("name")} (UID {target_pid}, login {uid}).'
+
+
+def _deleted_purge(filename, log):
+    fn = os.path.basename(filename or '')
+    fp = os.path.join(_deleted_dir(), fn)
+    if not fn.endswith('.json') or not os.path.exists(fp):
+        return 'ERR|Deleted save file not found.'
+    os.remove(fp)
+    log.info('[admin] permanently purged deleted save %s', fn)
+    return f'OK|Permanently deleted {fn}.'
+
+
+def _deleted_purge_all(days, log):
+    gone = _deleted_dir()
+    cutoff = time.time() - max(0, days) * 86400
+    n = 0
+    for fn in list(os.listdir(gone)):
+        if not fn.endswith('.json'):
+            continue
+        fp = os.path.join(gone, fn)
+        if days <= 0 or os.path.getmtime(fp) < cutoff:
+            try:
+                os.remove(fp); n += 1
+            except OSError:
+                pass
+    log.info('[admin] purged %d deleted save(s) (days=%d)', n, days)
+    return f'OK|Permanently deleted {n} archived save(s).'
 
 
 def _assign(server, pid, new, log):
