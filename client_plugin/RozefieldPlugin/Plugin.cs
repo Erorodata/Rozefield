@@ -9,7 +9,7 @@ using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.5.1")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.6.0")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -21,7 +21,8 @@ namespace RozefieldPlugin
             _harmony = new Harmony("com.rozefield.plugin");
             _harmony.PatchAll(typeof(FashionChairVehiclePatch));
             _harmony.PatchAll(typeof(Es3IsolationPatch));
-            Log.LogInfo("RozefieldPlugin 0.5.1 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
+            _harmony.PatchAll(typeof(ChatLevelGatePatch));
+            Log.LogInfo("RozefieldPlugin 0.6.0 loaded: Friendship's Weight + Vehicle, ES3 isolation & Lv2 Chat gate active.");
         }
     }
 
@@ -248,6 +249,77 @@ namespace RozefieldPlugin
                 return null;
             }
             return null;
+        }
+    }
+
+    /// <summary>
+    /// Hides the HUD Chat button until the player reaches Captain Level 2 (unlocked upon
+    /// leaving the tutorial stage) and shows it automatically as soon as Level 2 is reached.
+    /// </summary>
+    [HarmonyPatch]
+    internal static class ChatLevelGatePatch
+    {
+        private static int _captainLevel = 1;
+        private static UI_Main_ViewCtrl _mainCtrl;
+        private static bool _updating;
+
+        private static void SyncChatVisibility()
+        {
+            if (_updating || _mainCtrl == null) return;
+            try
+            {
+                _updating = true;
+                _mainCtrl.Set_Chat_Active(_captainLevel >= 2);
+            }
+            catch { }
+            finally { _updating = false; }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerModel), nameof(PlayerModel.Level), MethodType.Setter)]
+        private static void OnSetLevel(int value)
+        {
+            if (value > 0)
+            {
+                _captainLevel = value;
+                SyncChatVisibility();
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.OnPlayerLevelExpCallback))]
+        private static void OnLevelExpNotice(Pb.PlayerLevelExpNotice notice)
+        {
+            if (notice != null && notice.Level > 0)
+            {
+                _captainLevel = (int)notice.Level;
+                SyncChatVisibility();
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UI_Main_ViewCtrl), nameof(UI_Main_ViewCtrl.Set_Chat_Active))]
+        private static void GateSetChatActive(UI_Main_ViewCtrl __instance, ref bool isActive)
+        {
+            _mainCtrl = __instance;
+            if (_captainLevel < 2)
+                isActive = false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UI_Main_ViewCtrl), nameof(UI_Main_ViewCtrl.Set_Chat_Button))]
+        private static void PostSetChatButton(UI_Main_ViewCtrl __instance)
+        {
+            _mainCtrl = __instance;
+            if (_captainLevel < 2)
+                SyncChatVisibility();
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIMainSystem), nameof(UIMainSystem.OnChatButtonClick))]
+        private static bool GateChatClick()
+        {
+            return _captainLevel >= 2;
         }
     }
 }

@@ -507,7 +507,7 @@ static RECT r_start = {WW - 420, WH - 70, WW - 300, WH - 26}, r_stop = {WW - 290
 static RECT r_push = {12, WH - 196, SB - 12, WH - 164}, r_setup = {12, WH - 158, SB - 12, WH - 126}, r_savedir = {12, WH - 120, SB - 12, WH - 88}, r_logfile = {12, WH - 82, SB - 12, WH - 50};
 static RECT r_import = {X0, WH - 70, X0 + 150, WH - 26}, r_mailall = {X0 + 160, WH - 70, X0 + 300, WH - 26}, r_connect = {X0 + 310, WH - 70, X0 + 470, WH - 26};
 static RECT r_share = {508, 26, 592, 58}, r_hosting = {600, 26, 700, 58}, r_imports = {708, 26, 798, 58}, r_move = {806, 26, 922, 58}, r_package = {930, 26, 1060, 58};
-static RECT r_deleted = {X0 + 244, 114, X0 + 366, 138};
+static RECT r_deleted = {X0 + 262, 114, X0 + 366, 140};
 static RECT r_act[12], r_filt[NFILT];
 
 static struct pl *sel(void) { return (g_sel >= 0 && g_sel < g_npl) ? &g_pl[g_sel] : NULL; }
@@ -1501,7 +1501,7 @@ static void paint(HWND h) {
     RECT pp = {X0, 106, X0 + 380, 400}; fill(dc, pp, C_PANEL, 18); outline(dc, pp, C_LINE, 18);
     RECT ph = {X0 + 16, 116, X0 + 120, 140}; txt(dc, f_h, C_TXT, ph, L"Players", DT_LEFT | DT_SINGLELINE);
     fill(dc, r_deleted, g_hover == B_DELETED && g_up ? RGB(220, 240, 243) : C_TILE, 10);
-    txt(dc, f_small, g_up ? C_TXT : C_MUTE, r_deleted, L"Deleted library", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    txt(dc, f_small, g_up ? C_TXT : C_MUTE, r_deleted, L"Deleted", DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     /* traffic */
     { RECT tc = {X0, 414, X0 + 380, WH - 92}; fill(dc, tc, C_PANEL, 18); outline(dc, tc, C_LINE, 18);
       RECT th = {X0 + 16, 422, X0 + 200, 446}; txt(dc, f_h, C_TXT, th, L"Traffic", DT_LEFT | DT_SINGLELINE);
@@ -1751,7 +1751,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show) {
     g_win = CreateWindowExW(WS_EX_APPWINDOW, L"RozefieldServerPanel", APPNAME, WS_POPUP | WS_MINIMIZEBOX | WS_SYSMENU | WS_CLIPCHILDREN,
                             (GetSystemMetrics(SM_CXSCREEN) - WW) / 2, (GetSystemMetrics(SM_CYSCREEN) - WH) / 2, WW, WH, NULL, NULL, hi, NULL);
     SetWindowRgn(g_win, CreateRoundRectRgn(0, 0, WW + 1, WH + 1, 16, 16), TRUE);
-    g_find = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, X0 + 130, 114, 234, 26, g_win, NULL, hi, NULL);
+    g_find = CreateWindowExW(0, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, X0 + 102, 114, 152, 26, g_win, NULL, hi, NULL);
     SendMessageW(g_find, EM_SETCUEBANNER, TRUE, (LPARAM)L"Find name or UID");
     g_list = CreateWindowExW(0, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | LBS_OWNERDRAWFIXED | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT,
                              X0 + 12, 150, 356, 240, g_win, NULL, hi, NULL);
