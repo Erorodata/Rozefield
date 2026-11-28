@@ -171,6 +171,23 @@ def apply_umbrella_items(g, umbrellas):
     return added
 
 
+def apply_missing_rod_icons(g):
+    """Point Practical Fishing Rod (1006004, whose icon_caijidaoju_yugan_04 PNG is absent from the client manifest)
+    to icon_caijidaoju_yugan_01 so it renders and equips cleanly in storage and Fitting Room."""
+    n = 0
+    for r in g.get('Icon', {}).get('datas', []):
+        if int(r.get('ID', 0)) == 1006004:
+            want = [
+                'Texture/Item/Weapon/icon_caijidaoju_yugan_01',
+                'Texture/Item/Weapon/icon_caijidaoju_yugan_01_1024',
+                'Texture/Item/Weapon/icon_caijidaoju_yugan_01_512',
+            ]
+            if r.get('AssetFullName') != want:
+                r['AssetFullName'] = want
+                n += 1
+    return n
+
+
 def patch_config_bundle(src_bytes, shops_cfg, min_players):
     env = UnityPy.load(src_bytes)
     report = {}
@@ -196,6 +213,8 @@ def patch_config_bundle(src_bytes, shops_cfg, min_players):
         report['umbrella_weapons_added'] = _patch_table(by_base['weapon.bytes'], 'protocol.AllWeaponDatas', lambda g: apply_umbrella_weapons(g, umbrellas))
     if umbrellas and 'item.bytes' in by_base:
         report['umbrella_items_added'] = _patch_table(by_base['item.bytes'], 'protocol.AllItemDatas', lambda g: apply_umbrella_items(g, umbrellas))
+    if 'ui.bytes' in by_base:
+        report['rod_icons_fixed'] = _patch_table(by_base['ui.bytes'], 'protocol.AllUIDatas', apply_missing_rod_icons)
     return env.file.save(packer='lz4'), report
 
 
