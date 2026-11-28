@@ -135,7 +135,7 @@ def apply_umbrella_weapons(g, umbrellas):
             'BaseScore': 1,
             'RollSpellGroupID': 100400,
             'NormalSpellID': 1004000,       # Bug Net over-the-shoulder idle holding pose
-            'AssetFullName': asset,
+            'AssetFullName': 'Model/Weapon/TypeLife/InsectNet/Weapon_InsectNet_01',  # Valid WeaponController host; RozefieldPlugin swaps mesh to Umbrella
             'NewWeaponSystemType': 6,
             'NewStrikeCorrectionType': 4,   # Matches Bug Net (1004001)
             'NewWeaponType': 23,            # Dedicated Parasol Etiquette type (no conflict with 7 or 22)
@@ -179,7 +179,7 @@ def apply_umbrella_items(g, umbrellas):
 
 def apply_missing_rod_icons(g):
     """Point Practical Fishing Rod (1006004, whose icon_caijidaoju_yugan_04 PNG is absent from the client manifest)
-    to icon_caijidaoju_yugan_01 so it renders and equips cleanly in storage and Fitting Room."""
+    to icon_caijidaoju_yugan_01, and register UIExpressionIcon ID 2009 (Umbrella icon for Parasol Etiquette)."""
     n = 0
     for r in g.get('Icon', {}).get('datas', []):
         if int(r.get('ID', 0)) == 1006004:
@@ -191,6 +191,17 @@ def apply_missing_rod_icons(g):
             if r.get('AssetFullName') != want:
                 r['AssetFullName'] = want
                 n += 1
+    expr_icons = g.get('UIExpressionIcon', {}).get('datas', [])
+    has_2009 = False
+    for r in expr_icons:
+        if int(r.get('ID', 0)) == 2009:
+            has_2009 = True
+            if r.get('AssetFullName') != 'Texture/Item/Umbrella/icon_san_71':
+                r['AssetFullName'] = 'Texture/Item/Umbrella/icon_san_71'
+                n += 1
+    if not has_2009:
+        expr_icons.append({'ID': 2009, 'AssetFullName': 'Texture/Item/Umbrella/icon_san_71'})
+        n += 1
     return n
 
 
@@ -218,14 +229,14 @@ def apply_umbrella_tool_expression(g):
             n += 1
         elif rid == 2009:
             has_2009 = True
-            if int(r.get('IconID', 0)) != 4000:
-                r['IconID'] = 4000
+            if int(r.get('IconID', 0)) != 2009:
+                r['IconID'] = 2009
                 n += 1
     if not has_2009:
         rows.append({
             'ID': 2009,
             'TextID': 2009,
-            'IconID': 4000,
+            'IconID': 2009,
             'ExpressionGroupInfo': [{'Index': 1, 'IsShow': True}],
             'NewExpressionType': 3,
         })

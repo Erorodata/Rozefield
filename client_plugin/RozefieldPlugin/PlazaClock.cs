@@ -1,5 +1,4 @@
 using System;
-using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using Inutan;
 using UnityEngine;
@@ -8,11 +7,10 @@ namespace RozefieldPlugin
 {
     /// <summary>
     /// QOL (B5): Compact HUD clock showing OverField's own in-game Day/Night TOD clock
-    /// (read from Inutan.TimeOfDaySystem.GetTimeLine(), 0..24h). Toggleable with F9.
+    /// (read directly from static Inutan.ITimeOfDaySystem.GetTimeLine()). Toggleable with F9.
     /// </summary>
     internal static class PlazaClockManager
     {
-        internal static TimeOfDaySystem ActiveTod;
         internal static bool ShowClock = true;
 
         internal static void Init()
@@ -45,39 +43,31 @@ namespace RozefieldPlugin
 
         private void OnGUI()
         {
-            if (!PlazaClockManager.ShowClock || PlazaClockManager.ActiveTod == null) return;
-            float tl;
-            try { tl = PlazaClockManager.ActiveTod.GetTimeLine(); }
-            catch { return; }
+            if (!PlazaClockManager.ShowClock) return;
 
-            // Normalize to 0..24 hours (some scenes use 0..1 normalized, others 0..24)
+            float tl;
+            try
+            {
+                var tod = ITimeOfDaySystem.TimeOfDaySystem;
+                if (tod == null) return;
+                tl = ITimeOfDaySystem.GetTimeLine();
+            }
+            catch
+            {
+                return;
+            }
+
+            if (float.IsNaN(tl) || float.IsInfinity(tl)) return;
+
+            // OverField TOD timeline is 0..24 hours (fallback to 0..1 normalized if <= 1)
             float hours = (tl >= 0f && tl <= 1.0001f) ? tl * 24f : (tl % 24f + 24f) % 24f;
             int hh = (int)hours;
             int mm = (int)((hours - hh) * 60f);
             string phase = (hh >= 6 && hh < 18) ? "Day" : "Night";
             string label = $"{phase}  {hh:00}:{mm:00}";
 
-            GUI.Box(new Rect(14, 14, 128, 28), label);
-        }
-    }
-
-    [HarmonyPatch]
-    internal static class PlazaClockPatch
-    {
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(TimeOfDaySystem), nameof(TimeOfDaySystem.GetTimeLine))]
-        private static void CaptureTod(TimeOfDaySystem __instance)
-        {
-            if (__instance != null)
-                PlazaClockManager.ActiveTod = __instance;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(TimeOfDaySystem), nameof(TimeOfDaySystem.SetTimeLineByServer))]
-        private static void CaptureTodServer(TimeOfDaySystem __instance)
-        {
-            if (__instance != null)
-                PlazaClockManager.ActiveTod = __instance;
+            // Placed top-center-left so it never overlaps the avatar portrait or quest tracker
+            GUI.Box(new Rect(110, 14, 128, 28), label);
         }
     }
 }
