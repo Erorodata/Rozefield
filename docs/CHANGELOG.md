@@ -4,6 +4,7 @@ Newest first. One entry per build bundle (`rozefield_buildN.bundle`); keep this 
 
 | Build | Date | Changes |
 |---|---|---|
+| 62 | 2026-11-28 | Updated **RozefieldPlugin** to v0.2.0 (`client_plugin/RozefieldPlugin/Plugin.cs`): isolated Rozefield's `ES3System` save/settings directory from `Inutan\OverField` to `Rozefield\Rozefield` and guarded `ES3System.DeleteES3Data` against `IOException`, allowing Steam OverField and Rozefield to run simultaneously without `Setting.es3` locks, Settings crashes, or startup freezes |
 | 61 | 2026-11-28 | Added **RozefieldPlugin** (`client_plugin/RozefieldPlugin/`, BepInEx 6 BE IL2CPP Harmony plugin): hooks `Inutan.ChairSystem.SetFashionChairInteraction` so **Friendship's Weight** (`4645001`) stays usable together with Vehicles without modifying base game binaries or physics |
 | 60 | 2026-11-28 | Updated Rozefield's `winhttp.dll` (`server/link_relay/rozefield_link.c`) to optionally chain-load `doorstop.dll` before `UnityMain` when present next to `winhttp.dll` (zero overhead when absent), enabling BepInEx 6 IL2CPP plugins to load cleanly alongside Rozefield's login relay without overwriting `winhttp.dll` |
 | 59 | 2026-11-28 | Fixed Practical Fishing Rod (`1006004`) not rendering/equippable in storage & Fitting Room by patching its missing icon (`icon_caijidaoju_yugan_04` absent from client manifest) to `icon_caijidaoju_yugan_01` in `ui.bytes` via `devtools/build_rozefield_patch.py` (patch `2026-11-28-13-05-00-rz-rodicon`) |
