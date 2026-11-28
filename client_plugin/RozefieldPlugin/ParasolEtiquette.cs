@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using Il2CppInterop.Runtime.Injection;
 using Inutan;
 using Protocol;
 using UnityEngine;
@@ -11,8 +12,8 @@ namespace RozefieldPlugin
     /// Handles the dedicated Tools bar button ID 2009 ("Parasol Etiquette", UIExpressionIcon 2009)
     /// without touching Shovel (ID 2008 / NewWeaponType=22) or Bug Net (ID 2002 / NewWeaponType=7).
     ///
-    /// Zero hooks on UnitWeaponSystem during login/scene-load: only activates when the player
-    /// clicks Parasol Etiquette (ID 2009).
+    /// Uses the tuned holding transform on the umbrella's original pivot point:
+    ///   Pos=(0.066, 0.047, 0.000), Rot=(72.2, 96.9, 83.8), Scale=0.75
     /// </summary>
     [HarmonyPatch]
     internal static class ParasolEtiquettePatch
@@ -23,17 +24,37 @@ namespace RozefieldPlugin
         private const int WEAPON_TYPE_BUG_NET = 7;
         private const int WEAPON_TYPE_PARASOL = 23;
 
+        private static readonly Vector3 HOLD_POS = new Vector3(0.066f, 0.047f, 0.000f);
+        private static readonly Quaternion HOLD_ROT = Quaternion.Euler(72.2f, 96.9f, 83.8f);
+        private static readonly Vector3 HOLD_SCALE = new Vector3(0.75f, 0.75f, 0.75f);
+
         private static bool _holdingParasol;
         private static bool _attachAttempted;
         private static WeaponConfigure _activeCfg;
         private static int _activeWeaponId;
+        private static GameObject _parasolPivot;
         private static GameObject _spawnedUmbrella;
         private static AssetHandle _umbrellaHandle;
+
+        internal static void Init()
+        {
+            ClassInjector.RegisterTypeInIl2Cpp<ParasolTickHost>();
+            var go = new GameObject("RozefieldParasolHost");
+            UnityEngine.Object.DontDestroyOnLoad(go);
+            go.hideFlags = HideFlags.HideAndDontSave;
+            go.AddComponent<ParasolTickHost>();
+        }
 
         private static void CleanupUmbrellaMesh()
         {
             _attachAttempted = false;
-            if (_spawnedUmbrella != null)
+            if (_parasolPivot != null)
+            {
+                try { UnityEngine.Object.Destroy(_parasolPivot); } catch { }
+                _parasolPivot = null;
+                _spawnedUmbrella = null;
+            }
+            else if (_spawnedUmbrella != null)
             {
                 try { UnityEngine.Object.Destroy(_spawnedUmbrella); } catch { }
                 _spawnedUmbrella = null;
@@ -57,10 +78,26 @@ namespace RozefieldPlugin
             _holdingParasol = false;
         }
 
+        private static int GetActiveCharacterUmbrellaId(int fallbackWeaponId)
+        {
+            try
+            {
+                var ent = IPlayerSystem.MainCharacterEntity;
+                if (ent != null)
+                {
+                    var cm = ent.CharacterModel;
+                    if (cm != null && cm.UmbrellaItemID > 0)
+                        return cm.UmbrellaItemID;
+                }
+            }
+            catch { }
+            return fallbackWeaponId - PARASOL_WEAPON_MIN;
+        }
+
         private static void TryAttachUmbrellaToMainPlayer(int weaponId)
         {
             if (weaponId < PARASOL_WEAPON_MIN) return;
-            int umbrellaId = weaponId - PARASOL_WEAPON_MIN;
+            int umbrellaId = GetActiveCharacterUmbrellaId(weaponId);
             if (umbrellaId <= 0) return;
 
             try
@@ -69,7 +106,6 @@ namespace RozefieldPlugin
                 string assetPath = ucfg?.AssetFullName;
                 if (string.IsNullOrEmpty(assetPath)) return;
 
-                // Find active WeaponController on the main character's Bug Net host
                 var allWcs = UnityEngine.Object.FindObjectsOfType<WeaponController>();
                 if (allWcs == null || allWcs.Length == 0) return;
 
@@ -116,12 +152,20 @@ namespace RozefieldPlugin
                 }
 
                 _umbrellaHandle = handle;
-                _spawnedUmbrella = UnityEngine.Object.Instantiate(prefab, targetWc.transform);
+
+                _parasolPivot = new GameObject("RozefieldParasolPivot");
+                _parasolPivot.transform.SetParent(targetWc.transform, false);
+                _parasolPivot.transform.localPosition = HOLD_POS;
+                _parasolPivot.transform.localRotation = HOLD_ROT;
+                _parasolPivot.transform.localScale = HOLD_SCALE;
+
+                _spawnedUmbrella = UnityEngine.Object.Instantiate(prefab, _parasolPivot.transform);
                 _spawnedUmbrella.transform.localPosition = Vector3.zero;
                 _spawnedUmbrella.transform.localRotation = Quaternion.identity;
                 _spawnedUmbrella.transform.localScale = Vector3.one;
                 _spawnedUmbrella.SetActive(true);
-                Plugin.Log.LogInfo($"[ParasolEtiquette] Attached umbrella mesh '{yooPath}' onto {targetWc.gameObject.name}.");
+
+                Plugin.Log.LogInfo($"[ParasolEtiquette] Attached umbrella '{yooPath}'.");
             }
             catch (Exception e)
             {
@@ -132,9 +176,7 @@ namespace RozefieldPlugin
         internal static void Tick()
         {
             if (_holdingParasol && !_attachAttempted && _spawnedUmbrella == null && _activeWeaponId >= PARASOL_WEAPON_MIN)
-            {
                 TryAttachUmbrellaToMainPlayer(_activeWeaponId);
-            }
         }
 
         private static EquipItemModel FindParasolWeapon(out WeaponConfigure cfgOut, out int weaponIdOut)
@@ -230,6 +272,16 @@ namespace RozefieldPlugin
             if (!_holdingParasol) return;
             if (!isEquip || model == null || model.ID != _activeWeaponId)
                 RestoreActiveWeaponType();
+        }
+    }
+
+    internal class ParasolTickHost : MonoBehaviour
+    {
+        public ParasolTickHost(IntPtr ptr) : base(ptr) { }
+
+        private void Update()
+        {
+            ParasolEtiquettePatch.Tick();
         }
     }
 }

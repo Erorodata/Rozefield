@@ -9,7 +9,7 @@ using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.9.1")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.9.3")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -25,14 +25,15 @@ namespace RozefieldPlugin
         {
             Log = base.Log;
             KeyMappingManager.Init(Config);
-            PlazaClockManager.Init();
+            ParasolEtiquettePatch.Init();
+            // PlazaClockManager excluded from build for now
             _harmony = new Harmony("com.rozefield.plugin");
             SafePatch(typeof(FashionChairVehiclePatch));
             SafePatch(typeof(Es3IsolationPatch));
             SafePatch(typeof(ChatLevelGatePatch));
             SafePatch(typeof(KeyMappingInputPatch));
             SafePatch(typeof(ParasolEtiquettePatch));
-            Log.LogInfo("RozefieldPlugin 0.9.1 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat gate, Key Mapping, In-Game TOD Clock & Parasol Etiquette active.");
+            Log.LogInfo("RozefieldPlugin 0.9.3 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat gate, Key Mapping & Parasol Etiquette active.");
         }
     }
 
@@ -327,7 +328,6 @@ namespace RozefieldPlugin
         [HarmonyPatch(typeof(UIMainSystem), nameof(UIMainSystem.OnPanelReady))]
         private static void PostMainPanelReady()
         {
-            PlazaClockManager.HudReady = true;
             if (_captainLevel < 2)
                 SyncChatVisibility();
         }
