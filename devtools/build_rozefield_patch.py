@@ -116,34 +116,39 @@ def apply_coop_min_players(g, min_players):
 
 
 def apply_umbrella_weapons(g, umbrellas):
-    """Add Shovel-slot (NewWeaponType=22) Umbrella Tools (1070000 + umbrella_id) using Bug Net idle/swing."""
+    """Add/update Shovel-slot (NewWeaponType=22) Parasol Etiquette tools (1070000 + umbrella_id)."""
     rows = g.get('Weapon', {}).get('datas', [])
-    existing = {int(r.get('ID', 0)) for r in rows}
-    added = 0
+    by_id = {int(r.get('ID', 0)): r for r in rows}
+    changed = 0
     for u in umbrellas:
         uid = int(u.get('ID', 0))
         asset = u.get('AssetFullName')
         if not uid or not asset:
             continue
         tid = 1070000 + uid
-        if tid in existing:
-            continue
-        rows.append({
+        want = {
             'ID': tid,
             'ItemID': tid,
             'Durability': 100,
             'WeaponPropertyID': 1001001,
             'BaseScore': 1,
             'RollSpellGroupID': 100400,
-            'NormalSpellID': 1004000,   # Bug Net over-the-shoulder idle holding pose
+            'NormalSpellID': 1004000,       # Bug Net over-the-shoulder idle holding pose
             'AssetFullName': asset,
             'NewWeaponSystemType': 6,
-            'NewStrikeCorrectionType': 4,
-            'NewWeaponType': 22,        # Temporary Shovel tool slot (keeps Bug Net 7 intact)
-        })
-        existing.add(tid)
-        added += 1
-    return added
+            'NewChoppingCorrectionType': 4, # Matches official Shovel (1007001)
+            'NewWeaponType': 22,            # Temporary Shovel tool slot (keeps Bug Net 7 intact)
+        }
+        cur = by_id.get(tid)
+        if cur is None:
+            rows.append(want)
+            by_id[tid] = want
+            changed += 1
+        elif cur != want:
+            cur.clear()
+            cur.update(want)
+            changed += 1
+    return changed
 
 
 def apply_umbrella_items(g, umbrellas):
@@ -210,14 +215,14 @@ def apply_umbrella_tool_expression(g):
 
 
 def apply_umbrella_tool_string(g):
-    """Rename Tools bar Shovel label (StringExpression ID 2008) from 'Shovel' to 'Umbrella',
+    """Rename Tools bar Shovel label (StringExpression ID 2008) to 'Parasol Etiquette',
     and update any Fishing Rod text referencing Sherry -> Chang."""
     n = 0
     for r in g.get('StringExpression', {}).get('datas', []):
         if int(r.get('ID', 0)) == 2008:
             txt = r.get('Text', [])
-            if txt and txt[0] != 'Umbrella':
-                txt[0] = 'Umbrella'
+            if txt and txt[0] != 'Parasol Etiquette':
+                txt[0] = 'Parasol Etiquette'
                 r['Text'] = txt
                 n += 1
     for tbl in g.values():

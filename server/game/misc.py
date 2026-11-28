@@ -333,6 +333,7 @@ def register(H, pack):
         for iid, _ in pay:
             if p.d.item_tag(iid) == 'EBagItemTag_UnlockItem' and iid not in p.s['unlock_functions']:
                 p.s['unlock_functions'].append(iid)
+                p.__dict__.setdefault('_new_unlocks', []).append(iid)
         p.dirty = True
         ctx.reply({'status': OK, 'page': page, 'boxId': b, 'items': got})
         pack(ctx, changed)

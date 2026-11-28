@@ -208,10 +208,15 @@ class Player:
         self.dirty = False
 
     def sync_umbrella_tool(self, ch):
-        """Sync a character's Shovel tool slot (shovelInstanceId) to match their selected Skin Umbrella.
-        Uses tool ID = 1070000 + umbrellaId (NewWeaponType=22, unused Shovel slot) so Bug Net stays untouched."""
+        """Sync a character's default glider umbrellaId and Shovel tool slot (shovelInstanceId)
+        for Parasol Etiquette (tool ID = 1070000 + umbrellaId, NewWeaponType=22)."""
         ap = ch.setdefault('characterAppearance', {})
-        umb_id = int(ap.get('umbrellaId') or self.d.config_int('Player_Default_Umbrella_ItemID', 4000) or 4000)
+        umb_id = int(ap.get('umbrellaId') or self.d.config_int('Player_Default_Umbrella_ItemID', 4050) or 4050)
+        updated_ap = False
+        if not ap.get('umbrellaId'):
+            ap['umbrellaId'] = umb_id
+            self.dirty = True
+            updated_ap = True
         tool_id = 1070000 + umb_id
         inst_id = next((int(w['instanceId']) for w in self.s['weapons'].values() if int(w.get('weaponId', 0)) == tool_id), 0)
         changed = []
@@ -222,7 +227,7 @@ class Player:
             ap['shovelInstanceId'] = inst_id
             self.dirty = True
             return changed or True
-        return changed
+        return changed or updated_ap
 
     _LIFE_TOOL_AP_FIELD = {
         4: 'collectionGlovesInstanceId',
@@ -426,6 +431,7 @@ class Player:
                     unlocked.add(nxt)
         if tag == 'EBagItemTag_UnlockItem' and item_id not in self.s['unlock_functions']:
             self.s['unlock_functions'].append(item_id)
+            self.__dict__.setdefault('_new_unlocks', []).append(item_id)
         if tag == 'EBagItemTag_PlayerExp':
             self.add_exp(n)
         if tag == 'EBagItemTag_Expression':             # chat emoticon: official ChatUnLockExpressionNotice
