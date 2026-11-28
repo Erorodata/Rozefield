@@ -4,10 +4,11 @@ using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Inutan;
+using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.3.0")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.4.0")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -19,19 +20,71 @@ namespace RozefieldPlugin
             _harmony = new Harmony("com.rozefield.plugin");
             _harmony.PatchAll(typeof(FashionChairVehiclePatch));
             _harmony.PatchAll(typeof(Es3IsolationPatch));
-            Log.LogInfo("RozefieldPlugin 0.3.0 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
+            Log.LogInfo("RozefieldPlugin 0.4.0 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
         }
     }
 
     /// <summary>
     /// Allows Friendship's Weight (IsCanSit=1 fashion chair pendant, item 4645001) to coexist
-    /// with Vehicles without modifying normal chair or vehicle physics.
+    /// with Vehicles without modifying normal chair or vehicle physics:
+    ///   - Temporarily returns IsCanSit=0 only during UIEmotionSystem.OnClickTools (summoning a Vehicle)
+    ///     and UIFashionSystem.OnSelectItem / OnSelectItemButtonClick (equipping Friendship's Weight on a Vehicle).
+    ///   - Keeps ChairSystem.SetFashionChairInteraction and CharacterEntity.SetFashionCharis enabled.
     /// </summary>
     [HarmonyPatch]
     internal static class FashionChairVehiclePatch
     {
+        private static int _bypassDepth;
+        private static bool _loggedBypass;
         private static bool _loggedChair;
         private static bool _loggedCharis;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIEmotionSystem), nameof(UIEmotionSystem.OnClickTools))]
+        private static void PreClickTools(int id) => _bypassDepth++;
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIEmotionSystem), nameof(UIEmotionSystem.OnClickTools))]
+        private static void PostClickTools() { if (_bypassDepth > 0) _bypassDepth--; }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItem))]
+        private static void PreSelectItem() => _bypassDepth++;
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItem))]
+        private static void PostSelectItem() { if (_bypassDepth > 0) _bypassDepth--; }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClick))]
+        private static void PreSelectItemBtn() => _bypassDepth++;
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClick))]
+        private static void PostSelectItemBtn() { if (_bypassDepth > 0) _bypassDepth--; }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
+        private static void PreChangeGatherWeapon() => _bypassDepth++;
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
+        private static void PostChangeGatherWeapon() { if (_bypassDepth > 0) _bypassDepth--; }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FashionInfoConfigure), nameof(FashionInfoConfigure.IsCanSit), MethodType.Getter)]
+        private static void BypassIsCanSitDuringVehicleCheck(ref int __result)
+        {
+            if (_bypassDepth > 0 && __result != 0)
+            {
+                __result = 0;
+                if (!_loggedBypass)
+                {
+                    _loggedBypass = true;
+                    Plugin.Log.LogInfo("Bypassed IsCanSit check so Friendship's Weight + Vehicle can be used together.");
+                }
+            }
+        }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ChairSystem), nameof(ChairSystem.SetFashionChairInteraction))]
@@ -61,24 +114,6 @@ namespace RozefieldPlugin
                     Plugin.Log.LogInfo("Kept CharacterEntity.SetFashionCharis enabled.");
                 }
             }
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(UIMainSystem), nameof(UIMainSystem.Set_Life_ToolQuickSelectItem))]
-        private static void LogQuickSelect(eWeaponType weaponType)
-        {
-            if (weaponType == eWeaponType.Vehicle || weaponType == eWeaponType.Shovel)
-            {
-                Plugin.Log.LogInfo($"[ToolQuickSelect] weaponType={weaponType}");
-            }
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
-        private static void LogChangeGatherWeapon(bool isEquip, EquipItemModel model)
-        {
-            var id = model != null ? model.ItemID : 0;
-            Plugin.Log.LogInfo($"[ChangeGatherWeapon] isEquip={isEquip}, itemId={id}");
         }
     }
 
