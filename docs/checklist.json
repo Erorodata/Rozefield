@@ -125,9 +125,9 @@
         ],
         [
           "Profile, outfit / gear presets, pets, visit a friend's garden",
-          "partial",
-          "needs in-game check",
-          "retest"
+          "done",
+          "confirmed in Build 76 play-test",
+          "done"
         ],
         [
           "Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset",
@@ -145,9 +145,9 @@
         ],
         [
           "Chat and GM console: world and channel history kept across logins and restarts",
-          "partial",
-          "needs in-game check",
-          "retest"
+          "done",
+          "confirmed in Build 76 play-test",
+          "done"
         ],
         [
           "Umbrella / badge / tool appearance",
@@ -225,9 +225,9 @@
         ],
         [
           "Field treasure chests, encounters, riddles, challenges, moons",
-          "partial",
-          "1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated",
-          "retest / captured"
+          "done",
+          "confirmed in Build 76 play-test",
+          "done"
         ],
         [
           "Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server)",
@@ -258,9 +258,9 @@
         ],
         [
           "Group emotes, dice, friend gifts (friendship points)",
-          "partial",
-          "from the capture",
-          "test"
+          "done",
+          "confirmed in Build 76 play-test",
+          "done"
         ],
         [
           "Energy / vitality purchases (official prices)",

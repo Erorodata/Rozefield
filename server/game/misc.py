@@ -307,6 +307,19 @@ def register(H, pack):
             pages.append(e)
         return e
 
+    def badge_list(ctx, req):
+        from game import progression as P
+        p = ctx.p
+        pages = rec(p, 'AbilityBadgeListReq', {}, {'status': OK, 'abilityBadgePages': []}).get('abilityBadgePages', [])
+        done = list(_st(p, 'badge_achieve', []))
+        ctx.reply({
+            'status': OK,
+            'abilityBadgePages': pages,
+            'abilityBadgeAchieves': P.badge_achieves(p),
+            'abilityBadgeRewardAchieveIds': done,
+        })
+    H['AbilityBadgeListReq'] = badge_list
+
     def badge_box(ctx, req):
         """Astral Atlas: activate one box of a page (moonstone.StoneUnlockData, page = its ID).
         Costs the box's ItemID x ItemCount; pays packs/*/systems/atlas.json box_rewards (official ones known
@@ -492,6 +505,12 @@ def register(H, pack):
         if iid not in ids:
             ids.append(iid)
         got, changed = give(ctx, [(iid, 1)]) if first and ctx.d.item(iid) else ([], [])
+        if first:
+            from game import quests as Q
+            _collect_cond = {1: 91, 2: 98, 3: 94, 4: 93, 5: 100, 6: 92, 7: 97, 8: 95}
+            cid = _collect_cond.get(ctype)
+            if cid:
+                Q.event(p, cid, p.s.get('scene_id', 0))
         p.dirty = True
         ctx.reply({'status': OK, 'collections': [{'type': ctype, 'itemMap': {iid: {'itemId': iid}}}], 'items': got})
         pack(ctx, changed)

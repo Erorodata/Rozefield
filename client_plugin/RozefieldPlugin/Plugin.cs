@@ -321,8 +321,24 @@ namespace RozefieldPlugin
         private static void PostSetChatButton(UI_Main_ViewCtrl __instance)
         {
             _mainCtrl = __instance;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIMainSystem), nameof(UIMainSystem.OnPanelReady))]
+        private static void PostMainPanelReady()
+        {
+            PlazaClockManager.HudReady = true;
             if (_captainLevel < 2)
                 SyncChatVisibility();
+        }
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIMainSystem), nameof(UIMainSystem.OnPanelReady))]
+        private static Exception GuardMainPanelReady(Exception __exception)
+        {
+            if (__exception != null)
+                Plugin.Log.LogError($"[UIMainSystem.OnPanelReady] Exception: {__exception}");
+            return __exception;
         }
 
         [HarmonyPrefix]

@@ -192,15 +192,17 @@ def apply_missing_rod_icons(g):
                 r['AssetFullName'] = want
                 n += 1
     expr_icons = g.get('UIExpressionIcon', {}).get('datas', [])
+    # UIExpressionIcon MUST reference a sprite inside the Dongzuo SpriteAtlas (external paths like Texture/Item/Umbrella/ throw NullReferenceException in UIMainSystem.OnPanelReady)
+    want_expr_icon = 'Texture/Icon/Dongzuo/icon_gongju_02'
     has_2009 = False
     for r in expr_icons:
         if int(r.get('ID', 0)) == 2009:
             has_2009 = True
-            if r.get('AssetFullName') != 'Texture/Item/Umbrella/icon_san_71':
-                r['AssetFullName'] = 'Texture/Item/Umbrella/icon_san_71'
+            if r.get('AssetFullName') != want_expr_icon:
+                r['AssetFullName'] = want_expr_icon
                 n += 1
     if not has_2009:
-        expr_icons.append({'ID': 2009, 'AssetFullName': 'Texture/Item/Umbrella/icon_san_71'})
+        expr_icons.append({'ID': 2009, 'AssetFullName': want_expr_icon})
         n += 1
     return n
 

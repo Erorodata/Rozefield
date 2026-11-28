@@ -199,6 +199,10 @@ class Player:
         q = d.config_int('InitialQuest', 0)
         if q:
             quests.accept(self, q)
+        # Clear pending mid-session notices created during initial account setup;
+        # PlayerMainDataRsp delivers full unlockFunctions/quests on login.
+        for k in ('_new_unlocks', '_new_expressions', '_exp_changed', '_qchanged', '_qpack', '_achanged'):
+            self.__dict__.pop(k, None)
 
     def save(self):
         self.s['saved_at'] = int(time.time())

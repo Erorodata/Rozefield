@@ -44,10 +44,18 @@ def aidx(d):
         for row in d.table('character', 'CharacterAchieve').values():   # character badge achievements count the same way
             for it in row.get('AchieveInfo', []):
                 reward.setdefault(it['AchieveID'], None)
+        badge_aids = []
+        for row in d.table('moonstone', 'StoneRewardQuestData').values():   # Laplace Tree / Star Sigil achievements
+            for it in row.get('StoneRewardQuestDataGroupInfo', []):
+                aid = it.get('AchieveConditionID')
+                if aid:
+                    reward.setdefault(aid, None)
+                    badge_aids.append(aid)
         for aid in reward:
             t = (ach.get(aid) or {}).get('NewAchieveCondition')
             by_type.setdefault(t, []).append(aid)
-        _AIDX[id(d)] = {'groups': groups, 'reward': reward, 'group_reward': group_reward, 'by_type': by_type, 'ach': ach}
+        _AIDX[id(d)] = {'groups': groups, 'reward': reward, 'group_reward': group_reward,
+                        'by_type': by_type, 'ach': ach, 'badge_aids': badge_aids}
     return _AIDX[id(d)]
 
 
@@ -101,6 +109,41 @@ def on_event(p, ctype, key, n, absolute):
     if changed:
         p.__dict__.setdefault('_achanged', []).extend(changed)
         p.dirty = True
+
+
+def badge_achieves(p):
+    """Return Laplace Tree / Star Sigil (StoneRewardQuestData) achievement counts,
+    backfilling any already-collected chests/collectibles/areas from p.s['world']."""
+    ix = aidx(p.d)
+    a = astate(p)
+    world = p.s.get('world') or {}
+    # Map AchieveCondition -> ECollectionType for per-scene collectible counts
+    cond_to_ctype = {91: 1, 98: 2, 94: 3, 93: 4, 100: 5, 92: 6, 97: 7, 95: 8}
+    out = []
+    for aid in ix['badge_aids']:
+        cfg = ix['ach'].get(aid) or {}
+        need = int(cfg.get('CountParam', 1) or 1)
+        cur = int(a['count'].get(str(aid), 0))
+        ctype = cfg.get('NewAchieveCondition')
+        par = cfg.get('Param') or []
+        if par:
+            sid = str(par[0])
+            w = world.get(sid) if isinstance(world.get(sid), dict) else {}
+            calc = 0
+            if ctype == 3:       # OpenBox
+                calc = len(w.get('boxes') or {})
+            elif ctype == 99:    # CollectArea12
+                calc = len(w.get('areas') or [])
+            elif ctype in cond_to_ctype:
+                ct = cond_to_ctype[ctype]
+                calc = sum(len(c.get('itemMap') or {}) for c in (w.get('collections') or []) if c.get('type') == ct)
+            if calc > cur:
+                cur = min(need, calc)
+                a['count'][str(aid)] = cur
+                p.dirty = True
+        if cur > 0:
+            out.append({'achieveId': aid, 'count': str(cur)})
+    return out
 
 
 def group_info(p, gid):

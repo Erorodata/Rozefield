@@ -1,4 +1,4 @@
-# Rozefield progress: 84.99%
+# Rozefield progress: 86.13%
 
 ![progress](progress.png)
 
@@ -7,8 +7,8 @@
 | **Preservation & archive** | 93.8% | **93.8%** | 7 / 8 |
 | **Server & connection** | 91.7% | **91.7%** | 5 / 6 |
 | **Content (Global + CN)** | 87.5% | **87.5%** | 3 / 4 |
-| **Gameplay** | 60.2% | **67.0% (+6.8%)** | 15 / 44 |
-| **Overall** | **83.29%** | **84.99% (+1.70%)** | **32 items left** |
+| **Gameplay** | 60.2% | **71.6% (+11.4%)** | 19 / 44 |
+| **Overall** | **83.29%** | **86.13% (+2.84%)** | **28 items left** |
 
 _OverField preservation: run the game on your own server after the official one closes. Updated 2026-11-28; regenerate with `py devtools/progress.py`._
 
@@ -39,16 +39,16 @@ _OverField preservation: run the game on your own server after the official one 
 - [x] CN-only text translated to English
 - [~] English UI after the CN patch: fix shipped, needs an in-game check
 
-## Gameplay (67.0%)
+## Gameplay (71.6%)
 
 - [x] New account start, characters, team
 - [x] Outfits, gear equip, weapon / armor enhance
 - [~] Character level up, level break, star up, skill up [`test`]: costs from the game tables; needs in-game check
-- [~] Profile, outfit / gear presets, pets, visit a friend's garden [`retest`]: needs in-game check
+- [x] Profile, outfit / gear presets, pets, visit a friend's garden: confirmed in Build 76 play-test
 - [~] Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset [`retest`]: needs in-game check
 - [x] Food buffs and item use
 - [x] Channels, scenes, fields, friends' gardens
-- [~] Chat and GM console: world and channel history kept across logins and restarts [`retest`]: needs in-game check
+- [x] Chat and GM console: world and channel history kept across logins and restarts: confirmed in Build 76 play-test
 - [~] Umbrella / badge / tool appearance [`test`]: needs in-game check
 - [x] Garden plaza: lift, presets, 500,000 limit: confirmed in play-test
 - [x] Recruit banners and pulls
@@ -63,13 +63,13 @@ _OverField preservation: run the game on your own server after the official one 
 - [~] Life skills: cooking, sewing, making, handicraft, fishing [`test`]: recipes, success chance, levels, skills, handbook rewards; needs in-game check
 - [x] Gathering tools (net, axe, hammer, gloves, bottle): confirmed in play-test
 - [x] Dungeons (story, resource), vitality, sweep, monster drops: official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed
-- [~] Field treasure chests, encounters, riddles, challenges, moons [`retest / captured`]: 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated
+- [x] Field treasure chests, encounters, riddles, challenges, moons: confirmed in Build 76 play-test
 - [~] Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server) [`retest / captured`]: from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check
 - [x] Perform (instruments, emotes)
 - [x] Events: Pass, Gashapon, 7-day sign-in (official flow): confirmed in Build 51 play-test (Event menu clean, table-driven rewards)
 - [~] Wishing tree and Wish Stone exchange [`captured`]: from the capture; Wish Stone income is estimated
 - [~] Abyss: info, teams, team switch, best time [`retest`]: from the capture
-- [~] Group emotes, dice, friend gifts (friendship points) [`test`]: from the capture
+- [x] Group emotes, dice, friend gifts (friendship points): confirmed in Build 76 play-test
 - [~] Energy / vitality purchases (official prices) [`test`]: needs in-game check
 - [~] Exploration (send a team out), team exploration [`captured`]: reward amounts estimated
 - [~] Handbook, imprint, treasure, badge, character achievement rewards [`retest / captured`]: table rewards where the game has them, else estimated

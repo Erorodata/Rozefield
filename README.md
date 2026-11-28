@@ -1,14 +1,14 @@
-# Rozefield progress — 84.99%
+# Rozefield progress — 86.13%
 
-`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱` **84.99%**
+`▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱` **86.13%**
 
 | Area | Before (2026-11-26) | Now (2026-11-28) | Done / Total |
 |---|---:|---:|---:|
 | **Preservation & archive** | 93.8% | **93.8%** | 7 / 8 |
 | **Server & connection** | 91.7% | **91.7%** | 5 / 6 |
 | **Content (Global + CN)** | 87.5% | **87.5%** | 3 / 4 |
-| **Gameplay** | 60.2% | **67.0% (+6.8%)** | 15 / 44 |
-| **Overall** | **83.29%** | **84.99% (+1.70%)** | **32 items left** |
+| **Gameplay** | 60.2% | **71.6% (+11.4%)** | 19 / 44 |
+| **Overall** | **83.29%** | **86.13% (+2.84%)** | **28 items left** |
 
 OverField preservation: run the game on your own server after the official one closes.
 
@@ -25,7 +25,7 @@ OverField preservation: run the game on your own server after the official one c
 | Preservation & archive | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **93.8%** |
 | Server & connection | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱` | **91.7%** |
 | Content (Global + CN) | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱` | **87.5%** |
-| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱▱` | **67.0%** |
+| Gameplay | `▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▱▱▱▱▱▱▱▱▱` | **71.6%** |
 
 🟩 done · 🟨 in progress (`test` / `retest` / `captured`) · 🟥 blocked · ⬛ not yet
 
@@ -62,18 +62,18 @@ OverField preservation: run the game on your own server after the official one c
 | 🟩 | CN-only text translated to English | done |
 | 🟨 | English UI after the CN patch | in progress — fix shipped, needs an in-game check |
 
-## Gameplay — 67.0%
+## Gameplay — 71.6%
 
 | | Item | Stage | Status |
 |---|---|---|---|
 | 🟩 | New account start, characters, team | `done` | done |
 | 🟩 | Outfits, gear equip, weapon / armor enhance | `done` | done |
 | 🟨 | Character level up, level break, star up, skill up | `test` | in progress — costs from the game tables; needs in-game check |
-| 🟨 | Profile, outfit / gear presets, pets, visit a friend's garden | `retest` | in progress — needs in-game check |
+| 🟩 | Profile, outfit / gear presets, pets, visit a friend's garden | `done` | done — confirmed in Build 76 play-test |
 | 🟨 | Shops: every shop item shows (pool item index as official), multi-item slots rotate, daily / weekly / monthly limits reset | `retest` | in progress — needs in-game check |
 | 🟩 | Food buffs and item use | `done` | done |
 | 🟩 | Channels, scenes, fields, friends' gardens | `done` | done |
-| 🟨 | Chat and GM console: world and channel history kept across logins and restarts | `retest` | in progress — needs in-game check |
+| 🟩 | Chat and GM console: world and channel history kept across logins and restarts | `done` | done — confirmed in Build 76 play-test |
 | 🟨 | Umbrella / badge / tool appearance | `test` | in progress — needs in-game check |
 | 🟩 | Garden plaza: lift, presets, 500,000 limit | `done` | done — confirmed in play-test |
 | 🟩 | Recruit banners and pulls | `done` | done |
@@ -88,13 +88,13 @@ OverField preservation: run the game on your own server after the official one c
 | 🟨 | Life skills: cooking, sewing, making, handicraft, fishing | `test` | in progress — recipes, success chance, levels, skills, handbook rewards; needs in-game check |
 | 🟩 | Gathering tools (net, axe, hammer, gloves, bottle) | `done` | done — confirmed in play-test |
 | 🟩 | Dungeons (story, resource), vitality, sweep, monster drops | `done` | done — official flow from capture: final chest -> temp storage -> pickup; 38 dungeons' chest contents observed |
-| 🟨 | Field treasure chests, encounters, riddles, challenges, moons | `retest / captured` | in progress — 1300 chest positions + your opened-chest state imported; encounter/dynamic chest per capture; field chest amounts approximated |
+| 🟩 | Field treasure chests, encounters, riddles, challenges, moons | `done` | done — confirmed in Build 76 play-test |
 | 🟨 | Co-op games: Pop Balloons, Aerial Adventure (solo or with players on this server) | `retest / captured` | in progress — from the 2026-11-25 capture; only 2 platform layouts + 1 balloon layout were seen; needs in-game check |
 | 🟩 | Perform (instruments, emotes) | `done` | done |
 | 🟩 | Events: Pass, Gashapon, 7-day sign-in (official flow) | `done` | done — confirmed in Build 51 play-test (Event menu clean, table-driven rewards) |
 | 🟨 | Wishing tree and Wish Stone exchange | `captured` | in progress — from the capture; Wish Stone income is estimated |
 | 🟨 | Abyss: info, teams, team switch, best time | `retest` | in progress — from the capture |
-| 🟨 | Group emotes, dice, friend gifts (friendship points) | `test` | in progress — from the capture |
+| 🟩 | Group emotes, dice, friend gifts (friendship points) | `done` | done — confirmed in Build 76 play-test |
 | 🟨 | Energy / vitality purchases (official prices) | `test` | in progress — needs in-game check |
 | 🟨 | Exploration (send a team out), team exploration | `captured` | in progress — reward amounts estimated |
 | 🟨 | Handbook, imprint, treasure, badge, character achievement rewards | `retest / captured` | in progress — table rewards where the game has them, else estimated |
@@ -138,8 +138,3 @@ Rozefield preserves OverField: the archived client and a private server that run
 | **Co-op** | Minimum players reduced (3 → 2) | Pop Balloons and Aerial Adventure can start with 2 players instead of 3. |
 | **Shops** | All Fishing Rods on Chang's Store | All 10 Fishing Rods moved from Sherry to Chang's Lifestyle Store with official currencies (unpriced rods in Feline Tokens to encourage co-op). |
 | **New Players** | First recruit 100% guarantees Shiika | New accounts always receive Shiika (`102001`) on their first recruit, matching the prologue story. |
-| **Co-op** | Snakes & Ladders in Rota Plaza (`/sl`) | Play a 30-tile Snakes & Ladders match in Rota Plaza using the in-game Special Dice (`item 2020`, moving by the exact rolled face 1–6); awards 10,000 Feline Tokens to the winner and 5,000 to each participant. |
-| **Rota Plaza** | Park-area invisible wall removed | Disabled the plaza perimeter invisible wall (`包围盒v1`) in the Rozefield resource patch so players can explore freely behind the park area. |
-| **Fitting Room** | 10 Dye + 1 Default slots, dupe unlock & no gender lock | Slot 0 stays original colors (protected), Slot 1 is unlocked by default, Slots 2–10 unlock via Starstones or duplicate/crafted outfits, and outfit gender restrictions (`NewSexType`) are removed. |
-| **Client QOL** | Key Mapping (`F8`), In-Game TOD Clock (`F9`) & Friendship's Weight + Vehicle | `RozefieldPlugin` (BepInEx 6 IL2CPP) adds customizable keybinds from Settings (`F8`), a live in-game Day/Night cycle clock (`F9`), simultaneous Steam + Rozefield play (`ES3` isolation), Lv 2 Chat unlock gate, and Friendship's Weight + Vehicle coexistence. |
-| **Tools** | Umbrella Tool (with Umbrella icon) | Replaces the unused Shovel slot (`ID 2008`, `NewWeaponType = 22`) with an **Umbrella** button & icon using the Bug Net over-the-shoulder idle pose so Bug Net stays intact; automatically mirrors whichever Umbrella you pick in **Fitting Room → Skin → Umbrella**. |

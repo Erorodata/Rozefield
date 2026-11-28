@@ -328,7 +328,7 @@ def register(H, pack, scene_player):
                 items, changed = give(ctx, loot)
                 ctx.reply({'status': OK, 'items': items})
                 pack(ctx, changed)
-                Q.event(p, Q.C['OpenBox'])
+                Q.event(p, Q.C['OpenBox'], p.s.get('scene_id', 0))
                 from game.dungeon import task_event, TASK_CHEST
                 task_event(ctx, TASK_CHEST)
                 return
@@ -349,7 +349,7 @@ def register(H, pack, scene_player):
                 ctx.push('DungeonOpenFinalBoxNotice', {'status': OK, 'dungeonId': did})
             ctx.reply({'status': OK, 'items': items})
             pack(ctx, paid + changed)
-            Q.event(p, Q.C['OpenBox'])
+            Q.event(p, Q.C['OpenBox'], p.s.get('scene_id', 0))
             return
         if btype == 'TREASURE_BOX_TYPE_DYNAMIC':
             dyn = ctx.__dict__.setdefault('dynamic_boxes', {}).pop(req.get('treasureBoxIndex', 0), None)
@@ -360,7 +360,7 @@ def register(H, pack, scene_player):
                 _moon(ctx, 1120, 5)
             ctx.reply({'status': OK, 'items': items})
             pack(ctx, changed)
-            Q.event(p, Q.C['OpenBox'])
+            Q.event(p, Q.C['OpenBox'], p.s.get('scene_id', 0))
             return
         # static chest in the field
         idx = req.get('treasureBoxIndex', 0)
@@ -410,7 +410,7 @@ def register(H, pack, scene_player):
         new_rates = p.record_fatigue('chests', 1)
         if new_rates['treasureDropRate'] != tr_rate:
             ctx.push('PlayerTiredDropNotice', {'status': OK, 'dropRateInfo': new_rates})
-        Q.event(p, Q.C['OpenBox'])
+        Q.event(p, Q.C['OpenBox'], sid)
         Q.event(p, Q.C['OpenBox0'])
     H['TreasureBoxOpenReq'] = box_open
 
