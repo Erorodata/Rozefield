@@ -116,7 +116,8 @@ def apply_coop_min_players(g, min_players):
 
 
 def apply_umbrella_weapons(g, umbrellas):
-    """Add/update Shovel-slot (NewWeaponType=22) Parasol Etiquette tools (1070000 + umbrella_id)."""
+    """Add/update Parasol Etiquette weapons (1070000 + umbrella_id) with dedicated NewWeaponType=23
+    (unused type so zero conflict with Bug Net 7 or Shovel 22; RozefieldPlugin maps 23->7 during equip)."""
     rows = g.get('Weapon', {}).get('datas', [])
     by_id = {int(r.get('ID', 0)): r for r in rows}
     changed = 0
@@ -136,8 +137,8 @@ def apply_umbrella_weapons(g, umbrellas):
             'NormalSpellID': 1004000,       # Bug Net over-the-shoulder idle holding pose
             'AssetFullName': asset,
             'NewWeaponSystemType': 6,
-            'NewChoppingCorrectionType': 4, # Matches official Shovel (1007001)
-            'NewWeaponType': 22,            # Temporary Shovel tool slot (keeps Bug Net 7 intact)
+            'NewStrikeCorrectionType': 4,   # Matches Bug Net (1004001)
+            'NewWeaponType': 23,            # Dedicated Parasol Etiquette type (no conflict with 7 or 22)
         }
         cur = by_id.get(tid)
         if cur is None:
@@ -205,26 +206,56 @@ def apply_dye_slot_count(g):
 
 
 def apply_umbrella_tool_expression(g):
-    """Switch Tools bar Shovel entry (ID 2008, NewExpressionType=3) icon to Umbrella (IconID 4000)."""
+    """Restore Shovel entry (ID 2008) to its original IconID 2008, and add dedicated
+    Tools bar entry ID 2009 ('Parasol Etiquette', IconID 4000, NewExpressionType=3)."""
+    rows = g.get('Expression', {}).get('datas', [])
     n = 0
-    for r in g.get('Expression', {}).get('datas', []):
-        if int(r.get('ID', 0)) == 2008 and int(r.get('IconID', 0)) != 4000:
-            r['IconID'] = 4000
+    has_2009 = False
+    for r in rows:
+        rid = int(r.get('ID', 0))
+        if rid == 2008 and int(r.get('IconID', 0)) != 2008:
+            r['IconID'] = 2008
             n += 1
+        elif rid == 2009:
+            has_2009 = True
+            if int(r.get('IconID', 0)) != 4000:
+                r['IconID'] = 4000
+                n += 1
+    if not has_2009:
+        rows.append({
+            'ID': 2009,
+            'TextID': 2009,
+            'IconID': 4000,
+            'ExpressionGroupInfo': [{'Index': 1, 'IsShow': True}],
+            'NewExpressionType': 3,
+        })
+        n += 1
     return n
 
 
 def apply_umbrella_tool_string(g):
-    """Rename Tools bar Shovel label (StringExpression ID 2008) to 'Parasol Etiquette',
-    and update any Fishing Rod text referencing Sherry -> Chang."""
+    """Restore StringExpression ID 2008 to 'Shovel', add StringExpression ID 2009
+    ('Parasol Etiquette'), and update any Fishing Rod text referencing Sherry -> Chang."""
     n = 0
-    for r in g.get('StringExpression', {}).get('datas', []):
-        if int(r.get('ID', 0)) == 2008:
+    se_rows = g.get('StringExpression', {}).get('datas', [])
+    has_2009 = False
+    for r in se_rows:
+        rid = int(r.get('ID', 0))
+        if rid == 2008:
             txt = r.get('Text', [])
-            if txt and txt[0] != 'Parasol Etiquette':
-                txt[0] = 'Parasol Etiquette'
+            if txt and txt[0] != 'Shovel':
+                txt[0] = 'Shovel'
                 r['Text'] = txt
                 n += 1
+        elif rid == 2009:
+            has_2009 = True
+            txt = r.get('Text', [])
+            if not txt or txt[0] != 'Parasol Etiquette':
+                r['Text'] = ['Parasol Etiquette', '', '', '']
+                n += 1
+    if not has_2009:
+        se_rows.append({'ID': 2009, 'Text': ['Parasol Etiquette', '', '', '']})
+        n += 1
     for tbl in g.values():
         if not isinstance(tbl, dict) or 'datas' not in tbl:
             continue

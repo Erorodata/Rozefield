@@ -9,7 +9,7 @@ using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.8.0")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.9.0")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -32,7 +32,8 @@ namespace RozefieldPlugin
             SafePatch(typeof(ChatLevelGatePatch));
             SafePatch(typeof(KeyMappingInputPatch));
             SafePatch(typeof(PlazaClockPatch));
-            Log.LogInfo("RozefieldPlugin 0.8.0 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat gate, Key Mapping & In-Game TOD Clock active.");
+            SafePatch(typeof(ParasolEtiquettePatch));
+            Log.LogInfo("RozefieldPlugin 0.9.0 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat gate, Key Mapping, In-Game TOD Clock & Parasol Etiquette active.");
         }
     }
 

@@ -208,8 +208,9 @@ class Player:
         self.dirty = False
 
     def sync_umbrella_tool(self, ch):
-        """Sync a character's default glider umbrellaId and Shovel tool slot (shovelInstanceId)
-        for Parasol Etiquette (tool ID = 1070000 + umbrellaId, NewWeaponType=22)."""
+        """Ensure a character's default glider umbrellaId is set and grant the matching
+        Parasol Etiquette weapon (1070000 + umbrellaId, NewWeaponType=23) in bag without
+        hijacking shovelInstanceId."""
         ap = ch.setdefault('characterAppearance', {})
         umb_id = int(ap.get('umbrellaId') or self.d.config_int('Player_Default_Umbrella_ItemID', 4050) or 4050)
         updated_ap = False
@@ -217,16 +218,19 @@ class Player:
             ap['umbrellaId'] = umb_id
             self.dirty = True
             updated_ap = True
+        # Clean up legacy shovelInstanceId if it was previously pointed at a 107xxxx umbrella weapon
+        shv = int(ap.get('shovelInstanceId', 0))
+        if shv:
+            w = self.s['weapons'].get(str(shv))
+            if w and 1070000 <= int(w.get('weaponId', 0)) < 1080000:
+                ap.pop('shovelInstanceId', None)
+                self.dirty = True
+                updated_ap = True
         tool_id = 1070000 + umb_id
         inst_id = next((int(w['instanceId']) for w in self.s['weapons'].values() if int(w.get('weaponId', 0)) == tool_id), 0)
         changed = []
         if not inst_id:
             _, changed = self.add_item(tool_id, 1)
-            inst_id = next((int(w['instanceId']) for w in self.s['weapons'].values() if int(w.get('weaponId', 0)) == tool_id), 0)
-        if inst_id and int(ap.get('shovelInstanceId', 0)) != inst_id:
-            ap['shovelInstanceId'] = inst_id
-            self.dirty = True
-            return changed or True
         return changed or updated_ap
 
     _LIFE_TOOL_AP_FIELD = {
