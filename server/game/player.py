@@ -224,6 +224,31 @@ class Player:
             return changed or True
         return changed
 
+    _LIFE_TOOL_AP_FIELD = {
+        4: 'collectionGlovesInstanceId',
+        5: 'loggingAxeInstanceId',
+        6: 'miningHammerInstanceId',
+        7: 'insectNetInstanceId',
+        8: 'waterBottleInstanceId',
+        18: 'fishingRodInstanceId',
+        21: 'vehicleInstanceId',
+    }
+
+    def _auto_equip_life_tool(self, weapon_id, inst_id):
+        """Auto-equip a newly obtained gathering tool (Water Bottle, Fishing Rod, Bug Net, etc.)
+        into any character whose corresponding characterAppearance tool slot is still empty."""
+        if not inst_id:
+            return
+        w = self.d.row('weapon', 'Weapon', weapon_id) or {}
+        field = self._LIFE_TOOL_AP_FIELD.get(w.get('NewWeaponType'))
+        if not field:
+            return
+        for ch in self.s.get('characters', {}).values():
+            ap = ch.setdefault('characterAppearance', {})
+            if not ap.get(field):
+                ap[field] = int(inst_id)
+                self.dirty = True
+
     def sync_all_umbrella_tools(self):
         any_ch = False
         for ch in self.s.get('characters', {}).values():
@@ -372,6 +397,8 @@ class Player:
         if tag in INSTANCE_TAGS:
             for _ in range(n):
                 inst = self.new_instance(tag, item_id)
+                if tag == 'EBagItemTag_Weapon':
+                    self._auto_equip_life_tool(item_id, inst.get('instanceId', 0))
                 info = self.instance_info(tag, inst)
                 got.append({'mainItem': info}); changed.append({'mainItem': info})
             return got, changed

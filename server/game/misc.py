@@ -496,10 +496,11 @@ def register(H, pack):
         iid = req.get('itemId')
         done = _st(p, 'collection_reward', [])
         if iid in done:
-            return ctx.reply({'status': FAIL})
+            return ctx.reply({'status': OK, 'collectionRewardData': {'itemId': iid, 'status': 'Reward'}})
         done.append(iid)
         cfg = ctx.d.row('collectionitem', 'CollectItemPhotoItem', iid) or {}
         got, changed = give(ctx, reward_pool(ctx, cfg.get('RewardID')) or [(STARSTONE, 10)])
+        p.dirty = True
         ctx.reply({'status': OK, 'collectionRewardData': {'itemId': iid, 'status': 'Reward'}, 'items': got})
         pack(ctx, changed)
     H['CollectionRewardReq'] = collection_reward

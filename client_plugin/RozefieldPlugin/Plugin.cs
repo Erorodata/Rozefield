@@ -9,22 +9,28 @@ using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.7.0")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.7.1")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
         private Harmony _harmony;
+
+        private void SafePatch(Type t)
+        {
+            try { _harmony.PatchAll(t); }
+            catch (Exception e) { Log.LogError($"PatchAll({t.Name}) failed: {e.Message}"); }
+        }
 
         public override void Load()
         {
             Log = base.Log;
             KeyMappingManager.Init(Config);
             _harmony = new Harmony("com.rozefield.plugin");
-            _harmony.PatchAll(typeof(FashionChairVehiclePatch));
-            _harmony.PatchAll(typeof(Es3IsolationPatch));
-            _harmony.PatchAll(typeof(ChatLevelGatePatch));
-            _harmony.PatchAll(typeof(KeyMappingInputPatch));
-            Log.LogInfo("RozefieldPlugin 0.7.0 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat gate & Key Mapping active.");
+            SafePatch(typeof(FashionChairVehiclePatch));
+            SafePatch(typeof(Es3IsolationPatch));
+            SafePatch(typeof(ChatLevelGatePatch));
+            SafePatch(typeof(KeyMappingInputPatch));
+            Log.LogInfo("RozefieldPlugin 0.7.1 loaded: Friendship's Weight + Vehicle, ES3 isolation, Lv2 Chat gate & Key Mapping active.");
         }
     }
 
@@ -278,23 +284,23 @@ namespace RozefieldPlugin
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(PlayerModel), nameof(PlayerModel.Level), MethodType.Setter)]
-        private static void OnSetLevel(int value)
-        {
-            if (value > 0)
-            {
-                _captainLevel = value;
-                SyncChatVisibility();
-            }
-        }
-
-        [HarmonyPostfix]
         [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.OnPlayerLevelExpCallback))]
         private static void OnLevelExpNotice(Pb.PlayerLevelExpNotice notice)
         {
             if (notice != null && notice.Level > 0)
             {
                 _captainLevel = (int)notice.Level;
+                SyncChatVisibility();
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerModel), nameof(PlayerModel.CheckUnlockWorldLevel))]
+        private static void OnModelCheck(PlayerModel __instance)
+        {
+            if (__instance != null && __instance.Level > 0)
+            {
+                _captainLevel = __instance.Level;
                 SyncChatVisibility();
             }
         }
