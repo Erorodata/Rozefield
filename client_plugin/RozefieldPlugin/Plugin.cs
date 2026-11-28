@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
@@ -8,7 +9,7 @@ using Protocol;
 
 namespace RozefieldPlugin
 {
-    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.4.0")]
+    [BepInPlugin("com.rozefield.plugin", "Rozefield Gameplay Plugin", "0.5.0")]
     public class Plugin : BasePlugin
     {
         internal static new ManualLogSource Log;
@@ -20,71 +21,101 @@ namespace RozefieldPlugin
             _harmony = new Harmony("com.rozefield.plugin");
             _harmony.PatchAll(typeof(FashionChairVehiclePatch));
             _harmony.PatchAll(typeof(Es3IsolationPatch));
-            Log.LogInfo("RozefieldPlugin 0.4.0 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
+            Log.LogInfo("RozefieldPlugin 0.5.0 loaded: Friendship's Weight + Vehicle & ES3 save isolation active.");
         }
     }
 
     /// <summary>
     /// Allows Friendship's Weight (IsCanSit=1 fashion chair pendant, item 4645001) to coexist
     /// with Vehicles without modifying normal chair or vehicle physics:
-    ///   - Temporarily returns IsCanSit=0 only during UIEmotionSystem.OnClickTools (summoning a Vehicle)
-    ///     and UIFashionSystem.OnSelectItem / OnSelectItemButtonClick (equipping Friendship's Weight on a Vehicle).
+    ///   - IL2CPP inlines FashionInfoConfigure.get_IsCanSit(), so instead of patching the getter,
+    ///     we temporarily zero the backing field (isCanSit_) in FashionConfigureManager.FashionInfo
+    ///     during UIEmotionSystem.OnClickTools, UIFashionSystem.OnSelectItem/OnSelectItemButtonClick,
+    ///     and PlayerSystem.MainPlayerChangeGatherWeapon, then restore it in the Finalizer.
     ///   - Keeps ChairSystem.SetFashionChairInteraction and CharacterEntity.SetFashionCharis enabled.
     /// </summary>
     [HarmonyPatch]
     internal static class FashionChairVehiclePatch
     {
         private static int _bypassDepth;
-        private static bool _loggedBypass;
+        private static readonly List<(FashionInfoConfigure cfg, int orig)> _saved = new();
+        private static bool _loggedFlip;
         private static bool _loggedChair;
         private static bool _loggedCharis;
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(UIEmotionSystem), nameof(UIEmotionSystem.OnClickTools))]
-        private static void PreClickTools(int id) => _bypassDepth++;
-
-        [HarmonyFinalizer]
-        [HarmonyPatch(typeof(UIEmotionSystem), nameof(UIEmotionSystem.OnClickTools))]
-        private static void PostClickTools() { if (_bypassDepth > 0) _bypassDepth--; }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItem))]
-        private static void PreSelectItem() => _bypassDepth++;
-
-        [HarmonyFinalizer]
-        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItem))]
-        private static void PostSelectItem() { if (_bypassDepth > 0) _bypassDepth--; }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClick))]
-        private static void PreSelectItemBtn() => _bypassDepth++;
-
-        [HarmonyFinalizer]
-        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClick))]
-        private static void PostSelectItemBtn() { if (_bypassDepth > 0) _bypassDepth--; }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
-        private static void PreChangeGatherWeapon() => _bypassDepth++;
-
-        [HarmonyFinalizer]
-        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
-        private static void PostChangeGatherWeapon() { if (_bypassDepth > 0) _bypassDepth--; }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(FashionInfoConfigure), nameof(FashionInfoConfigure.IsCanSit), MethodType.Getter)]
-        private static void BypassIsCanSitDuringVehicleCheck(ref int __result)
+        private static void EnterBypass()
         {
-            if (_bypassDepth > 0 && __result != 0)
+            _bypassDepth++;
+            if (_bypassDepth != 1) return;
+            _saved.Clear();
+            try
             {
-                __result = 0;
-                if (!_loggedBypass)
+                var arr = FashionConfigureManager.FashionInfo;
+                if (arr == null) return;
+                for (int i = 0; i < arr.Length; i++)
                 {
-                    _loggedBypass = true;
-                    Plugin.Log.LogInfo("Bypassed IsCanSit check so Friendship's Weight + Vehicle can be used together.");
+                    var cfg = arr[i];
+                    if (cfg != null && cfg.isCanSit_ != 0)
+                    {
+                        _saved.Add((cfg, cfg.isCanSit_));
+                        cfg.isCanSit_ = 0;
+                    }
+                }
+                if (!_loggedFlip && _saved.Count > 0)
+                {
+                    _loggedFlip = true;
+                    Plugin.Log.LogInfo($"Temporarily bypassed isCanSit_ on {_saved.Count} sittable fashion(s) during Vehicle/Fashion click.");
                 }
             }
+            catch (Exception e)
+            {
+                Plugin.Log.LogWarning($"EnterBypass error: {e.Message}");
+            }
         }
+
+        private static void ExitBypass()
+        {
+            if (_bypassDepth <= 0) return;
+            _bypassDepth--;
+            if (_bypassDepth != 0) return;
+            for (int i = 0; i < _saved.Count; i++)
+            {
+                try { _saved[i].cfg.isCanSit_ = _saved[i].orig; } catch { }
+            }
+            _saved.Clear();
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIEmotionSystem), nameof(UIEmotionSystem.OnClickTools))]
+        private static void PreClickTools() => EnterBypass();
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIEmotionSystem), nameof(UIEmotionSystem.OnClickTools))]
+        private static void PostClickTools() => ExitBypass();
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItem))]
+        private static void PreSelectItem() => EnterBypass();
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItem))]
+        private static void PostSelectItem() => ExitBypass();
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClick))]
+        private static void PreSelectItemBtn() => EnterBypass();
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(UIFashionSystem), nameof(UIFashionSystem.OnSelectItemButtonClick))]
+        private static void PostSelectItemBtn() => ExitBypass();
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
+        private static void PreChangeGatherWeapon() => EnterBypass();
+
+        [HarmonyFinalizer]
+        [HarmonyPatch(typeof(PlayerSystem), nameof(PlayerSystem.MainPlayerChangeGatherWeapon))]
+        private static void PostChangeGatherWeapon() => ExitBypass();
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ChairSystem), nameof(ChairSystem.SetFashionChairInteraction))]
