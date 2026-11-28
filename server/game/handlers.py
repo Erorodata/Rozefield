@@ -386,6 +386,11 @@ def chat(ctx, req):
         from game import snakes_ladders
         if snakes_ladders.handle_command(ctx, text, pack):
             return
+    # Optional DLC chat command hooks (zero hardcoded expansion code in core)
+    if text.strip().startswith('/'):
+        from game import dlc as _dlc
+        if _dlc.dispatch_chat(ctx, text, pack):
+            return
     # GM commands are not taken from in-game chat (anyone could type them): use the server panel (GM commands) or
     # the server console instead; a line starting with "/" is ordinary chat
     s = ctx.p.s
@@ -1591,3 +1596,7 @@ _scene_progress.register(H)
 from game import live_records as _live_records  # noqa: E402
 _live_records.register(H, _friends.brief)
 _live_records.register_wishlist(H, pack)
+
+# optional modular DLC packs (<server_dir>/dlc/<pack>/manifest.json + dlc.py)
+from game import dlc as _dlc  # noqa: E402
+_dlc.load_all(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), H, pack, scene_player)

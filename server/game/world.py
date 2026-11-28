@@ -521,10 +521,10 @@ def register(H, pack, scene_player):
             if first and not is_scenic:
                 rsp['dynamicTreasureBoxBaseInfo'] = dyn_box(ctx)
             p.dirty = True
+            Q.event(p, Q.C['FinishMission'], bid)
             if is_scenic:
-                Q.event(p, 96, p.s.get('scene_id', 0))   # CollectScenic12 (Star Sigil / scenic spots; never triggers combat FinishMission)
+                Q.event(p, 96, p.s.get('scene_id', 0))   # CollectScenic12 (Star Sigil); skip untyped Q.reported so Area/Item 1002 quests don't false-complete
             else:
-                Q.event(p, Q.C['FinishMission'], bid)
                 Q.reported(p, bid)
         rsp['battle_data'] = f or {'battleId': bid}
         ctx.reply(rsp)

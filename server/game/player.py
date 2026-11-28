@@ -572,6 +572,8 @@ class Player:
                 break
             self.s['exp'] -= row['NeedExp']; self.s['level'] += 1
             self.__dict__['_leveled'] = True
+        from game import dlc as _dlc
+        _dlc.run_exp_hooks(self)
 
     # ------------------------------------------------------------ views
     def pack_items(self):
