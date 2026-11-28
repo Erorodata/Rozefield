@@ -58,5 +58,12 @@
   "3": {"max_enemy_lv": 75, "gold_mult": 1.75, "epic_bonus_pct": 52, "max_gear_lv": 79, "max_gear_lv_low": [38, 69]},
   "4": {"max_enemy_lv": 89, "gold_mult": 2.0, "epic_bonus_pct": 67, "max_gear_lv": 89, "max_gear_lv_low": [41, 79]},
   "5": {"max_enemy_lv": 100, "gold_mult": 2.25, "epic_bonus_pct": 80, "max_gear_lv": 100}
+ },
+ "exploration_fatigue": {
+  "treasure_decay_pct": 1,
+  "treasure_floor_pct": 10,
+  "kill_decay_pct": 1,
+  "kill_floor_pct": 10,
+  "kill_mat_cutoff_pct": 20
  }
 }

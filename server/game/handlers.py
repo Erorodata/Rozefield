@@ -1166,15 +1166,17 @@ def char_appearance(ctx, req):
     ch = p.s['characters'].get(str(cid))
     if not ch:
         return ctx.reply({'status': FAIL})
+    sent = req.get('appearance', {})
     ap = ch.setdefault('characterAppearance', {})
-    ap.update(req.get('appearance', {}))
+    ap.update(sent)
     for k in [k for k, v in ap.items() if not v]:
         ap.pop(k)
     umb_ch = p.sync_umbrella_tool(ch)
     if isinstance(umb_ch, list) and umb_ch:
         pack(ctx, umb_ch)
     p.dirty = True
-    ctx.reply({'status': OK, 'charId': cid, 'appearance': ap})
+    # Return only the changed field(s) so the client fires 1 toast instead of 1 per appearance slot
+    ctx.reply({'status': OK, 'charId': cid, 'appearance': sent or ap})
 
 
 @handler('UpdatePlayerAppearanceReq')

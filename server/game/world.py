@@ -384,19 +384,25 @@ def register(H, pack, scene_player):
         p.dirty = True
         wl = p.s.get('world_level', 0)
         gmult = world_level_cfg(wl).get('gold_mult', 1.0)
+        tr_rate = p.drop_rate_info()['treasureDropRate']
+        tmult = tr_rate / 100.0
         big = cfg.get('NewTreasureBoxRewardShowType', 1) >= 3
         if big:
-            items = roll_gear(p.d, 2, wl) + [(102, 20), (GOLD, int(random.randint(400, 800) * gmult))]
+            n_gear = 2 if (tr_rate >= 50 or random.random() < tmult) else 1
+            items = roll_gear(p.d, n_gear, wl) + [(102, max(2, int(round(20 * tmult)))), (GOLD, max(10, int(random.randint(400, 800) * gmult * tmult)))]
         else:
-            items = [(GOLD, int(random.randint(80, 200) * gmult)), (190, 1)]
+            items = [(GOLD, max(10, int(random.randint(80, 200) * gmult * tmult))), (190, 1)]
         items, changed = give(ctx, items)
-        if random.random() < 0.5:         # field chest Moon Points (official id 1120)
+        if random.random() < 0.5 * tmult:   # field chest Moon Points (official id 1120)
             _moon(ctx, 1120, 5)
         rsp = {'status': OK, 'items': items}
         if refresh:
             rsp['nextRefreshTime'] = str(refresh * 1000)   # official: milliseconds
         ctx.reply(rsp)
         pack(ctx, changed)
+        new_rates = p.record_fatigue('chests', 1)
+        if new_rates['treasureDropRate'] != tr_rate:
+            ctx.push('PlayerTiredDropNotice', {'status': OK, 'dropRateInfo': new_rates})
         Q.event(p, Q.C['OpenBox'])
         Q.event(p, Q.C['OpenBox0'])
     H['TreasureBoxOpenReq'] = box_open
@@ -577,13 +583,21 @@ def register(H, pack, scene_player):
     def pickup(ctx, req):
         p = ctx.p
         items = ctx.__dict__.setdefault('drops', {}).pop(req.get('dropItemIndex', 0), None)
+        kills = 0
         if items is None:
             kills = ctx.__dict__.pop('kills_since_drop', 0)
             if not kills:
                 return ctx.reply({'status': OK})
-            items = roll_gear(p.d, random.randint(3, 5), p.s.get('world_level', 1))
-            if random.random() < 0.3:
-                items.append((random.choice((1030, 1032, 1020, 1022, 1010, 1012, 1000, 1002)), random.randint(1, 4)))
+            kr_rate = p.drop_rate_info()['killDropRate']
+            kmult = kr_rate / 100.0
+            cutoff = p._fatigue_cfg()['kill_mat_cutoff']
+            n_gear = max(1, int(round(random.randint(3, 5) * kmult)))
+            items = roll_gear(p.d, n_gear, p.s.get('world_level', 1))
+            if kr_rate > cutoff and random.random() < 0.3 * kmult:
+                items.append((random.choice((1030, 1032, 1020, 1022, 1010, 1012, 1000, 1002)), max(1, int(round(random.randint(1, 4) * kmult)))))
+            new_rates = p.record_fatigue('kills', kills)
+            if new_rates['killDropRate'] != kr_rate:
+                ctx.push('PlayerTiredDropNotice', {'status': OK, 'dropRateInfo': new_rates})
         got, changed = p.add_items(items)
         ctx.reply({'status': OK, 'items': got})
         pack(ctx, changed)

@@ -231,6 +231,47 @@ class Player:
                 any_ch = True
         return any_ch
 
+    def _fatigue_state(self):
+        today = time.strftime('%Y-%m-%d')
+        f = self.s.setdefault('fatigue', {})
+        if f.get('day') != today:
+            f.clear()
+            f.update(day=today, chests=0, kills=0)
+            self.dirty = True
+        return f
+
+    def _fatigue_cfg(self):
+        from game import packs as _packs
+        cfg = _packs.system('world', 'exploration_fatigue', {}) or {}
+        d = self.d
+        def _gc_pct(key, default_pct):
+            v = d.config(key)
+            try:
+                return int(round(float(v[0]) * 100))
+            except Exception:
+                return default_pct
+        return {
+            'treasure_decay': int(cfg.get('treasure_decay_pct', _gc_pct('TreasureDrop_Decay_Ratio', 1))),
+            'treasure_floor': int(cfg.get('treasure_floor_pct', _gc_pct('TreasureDrop_Decay_LowerLimit', 10))),
+            'kill_decay': int(cfg.get('kill_decay_pct', _gc_pct('BattleDrop_Decay_Ratio', 1))),
+            'kill_floor': int(cfg.get('kill_floor_pct', _gc_pct('BattleDrop_Decay_LowerLimit', 10))),
+            'kill_mat_cutoff': int(cfg.get('kill_mat_cutoff_pct', 20)),
+        }
+
+    def drop_rate_info(self):
+        f = self._fatigue_state()
+        c = self._fatigue_cfg()
+        tr = max(c['treasure_floor'], 100 - f.get('chests', 0) * c['treasure_decay'])
+        kr = max(c['kill_floor'], 100 - f.get('kills', 0) * c['kill_decay'])
+        return {'killDropRate': kr, 'treasureDropRate': tr}
+
+    def record_fatigue(self, kind, n=1):
+        """Increment daily field chest ('chests') or monster kill ('kills') count. Returns updated drop_rate_info."""
+        f = self._fatigue_state()
+        f[kind] = f.get(kind, 0) + max(1, int(n))
+        self.dirty = True
+        return self.drop_rate_info()
+
     # ------------------------------------------------------------ items
     def _next_iid(self):
         i = self.s['next_instance']; self.s['next_instance'] += 1
@@ -485,7 +526,7 @@ class Player:
             'placed_characters': s['placed_characters'], 'phone_case': s['phone_case'],
             'sex': s.get('sex') or 0, 'isHideBirthday': s.get('hide_birthday', False),
             'pet_instance_id': s.get('pet_instance_id', 0), 'reward_levels': s.get('level_rewards', []),
-            'playerDropRateInfo': {'killDropRate': 100, 'treasureDropRate': 100},
+            'playerDropRateInfo': self.drop_rate_info(),
             # sub-messages official always sends (null on the client if absent; its login setup stops on them)
             'daily_task': self._daily_task(), 'questionnaire_info': {},
             'player_buffs': self._player_buffs(),
